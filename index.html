@@ -8,6 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
   <style>
+    /* 1. Dark Theme (Default) */
     :root {
       --bg: #0d1117;
       --text: #e6edf3;
@@ -17,6 +18,7 @@
       --code-bg: #222;
     }
 
+    /* 2. Light Theme */
     .light {
       --bg: #ffffff;
       --text: #111;
@@ -26,12 +28,22 @@
       --code-bg: #e0e0e0;
     }
 
+    /* 3. Eye Saver Theme (Warm/Sepia) */
+    .eye-saver {
+      --bg: #fdf6e3;
+      --text: #4b5258;
+      --card: #eee8d5;
+      --accent: #b58900;
+      --border: #d3c6a6;
+      --code-bg: #e6dfcb;
+    }
+
     body {
       margin: 0;
       font-family: 'Inter', sans-serif;
       background: var(--bg);
       color: var(--text);
-      transition: background-color 0.3s, color 0.3s;
+      transition: background-color 0.4s ease, color 0.4s ease;
       line-height: 1.6;
     }
 
@@ -41,7 +53,7 @@
       align-items: center;
       padding: 20px 40px;
       border-bottom: 1px solid var(--border);
-      transition: border-color 0.3s;
+      transition: border-color 0.4s ease;
     }
 
     h1 {
@@ -49,6 +61,7 @@
       font-size: 22px;
     }
 
+    /* Theme Button Styling */
     button {
       background: var(--card);
       border: 1px solid var(--border);
@@ -58,10 +71,25 @@
       border-radius: 6px;
       transition: all 0.2s ease;
       font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
     button:hover {
-      filter: brightness(1.2);
+      filter: brightness(1.1);
+    }
+
+    /* Emoji Animation Keyframes */
+    @keyframes popSpin {
+      0% { transform: scale(0.5) rotate(-45deg); opacity: 0; }
+      50% { transform: scale(1.2) rotate(10deg); }
+      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+
+    .emoji {
+      display: inline-block;
+      font-size: 1.2em;
     }
 
     .container {
@@ -76,17 +104,18 @@
       margin-bottom: 24px;
       border-radius: 10px;
       border: 1px solid var(--border);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.4s ease;
     }
 
     .post:hover {
       transform: translateY(-3px);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
     }
 
     .post h1, .post h2, .post h3 {
       margin-top: 0;
       color: var(--accent);
+      transition: color 0.4s ease;
     }
 
     code {
@@ -95,7 +124,7 @@
       border-radius: 5px;
       font-family: monospace;
       font-size: 0.9em;
-      transition: background 0.3s;
+      transition: background-color 0.4s ease;
     }
 
     pre {
@@ -103,6 +132,7 @@
       padding: 16px;
       overflow-x: auto;
       border-radius: 8px;
+      transition: background-color 0.4s ease;
     }
 
     pre code {
@@ -131,7 +161,10 @@
 
   <header>
     <h1>AryterLog</h1>
-    <button id="theme-btn" aria-label="Toggle Theme">🌗 Theme</button>
+    <button id="theme-btn" aria-label="Cycle Theme">
+      <span class="emoji" id="theme-emoji">🌙</span>
+      <span id="theme-label">Dark</span>
+    </button>
   </header>
 
   <main class="container" id="posts">
@@ -145,19 +178,66 @@
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
   <script>
-    // --- Theme Logic ---
-    const themeBtn = document.getElementById("theme-btn");
-    
-    // Load saved theme on startup
-    if (localStorage.getItem("theme") === "light") {
-      document.body.classList.add("light");
+    // --- Cookie Utilities ---
+    function setCookie(name, value, days) {
+      const date = new Date();
+      date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+      document.cookie = `${name}=${value};expires=${date.toUTCString()};path=/`;
     }
 
-    // Toggle theme on click
+    function getCookie(name) {
+      const cookieArr = document.cookie.split(";");
+      for (let i = 0; i < cookieArr.length; i++) {
+        const cookiePair = cookieArr[i].split("=");
+        if (name === cookiePair[0].trim()) {
+          return decodeURIComponent(cookiePair[1]);
+        }
+      }
+      return null;
+    }
+
+    // --- Theme Logic ---
+    const themes = ["dark", "light", "eye-saver"];
+    const themeData = {
+      "dark": { emoji: "🌙", label: "Dark" },
+      "light": { emoji: "☀️", label: "Light" },
+      "eye-saver": { emoji: "☕", label: "Reading" }
+    };
+
+    const themeBtn = document.getElementById("theme-btn");
+    const themeEmoji = document.getElementById("theme-emoji");
+    const themeLabel = document.getElementById("theme-label");
+
+    // Initialize theme from cookie (fallback to 'dark')
+    let currentTheme = getCookie("site_theme") || "dark";
+    applyTheme(currentTheme, false);
+
+    // Handle Button Click
     themeBtn.addEventListener("click", () => {
-      document.body.classList.toggle("light");
-      localStorage.setItem("theme", document.body.classList.contains("light") ? "light" : "dark");
+      // Find the next theme in the array
+      const currentIndex = themes.indexOf(currentTheme);
+      currentTheme = themes[(currentIndex + 1) % themes.length];
+      applyTheme(currentTheme, true);
     });
+
+    function applyTheme(themeName, animate) {
+      // 1. Apply the CSS class (remove others first)
+      document.body.className = themeName === "dark" ? "" : themeName;
+      
+      // 2. Update text and emoji
+      themeEmoji.textContent = themeData[themeName].emoji;
+      themeLabel.textContent = themeData[themeName].label;
+
+      // 3. Save to Cookie (valid for 365 days)
+      setCookie("site_theme", themeName, 365);
+
+      // 4. Trigger Animation
+      if (animate) {
+        themeEmoji.style.animation = 'none'; // Reset
+        themeEmoji.offsetHeight;             // Trigger reflow to restart animation
+        themeEmoji.style.animation = 'popSpin 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards';
+      }
+    }
 
     // --- Posts Logic ---
     const posts = [
@@ -169,24 +249,20 @@
       const container = document.getElementById("posts");
 
       try {
-        // Fetch all markdown files simultaneously for better performance
         const fetchPromises = posts.map(post => fetch(post));
         const responses = await Promise.all(fetchPromises);
         
-        // Convert responses to text
         const textPromises = responses.map(res => {
           if (!res.ok) throw new Error(`Could not load ${res.url}`);
           return res.text();
         });
         const markdownTexts = await Promise.all(textPromises);
 
-        // Clear the "Loading..." text
-        container.innerHTML = "";
+        container.innerHTML = ""; // Clear loading text
 
-        // Parse and append each post
         markdownTexts.forEach(text => {
           const html = marked.parse(text);
-          const article = document.createElement("article"); // Semantic HTML
+          const article = document.createElement("article");
           article.className = "post";
           article.innerHTML = html;
           container.appendChild(article);
