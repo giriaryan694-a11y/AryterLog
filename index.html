@@ -1,156 +1,205 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AryterLog</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AryterLog</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
-<style>
-:root {
-  --bg: #0d1117;
-  --text: #e6edf3;
-  --card: #161b22;
-  --accent: #3fb950;
-}
+  <style>
+    :root {
+      --bg: #0d1117;
+      --text: #e6edf3;
+      --card: #161b22;
+      --accent: #3fb950;
+      --border: #30363d;
+      --code-bg: #222;
+    }
 
-.light {
-  --bg: #ffffff;
-  --text: #111;
-  --card: #f5f5f5;
-  --accent: #007bff;
-}
+    .light {
+      --bg: #ffffff;
+      --text: #111;
+      --card: #f5f5f5;
+      --accent: #007bff;
+      --border: #eaeaea;
+      --code-bg: #e0e0e0;
+    }
 
-body {
-  margin: 0;
-  font-family: 'Inter', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  transition: 0.3s;
-}
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      transition: background-color 0.3s, color 0.3s;
+      line-height: 1.6;
+    }
 
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 40px;
-  border-bottom: 1px solid #30363d;
-}
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 40px;
+      border-bottom: 1px solid var(--border);
+      transition: border-color 0.3s;
+    }
 
-h1 {
-  margin: 0;
-  font-size: 22px;
-}
+    h1 {
+      margin: 0;
+      font-size: 22px;
+    }
 
-button {
-  background: var(--card);
-  border: none;
-  padding: 8px 12px;
-  cursor: pointer;
-  color: var(--text);
-  border-radius: 6px;
-}
+    button {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 8px 16px;
+      cursor: pointer;
+      color: var(--text);
+      border-radius: 6px;
+      transition: all 0.2s ease;
+      font-weight: 600;
+    }
 
-.container {
-  max-width: 800px;
-  margin: auto;
-  padding: 20px;
-}
+    button:hover {
+      filter: brightness(1.2);
+    }
 
-.post {
-  background: var(--card);
-  padding: 20px;
-  margin-bottom: 20px;
-  border-radius: 10px;
-  transition: 0.2s;
-}
+    .container {
+      max-width: 800px;
+      margin: auto;
+      padding: 40px 20px;
+    }
 
-.post:hover {
-  transform: translateY(-3px);
-}
+    .post {
+      background: var(--card);
+      padding: 30px;
+      margin-bottom: 24px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
 
-.post h1, .post h2 {
-  margin-top: 0;
-}
+    .post:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
 
-code {
-  background: #222;
-  padding: 3px 6px;
-  border-radius: 5px;
-}
+    .post h1, .post h2, .post h3 {
+      margin-top: 0;
+      color: var(--accent);
+    }
 
-pre {
-  background: #0d1117;
-  padding: 10px;
-  overflow-x: auto;
-  border-radius: 8px;
-}
+    code {
+      background: var(--code-bg);
+      padding: 4px 6px;
+      border-radius: 5px;
+      font-family: monospace;
+      font-size: 0.9em;
+      transition: background 0.3s;
+    }
 
-.light pre {
-  background: #eee;
-}
+    pre {
+      background: var(--code-bg);
+      padding: 16px;
+      overflow-x: auto;
+      border-radius: 8px;
+    }
 
-footer {
-  text-align: center;
-  padding: 20px;
-  opacity: 0.6;
-}
-</style>
+    pre code {
+      background: transparent;
+      padding: 0;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      opacity: 0.6;
+      font-size: 0.9em;
+    }
+
+    .loading, .error {
+      text-align: center;
+      padding: 20px;
+      font-style: italic;
+    }
+    
+    .error { color: #ff6b6b; }
+  </style>
 </head>
 
 <body>
 
-<header>
-  <h1>AryterLog</h1>
-  <button onclick="toggleTheme()">🌗 Theme</button>
-</header>
+  <header>
+    <h1>AryterLog</h1>
+    <button id="theme-btn" aria-label="Toggle Theme">🌗 Theme</button>
+  </header>
 
-<div class="container" id="posts"></div>
+  <main class="container" id="posts">
+    <div class="loading">Loading posts...</div>
+  </main>
 
-<footer>
-  Learning. Building. Breaking. ⚡
-</footer>
+  <footer>
+    Learning. Building. Breaking. ⚡
+  </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
-<script>
-// Theme toggle
-function toggleTheme() {
-  document.body.classList.toggle("light");
-  localStorage.setItem("theme", document.body.classList.contains("light") ? "light" : "dark");
-}
+  <script>
+    // --- Theme Logic ---
+    const themeBtn = document.getElementById("theme-btn");
+    
+    // Load saved theme on startup
+    if (localStorage.getItem("theme") === "light") {
+      document.body.classList.add("light");
+    }
 
-// Load saved theme
-if (localStorage.getItem("theme") === "light") {
-  document.body.classList.add("light");
-}
+    // Toggle theme on click
+    themeBtn.addEventListener("click", () => {
+      document.body.classList.toggle("light");
+      localStorage.setItem("theme", document.body.classList.contains("light") ? "light" : "dark");
+    });
 
-// Posts list
-const posts = [
-  "posts/first-post.md",
-  "posts/second-post.md"
-];
+    // --- Posts Logic ---
+    const posts = [
+      "posts/first-post.md",
+      "posts/second-post.md"
+    ];
 
-async function loadPosts() {
-  const container = document.getElementById("posts");
+    async function loadPosts() {
+      const container = document.getElementById("posts");
 
-  for (let post of posts) {
-    const res = await fetch(post);
-    const text = await res.text();
+      try {
+        // Fetch all markdown files simultaneously for better performance
+        const fetchPromises = posts.map(post => fetch(post));
+        const responses = await Promise.all(fetchPromises);
+        
+        // Convert responses to text
+        const textPromises = responses.map(res => {
+          if (!res.ok) throw new Error(`Could not load ${res.url}`);
+          return res.text();
+        });
+        const markdownTexts = await Promise.all(textPromises);
 
-    const html = marked.parse(text);
+        // Clear the "Loading..." text
+        container.innerHTML = "";
 
-    const div = document.createElement("div");
-    div.className = "post";
-    div.innerHTML = html;
+        // Parse and append each post
+        markdownTexts.forEach(text => {
+          const html = marked.parse(text);
+          const article = document.createElement("article"); // Semantic HTML
+          article.className = "post";
+          article.innerHTML = html;
+          container.appendChild(article);
+        });
 
-    container.appendChild(div);
-  }
-}
+      } catch (error) {
+        console.error("Error loading posts:", error);
+        container.innerHTML = `<div class="error">Failed to load posts. Please check if the files exist.</div>`;
+      }
+    }
 
-loadPosts();
-</script>
+    loadPosts();
+  </script>
 
 </body>
 </html>
