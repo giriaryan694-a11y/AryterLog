@@ -5,179 +5,407 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AryterLog</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
 
   <style>
     /* --- THEMES --- */
     :root {
-      --bg: #0d1117;
-      --text: #e6edf3;
-      --card: #161b22;
-      --accent: #3fb950;
-      --border: #30363d;
-      --code-bg: #222;
-      --input-bg: #010409;
+      --bg: #0a0e13;
+      --text: #c9d1d9;
+      --card: #0f1419;
+      --card2: #161b22;
+      --accent: #39d353;
+      --accent2: #1f6feb;
+      --border: #21262d;
+      --code-bg: #1c2128;
+      --input-bg: #0d1117;
+      --muted: #8b949e;
+      --glow: rgba(57,211,83,0.12);
     }
     .light {
-      --bg: #ffffff;
-      --text: #111;
-      --card: #f5f5f5;
-      --accent: #007bff;
-      --border: #eaeaea;
-      --code-bg: #e0e0e0;
+      --bg: #f0f2f5;
+      --text: #1c1e21;
+      --card: #ffffff;
+      --card2: #f8f9fa;
+      --accent: #0969da;
+      --accent2: #8250df;
+      --border: #d0d7de;
+      --code-bg: #f6f8fa;
       --input-bg: #ffffff;
+      --muted: #57606a;
+      --glow: rgba(9,105,218,0.10);
     }
     .eye-saver {
-      --bg: #fdf6e3;
-      --text: #4b5258;
-      --card: #eee8d5;
-      --accent: #b58900;
-      --border: #d3c6a6;
-      --code-bg: #e6dfcb;
-      --input-bg: #fdf6e3;
+      --bg: #1a1500;
+      --text: #e8dcc8;
+      --card: #231c08;
+      --card2: #2a2210;
+      --accent: #f0b429;
+      --accent2: #e07b39;
+      --border: #3d3418;
+      --code-bg: #2a2210;
+      --input-bg: #1a1500;
+      --muted: #a89060;
+      --glow: rgba(240,180,41,0.12);
     }
+
+    *, *::before, *::after { box-sizing: border-box; }
 
     body {
       margin: 0;
-      font-family: 'Inter', sans-serif;
+      font-family: 'JetBrains Mono', monospace;
       background: var(--bg);
       color: var(--text);
-      transition: background-color 0.4s ease, color 0.4s ease;
-      line-height: 1.6;
+      transition: background 0.35s ease, color 0.35s ease;
+      line-height: 1.7;
+      min-height: 100vh;
     }
 
-    /* --- HEADER & CONTROLS --- */
+    /* --- SCANLINE EFFECT --- */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.03) 2px,
+        rgba(0,0,0,0.03) 4px
+      );
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* --- HEADER --- */
     header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 20px 40px;
+      padding: 16px 24px;
       border-bottom: 1px solid var(--border);
-      flex-wrap: wrap; /* Helps with mobile screens */
-      gap: 15px;
+      background: var(--card);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+      gap: 12px;
+      flex-wrap: wrap;
     }
-    
-    h1 {
+
+    .logo {
       margin: 0;
-      font-size: 22px;
+      font-family: 'Syne', sans-serif;
+      font-size: 20px;
+      font-weight: 800;
       cursor: pointer;
+      color: var(--accent);
+      letter-spacing: -0.5px;
+      white-space: nowrap;
+      flex-shrink: 0;
     }
+    .logo span { color: var(--text); opacity: 0.5; }
 
     .header-controls {
       display: flex;
-      gap: 12px;
+      gap: 8px;
       align-items: center;
       flex-wrap: wrap;
     }
 
-    /* Shared styling for buttons and links so they look identical */
     button, .nav-btn {
-      background: var(--card);
+      background: transparent;
       border: 1px solid var(--border);
-      padding: 8px 16px;
+      padding: 6px 12px;
       cursor: pointer;
       color: var(--text);
       border-radius: 6px;
       transition: all 0.2s ease;
+      font-family: 'JetBrains Mono', monospace;
       font-weight: 600;
-      display: flex;
+      font-size: 12px;
+      display: inline-flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       text-decoration: none;
-      font-size: 14px;
+      white-space: nowrap;
     }
-    button:hover, .nav-btn:hover { 
-      filter: brightness(1.1); 
-      border-color: var(--accent); 
+    button:hover, .nav-btn:hover {
+      background: var(--glow);
+      border-color: var(--accent);
+      color: var(--accent);
     }
 
-    /* Emoji Animation */
-    @keyframes popSpin {
-      0% { transform: scale(0.5) rotate(-45deg); opacity: 0; }
-      50% { transform: scale(1.2) rotate(10deg); }
-      100% { transform: scale(1) rotate(0deg); opacity: 1; }
-    }
-    .emoji { display: inline-block; font-size: 1.2em; }
-
+    /* --- MAIN CONTAINER --- */
     .container {
-      max-width: 800px;
-      margin: auto;
-      padding: 40px 20px;
-      min-height: 60vh;
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 32px 16px;
+      min-height: 70vh;
     }
 
-    /* --- SEARCH BAR --- */
+    /* --- SEARCH --- */
     .search-wrapper {
-      margin-bottom: 30px;
+      margin-bottom: 28px;
+      position: relative;
+    }
+    .search-wrapper::before {
+      content: '⌕';
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      opacity: 0.4;
+      font-size: 18px;
+      pointer-events: none;
     }
     #search-bar {
       width: 100%;
-      padding: 14px 20px;
-      font-size: 16px;
+      padding: 12px 16px 12px 40px;
+      font-size: 13px;
       border-radius: 8px;
       border: 1px solid var(--border);
       background: var(--input-bg);
       color: var(--text);
-      box-sizing: border-box;
-      font-family: 'Inter', sans-serif;
+      font-family: 'JetBrains Mono', monospace;
       transition: border-color 0.3s, box-shadow 0.3s;
     }
+    #search-bar::placeholder { color: var(--muted); }
     #search-bar:focus {
       outline: none;
       border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(63, 185, 80, 0.2);
+      box-shadow: 0 0 0 3px var(--glow);
     }
 
-    /* --- POST CARDS (HOME VIEW) --- */
+    /* --- POST CARDS --- */
+    .posts-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+
     .post-card {
       background: var(--card);
-      padding: 20px 24px;
-      margin-bottom: 16px;
+      padding: 20px 22px;
+      margin-bottom: 12px;
       border-radius: 10px;
       border: 1px solid var(--border);
       cursor: pointer;
       transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .post-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: var(--accent);
+      transform: scaleY(0);
+      transition: transform 0.2s ease;
+      transform-origin: bottom;
     }
     .post-card:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 6px 24px rgba(0,0,0,0.2);
       border-color: var(--accent);
     }
-    .post-card h2 { margin: 0 0 8px 0; font-size: 20px; color: var(--accent); }
-    .post-card .meta { font-size: 0.85em; opacity: 0.7; margin-bottom: 8px; }
-    .post-card p { margin: 0; font-size: 0.95em; opacity: 0.9; }
+    .post-card:hover::before { transform: scaleY(1); }
+
+    .post-card h2 {
+      margin: 0 0 6px 0;
+      font-family: 'Syne', sans-serif;
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1.3;
+    }
+    .post-card .meta {
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 8px;
+      font-weight: 400;
+    }
+    .post-card p {
+      margin: 0;
+      font-size: 13px;
+      color: var(--text);
+      opacity: 0.8;
+      line-height: 1.6;
+    }
 
     /* --- FULL POST VIEW --- */
-    .back-btn { margin-bottom: 24px; display: inline-flex; }
+    .back-btn { margin-bottom: 20px; }
+
     .post-content {
       background: var(--card);
-      padding: 30px;
+      padding: 28px 24px;
       border-radius: 10px;
       border: 1px solid var(--border);
     }
-    .post-content h1, .post-content h2, .post-content h3 { color: var(--accent); margin-top: 0; }
-    code { background: var(--code-bg); padding: 4px 6px; border-radius: 5px; font-family: monospace; font-size: 0.9em; }
-    pre { background: var(--code-bg); padding: 16px; overflow-x: auto; border-radius: 8px; }
-    pre code { background: transparent; padding: 0; }
 
-    footer { text-align: center; padding: 20px; opacity: 0.6; font-size: 0.9em; }
-    .loading, .error { text-align: center; padding: 40px; font-style: italic; }
-    .error { color: #ff6b6b; }
+    /* KEY FIX: All text & code overflow handling */
+    .post-content * {
+      max-width: 100%;
+    }
+
+    .post-content h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(18px, 4vw, 26px);
+      color: var(--accent);
+      margin: 0 0 8px 0;
+      line-height: 1.3;
+      word-break: break-word;
+    }
+    .post-content h2, .post-content h3 {
+      font-family: 'Syne', sans-serif;
+      color: var(--accent);
+      word-break: break-word;
+    }
+
+    .post-header-meta {
+      opacity: 0.55;
+      font-size: 12px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 18px;
+      margin-bottom: 22px;
+    }
+
+    /* --- CODE BLOCKS: THE MOBILE FIX --- */
+    code {
+      background: var(--code-bg);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85em;
+      word-break: break-all;     /* break inline code */
+      overflow-wrap: break-word;
+    }
+
+    pre {
+      background: var(--code-bg);
+      padding: 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      overflow-x: auto;          /* scroll for code blocks */
+      max-width: 100%;
+      -webkit-overflow-scrolling: touch;
+    }
+    pre code {
+      background: transparent;
+      padding: 0;
+      word-break: normal;        /* normal inside pre, let pre scroll */
+      overflow-wrap: normal;
+      white-space: pre;
+      display: block;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    /* --- LINKS & URLS: THE KEY MOBILE FIX --- */
+    a {
+      color: var(--accent);
+      word-break: break-all;     /* break long URLs */
+      overflow-wrap: break-word;
+    }
+    .post-content a {
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    /* blockquote */
+    blockquote {
+      border-left: 3px solid var(--accent);
+      margin: 0;
+      padding: 8px 16px;
+      background: var(--card2);
+      border-radius: 0 6px 6px 0;
+      font-style: italic;
+      color: var(--muted);
+    }
+
+    /* tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      display: block;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      font-size: 13px;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 8px 12px;
+      text-align: left;
+      white-space: nowrap;
+    }
+    th { background: var(--card2); color: var(--accent); font-weight: 600; }
+
+    /* images */
+    .post-content img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      display: block;
+    }
+
+    /* --- FOOTER --- */
+    footer {
+      text-align: center;
+      padding: 24px 16px;
+      color: var(--muted);
+      font-size: 12px;
+      border-top: 1px solid var(--border);
+    }
+    footer span { color: var(--accent); }
+
+    /* --- STATES --- */
+    .loading {
+      text-align: center;
+      padding: 48px 16px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .loading::before { content: ''; }
+    .error { text-align: center; padding: 40px 16px; color: #f85149; font-size: 13px; }
     .hidden { display: none !important; }
+
+    /* --- THEME EMOJI ANIMATION --- */
+    @keyframes popSpin {
+      0%   { transform: scale(0.5) rotate(-45deg); opacity: 0; }
+      60%  { transform: scale(1.2) rotate(8deg); }
+      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+    .emoji { display: inline-block; }
+
+    /* --- MOBILE SPECIFIC --- */
+    @media (max-width: 480px) {
+      header { padding: 12px 14px; gap: 8px; }
+      .logo { font-size: 17px; }
+      button, .nav-btn { padding: 5px 10px; font-size: 11px; }
+      .container { padding: 20px 12px; }
+      .post-card { padding: 16px; }
+      .post-card h2 { font-size: 15px; }
+      .post-content { padding: 18px 14px; }
+      pre { padding: 12px; font-size: 12px; }
+    }
   </style>
 </head>
 
 <body>
 
   <header>
-    <h1 onclick="window.location.hash = ''">AryterLog</h1>
-    
+    <h1 class="logo" onclick="window.location.hash = ''">AryterLog</h1>
+
     <div class="header-controls">
       <a href="https://github.com/giriaryan694-a11y" target="_blank" rel="noopener noreferrer" class="nav-btn">
         🐙 GitHub
       </a>
       <a href="https://tryhackme.com/p/giriaryan694a11y" target="_blank" rel="noopener noreferrer" class="nav-btn">
-        🎯 TryHackMe
+        🎯 THM
       </a>
       <button id="theme-btn" aria-label="Cycle Theme">
         <span class="emoji" id="theme-emoji">🌙</span>
@@ -189,18 +417,19 @@
   <main class="container">
     <div id="home-view">
       <div class="search-wrapper">
-        <input type="text" id="search-bar" placeholder="Search posts... (Title or keywords)">
+        <input type="text" id="search-bar" placeholder="Search posts...">
       </div>
+      <div class="posts-label">// Recent Posts</div>
       <div id="post-list"></div>
     </div>
 
     <div id="post-view" class="hidden">
-      <button class="back-btn" onclick="window.location.hash = ''">← Back to Posts</button>
+      <button class="back-btn" onclick="window.location.hash = ''">← Back</button>
       <article id="post-content-container" class="post-content"></article>
     </div>
   </main>
 
-  <footer>Learning. Building. Breaking. ⚡</footer>
+  <footer>Learning. Building. Breaking. ⚡ &nbsp;|&nbsp; Made by <span>Aryan Giri</span></footer>
 
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
@@ -210,13 +439,14 @@
        ========================================= */
     const themes = ["dark", "light", "eye-saver"];
     const themeData = {
-      "dark": { emoji: "🌙", label: "Dark" },
-      "light": { emoji: "☀️", label: "Light" },
+      "dark":      { emoji: "🌙", label: "Dark" },
+      "light":     { emoji: "☀️",  label: "Light" },
       "eye-saver": { emoji: "☕", label: "Reading" }
     };
 
     function setCookie(name, value, days) {
-      const d = new Date(); d.setTime(d.getTime() + (days*24*60*60*1000));
+      const d = new Date();
+      d.setTime(d.getTime() + days * 86400000);
       document.cookie = `${name}=${value};expires=${d.toUTCString()};path=/`;
     }
     function getCookie(name) {
@@ -225,7 +455,7 @@
     }
 
     let currentTheme = getCookie("site_theme") || "dark";
-    const themeBtn = document.getElementById("theme-btn");
+    const themeBtn   = document.getElementById("theme-btn");
     const themeEmoji = document.getElementById("theme-emoji");
 
     function applyTheme(theme, animate = false) {
@@ -233,11 +463,10 @@
       themeEmoji.textContent = themeData[theme].emoji;
       document.getElementById("theme-label").textContent = themeData[theme].label;
       setCookie("site_theme", theme, 365);
-      
       if (animate) {
-        themeEmoji.style.animation = 'none';
-        themeEmoji.offsetHeight; 
-        themeEmoji.style.animation = 'popSpin 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards';
+        themeEmoji.style.animation = "none";
+        themeEmoji.offsetHeight;
+        themeEmoji.style.animation = "popSpin 0.4s cubic-bezier(0.175,0.885,0.32,1.275) forwards";
       }
     }
 
@@ -248,128 +477,109 @@
     });
 
     /* =========================================
-       2. POST METADATA
-       ========================================= */
-    const blogPosts = [
-      {
-        id: "tor-rev-shell",
-        title: "🕶️ Tor-Routed Reverse Shell Lab (Free Port Forwarding Alternative)",
-        date: "March 26, 2026",
-        summary: "Build a fully working reverse shell using Tor hidden services — no public IP, no paid TCP port forwarding.",
-        file: "posts/🕶️ Tor-Routed Reverse Shell Lab (Free Port Forwarding Alternative).md"
-      },
-      {
-        id: "chatgpt-apps-for-cyber",
-        title: "🔐 ChatGPT Apps You Should Use to Stay Safe (2026 Guide)",
-        date: "March 26, 2026",
-        summary: "Turn ChatGPT into a cybersecurity assistant, OSINT toolkit, and scam shield using built-in apps.",
-        file: "posts/🔐 ChatGPT Apps You Should Use to Stay Safe (2026 Guide).md"
-      },
-      {
-        id: "ai-red-team",
-        title: "AI-Powered Red Team Pipeline using MCP + Kali Linux",
-        date: "March 26, 2026",
-        summary: "A deep dive into automating penetration testing workflows using modern AI contexts.",
-        file: "posts/AI-Powered Red Team Pipeline using MCP + Kali Linux.md"
-      },
-      {
-        id: "ai-reality-in-cyber",
-        title: "AI in Cybersecurity — Reality Check",
-        date: "March 26, 2026",
-        summary: "AI is a powerful tool that augments human pentesters, not a replacement — because accountability, creativity, air-gapped environments, and logical thinking still require a human behind the keyboard.",
-        file: "posts/AI in Cybersecurity — Reality Check.md"
-      }
-    ];
-
-    /* =========================================
-       3. SEARCH & LIST RENDERING LOGIC
+       2. SEARCH & LIST RENDERING
        ========================================= */
     const listContainer = document.getElementById("post-list");
-    const searchBar = document.getElementById("search-bar");
+    const searchBar     = document.getElementById("search-bar");
+    let blogPosts       = [];
 
     function renderPostCards(filterQuery = "") {
       listContainer.innerHTML = "";
-      const lowerQuery = filterQuery.toLowerCase();
-
-      const filteredPosts = blogPosts.filter(post => 
-        post.title.toLowerCase().includes(lowerQuery) || 
-        post.summary.toLowerCase().includes(lowerQuery)
+      const lq = filterQuery.toLowerCase();
+      const filtered = blogPosts.filter(p =>
+        p.title.toLowerCase().includes(lq) ||
+        p.summary.toLowerCase().includes(lq)
       );
 
-      if (filteredPosts.length === 0) {
-        listContainer.innerHTML = `<div class="loading">No posts found matching "${filterQuery}"</div>`;
+      if (!filtered.length) {
+        listContainer.innerHTML = `<div class="loading">No posts found for "<em>${filterQuery}</em>"</div>`;
         return;
       }
 
-      filteredPosts.forEach(post => {
+      filtered.forEach(post => {
         const card = document.createElement("div");
         card.className = "post-card";
         card.onclick = () => window.location.hash = `post-${post.id}`;
-        
         card.innerHTML = `
           <h2>${post.title}</h2>
-          <div class="meta">🗓️ ${post.date}</div>
+          <div class="meta">📅 ${post.date}</div>
           <p>${post.summary}</p>
         `;
         listContainer.appendChild(card);
       });
     }
 
-    searchBar.addEventListener("input", (e) => renderPostCards(e.target.value));
+    searchBar.addEventListener("input", e => renderPostCards(e.target.value));
 
     /* =========================================
-       4. ROUTING & FETCHING
+       3. ROUTING & FETCHING
        ========================================= */
-    const homeView = document.getElementById("home-view");
-    const postView = document.getElementById("post-view");
+    const homeView    = document.getElementById("home-view");
+    const postView    = document.getElementById("post-view");
     const postContent = document.getElementById("post-content-container");
 
+    marked.setOptions({ breaks: true, gfm: true });
+
     async function loadFullPost(postId) {
-      const postMeta = blogPosts.find(p => p.id === postId);
-      
-      if (!postMeta) {
+      const meta = blogPosts.find(p => p.id === postId);
+      if (!meta) {
         postContent.innerHTML = `<div class="error">⚠️ Post not found.</div>`;
         return;
       }
 
-      postContent.innerHTML = `<div class="loading">Fetching markdown...</div>`;
+      postContent.innerHTML = `<div class="loading">⟳ Loading post...</div>`;
 
       try {
-        const res = await fetch(postMeta.file);
-        if (!res.ok) throw new Error("File not found on server.");
-        
-        const markdown = await res.text();
-        const headerHTML = `<h1 style="margin-bottom:5px;">${postMeta.title}</h1><p style="opacity:0.6; margin-top:0; border-bottom:1px solid var(--border); padding-bottom:20px; margin-bottom:20px;">Published on ${postMeta.date}</p>`;
-        
-        postContent.innerHTML = headerHTML + marked.parse(markdown);
-      } catch (error) {
+        const res = await fetch(meta.file);
+        if (!res.ok) throw new Error("File not found");
+        const md = await res.text();
+
+        postContent.innerHTML = `
+          <h1>${meta.title}</h1>
+          <div class="post-header-meta">📅 Published ${meta.date}</div>
+          ${marked.parse(md)}
+        `;
+      } catch (err) {
         postContent.innerHTML = `
           <div class="error">
-            <h3>⚠️ Failed to load post</h3>
-            <p>Could not load: <code>${postMeta.file}</code></p>
+            <p>⚠️ Could not load post.</p>
+            <code>${meta.file}</code>
           </div>`;
       }
     }
 
     function handleRoute() {
       const hash = window.location.hash;
-
       if (hash.startsWith("#post-")) {
         homeView.classList.add("hidden");
         postView.classList.remove("hidden");
-        const postId = hash.replace("#post-", "");
-        loadFullPost(postId);
-        window.scrollTo(0, 0); 
+        loadFullPost(hash.replace("#post-", ""));
+        window.scrollTo(0, 0);
       } else {
         postView.classList.add("hidden");
         homeView.classList.remove("hidden");
-        renderPostCards(searchBar.value); 
+        renderPostCards(searchBar.value);
       }
     }
 
-    window.addEventListener("hashchange", handleRoute);
-    handleRoute();
+    /* =========================================
+       4. BOOT — load posts-info.json first
+       ========================================= */
+    async function init() {
+      listContainer.innerHTML = `<div class="loading">⟳ Loading posts...</div>`;
+      try {
+        const res = await fetch("posts-info.json");
+        if (!res.ok) throw new Error("posts-info.json not found");
+        blogPosts = await res.json();
+      } catch (err) {
+        listContainer.innerHTML = `<div class="error">⚠️ Could not load posts-info.json<br><small>${err.message}</small></div>`;
+        return;
+      }
+      window.addEventListener("hashchange", handleRoute);
+      handleRoute();
+    }
 
+    init();
   </script>
 </body>
 </html>
