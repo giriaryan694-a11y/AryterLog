@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AryterLog</title>
+
+  <!-- Mobile -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      background: #0d1117;
+      color: #00ff9c;
+      font-family: 'Share Tech Mono', monospace;
+    }
+
+    header {
+      border-bottom: 1px solid #00ff9c;
+      padding: 15px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 28px;
+      letter-spacing: 2px;
+    }
+
+    header p {
+      color: #8b949e;
+      font-size: 14px;
+    }
+
+    #terminal {
+      padding: 20px;
+      white-space: pre-wrap;
+    }
+
+    .prompt {
+      color: #00ff9c;
+    }
+
+    .command {
+      color: #ffffff;
+    }
+
+    .post {
+      border: 1px solid #00ff9c;
+      margin: 20px;
+      padding: 15px;
+      transition: 0.2s;
+    }
+
+    .post:hover {
+      background: rgba(0,255,156,0.05);
+      transform: scale(1.01);
+    }
+
+    .post h2 {
+      margin-top: 0;
+    }
+
+    a {
+      color: #00ff9c;
+      text-decoration: none;
+    }
+
+    footer {
+      text-align: center;
+      padding: 10px;
+      border-top: 1px solid #00ff9c;
+      font-size: 12px;
+      color: #8b949e;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>⚡ AryterLog</h1>
+  <p>> cyber notes | exploits | thoughts</p>
+</header>
+
+<div id="terminal"></div>
+
+<div id="posts"></div>
+
+<footer>
+  © 2026 AryterLog — Built Different
+</footer>
+
+<!-- Markdown Parser -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<script>
+  // 🔥 Terminal Boot Animation
+  const terminal = document.getElementById("terminal");
+
+  const bootText = [
+    "[+] Initializing AryterLog...",
+    "[+] Loading modules...",
+    "[+] Connecting to knowledge base...",
+    "[+] Access granted ✔",
+    "",
+  ];
+
+  let i = 0;
+
+  function typeLine() {
+    if (i < bootText.length) {
+      terminal.innerHTML += bootText[i] + "\\n";
+      i++;
+      setTimeout(typeLine, 200);
+    } else {
+      loadPosts();
+    }
+  }
+
+  typeLine();
+
+  // 📂 Your posts list (edit this)
+  const posts = [
+    "posts/first-post.md",
+    "posts/second-post.md"
+  ];
+
+  async function loadPosts() {
+    const container = document.getElementById("posts");
+
+    for (let post of posts) {
+      const res = await fetch(post);
+      const text = await res.text();
+
+      const html = marked.parse(text);
+
+      const div = document.createElement("div");
+      div.className = "post";
+      div.innerHTML = html;
+
+      container.appendChild(div);
+    }
+  }
+</script>
+
+</body>
+</html>
