@@ -53,6 +53,8 @@
       align-items: center;
       padding: 20px 40px;
       border-bottom: 1px solid var(--border);
+      flex-wrap: wrap; /* Helps with mobile screens */
+      gap: 15px;
     }
     
     h1 {
@@ -61,7 +63,15 @@
       cursor: pointer;
     }
 
-    button {
+    .header-controls {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    /* Shared styling for buttons and links so they look identical */
+    button, .nav-btn {
       background: var(--card);
       border: 1px solid var(--border);
       padding: 8px 16px;
@@ -73,8 +83,13 @@
       display: flex;
       align-items: center;
       gap: 8px;
+      text-decoration: none;
+      font-size: 14px;
     }
-    button:hover { filter: brightness(1.1); }
+    button:hover, .nav-btn:hover { 
+      filter: brightness(1.1); 
+      border-color: var(--accent); 
+    }
 
     /* Emoji Animation */
     @keyframes popSpin {
@@ -156,10 +171,19 @@
 
   <header>
     <h1 onclick="window.location.hash = ''">AryterLog</h1>
-    <button id="theme-btn" aria-label="Cycle Theme">
-      <span class="emoji" id="theme-emoji">🌙</span>
-      <span id="theme-label">Dark</span>
-    </button>
+    
+    <div class="header-controls">
+      <a href="https://github.com/giriaryan694-a11y" target="_blank" rel="noopener noreferrer" class="nav-btn">
+        🐙 GitHub
+      </a>
+      <a href="https://tryhackme.com/p/giriaryan694a11y" target="_blank" rel="noopener noreferrer" class="nav-btn">
+        🎯 TryHackMe
+      </a>
+      <button id="theme-btn" aria-label="Cycle Theme">
+        <span class="emoji" id="theme-emoji">🌙</span>
+        <span id="theme-label">Dark</span>
+      </button>
+    </div>
   </header>
 
   <main class="container">
@@ -224,33 +248,32 @@
     });
 
     /* =========================================
-       2. POST METADATA (The "Database")
-       Update this array whenever you add a new post!
+       2. POST METADATA
        ========================================= */
     const blogPosts = [
       {
-        id: "tor-rev-shell", // Used for the URL (e.g. #post-ai-red-team)
+        id: "tor-rev-shell",
         title: "🕶️ Tor-Routed Reverse Shell Lab (Free Port Forwarding Alternative)",
         date: "March 26, 2026",
         summary: "Build a fully working reverse shell using Tor hidden services — no public IP, no paid TCP port forwarding.",
         file: "posts/🕶️ Tor-Routed Reverse Shell Lab (Free Port Forwarding Alternative).md"
       },
       {
-        id: "chatgpt-apps-for-cyber", // Used for the URL (e.g. #post-ai-red-team)
+        id: "chatgpt-apps-for-cyber",
         title: "🔐 ChatGPT Apps You Should Use to Stay Safe (2026 Guide)",
         date: "March 26, 2026",
         summary: "Turn ChatGPT into a cybersecurity assistant, OSINT toolkit, and scam shield using built-in apps.",
         file: "posts/🔐 ChatGPT Apps You Should Use to Stay Safe (2026 Guide).md"
       },
       {
-        id: "ai-red-team", // Used for the URL (e.g. #post-ai-red-team)
+        id: "ai-red-team",
         title: "AI-Powered Red Team Pipeline using MCP + Kali Linux",
         date: "March 26, 2026",
         summary: "A deep dive into automating penetration testing workflows using modern AI contexts.",
         file: "posts/AI-Powered Red Team Pipeline using MCP + Kali Linux.md"
       },
       {
-        id: "ai-reality-in-cyber", // Used for the URL (e.g. #post-ai-red-team)
+        id: "ai-reality-in-cyber",
         title: "AI in Cybersecurity — Reality Check",
         date: "March 26, 2026",
         summary: "AI is a powerful tool that augments human pentesters, not a replacement — because accountability, creativity, air-gapped environments, and logical thinking still require a human behind the keyboard.",
@@ -281,7 +304,6 @@
       filteredPosts.forEach(post => {
         const card = document.createElement("div");
         card.className = "post-card";
-        // When clicked, change the URL hash to trigger the router
         card.onclick = () => window.location.hash = `post-${post.id}`;
         
         card.innerHTML = `
@@ -296,7 +318,7 @@
     searchBar.addEventListener("input", (e) => renderPostCards(e.target.value));
 
     /* =========================================
-       4. ROUTING & FETCHING (Single Page App Logic)
+       4. ROUTING & FETCHING
        ========================================= */
     const homeView = document.getElementById("home-view");
     const postView = document.getElementById("post-view");
@@ -317,7 +339,6 @@
         if (!res.ok) throw new Error("File not found on server.");
         
         const markdown = await res.text();
-        // Add Title and Date to the top of the Markdown automatically
         const headerHTML = `<h1 style="margin-bottom:5px;">${postMeta.title}</h1><p style="opacity:0.6; margin-top:0; border-bottom:1px solid var(--border); padding-bottom:20px; margin-bottom:20px;">Published on ${postMeta.date}</p>`;
         
         postContent.innerHTML = headerHTML + marked.parse(markdown);
@@ -334,24 +355,19 @@
       const hash = window.location.hash;
 
       if (hash.startsWith("#post-")) {
-        // Show Post View
         homeView.classList.add("hidden");
         postView.classList.remove("hidden");
         const postId = hash.replace("#post-", "");
         loadFullPost(postId);
-        window.scrollTo(0, 0); // Scroll to top
+        window.scrollTo(0, 0); 
       } else {
-        // Show Home View
         postView.classList.add("hidden");
         homeView.classList.remove("hidden");
-        renderPostCards(searchBar.value); // Re-render list
+        renderPostCards(searchBar.value); 
       }
     }
 
-    // Listen for URL changes (Back/Forward browser buttons work automatically!)
     window.addEventListener("hashchange", handleRoute);
-    
-    // Initial Load
     handleRoute();
 
   </script>
