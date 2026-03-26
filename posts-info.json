@@ -4,7 +4,7 @@
     "title": "AI Web Pentesting Myth: Do LLMs Really Read Source Code?",
     "date": "March 26, 2026",
     "summary": "Can AI tools like ChatGPT, Claude, Gemini, DeepSeek actually read and analyze the real source code of a website?",
-    "file": "posts/AI Web Pentesting Myth: Do LLMs Really Read Source Code?.md"
+    "file": "posts/AI Web Pentesting Myth: Do LLMs Really Read Source Code.md"
   },
   {
     "id": "tor-rev-shell",
