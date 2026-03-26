@@ -1,0 +1,30 @@
+[
+  {
+    "id": "tor-rev-shell",
+    "title": "🕶️ Tor-Routed Reverse Shell Lab (Free Port Forwarding Alternative)",
+    "date": "March 26, 2026",
+    "summary": "Build a fully working reverse shell using Tor hidden services — no public IP, no paid TCP port forwarding.",
+    "file": "posts/🕶️ Tor-Routed Reverse Shell Lab (Free Port Forwarding Alternative).md"
+  },
+  {
+    "id": "chatgpt-apps-for-cyber",
+    "title": "🔐 ChatGPT Apps You Should Use to Stay Safe (2026 Guide)",
+    "date": "March 26, 2026",
+    "summary": "Turn ChatGPT into a cybersecurity assistant, OSINT toolkit, and scam shield using built-in apps.",
+    "file": "posts/🔐 ChatGPT Apps You Should Use to Stay Safe (2026 Guide).md"
+  },
+  {
+    "id": "ai-red-team",
+    "title": "AI-Powered Red Team Pipeline using MCP + Kali Linux",
+    "date": "March 26, 2026",
+    "summary": "A deep dive into automating penetration testing workflows using modern AI contexts.",
+    "file": "posts/AI-Powered Red Team Pipeline using MCP + Kali Linux.md"
+  },
+  {
+    "id": "ai-reality-in-cyber",
+    "title": "AI in Cybersecurity — Reality Check",
+    "date": "March 26, 2026",
+    "summary": "AI augments human pentesters, not replace them — accountability, creativity, and logical thinking still need a human behind the keyboard.",
+    "file": "posts/AI in Cybersecurity — Reality Check.md"
+  }
+]
