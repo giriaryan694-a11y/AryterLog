@@ -8,7 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
   <style>
-    /* 1. Dark Theme (Default) */
+    /* --- THEMES --- */
     :root {
       --bg: #0d1117;
       --text: #e6edf3;
@@ -16,9 +16,8 @@
       --accent: #3fb950;
       --border: #30363d;
       --code-bg: #222;
+      --input-bg: #010409;
     }
-
-    /* 2. Light Theme */
     .light {
       --bg: #ffffff;
       --text: #111;
@@ -26,9 +25,8 @@
       --accent: #007bff;
       --border: #eaeaea;
       --code-bg: #e0e0e0;
+      --input-bg: #ffffff;
     }
-
-    /* 3. Eye Saver Theme (Warm/Sepia) */
     .eye-saver {
       --bg: #fdf6e3;
       --text: #4b5258;
@@ -36,6 +34,7 @@
       --accent: #b58900;
       --border: #d3c6a6;
       --code-bg: #e6dfcb;
+      --input-bg: #fdf6e3;
     }
 
     body {
@@ -47,21 +46,21 @@
       line-height: 1.6;
     }
 
+    /* --- HEADER & CONTROLS --- */
     header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 20px 40px;
       border-bottom: 1px solid var(--border);
-      transition: border-color 0.4s ease;
     }
-
+    
     h1 {
       margin: 0;
       font-size: 22px;
+      cursor: pointer;
     }
 
-    /* Theme Button Styling */
     button {
       background: var(--card);
       border: 1px solid var(--border);
@@ -75,128 +74,116 @@
       align-items: center;
       gap: 8px;
     }
+    button:hover { filter: brightness(1.1); }
 
-    button:hover {
-      filter: brightness(1.1);
-    }
-
-    /* Emoji Animation Keyframes */
+    /* Emoji Animation */
     @keyframes popSpin {
       0% { transform: scale(0.5) rotate(-45deg); opacity: 0; }
       50% { transform: scale(1.2) rotate(10deg); }
       100% { transform: scale(1) rotate(0deg); opacity: 1; }
     }
-
-    .emoji {
-      display: inline-block;
-      font-size: 1.2em;
-    }
+    .emoji { display: inline-block; font-size: 1.2em; }
 
     .container {
       max-width: 800px;
       margin: auto;
       padding: 40px 20px;
+      min-height: 60vh;
     }
 
-    .post {
+    /* --- SEARCH BAR --- */
+    .search-wrapper {
+      margin-bottom: 30px;
+    }
+    #search-bar {
+      width: 100%;
+      padding: 14px 20px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--input-bg);
+      color: var(--text);
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    #search-bar:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(63, 185, 80, 0.2);
+    }
+
+    /* --- POST CARDS (HOME VIEW) --- */
+    .post-card {
       background: var(--card);
-      padding: 30px;
-      margin-bottom: 24px;
+      padding: 20px 24px;
+      margin-bottom: 16px;
       border-radius: 10px;
       border: 1px solid var(--border);
-      transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.4s ease;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
     }
-
-    .post:hover {
-      transform: translateY(-3px);
+    .post-card:hover {
+      transform: translateY(-2px);
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      border-color: var(--accent);
     }
+    .post-card h2 { margin: 0 0 8px 0; font-size: 20px; color: var(--accent); }
+    .post-card .meta { font-size: 0.85em; opacity: 0.7; margin-bottom: 8px; }
+    .post-card p { margin: 0; font-size: 0.95em; opacity: 0.9; }
 
-    .post h1, .post h2, .post h3 {
-      margin-top: 0;
-      color: var(--accent);
-      transition: color 0.4s ease;
+    /* --- FULL POST VIEW --- */
+    .back-btn { margin-bottom: 24px; display: inline-flex; }
+    .post-content {
+      background: var(--card);
+      padding: 30px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
     }
+    .post-content h1, .post-content h2, .post-content h3 { color: var(--accent); margin-top: 0; }
+    code { background: var(--code-bg); padding: 4px 6px; border-radius: 5px; font-family: monospace; font-size: 0.9em; }
+    pre { background: var(--code-bg); padding: 16px; overflow-x: auto; border-radius: 8px; }
+    pre code { background: transparent; padding: 0; }
 
-    code {
-      background: var(--code-bg);
-      padding: 4px 6px;
-      border-radius: 5px;
-      font-family: monospace;
-      font-size: 0.9em;
-      transition: background-color 0.4s ease;
-    }
-
-    pre {
-      background: var(--code-bg);
-      padding: 16px;
-      overflow-x: auto;
-      border-radius: 8px;
-      transition: background-color 0.4s ease;
-    }
-
-    pre code {
-      background: transparent;
-      padding: 0;
-    }
-
-    footer {
-      text-align: center;
-      padding: 20px;
-      opacity: 0.6;
-      font-size: 0.9em;
-    }
-
-    .loading, .error {
-      text-align: center;
-      padding: 20px;
-      font-style: italic;
-    }
-    
+    footer { text-align: center; padding: 20px; opacity: 0.6; font-size: 0.9em; }
+    .loading, .error { text-align: center; padding: 40px; font-style: italic; }
     .error { color: #ff6b6b; }
+    .hidden { display: none !important; }
   </style>
 </head>
 
 <body>
 
   <header>
-    <h1>AryterLog</h1>
+    <h1 onclick="window.location.hash = ''">AryterLog</h1>
     <button id="theme-btn" aria-label="Cycle Theme">
       <span class="emoji" id="theme-emoji">🌙</span>
       <span id="theme-label">Dark</span>
     </button>
   </header>
 
-  <main class="container" id="posts">
-    <div class="loading">Loading posts...</div>
+  <main class="container">
+    <div id="home-view">
+      <div class="search-wrapper">
+        <input type="text" id="search-bar" placeholder="Search posts... (Title or keywords)">
+      </div>
+      <div id="post-list"></div>
+    </div>
+
+    <div id="post-view" class="hidden">
+      <button class="back-btn" onclick="window.location.hash = ''">← Back to Posts</button>
+      <article id="post-content-container" class="post-content"></article>
+    </div>
   </main>
 
-  <footer>
-    Learning. Building. Breaking. ⚡
-  </footer>
+  <footer>Learning. Building. Breaking. ⚡</footer>
 
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
   <script>
-    // --- Cookie Utilities ---
-    function setCookie(name, value, days) {
-      const date = new Date();
-      date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-      document.cookie = `${name}=${value};expires=${date.toUTCString()};path=/`;
-    }
-
-    function getCookie(name) {
-      const cookieArr = document.cookie.split(";");
-      for (let i = 0; i < cookieArr.length; i++) {
-        const cookiePair = cookieArr[i].split("=");
-        if (name === cookiePair[0].trim()) {
-          return decodeURIComponent(cookiePair[1]);
-        }
-      }
-      return null;
-    }
-
-    // --- Theme Logic ---
+    /* =========================================
+       1. THEME LOGIC
+       ========================================= */
     const themes = ["dark", "light", "eye-saver"];
     const themeData = {
       "dark": { emoji: "🌙", label: "Dark" },
@@ -204,77 +191,148 @@
       "eye-saver": { emoji: "☕", label: "Reading" }
     };
 
+    function setCookie(name, value, days) {
+      const d = new Date(); d.setTime(d.getTime() + (days*24*60*60*1000));
+      document.cookie = `${name}=${value};expires=${d.toUTCString()};path=/`;
+    }
+    function getCookie(name) {
+      const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+      return match ? match[2] : null;
+    }
+
+    let currentTheme = getCookie("site_theme") || "dark";
     const themeBtn = document.getElementById("theme-btn");
     const themeEmoji = document.getElementById("theme-emoji");
-    const themeLabel = document.getElementById("theme-label");
 
-    // Initialize theme from cookie (fallback to 'dark')
-    let currentTheme = getCookie("site_theme") || "dark";
-    applyTheme(currentTheme, false);
-
-    // Handle Button Click
-    themeBtn.addEventListener("click", () => {
-      // Find the next theme in the array
-      const currentIndex = themes.indexOf(currentTheme);
-      currentTheme = themes[(currentIndex + 1) % themes.length];
-      applyTheme(currentTheme, true);
-    });
-
-    function applyTheme(themeName, animate) {
-      // 1. Apply the CSS class (remove others first)
-      document.body.className = themeName === "dark" ? "" : themeName;
+    function applyTheme(theme, animate = false) {
+      document.body.className = theme === "dark" ? "" : theme;
+      themeEmoji.textContent = themeData[theme].emoji;
+      document.getElementById("theme-label").textContent = themeData[theme].label;
+      setCookie("site_theme", theme, 365);
       
-      // 2. Update text and emoji
-      themeEmoji.textContent = themeData[themeName].emoji;
-      themeLabel.textContent = themeData[themeName].label;
-
-      // 3. Save to Cookie (valid for 365 days)
-      setCookie("site_theme", themeName, 365);
-
-      // 4. Trigger Animation
       if (animate) {
-        themeEmoji.style.animation = 'none'; // Reset
-        themeEmoji.offsetHeight;             // Trigger reflow to restart animation
+        themeEmoji.style.animation = 'none';
+        themeEmoji.offsetHeight; 
         themeEmoji.style.animation = 'popSpin 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards';
       }
     }
 
-    // --- Posts Logic ---
-    const posts = [
-      "posts/AI-Powered Red Team Pipeline using MCP + Kali Linux.md"
+    applyTheme(currentTheme);
+    themeBtn.addEventListener("click", () => {
+      currentTheme = themes[(themes.indexOf(currentTheme) + 1) % themes.length];
+      applyTheme(currentTheme, true);
+    });
+
+    /* =========================================
+       2. POST METADATA (The "Database")
+       Update this array whenever you add a new post!
+       ========================================= */
+    const blogPosts = [
+      {
+        id: "ai-red-team", // Used for the URL (e.g. #post-ai-red-team)
+        title: "AI-Powered Red Team Pipeline using MCP + Kali Linux",
+        date: "March 26, 2026",
+        summary: "A deep dive into automating penetration testing workflows using modern AI contexts.",
+        file: "posts/AI-Powered Red Team Pipeline using MCP + Kali Linux.md"
+      }
     ];
 
-    async function loadPosts() {
-      const container = document.getElementById("posts");
+    /* =========================================
+       3. SEARCH & LIST RENDERING LOGIC
+       ========================================= */
+    const listContainer = document.getElementById("post-list");
+    const searchBar = document.getElementById("search-bar");
+
+    function renderPostCards(filterQuery = "") {
+      listContainer.innerHTML = "";
+      const lowerQuery = filterQuery.toLowerCase();
+
+      const filteredPosts = blogPosts.filter(post => 
+        post.title.toLowerCase().includes(lowerQuery) || 
+        post.summary.toLowerCase().includes(lowerQuery)
+      );
+
+      if (filteredPosts.length === 0) {
+        listContainer.innerHTML = `<div class="loading">No posts found matching "${filterQuery}"</div>`;
+        return;
+      }
+
+      filteredPosts.forEach(post => {
+        const card = document.createElement("div");
+        card.className = "post-card";
+        // When clicked, change the URL hash to trigger the router
+        card.onclick = () => window.location.hash = `post-${post.id}`;
+        
+        card.innerHTML = `
+          <h2>${post.title}</h2>
+          <div class="meta">🗓️ ${post.date}</div>
+          <p>${post.summary}</p>
+        `;
+        listContainer.appendChild(card);
+      });
+    }
+
+    searchBar.addEventListener("input", (e) => renderPostCards(e.target.value));
+
+    /* =========================================
+       4. ROUTING & FETCHING (Single Page App Logic)
+       ========================================= */
+    const homeView = document.getElementById("home-view");
+    const postView = document.getElementById("post-view");
+    const postContent = document.getElementById("post-content-container");
+
+    async function loadFullPost(postId) {
+      const postMeta = blogPosts.find(p => p.id === postId);
+      
+      if (!postMeta) {
+        postContent.innerHTML = `<div class="error">⚠️ Post not found.</div>`;
+        return;
+      }
+
+      postContent.innerHTML = `<div class="loading">Fetching markdown...</div>`;
 
       try {
-        const fetchPromises = posts.map(post => fetch(post));
-        const responses = await Promise.all(fetchPromises);
+        const res = await fetch(postMeta.file);
+        if (!res.ok) throw new Error("File not found on server.");
         
-        const textPromises = responses.map(res => {
-          if (!res.ok) throw new Error(`Could not load ${res.url}`);
-          return res.text();
-        });
-        const markdownTexts = await Promise.all(textPromises);
-
-        container.innerHTML = ""; // Clear loading text
-
-        markdownTexts.forEach(text => {
-          const html = marked.parse(text);
-          const article = document.createElement("article");
-          article.className = "post";
-          article.innerHTML = html;
-          container.appendChild(article);
-        });
-
+        const markdown = await res.text();
+        // Add Title and Date to the top of the Markdown automatically
+        const headerHTML = `<h1 style="margin-bottom:5px;">${postMeta.title}</h1><p style="opacity:0.6; margin-top:0; border-bottom:1px solid var(--border); padding-bottom:20px; margin-bottom:20px;">Published on ${postMeta.date}</p>`;
+        
+        postContent.innerHTML = headerHTML + marked.parse(markdown);
       } catch (error) {
-        console.error("Error loading posts:", error);
-        container.innerHTML = `<div class="error">Failed to load posts. Please check if the files exist.</div>`;
+        postContent.innerHTML = `
+          <div class="error">
+            <h3>⚠️ Failed to load post</h3>
+            <p>Could not load: <code>${postMeta.file}</code></p>
+          </div>`;
       }
     }
 
-    loadPosts();
-  </script>
+    function handleRoute() {
+      const hash = window.location.hash;
 
+      if (hash.startsWith("#post-")) {
+        // Show Post View
+        homeView.classList.add("hidden");
+        postView.classList.remove("hidden");
+        const postId = hash.replace("#post-", "");
+        loadFullPost(postId);
+        window.scrollTo(0, 0); // Scroll to top
+      } else {
+        // Show Home View
+        postView.classList.add("hidden");
+        homeView.classList.remove("hidden");
+        renderPostCards(searchBar.value); // Re-render list
+      }
+    }
+
+    // Listen for URL changes (Back/Forward browser buttons work automatically!)
+    window.addEventListener("hashchange", handleRoute);
+    
+    // Initial Load
+    handleRoute();
+
+  </script>
 </body>
 </html>
