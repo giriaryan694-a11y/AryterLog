@@ -1,5 +1,12 @@
 [
   {
+    "id": "PFPAT",
+    "title": "🔐 Privacy-Focused Port Forwarding & Tunneling (2026)",
+    "date": "March 27, 2026",
+    "summary": "A practical, neutral guide to modern tunneling techniques, tools, and tradeoffs. This is not about best tool it’s about choosing the right approach based on threat model, control, and privacy needs.",
+    "file": "posts/🔐 Privacy-Focused Port Forwarding & Tunneling (2026).md"
+  },
+  {
     "id": "CLSAM",
     "title": "Cybersecurity Learning Scams & Misinformation",
     "date": "March 27, 2026",
