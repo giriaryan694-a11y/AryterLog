@@ -264,13 +264,3 @@ Also abused in real-world attacks.
 Learn responsibly.
 
 ---
-
-# 🚀 Final Thought
-
-If you can expose a service over Tor…
-
-What else can you route through it?
-
----
-
-**Next Lab:** Tor interactive channel / reverse communication
