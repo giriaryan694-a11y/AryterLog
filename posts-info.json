@@ -1,5 +1,12 @@
 [
   {
+  "id": "TOR_HIDDEN_SERVICE_LAB_2026",
+  "title": "🧅 Building a Tor Hidden Service Lab (From Zero to Working Onion)",
+  "date": "March 29, 2026",
+  "summary": "A hands-on, beginner-friendly lab to build and debug a Tor hidden service from scratch. Learn correct port mapping, fix common SOCKS and Tor issues, and understand how anonymous inbound channels work.",
+  "file": "posts/Building a Tor Hidden Service Lab.md"
+  },
+  {
   "id": "ULLM_2026",
   "title": "🔓 Uncensored LLMs on Ollama: Power, Risk, and Cybersecurity Use-Cases",
   "date": "March 29, 2026",
