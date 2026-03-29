@@ -1,5 +1,12 @@
 [
   {
+  "id": "TOR_RESET_CLEAN_2026",
+  "title": "🧹 Resetting and Cleaning a Tor Hidden Service (Complete Guide)",
+  "date": "March 29, 2026",
+  "summary": "A clear, step-by-step guide to safely stop Tor, remove hidden services, reset .onion identities, and start fresh. Learn how Tor stores identity and how to fully clean your lab environment.",
+  "file": "posts/Resetting and Cleaning a Tor Hidden Service.md"
+  },
+  {
   "id": "TOR_HIDDEN_SERVICE_LAB_2026",
   "title": "🧅 Building a Tor Hidden Service Lab (From Zero to Working Onion)",
   "date": "March 29, 2026",
