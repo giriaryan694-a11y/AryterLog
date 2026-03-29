@@ -1,5 +1,12 @@
 [
   {
+  "id": "ULLM_2026",
+  "title": "🔓 Uncensored LLMs on Ollama: Power, Risk, and Cybersecurity Use-Cases",
+  "date": "March 29, 2026",
+  "summary": "An in-depth look at uncensored LLMs running locally on Ollama, exploring their capabilities, risks, and role in cybersecurity research. Covers key models, alignment removal, and the critical issue of hallucinated or incorrect outputs in offensive and defensive workflows.",
+  "file": "posts/Uncensored LLMs on Ollama.md"
+  },
+  {
     "id": "PTG_2026",
     "title": "🎣 The Ultimate Guide to Phishing Techniques (2026 Edition)",
     "date": "March 29, 2026",
