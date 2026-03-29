@@ -1,5 +1,7 @@
 # 🔐 Top Privacy Documentaries on YouTube (Must-Watch in 2026)
 
+**Written by Aryan**
+
 In a world dominated by surveillance capitalism, AI profiling, and invisible tracking systems, privacy is no longer optional—it’s a battlefield.
 
 From government surveillance to corporate data harvesting, these documentaries expose how deeply monitored our digital lives have become. Modern systems don’t just collect data—they **predict behavior, influence decisions, and monetize identity**.
