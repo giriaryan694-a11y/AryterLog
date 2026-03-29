@@ -46,7 +46,6 @@ This is often achieved via **fine-tuning on unfiltered datasets** or modifying a
 
 ## 🧪 Key Uncensored Models on Ollama
 
-
 ### 🦙 LLaMA 2 Uncensored
 
 🔗 https://ollama.com/library/llama2-uncensored
@@ -55,26 +54,15 @@ This is often achieved via **fine-tuning on unfiltered datasets** or modifying a
 * Fine-tuned with unfiltered instruction datasets
 * Removes typical refusal patterns
 
-👉 Use-case:
-
-* Testing prompt bypass techniques
-* Studying alignment weaknesses
-
 ---
 
 ### 🐬 Dolphin (Dolphin3)
 
 🔗 https://ollama.com/library/dolphin3
 
-* Strong in **coding + agent workflows**
+* Strong performance in coding and general tasks
 * Long context support
 * Reduced alignment constraints
-
-👉 Use-case:
-
-* Automation scripts
-* AI agents
-* Exploit development assistance
 
 ---
 
@@ -82,14 +70,8 @@ This is often achieved via **fine-tuning on unfiltered datasets** or modifying a
 
 🔗 https://ollama.com/WhiteRabbitNeo/WhiteRabbitNeo-V3-7B
 
-* Designed for **offensive security workflows**
-* Focus on recon, exploitation, and security tooling
-
-👉 Use-case:
-
-* Red team labs
-* Recon automation
-* Security research
+* Designed around cybersecurity-focused workflows
+* Focus on offensive security and automation
 
 ---
 
@@ -98,13 +80,7 @@ This is often achieved via **fine-tuning on unfiltered datasets** or modifying a
 🔗 https://ollama.com/DeepHat/DeepHat-V1-7B
 
 * Enterprise-focused adversarial AI
-* Built for **DevSecOps + security automation**
-
-👉 Use-case:
-
-* CI/CD security testing
-* Threat modeling
-* Automated vulnerability analysis
+* Built for DevSecOps and security automation
 
 ---
 
@@ -132,7 +108,7 @@ Uncensored models come with a critical tradeoff:
 
 * Prioritize **compliance over correctness**
 * Generate **confident but incorrect outputs**
-* May produce **non-functional or misleading exploit code**
+* May produce **non-functional or misleading technical content**
 
 > AI output = **hypothesis, not truth**
 
@@ -175,7 +151,7 @@ With great power comes:
 
 ## 🧪 Quick Start (Ollama)
 
-```bash
+```bash id="a92kdf"
 # Install model
 ollama run llama2-uncensored
 
