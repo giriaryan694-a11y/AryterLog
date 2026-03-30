@@ -1,5 +1,12 @@
 [
   {
+  "id": "K8S_KERBEROS_2026",
+  "title": "🧠 Kubernetes vs Kerberos vs Kerberoasting — Infrastructure vs Identity Attacks (2026)",
+  "date": "March 30, 2026",
+  "summary": "A clear and practical breakdown of Kubernetes, Kerberos, and Kerberoasting—explaining how modern infrastructure, authentication protocols, and credential attacks connect in real-world cyber operations.",
+  "file": "posts/Kubernetes vs Kerberos vs Kerberoasting.md"
+  },
+  {
   "id": "WITR_2026",
   "title": "🔍 Witr: Understanding Why a Process is Running",
   "date": "March 30, 2026",
