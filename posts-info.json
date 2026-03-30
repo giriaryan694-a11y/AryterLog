@@ -1,5 +1,12 @@
 [
   {
+  "id": "WITR_2026",
+  "title": "🔍 Witr: Understanding Why a Process is Running",
+  "date": "March 30, 2026",
+  "summary": "A practical guide to Witr, a tool that reveals the origin chain of processes—helping you understand not just what is running, but why it exists.",
+  "file": "posts/Witr_Understanding_Why_Processes_Run.md"
+  },
+  {
   "id": "AI_CYBER_2026",
   "title": "🤖 Is Cybersecurity Getting Replaced by AI? (2026 Reality Check)",
   "date": "March 30, 2026",
