@@ -4,7 +4,7 @@
   "title": "📱 Telegram Zero-Click Sticker Vulnerability? Researchers vs Telegram — Full Analysis (2026)",
   "date": "March 31, 2026",
   "summary": "A grounded investigation into the alleged Telegram zero-click vulnerability triggered via animated stickers, covering ZDI researcher claims (ZDI-CAN-30207), Telegram’s firm denial, CVSS score discrepancies, and what this means for modern attack surfaces like media parsing and auto-preview systems.",
-  "file": "/posts/telegram-zero-click-sticker-2026.md"
+  "file": "posts/telegram-zero-click-sticker-2026.md"
   },
   {
   "id": "OPEN_SOURCE_CYBER_TOOLS_MARCH_2026",
