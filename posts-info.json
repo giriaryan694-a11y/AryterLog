@@ -1,5 +1,12 @@
 [
   {
+  "id": "OPENCLAW_PWNKIT_2026",
+  "title": "🧠 OpenClaw-PwnKit: Adversarial Attacks on LLM Agent Tool-Calling (2026)",
+  "date": "March 31, 2026",
+  "summary": "A grounded analysis of OpenClaw-PwnKit, a research framework demonstrating how adversarial inputs can influence LLM agents into unintended tool execution under specific conditions, highlighting real risks and defensive practices like sandboxing and private access.",
+  "file": "posts/OpenClaw_PwnKit_Analysis.md"
+  },
+  {
   "id": "QR_PHISHING_QUISHING_2026",
   "title": "📱 QR-Based Phishing Campaign Impersonating mass.gov (Quishing) — Full Threat Analysis (2026)",
   "date": "March 31, 2026",
