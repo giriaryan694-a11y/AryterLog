@@ -1,5 +1,12 @@
 [
   {
+  "id": "OPEN_SOURCE_CYBER_TOOLS_MARCH_2026",
+  "title": "🧠 Hottest Open-Source Cybersecurity Tools — March 2026",
+  "date": "March 31, 2026",
+  "summary": "A practical breakdown of the most impactful open-source cybersecurity tools from March 2026, including AI-driven pentesting frameworks, memory forensics innovations, AWS security auditing, binary vulnerability detection, secrets scanning, CI/CD pipeline security, and workflow orchestration.",
+  "file": "posts/Open_Source_Cyber_Tools_March_2026.md"
+  },
+  {
   "id": "OPENCLAW_PWNKIT_2026",
   "title": "🧠 OpenClaw-PwnKit: Adversarial Attacks on LLM Agent Tool-Calling (2026)",
   "date": "March 31, 2026",
