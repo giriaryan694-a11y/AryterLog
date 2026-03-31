@@ -1,5 +1,12 @@
 [
   {
+  "id": "QR_PHISHING_QUISHING_2026",
+  "title": "📱 QR-Based Phishing Campaign Impersonating mass.gov (Quishing) — Full Threat Analysis (2026)",
+  "date": "March 31, 2026",
+  "summary": "A real-world investigation of a QR-based phishing (quishing) campaign using physical mail, fake CAPTCHA redirection, and subdomain impersonation to steal sensitive user data, with OSINT and MITRE ATT&CK mapping.",
+  "file": "posts/QR_Phishing_Quishing_massgov.md"
+  },
+  {
   "id": "K8S_KERBEROS_2026",
   "title": "🧠 Kubernetes vs Kerberos vs Kerberoasting — Infrastructure vs Identity Attacks (2026)",
   "date": "March 30, 2026",
