@@ -1,5 +1,12 @@
 [
   {
+  "id": "INFO_GATHERING_TECHNIQUES_2026",
+  "title": "🧠 Complete Information-Gathering Techniques List (Red Team Recon Dictionary)",
+  "date": "April 1, 2026",
+  "summary": "A comprehensive breakdown of information-gathering techniques used in cybersecurity, covering physical recon, social engineering, OSINT, technical enumeration, psychological manipulation, and insider risks. Includes short explanations and real-world examples to help understand how attackers and defenders think across human, system, and environmental layers.",
+  "file": "posts/complete_information_gathering_techniques_article.md"
+  },
+  {
   "id": "TELEGRAM_ZERO_CLICK_STICKER_2026",
   "title": "📱 Telegram Zero-Click Sticker Vulnerability? Researchers vs Telegram — Full Analysis (2026)",
   "date": "March 31, 2026",
