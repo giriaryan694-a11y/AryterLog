@@ -1,5 +1,12 @@
 [
   {
+  "id": "WINDOWS_RESERVED_FILENAMES_EXPLOIT_2026",
+  "title": "🧠 Windows Reserved Filenames Exploit & Ghost File Abuse",
+  "date": "April 1, 2026",
+  "summary": "A practical and conceptual deep dive into Windows reserved device names like con, nul, and aux, showing how attackers can create undeletable files and combine them with fsutil to allocate massive ghost files, leading to stealthy disk exhaustion and denial-of-service scenarios, along with real-world red team use cases, deletion techniques, and defensive strategies.",
+  "file": "posts/windows-reserved-filenames-exploit.md"
+  },
+  {
   "id": "PENELOPE_SHELL_HANDLER_2026",
   "title": "🧠 Penelope: The Modern Reverse Shell Handler (Netcat Killer?)",
   "date": "April 1, 2026",
