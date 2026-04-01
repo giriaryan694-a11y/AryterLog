@@ -1,5 +1,12 @@
 [
   {
+  "id": "PENELOPE_SHELL_HANDLER_2026",
+  "title": "🧠 Penelope: The Modern Reverse Shell Handler (Netcat Killer?)",
+  "date": "April 1, 2026",
+  "summary": "A practical deep dive into Penelope, a modern Python-based reverse shell handler designed to replace Netcat by enabling multi-session management, automatic PTY upgrades, fileless execution, and streamlined post-exploitation workflows.",
+  "file": "posts/penelope-shell-handler-2026.md"
+  },
+  {
   "id": "INFO_GATHERING_TECHNIQUES_2026",
   "title": "🧠 Complete Information-Gathering Techniques List (Red Team Recon Dictionary)",
   "date": "April 1, 2026",
