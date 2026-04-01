@@ -1,5 +1,12 @@
 [
   {
+  "id": "CHROME_EXTENSION_MALWARE_INVESTIGATION_2026",
+  "title": "🧠 Investigating Chrome Extensions: Malware Analysis & Extraction Guide (2026)",
+  "date": "April 1, 2026",
+  "summary": "A practical and conceptual deep dive into extracting and analyzing Chrome/Chromium extensions on Linux and Windows. Covers manifest auditing, permission risks, code inspection, network monitoring, AI-powered analysis, and building automated pipelines to detect malicious extensions.",
+  "file": "posts/chrome-extension-malware-investigation-2026.md"
+  },
+  {
   "id": "WINDOWS_RESERVED_FILENAMES_EXPLOIT_2026",
   "title": "🧠 Windows Reserved Filenames Exploit & Ghost File Abuse",
   "date": "April 1, 2026",
