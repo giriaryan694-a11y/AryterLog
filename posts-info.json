@@ -1,8 +1,15 @@
 [
   {
+  "id": "ary-webshell-browser-terminal",
+  "title": "ARY_Webshell: Build Your Own Browser-Based Linux Terminal",
+  "date": "April 3, 2026",
+  "summary": "Learn how ARY_Webshell works — a high-performance C-based browser terminal using WebSockets and PTY. Explore its architecture, security model, mobile optimization, and safe deployment for ethical hacking and learning.",
+  "file path": "posts/ary_webshell_article.md"
+  },
+  {
   "id": "exam-chaos-jr-college",
   "title": "Exam Hall Chaos: Long Papers, Distractions & System Flaws in Junior College",
-  "date": "2026-04-02",
+  "date": "April 2, 2026",
   "summary": "A real look into how long exam papers, distracting students, and slow responses from college authorities turn simple exams into stressful experiences—and how students can handle it smartly.",
   "file": "posts/exam-chaos-jr-college.md"
   },
