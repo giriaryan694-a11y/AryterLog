@@ -1,5 +1,12 @@
 [
   {
+  "id": "http2https-https-wrapper",
+  "title": "Turning HTTP into HTTPS Locally with http2https",
+  "date": "April 3, 2026",
+  "summary": "A practical guide to using http2https, a Python CLI tool that wraps HTTP services with HTTPS using a local reverse proxy and auto-generated TLS certificates.",
+  "file": "posts/http2https-article.md"
+  },
+  {
   "id": "ary-webshell-browser-terminal",
   "title": "ARY_Webshell: Build Your Own Browser-Based Linux Terminal",
   "date": "April 3, 2026",
