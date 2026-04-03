@@ -131,7 +131,7 @@ Replace QUERY with:
 
 * free AI pentesting course
 * ethical hacking course free 2026
-* BGMI redeem codes
+* Games redeem codes
 * free premium apps
 
 ---
