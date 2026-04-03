@@ -418,17 +418,6 @@
       opacity: 0.3;
       cursor: not-allowed;
     }
-    .page-btn.dots {
-      border-color: transparent;
-      color: var(--muted);
-      cursor: pointer;
-      letter-spacing: 1px;
-    }
-    .page-btn.dots:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-      background: var(--glow);
-    }
     .page-info {
       font-size: 11px;
       color: var(--muted);
@@ -586,12 +575,12 @@
 
       // Only render pagination if more than one page
       if (totalPages > 1) {
-        const addBtn = (label, page, isActive = false, isDisabled = false, isDots = false) => {
+        const addBtn = (label, page, isActive = false, isDisabled = false) => {
           const btn = document.createElement("button");
-          btn.className = "page-btn" + (isActive ? " active" : "") + (isDots ? " dots" : "");
+          btn.className = "page-btn" + (isActive ? " active" : "");
           btn.textContent = label;
           btn.disabled = isDisabled;
-          if (!isDisabled && !isDots) {
+          if (!isDisabled) {
             btn.onclick = () => { renderPostCards(currentQuery, page); window.scrollTo(0,0); };
           }
           paginationEl.appendChild(btn);
@@ -600,11 +589,9 @@
         // ← prev
         addBtn("←", currentPage - 1, false, currentPage === 1);
 
-        // Sliding window: always show 3 page numbers around current
-        // Determine which 3 to show
+        // Sliding window of 3 page numbers
         let visiblePages = [];
         if (totalPages <= 3) {
-          // Show all if 3 or fewer total
           for (let i = 1; i <= totalPages; i++) visiblePages.push(i);
         } else if (currentPage === 1) {
           visiblePages = [1, 2, 3];
@@ -614,20 +601,7 @@
           visiblePages = [currentPage - 1, currentPage, currentPage + 1];
         }
 
-        // Clamp to valid range
-        visiblePages = visiblePages.filter(p => p >= 1 && p <= totalPages);
-
-        // Leading ellipsis if window doesn't start at 1
-        if (visiblePages[0] > 1) {
-          addBtn("...", visiblePages[0] - 1, false, false, true);
-        }
-
         visiblePages.forEach(p => addBtn(p, p, p === currentPage));
-
-        // Trailing ellipsis if window doesn't end at last page
-        if (visiblePages[visiblePages.length - 1] < totalPages) {
-          addBtn("...", visiblePages[visiblePages.length - 1] + 1, false, false, true);
-        }
 
         // → next
         addBtn("→", currentPage + 1, false, currentPage === totalPages);
