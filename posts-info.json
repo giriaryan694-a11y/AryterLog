@@ -1,5 +1,12 @@
 [
   {
+  "id": "youtube-promo-code-hunting-gemini",
+  "title": "Hunting Real Promo Codes Using Gemini & YouTube (No Scams, Only Real Deals)",
+  "date": "April 3, 2026",
+  "summary": "Learn how to turn Gemini into a powerful OSINT tool to extract real promo codes for courses, games, and apps directly from YouTube—filtering out scams and focusing only on verified, usable deals.",
+  "file": "posts/youtube-promo-code-hunting-gemini.md"
+  },
+  {
   "id": "http2https-https-wrapper",
   "title": "Turning HTTP into HTTPS Locally with http2https",
   "date": "April 3, 2026",
