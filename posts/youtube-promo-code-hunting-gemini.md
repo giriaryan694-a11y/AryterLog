@@ -38,7 +38,7 @@ QUERY: "<INSERT USER NEED HERE>"
 
 🎯 OBJECTIVE:
 Find valid, working promo codes or coupon links for:
-- Courses (Udemy, Coursera, etc.)
+- Courses (Udemy, Coursera, Brown Fine Security Training, and more related to query eg cybersec = tryhackme or hackthebox.)
 - Games / in-game rewards
 - App subscriptions or premium unlocks
 
