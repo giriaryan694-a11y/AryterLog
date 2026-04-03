@@ -4,7 +4,7 @@
   "title": "ARY_Webshell: Build Your Own Browser-Based Linux Terminal",
   "date": "April 3, 2026",
   "summary": "Learn how ARY_Webshell works — a high-performance C-based browser terminal using WebSockets and PTY. Explore its architecture, security model, mobile optimization, and safe deployment for ethical hacking and learning.",
-  "file path": "posts/ary_webshell_article.md"
+  "file": "posts/ary_webshell_article.md"
   },
   {
   "id": "exam-chaos-jr-college",
