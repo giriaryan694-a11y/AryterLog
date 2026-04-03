@@ -418,6 +418,17 @@
       opacity: 0.3;
       cursor: not-allowed;
     }
+    .page-btn.dots {
+      border-color: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      letter-spacing: 1px;
+    }
+    .page-btn.dots:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--glow);
+    }
     .page-info {
       font-size: 11px;
       color: var(--muted);
@@ -575,30 +586,51 @@
 
       // Only render pagination if more than one page
       if (totalPages > 1) {
-        // Prev button
-        const prev = document.createElement("button");
-        prev.className = "page-btn";
-        prev.textContent = "←";
-        prev.disabled = currentPage === 1;
-        prev.onclick = () => renderPostCards(currentQuery, currentPage - 1);
-        paginationEl.appendChild(prev);
-
-        // Page number buttons
-        for (let i = 1; i <= totalPages; i++) {
+        const addBtn = (label, page, isActive = false, isDisabled = false, isDots = false) => {
           const btn = document.createElement("button");
-          btn.className = "page-btn" + (i === currentPage ? " active" : "");
-          btn.textContent = i;
-          btn.onclick = () => renderPostCards(currentQuery, i);
+          btn.className = "page-btn" + (isActive ? " active" : "") + (isDots ? " dots" : "");
+          btn.textContent = label;
+          btn.disabled = isDisabled;
+          if (!isDisabled && !isDots) {
+            btn.onclick = () => { renderPostCards(currentQuery, page); window.scrollTo(0,0); };
+          }
           paginationEl.appendChild(btn);
+        };
+
+        // ← prev
+        addBtn("←", currentPage - 1, false, currentPage === 1);
+
+        // Sliding window: always show 3 page numbers around current
+        // Determine which 3 to show
+        let visiblePages = [];
+        if (totalPages <= 3) {
+          // Show all if 3 or fewer total
+          for (let i = 1; i <= totalPages; i++) visiblePages.push(i);
+        } else if (currentPage === 1) {
+          visiblePages = [1, 2, 3];
+        } else if (currentPage === totalPages) {
+          visiblePages = [totalPages - 2, totalPages - 1, totalPages];
+        } else {
+          visiblePages = [currentPage - 1, currentPage, currentPage + 1];
         }
 
-        // Next button
-        const next = document.createElement("button");
-        next.className = "page-btn";
-        next.textContent = "→";
-        next.disabled = currentPage === totalPages;
-        next.onclick = () => renderPostCards(currentQuery, currentPage + 1);
-        paginationEl.appendChild(next);
+        // Clamp to valid range
+        visiblePages = visiblePages.filter(p => p >= 1 && p <= totalPages);
+
+        // Leading ellipsis if window doesn't start at 1
+        if (visiblePages[0] > 1) {
+          addBtn("...", visiblePages[0] - 1, false, false, true);
+        }
+
+        visiblePages.forEach(p => addBtn(p, p, p === currentPage));
+
+        // Trailing ellipsis if window doesn't end at last page
+        if (visiblePages[visiblePages.length - 1] < totalPages) {
+          addBtn("...", visiblePages[visiblePages.length - 1] + 1, false, false, true);
+        }
+
+        // → next
+        addBtn("→", currentPage + 1, false, currentPage === totalPages);
 
         // Page info text
         const from = start + 1;
