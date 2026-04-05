@@ -1,5 +1,12 @@
 [
   {
+  "id": "ps-webshell-cloudshell-style",
+  "title": "PS_WebShell: A CloudShell-Style PowerShell Web Interface",
+  "date": "April 5, 2026",
+  "summary": "A CloudShell-inspired PowerShell WebShell built for CTFs, labs, and authorized red teaming, featuring session-based authentication, command history, IP whitelisting, and secure deployment using VPN and HTTPS reverse proxy.",
+  "file": "posts/ps_webshell.md"
+  },
+  {
   "id": "memory-efficient-malware-low-ram-threats",
   "title": "Memory-Efficient Malware: How Modern Threats Stay Invisible in Low-RAM Environments",
   "date": "April 4, 2026",
