@@ -1,5 +1,12 @@
 [
   {
+  "id": "mingw-w64-cross-compilation",
+  "title": "Cross-Compilation Mastery with MinGW-w64 (32-bit & 64-bit)",
+  "date": "April 5, 2026",
+  "summary": "Learn how to use MinGW-w64 to cross-compile Windows binaries from Linux, including 32-bit and 64-bit builds, installation, and real-world security use cases.",
+  "file": "posts/mingw-w64-cross-compilation.md"
+  },
+  {
   "id": "ps-webshell-cloudshell-style",
   "title": "PS_WebShell: A CloudShell-Style PowerShell Web Interface",
   "date": "April 5, 2026",
