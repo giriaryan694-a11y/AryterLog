@@ -168,7 +168,7 @@ The gap between models is not just size or safety — it is training on real-wor
 E2B understands concepts but lacks execution capability.
 E4B bridges the gap between theory and practice.
 
-> In cybersecurity, a model that knows what a tool does is useless if it does not know how to use it.
+> In cybersecurity workflows, theoretical knowledge must be complemented by accurate command-level execution to be practically useful.
 
 ---
 
