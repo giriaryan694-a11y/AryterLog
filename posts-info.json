@@ -1,5 +1,12 @@
 [
   {
+  "id": "time-manipulation-vulnerability-mobile-games",
+  "title": "Time Manipulation Vulnerability in Mobile Games",
+  "date": "April 6, 2026",
+  "summary": "A client-side logic flaw that allows users to claim unlimited daily rewards by manipulating device time, even on unrooted Android and iOS devices. Explores impact, root cause, and secure mitigation strategies.",
+  "file": "posts/time-manipulation-vulnerability-mobile-games.md"
+  },
+  {
   "id": "gemma-4-cybersecurity-evaluation",
   "title": "Hands-On: Testing Google’s Gemma 4 (E2B vs E4B) for Cybersecurity Tasks",
   "date": "April 6, 2026",
