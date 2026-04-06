@@ -1,5 +1,12 @@
 [
   {
+  "id": "gemma-4-cybersecurity-evaluation",
+  "title": "Hands-On: Testing Google’s Gemma 4 (E2B vs E4B) for Cybersecurity Tasks",
+  "date": "April 6, 2026",
+  "summary": "A practical evaluation of Gemma 4 E2B (~2.3B) and E4B (~4.5B) models for cybersecurity tasks, highlighting differences in vulnerability detection, tooling knowledge, payload generation, and real-world pentesting usability.",
+  "file": "posts/gemma-4-cybersec-evaluation.md"
+  },
+  {
   "id": "mingw-w64-cross-compilation",
   "title": "Cross-Compilation Mastery with MinGW-w64 (32-bit & 64-bit)",
   "date": "April 5, 2026",
