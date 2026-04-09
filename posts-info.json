@@ -1,5 +1,12 @@
 [
   {
+  "id": "exam-administration-system-failure",
+  "title": "Exam Administration, Student Welfare, and the Cost of Poor Planning",
+  "date": "April 9, 2026",
+  "summary": "A structured analysis of exam mismanagement, highlighting issues in supervision, scheduling, and student welfare, along with insights into how poor system design impacts fairness and performance.",
+  "file": "posts/exam-administration-system-failure.md"
+  },
+  {
   "id": "ai-vs-hackers-red-team-battlefield-2026",
   "title": "AI vs Hackers: The New Red Team Battlefield (2026)",
   "date": "April 6, 2026",
