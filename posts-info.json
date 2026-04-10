@@ -1,5 +1,12 @@
 [
   {
+    "id": "linux-privilege-escalation-arytorlog",
+    "title": "Linux Privilege Escalation Techniques (Complete Guide)",
+    "date": "April 10, 2026",
+    "summary": "A complete practical guide covering Linux privilege escalation techniques including SUID abuse, sudo misconfigurations, cron jobs, capabilities, PATH hijacking, kernel exploits, and GTFOBins usage with real terminal examples.",
+    "file": "posts/linux-privilege-escalation.md"
+  },
+  {
   "id": "ai-vs-hackers-red-team-battlefield-2026",
   "title": "AI vs Hackers: The New Red Team Battlefield (2026)",
   "date": "April 6, 2026",
