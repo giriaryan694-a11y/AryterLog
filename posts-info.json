@@ -1,5 +1,12 @@
 [
   {
+  "id": "fixing-mitm-arp-spoofing-failures",
+  "title": "Fixing MITM Failures in ARP Spoofing (Real-World Debugging Guide)",
+  "date": "April 17, 2026",
+  "summary": "A practical guide to debugging ARP spoofing MITM failures in real networks, covering gateway resolution issues, router protections, and how to build a reliable virtual lab setup.",
+  "file": "posts/fixing-mitm-arp-spoofing-failures.md"
+  },
+  {
     "id": "linux-privilege-escalation-arytorlog",
     "title": "Linux Privilege Escalation Techniques (Complete Guide)",
     "date": "April 10, 2026",
