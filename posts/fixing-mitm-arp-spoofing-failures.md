@@ -235,7 +235,15 @@ Example:
 
 * VM1: Kali Linux (Attacker)
 * VM2: Any Linux/Windows (Victim)
-* Network: Host-only (both VMs on same isolated network)
+
+⚠️ Important networking note:
+
+* Host-only alone = ❌ limited (no real gateway behavior)
+
+You’ll need:
+
+* NAT + Host-only combo OR
+* Internal network with router simulation
 
 You can also use an interface like `eth0` inside the VM to perform ARP spoofing safely.
 
