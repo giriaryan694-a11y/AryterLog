@@ -221,5 +221,3 @@ This room was a good example of how an incident response investigation can combi
 * AI-assisted triage
 
 A manual approach was possible, but the AI helper saved a lot of time while still keeping the investigation grounded in evidence.
-
-This draft can be published as-is or polished further into a cleaner ArytorLog post with a more blog-like intro and outro.
