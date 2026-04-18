@@ -1,5 +1,12 @@
 [
   {
+  "id": "containment-tryhackme-walkthrough",
+  "title": "ContAInment TryHackMe Walkthrough",
+  "date": "April 18, 2026",
+  "summary": "A full incident response walkthrough of the ContAInment TryHackMe room, covering phishing analysis, PCAP reconstruction, archive decryption, and automated flag extraction using an AI assistant.",
+  "file": "posts/containment-tryhackme-walkthrough.md"
+  },
+  {
   "id": "fixing-mitm-arp-spoofing-failures",
   "title": "Fixing MITM Failures in ARP Spoofing (Real-World Debugging Guide)",
   "date": "April 17, 2026",
