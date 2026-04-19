@@ -1,5 +1,12 @@
 [
   {
+    "id": "ai-cybersecurity-career-map",
+    "title": "AI Cybersecurity Career Map (Real Roles, No Hype)",
+    "date": "April 19, 2026",
+    "summary": "A clear and practical guide to real AI cybersecurity roles like AI Red Teamer, MLSecOps, and AI Security Engineer. Learn what each role actually does, required skills, beginner paths, and salary insights without hype.",
+    "file": "posts/ai-cybersecurity-career-map.md"
+  },
+  {
   "id": "containment-tryhackme-walkthrough",
   "title": "ContAInment TryHackMe Walkthrough",
   "date": "April 18, 2026",
