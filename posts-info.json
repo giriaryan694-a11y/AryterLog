@@ -1,5 +1,12 @@
 [
   {
+  "id": "interactsh-free-oast-tool",
+  "title": "Interactsh: Free Alternative to Burp Collaborator for OAST Testing",
+  "date": "April 20, 2026",
+  "summary": "Learn how Interactsh works as a free out-of-band application security testing (OAST) tool. Understand its usage for blind SSRF, XXE, and command injection, along with client vs server setup and why it's enough for bug bounty, pentesting, CTFs, and learning.",
+  "file": "posts/interactsh-free-oast-tool.md"
+  },
+  {
     "id": "ai-cybersecurity-career-map",
     "title": "AI Cybersecurity Career Map (Real Roles, No Hype)",
     "date": "April 19, 2026",
