@@ -1,5 +1,13 @@
 [
   {
+    "id": "membership-inference-llm-privacy-attack",
+    "title": "Membership Inference Attacks in LLMs: Detecting Training Data Exposure",
+    "date": "April 21, 2026",
+    "summary": "Deep dive into membership inference attacks in LLMs, showing how attackers use confidence signals to detect whether specific data samples were used during training and why this creates real privacy and compliance risks.",
+    "category": ["ai", "ai-security", "llm", "privacy", "threats"],
+    "file": "posts/membership-inference-llm-article.md"
+  },
+  {
   "id": "llm-pentest-tool-calling-hallucination-benchmark",
   "title": "LLMs Break in Pentest Tool-Calling: Hallucinated Recon, Fake Commands & Active/Passive Confusion",
   "date": "April 21, 2026",
