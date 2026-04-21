@@ -454,18 +454,92 @@
     }
     .sidebar-close-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--glow); }
 
-    .sidebar-section {
-      padding: 18px 20px;
-      flex: 1;
+    /* --- SIDEBAR COLLAPSIBLE SECTIONS --- */
+    .sb-section {
+      border-bottom: 1px solid var(--border);
     }
-    .sidebar-section-label {
-      font-size: 10px;
+    .sb-section-toggle {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 20px;
+      cursor: pointer;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
       font-weight: 700;
       letter-spacing: 2px;
       text-transform: uppercase;
       color: var(--muted);
-      margin-bottom: 14px;
+      user-select: none;
+      transition: color 0.2s;
     }
+    .sb-section-toggle:hover { color: var(--text); }
+    .sb-arrow {
+      font-size: 13px;
+      transition: transform 0.25s ease;
+      display: inline-block;
+    }
+    .sb-section.open .sb-arrow { transform: rotate(180deg); }
+    .sb-section-body {
+      overflow: hidden;
+      max-height: 0;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+      padding: 0 20px;
+    }
+    .sb-section.open .sb-section-body {
+      max-height: 400px;
+      padding: 0 20px 16px;
+    }
+
+    /* --- SOCIAL LINKS --- */
+    .social-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .social-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--card2);
+      text-decoration: none;
+      color: var(--text);
+      transition: all 0.2s ease;
+    }
+    .social-link:hover {
+      border-color: var(--accent);
+      background: var(--glow);
+      color: var(--accent);
+    }
+    .social-icon { font-size: 18px; flex-shrink: 0; }
+    .social-info {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-width: 0;
+    }
+    .social-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+    .social-handle {
+      font-size: 10px;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .social-ext {
+      font-size: 12px;
+      opacity: 0.4;
+      flex-shrink: 0;
+    }
+    .social-link:hover .social-ext { opacity: 1; }
 
     /* --- CATEGORY CHIPS --- */
     .category-list {
@@ -674,15 +748,34 @@
   <div id="sidebar-overlay" class="sidebar-overlay"></div>
   <aside id="sidebar" class="sidebar">
     <div class="sidebar-header">
-      <span class="sidebar-title">// Filters</span>
       <button id="sidebar-close" class="sidebar-close-btn" aria-label="Close">✕</button>
     </div>
-    <div class="sidebar-section">
-      <div class="sidebar-section-label">Category</div>
-      <div id="category-list" class="category-list">
-        <span style="color:var(--muted);font-size:12px;">Loading...</span>
+    <!-- Category Section -->
+    <div class="sb-section">
+      <div class="sb-section-toggle" id="toggle-category">
+        <span>Category</span>
+        <span class="sb-arrow">▾</span>
+      </div>
+      <div class="sb-section-body" id="body-category">
+        <div id="category-list" class="category-list">
+          <span style="color:var(--muted);font-size:12px;">Loading...</span>
+        </div>
       </div>
     </div>
+
+    <!-- My Socials Section -->
+    <div class="sb-section">
+      <div class="sb-section-toggle" id="toggle-socials">
+        <span>My Socials</span>
+        <span class="sb-arrow">▾</span>
+      </div>
+      <div class="sb-section-body" id="body-socials">
+        <div class="social-list" id="social-list">
+          <span style="color:var(--muted);font-size:12px;">Loading...</span>
+        </div>
+      </div>
+    </div>
+
     <div class="sidebar-footer">
       <button id="clear-filters" class="clear-btn">✕ Clear filters</button>
     </div>
@@ -697,12 +790,6 @@
     </div>
 
     <div class="header-controls">
-      <a href="https://github.com/giriaryan694-a11y" target="_blank" rel="noopener noreferrer" class="nav-btn">
-        🐙 GitHub
-      </a>
-      <a href="https://tryhackme.com/p/giriaryan694a11y" target="_blank" rel="noopener noreferrer" class="nav-btn">
-        🎯 THM
-      </a>
       <button id="theme-btn" aria-label="Cycle Theme">
         <span class="emoji" id="theme-emoji">🌙</span>
         <span id="theme-label">Dark</span>
@@ -794,6 +881,18 @@
     hamburger.addEventListener("click", openSidebar);
     sidebarCloseBtn.addEventListener("click", closeSidebar);
     sidebarOverlay.addEventListener("click", closeSidebar);
+
+    // Collapsible section toggles
+    document.querySelectorAll(".sb-section-toggle").forEach(toggle => {
+      toggle.addEventListener("click", () => {
+        const section = toggle.parentElement;
+        section.classList.toggle("open");
+      });
+    });
+
+    // Open both by default
+    document.getElementById("toggle-category").parentElement.classList.add("open");
+    document.getElementById("toggle-socials").parentElement.classList.add("open");
 
     function buildCategoryChips() {
       // Count posts per category
@@ -1051,16 +1150,42 @@
       }
     }
 
+    function buildSocialLinks(socials) {
+      const el = document.getElementById("social-list");
+      if (!socials || !socials.length) {
+        el.innerHTML = `<span style="color:var(--muted);font-size:12px;">No socials found.</span>`;
+        return;
+      }
+      el.innerHTML = socials.map(s => `
+        <a href="${s.url}" target="_blank" rel="noopener noreferrer" class="social-link">
+          <span class="social-icon">${s.icon}</span>
+          <div class="social-info">
+            <span class="social-name">${s.name}</span>
+            <span class="social-handle">${s.handle}</span>
+          </div>
+          <span class="social-ext">↗</span>
+        </a>
+      `).join("");
+    }
+
     /* =========================================
        4. BOOT — load posts-info.json first
        ========================================= */
     async function init() {
       listContainer.innerHTML = `<div class="loading">⟳ Loading posts...</div>`;
       try {
-        const res = await fetch("posts-info.json");
-        if (!res.ok) throw new Error("posts-info.json not found");
-        blogPosts = await res.json();
+        const [postsRes, socialsRes] = await Promise.all([
+          fetch("posts-info.json"),
+          fetch("socials.json")
+        ]);
+        if (!postsRes.ok) throw new Error("posts-info.json not found");
+        blogPosts = await postsRes.json();
         buildCategoryChips();
+
+        if (socialsRes.ok) {
+          const socials = await socialsRes.json();
+          buildSocialLinks(socials);
+        }
       } catch (err) {
         listContainer.innerHTML = `<div class="error">⚠️ Could not load posts-info.json<br><small>${err.message}</small></div>`;
         return;
