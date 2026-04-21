@@ -487,7 +487,8 @@
       padding: 0 20px;
     }
     .sb-section.open .sb-section-body {
-      max-height: 400px;
+      max-height: 60vh;
+      overflow-y: auto;
       padding: 0 20px 16px;
     }
 
@@ -890,9 +891,7 @@
       });
     });
 
-    // Open both by default
-    document.getElementById("toggle-category").parentElement.classList.add("open");
-    document.getElementById("toggle-socials").parentElement.classList.add("open");
+    // Sections start closed — user clicks to expand
 
     function buildCategoryChips() {
       // Count posts per category
