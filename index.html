@@ -237,6 +237,19 @@
       line-height: 1.6;
     }
 
+    .post-card .meta .card-cat-chip {
+      display: inline-block;
+      padding: 1px 7px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: var(--card2);
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 600;
+      vertical-align: middle;
+      margin-left: 2px;
+    }
+
     /* --- FULL POST VIEW --- */
     .back-btn { margin-bottom: 20px; }
 
@@ -351,6 +364,191 @@
       border-radius: 8px;
       display: block;
     }
+
+    /* --- HAMBURGER --- */
+    .hamburger {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      width: 36px;
+      height: 36px;
+      padding: 6px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .hamburger span {
+      display: block;
+      width: 100%;
+      height: 2px;
+      background: var(--text);
+      border-radius: 2px;
+      transition: all 0.25s ease;
+    }
+    .hamburger:hover { border-color: var(--accent); }
+    .hamburger:hover span { background: var(--accent); }
+
+    /* --- SIDEBAR OVERLAY --- */
+    .sidebar-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      backdrop-filter: blur(2px);
+    }
+    .sidebar-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    /* --- SIDEBAR DRAWER --- */
+    .sidebar {
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      width: 280px;
+      background: var(--card);
+      border-right: 1px solid var(--border);
+      z-index: 300;
+      display: flex;
+      flex-direction: column;
+      transform: translateX(-100%);
+      transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+      overflow-y: auto;
+    }
+    .sidebar.open { transform: translateX(0); }
+
+    .sidebar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 20px 14px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .sidebar-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--accent);
+      letter-spacing: 0.3px;
+    }
+    .sidebar-close-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      width: 28px;
+      height: 28px;
+      padding: 0;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .sidebar-close-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--glow); }
+
+    .sidebar-section {
+      padding: 18px 20px;
+      flex: 1;
+    }
+    .sidebar-section-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+
+    /* --- CATEGORY CHIPS --- */
+    .category-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .cat-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 11px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: var(--card2);
+      color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      user-select: none;
+    }
+    .cat-chip:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--glow);
+    }
+    .cat-chip.selected {
+      border-color: var(--accent);
+      background: var(--glow);
+      color: var(--accent);
+    }
+    .cat-chip .cat-count {
+      opacity: 0.6;
+      font-size: 10px;
+    }
+
+    /* Active filter indicator on posts-label */
+    .filter-active-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .filter-active-bar .active-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 9px;
+      border-radius: 20px;
+      background: var(--glow);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .filter-active-bar .active-chip:hover { opacity: 0.75; }
+
+    .sidebar-footer {
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .clear-btn {
+      width: 100%;
+      justify-content: center;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .clear-btn:hover { border-color: #f85149; color: #f85149; background: rgba(248,81,73,0.08); }
 
     /* --- COPY BUTTON --- */
     .copy-btn {
@@ -472,8 +670,31 @@
 
 <body>
 
+  <!-- Sidebar Drawer -->
+  <div id="sidebar-overlay" class="sidebar-overlay"></div>
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-header">
+      <span class="sidebar-title">// Filters</span>
+      <button id="sidebar-close" class="sidebar-close-btn" aria-label="Close">✕</button>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Category</div>
+      <div id="category-list" class="category-list">
+        <span style="color:var(--muted);font-size:12px;">Loading...</span>
+      </div>
+    </div>
+    <div class="sidebar-footer">
+      <button id="clear-filters" class="clear-btn">✕ Clear filters</button>
+    </div>
+  </aside>
+
   <header>
-    <h1 class="logo" onclick="window.location.hash = ''">AryterLog</h1>
+    <div style="display:flex;align-items:center;gap:12px;flex-shrink:0;">
+      <button id="hamburger" class="hamburger" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+      <h1 class="logo" onclick="window.location.hash = ''">AryterLog</h1>
+    </div>
 
     <div class="header-controls">
       <a href="https://github.com/giriaryan694-a11y" target="_blank" rel="noopener noreferrer" class="nav-btn">
@@ -495,6 +716,7 @@
         <input type="text" id="search-bar" placeholder="Search posts...">
       </div>
       <div class="posts-label">// Recent Posts</div>
+      <div id="active-filter-bar"></div>
       <div id="post-list"></div>
       <div id="pagination" class="pagination"></div>
       <div id="page-info" class="page-info"></div>
@@ -554,7 +776,89 @@
     });
 
     /* =========================================
-       2. SEARCH & LIST RENDERING WITH PAGINATION
+       2. SIDEBAR & CATEGORY FILTER
+       ========================================= */
+    const sidebar         = document.getElementById("sidebar");
+    const sidebarOverlay  = document.getElementById("sidebar-overlay");
+    const hamburger       = document.getElementById("hamburger");
+    const sidebarCloseBtn = document.getElementById("sidebar-close");
+    const categoryListEl  = document.getElementById("category-list");
+    const clearFiltersBtn = document.getElementById("clear-filters");
+    const activeFilterBar = document.getElementById("active-filter-bar");
+
+    let selectedCategories = new Set();
+
+    function openSidebar()  { sidebar.classList.add("open"); sidebarOverlay.classList.add("active"); }
+    function closeSidebar() { sidebar.classList.remove("open"); sidebarOverlay.classList.remove("active"); }
+
+    hamburger.addEventListener("click", openSidebar);
+    sidebarCloseBtn.addEventListener("click", closeSidebar);
+    sidebarOverlay.addEventListener("click", closeSidebar);
+
+    function buildCategoryChips() {
+      // Count posts per category
+      const countMap = {};
+      blogPosts.forEach(p => {
+        const cats = Array.isArray(p.category) ? p.category : (p.category ? [p.category] : []);
+        cats.forEach(c => { countMap[c] = (countMap[c] || 0) + 1; });
+      });
+
+      const cats = Object.keys(countMap).sort();
+      categoryListEl.innerHTML = "";
+
+      if (!cats.length) {
+        categoryListEl.innerHTML = `<span style="color:var(--muted);font-size:12px;">No categories found</span>`;
+        return;
+      }
+
+      cats.forEach(cat => {
+        const chip = document.createElement("div");
+        chip.className = "cat-chip" + (selectedCategories.has(cat) ? " selected" : "");
+        chip.innerHTML = `${cat} <span class="cat-count">${countMap[cat]}</span>`;
+        chip.onclick = () => {
+          if (selectedCategories.has(cat)) {
+            selectedCategories.delete(cat);
+            chip.classList.remove("selected");
+          } else {
+            selectedCategories.add(cat);
+            chip.classList.add("selected");
+          }
+          renderPostCards(searchBar.value, 1);
+        };
+        categoryListEl.appendChild(chip);
+      });
+    }
+
+    clearFiltersBtn.addEventListener("click", () => {
+      selectedCategories.clear();
+      categoryListEl.querySelectorAll(".cat-chip").forEach(c => c.classList.remove("selected"));
+      renderPostCards(searchBar.value, 1);
+    });
+
+    function renderActiveFilterBar() {
+      activeFilterBar.innerHTML = "";
+      if (!selectedCategories.size) return;
+      const bar = document.createElement("div");
+      bar.className = "filter-active-bar";
+      bar.innerHTML = `<span>Filtered by:</span>`;
+      selectedCategories.forEach(cat => {
+        const chip = document.createElement("span");
+        chip.className = "active-chip";
+        chip.innerHTML = `${cat} <span>✕</span>`;
+        chip.onclick = () => {
+          selectedCategories.delete(cat);
+          categoryListEl.querySelectorAll(".cat-chip").forEach(c => {
+            if (c.textContent.trim().startsWith(cat)) c.classList.remove("selected");
+          });
+          renderPostCards(searchBar.value, 1);
+        };
+        bar.appendChild(chip);
+      });
+      activeFilterBar.appendChild(bar);
+    }
+
+    /* =========================================
+       3. SEARCH & LIST RENDERING WITH PAGINATION
        ========================================= */
     const listContainer = document.getElementById("post-list");
     const paginationEl  = document.getElementById("pagination");
@@ -572,54 +876,59 @@
       listContainer.innerHTML = "";
       paginationEl.innerHTML  = "";
       pageInfoEl.innerHTML    = "";
+      renderActiveFilterBar();
 
       const lq = filterQuery.toLowerCase();
-      const filtered = blogPosts.filter(p =>
-        p.title.toLowerCase().includes(lq) ||
-        p.summary.toLowerCase().includes(lq)
-      );
+      const filtered = blogPosts.filter(p => {
+        const matchesText = p.title.toLowerCase().includes(lq) || p.summary.toLowerCase().includes(lq);
+        if (!matchesText) return false;
+        if (!selectedCategories.size) return true;
+        const postCats = Array.isArray(p.category) ? p.category : (p.category ? [p.category] : []);
+        return [...selectedCategories].every(sc => postCats.includes(sc));
+      });
 
       if (!filtered.length) {
-        listContainer.innerHTML = `<div class="loading">No posts found for "<em>${filterQuery}</em>"</div>`;
+        listContainer.innerHTML = `<div class="loading">No posts found${filterQuery ? ` for "<em>${filterQuery}</em>"` : ""}${selectedCategories.size ? " with selected filters" : ""}.</div>`;
         return;
       }
 
       const totalPages = Math.ceil(filtered.length / POSTS_PER_PAGE);
-      // clamp page
       currentPage = Math.max(1, Math.min(page, totalPages));
 
       const start = (currentPage - 1) * POSTS_PER_PAGE;
       const slice = filtered.slice(start, start + POSTS_PER_PAGE);
 
       slice.forEach(post => {
+        const cats = Array.isArray(post.category) ? post.category : (post.category ? [post.category] : []);
+        const catHTML = cats.map(c =>
+          `<span class="card-cat-chip">${c}</span>`
+        ).join("");
+
         const card = document.createElement("div");
         card.className = "post-card";
         card.onclick = () => window.location.hash = `post-${post.id}`;
         card.innerHTML = `
           <h2>${post.title}</h2>
-          <div class="meta">📅 ${post.date}</div>
+          <div class="meta">📅 ${post.date}${catHTML ? ` &nbsp;·&nbsp; ${catHTML}` : ""}</div>
           <p>${post.summary}</p>
         `;
         listContainer.appendChild(card);
       });
 
-      // Only render pagination if more than one page
       if (totalPages > 1) {
-        const addBtn = (label, page, isActive = false, isDisabled = false) => {
+        const addBtn = (label, pg, isActive = false, isDisabled = false) => {
           const btn = document.createElement("button");
           btn.className = "page-btn" + (isActive ? " active" : "");
           btn.textContent = label;
           btn.disabled = isDisabled;
           if (!isDisabled) {
-            btn.onclick = () => { renderPostCards(currentQuery, page); window.scrollTo(0,0); };
+            btn.onclick = () => { renderPostCards(currentQuery, pg); window.scrollTo(0,0); };
           }
           paginationEl.appendChild(btn);
         };
 
-        // ← prev
         addBtn("←", currentPage - 1, false, currentPage === 1);
 
-        // Sliding window of 3 page numbers
         let visiblePages = [];
         if (totalPages <= 3) {
           for (let i = 1; i <= totalPages; i++) visiblePages.push(i);
@@ -632,18 +941,14 @@
         }
 
         visiblePages.forEach(p => addBtn(p, p, p === currentPage));
-
-        // → next
         addBtn("→", currentPage + 1, false, currentPage === totalPages);
 
-        // Page info text
         const from = start + 1;
         const to   = Math.min(start + POSTS_PER_PAGE, filtered.length);
         pageInfoEl.textContent = `Showing ${from}–${to} of ${filtered.length} posts`;
       }
     }
 
-    // Reset to page 1 on new search
     searchBar.addEventListener("input", e => renderPostCards(e.target.value, 1));
 
     /* =========================================
@@ -755,6 +1060,7 @@
         const res = await fetch("posts-info.json");
         if (!res.ok) throw new Error("posts-info.json not found");
         blogPosts = await res.json();
+        buildCategoryChips();
       } catch (err) {
         listContainer.innerHTML = `<div class="error">⚠️ Could not load posts-info.json<br><small>${err.message}</small></div>`;
         return;
