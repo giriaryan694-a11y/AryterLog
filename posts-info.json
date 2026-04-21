@@ -1,303 +1,162 @@
 [
   {
-  "id": "official-ai-security-guides",
-  "title": "Official AI Security Guides for Pentesting and Secure Design",
-  "date": "April 21, 2026",
-  "summary": "A curated list of official frameworks like OWASP, MITRE ATLAS, NIST, ENISA, and CSA for AI pentesting, red teaming, and secure system design.",
-  "file": "posts/official-ai-security-guides.md"
+    "id": "official-ai-security-guides",
+    "title": "Official AI Security Guides for Pentesting and Secure Design",
+    "date": "April 21, 2026",
+    "summary": "A curated list of official frameworks like OWASP, MITRE ATLAS, NIST, ENISA, and CSA for AI pentesting, red teaming, and secure system design.",
+    "category": ["ai", "ai-security", "ai-pentest", "frameworks"],
+    "file": "posts/official-ai-security-guides.md"
   },
   {
-  "id": "interactsh-free-oast-tool",
-  "title": "Interactsh: Free Alternative to Burp Collaborator for OAST Testing",
-  "date": "April 20, 2026",
-  "summary": "Learn how Interactsh works as a free out-of-band application security testing (OAST) tool. Understand its usage for blind SSRF, XXE, and command injection, along with client vs server setup and why it's enough for bug bounty, pentesting, CTFs, and learning.",
-  "file": "posts/interactsh-free-oast-tool.md"
+    "id": "interactsh-free-oast-tool",
+    "title": "Interactsh: Free Alternative to Burp Collaborator for OAST Testing",
+    "date": "April 20, 2026",
+    "summary": "Learn how Interactsh works as a free out-of-band application security testing (OAST) tool.",
+    "category": ["web", "pentest", "tooling", "oast"],
+    "file": "posts/interactsh-free-oast-tool.md"
   },
   {
     "id": "ai-cybersecurity-career-map",
     "title": "AI Cybersecurity Career Map (Real Roles, No Hype)",
     "date": "April 19, 2026",
-    "summary": "A clear and practical guide to real AI cybersecurity roles like AI Red Teamer, MLSecOps, and AI Security Engineer. Learn what each role actually does, required skills, beginner paths, and salary insights without hype.",
+    "summary": "A practical guide to real AI cybersecurity roles.",
+    "category": ["ai", "career", "ai-security"],
     "file": "posts/ai-cybersecurity-career-map.md"
   },
   {
-  "id": "containment-tryhackme-walkthrough",
-  "title": "ContAInment TryHackMe Walkthrough",
-  "date": "April 18, 2026",
-  "summary": "A full incident response walkthrough of the ContAInment TryHackMe room, covering phishing analysis, PCAP reconstruction, archive decryption, and automated flag extraction using an AI assistant.",
-  "file": "posts/containment-tryhackme-walkthrough.md"
+    "id": "containment-tryhackme-walkthrough",
+    "title": "ContAInment TryHackMe Walkthrough",
+    "date": "April 18, 2026",
+    "summary": "Incident response walkthrough with phishing and PCAP analysis.",
+    "category": ["ctf", "tryhackme", "forensics", "ai"],
+    "file": "posts/containment-tryhackme-walkthrough.md"
   },
   {
-  "id": "fixing-mitm-arp-spoofing-failures",
-  "title": "Fixing MITM Failures in ARP Spoofing (Real-World Debugging Guide)",
-  "date": "April 17, 2026",
-  "summary": "A practical guide to debugging ARP spoofing MITM failures in real networks, covering gateway resolution issues, router protections, and how to build a reliable virtual lab setup.",
-  "file": "posts/fixing-mitm-arp-spoofing-failures.md"
+    "id": "fixing-mitm-arp-spoofing-failures",
+    "title": "Fixing MITM Failures in ARP Spoofing",
+    "date": "April 17, 2026",
+    "summary": "Debugging ARP spoofing failures in real networks.",
+    "category": ["network", "pentest", "mitm"],
+    "file": "posts/fixing-mitm-arp-spoofing-failures.md"
   },
   {
     "id": "linux-privilege-escalation-arytorlog",
-    "title": "Linux Privilege Escalation Techniques (Complete Guide)",
+    "title": "Linux Privilege Escalation Techniques",
     "date": "April 10, 2026",
-    "summary": "A complete practical guide covering Linux privilege escalation techniques including SUID abuse, sudo misconfigurations, cron jobs, capabilities, PATH hijacking, kernel exploits, and GTFOBins usage with real terminal examples.",
+    "summary": "Complete guide to Linux privilege escalation.",
+    "category": ["linux", "privilege-escalation", "pentest"],
     "file": "posts/linux-privilege-escalation.md"
   },
   {
-  "id": "ai-vs-hackers-red-team-battlefield-2026",
-  "title": "AI vs Hackers: The New Red Team Battlefield (2026)",
-  "date": "April 6, 2026",
-  "summary": "An in-depth breakdown of how AI is reshaping red teaming and offensive security, highlighting speed advantages, limitations, and the emergence of the AI-augmented hacker.",
-  "file": "posts/ai-vs-hackers-red-team-battlefield-2026.md"
+    "id": "ai-vs-hackers-red-team-battlefield-2026",
+    "title": "AI vs Hackers: The New Red Team Battlefield",
+    "date": "April 6, 2026",
+    "summary": "How AI is reshaping red teaming.",
+    "category": ["ai", "red-team", "ai-security"],
+    "file": "posts/ai-vs-hackers-red-team-battlefield-2026.md"
   },
   {
-  "id": "time-manipulation-vulnerability-mobile-games",
-  "title": "Time Manipulation Vulnerability in Mobile Games",
-  "date": "April 6, 2026",
-  "summary": "A client-side logic flaw that allows users to claim unlimited daily rewards by manipulating device time, even on unrooted Android and iOS devices. Explores impact, root cause, and secure mitigation strategies.",
-  "file": "posts/time-manipulation-vulnerability-mobile-games.md"
+    "id": "time-manipulation-vulnerability-mobile-games",
+    "title": "Time Manipulation Vulnerability in Mobile Games",
+    "date": "April 6, 2026",
+    "summary": "Client-side logic flaw abusing device time.",
+    "category": ["mobile", "vulnerability", "logic-bug"],
+    "file": "posts/time-manipulation-vulnerability-mobile-games.md"
   },
   {
-  "id": "gemma-4-cybersecurity-evaluation",
-  "title": "Hands-On: Testing Google’s Gemma 4 (E2B vs E4B) for Cybersecurity Tasks",
-  "date": "April 6, 2026",
-  "summary": "A practical evaluation of Gemma 4 E2B (~2.3B) and E4B (~4.5B) models for cybersecurity tasks, highlighting differences in vulnerability detection, tooling knowledge, payload generation, and real-world pentesting usability.",
-  "file": "posts/gemma-4-cybersec-evaluation.md"
+    "id": "gemma-4-cybersecurity-evaluation",
+    "title": "Testing Google’s Gemma 4 for Cybersecurity Tasks",
+    "date": "April 6, 2026",
+    "summary": "Evaluation of AI models for pentesting.",
+    "category": ["ai", "ai-security", "evaluation"],
+    "file": "posts/gemma-4-cybersec-evaluation.md"
   },
   {
-  "id": "mingw-w64-cross-compilation",
-  "title": "Cross-Compilation Mastery with MinGW-w64 (32-bit & 64-bit)",
-  "date": "April 5, 2026",
-  "summary": "Learn how to use MinGW-w64 to cross-compile Windows binaries from Linux, including 32-bit and 64-bit builds, installation, and real-world security use cases.",
-  "file": "posts/mingw-w64-cross-compilation.md"
+    "id": "mingw-w64-cross-compilation",
+    "title": "Cross-Compilation with MinGW-w64",
+    "date": "April 5, 2026",
+    "summary": "Compile Windows binaries from Linux.",
+    "category": ["tooling", "development", "red-team"],
+    "file": "posts/mingw-w64-cross-compilation.md"
   },
   {
-  "id": "ps-webshell-cloudshell-style",
-  "title": "PS_WebShell: A CloudShell-Style PowerShell Web Interface",
-  "date": "April 5, 2026",
-  "summary": "A CloudShell-inspired PowerShell WebShell built for CTFs, labs, and authorized red teaming, featuring session-based authentication, command history, IP whitelisting, and secure deployment using VPN and HTTPS reverse proxy.",
-  "file": "posts/ps_webshell.md"
+    "id": "ps-webshell-cloudshell-style",
+    "title": "PS_WebShell: PowerShell Web Interface",
+    "date": "April 5, 2026",
+    "summary": "CloudShell-style webshell for labs.",
+    "category": ["webshell", "red-team", "tooling"],
+    "file": "posts/ps_webshell.md"
   },
   {
-  "id": "memory-efficient-malware-low-ram-threats",
-  "title": "Memory-Efficient Malware: How Modern Threats Stay Invisible in Low-RAM Environments",
-  "date": "April 4, 2026",
-  "summary": "An in-depth look at how modern malware operates in low-RAM environments using fileless execution, process injection, modular payloads, and living-off-the-land techniques—revealing why smaller, stealthier attacks are dominating cybersecurity in 2026.",
-  "file": "posts/memory-efficient-malware-low-ram-threats.md"
+    "id": "memory-efficient-malware-low-ram-threats",
+    "title": "Memory-Efficient Malware",
+    "date": "April 4, 2026",
+    "summary": "How modern malware stays stealthy.",
+    "category": ["malware", "threats", "defense"],
+    "file": "posts/memory-efficient-malware-low-ram-threats.md"
   },
   {
-  "id": "reality-loop-perception-walk",
-  "title": "A Walk, a Memory, and the Feeling That Reality Loops",
-  "date": "April 3, 2026",
-  "summary": "A simple walk triggers deep reflections on childhood, the idea of a looping universe, and how perception shapes reality—connecting personal experience with philosophy, science, and the hidden ways humans interpret the world.",
-  "file": "posts/reality-loop-perception-walk.md"
+    "id": "youtube-promo-code-hunting-gemini",
+    "title": "Hunting Promo Codes Using Gemini",
+    "date": "April 3, 2026",
+    "summary": "Using AI for OSINT-style extraction.",
+    "category": ["osint", "ai", "automation"],
+    "file": "posts/youtube-promo-code-hunting-gemini.md"
   },
   {
-  "id": "youtube-promo-code-hunting-gemini",
-  "title": "Hunting Real Promo Codes Using Gemini & YouTube (No Scams, Only Real Deals)",
-  "date": "April 3, 2026",
-  "summary": "Learn how to turn Gemini into a powerful OSINT tool to extract real promo codes for courses, games, and apps directly from YouTube—filtering out scams and focusing only on verified, usable deals.",
-  "file": "posts/youtube-promo-code-hunting-gemini.md"
+    "id": "http2https-https-wrapper",
+    "title": "Turning HTTP into HTTPS Locally",
+    "date": "April 3, 2026",
+    "summary": "Wrap HTTP services with TLS.",
+    "category": ["network", "tooling", "security"],
+    "file": "posts/http2https-article.md"
   },
   {
-  "id": "http2https-https-wrapper",
-  "title": "Turning HTTP into HTTPS Locally with http2https",
-  "date": "April 3, 2026",
-  "summary": "A practical guide to using http2https, a Python CLI tool that wraps HTTP services with HTTPS using a local reverse proxy and auto-generated TLS certificates.",
-  "file": "posts/http2https-article.md"
+    "id": "ary-webshell-browser-terminal",
+    "title": "ARY_Webshell: Browser-Based Terminal",
+    "date": "April 3, 2026",
+    "summary": "C-based web terminal using WebSockets.",
+    "category": ["webshell", "tooling", "red-team"],
+    "file": "posts/ary_webshell_article.md"
   },
   {
-  "id": "ary-webshell-browser-terminal",
-  "title": "ARY_Webshell: Build Your Own Browser-Based Linux Terminal",
-  "date": "April 3, 2026",
-  "summary": "Learn how ARY_Webshell works — a high-performance C-based browser terminal using WebSockets and PTY. Explore its architecture, security model, mobile optimization, and safe deployment for ethical hacking and learning.",
-  "file": "posts/ary_webshell_article.md"
+    "id": "chrome-extension-malware-investigation-2026",
+    "title": "Chrome Extension Malware Analysis",
+    "date": "April 1, 2026",
+    "summary": "Analyzing malicious browser extensions.",
+    "category": ["malware", "analysis", "browser"],
+    "file": "posts/chrome-extension-malware-investigation-2026.md"
   },
   {
-  "id": "exam-chaos-jr-college",
-  "title": "Exam Hall Chaos: Long Papers, Distractions & System Flaws in Junior College",
-  "date": "April 2, 2026",
-  "summary": "A real look into how long exam papers, distracting students, and slow responses from college authorities turn simple exams into stressful experiences—and how students can handle it smartly.",
-  "file": "posts/exam-chaos-jr-college.md"
+    "id": "penelope-shell-handler-2026",
+    "title": "Penelope: Modern Reverse Shell Handler",
+    "date": "April 1, 2026",
+    "summary": "Advanced reverse shell management.",
+    "category": ["red-team", "tooling", "shell"],
+    "file": "posts/penelope-shell-handler-2026.md"
   },
   {
-  "id": "CHROME_EXTENSION_MALWARE_INVESTIGATION_2026",
-  "title": "🧠 Investigating Chrome Extensions: Malware Analysis & Extraction Guide (2026)",
-  "date": "April 1, 2026",
-  "summary": "A practical and conceptual deep dive into extracting and analyzing Chrome/Chromium extensions on Linux and Windows. Covers manifest auditing, permission risks, code inspection, network monitoring, AI-powered analysis, and building automated pipelines to detect malicious extensions.",
-  "file": "posts/chrome-extension-malware-investigation-2026.md"
+    "id": "qr-phishing-quishing-2026",
+    "title": "QR Phishing (Quishing) Attack Analysis",
+    "date": "March 31, 2026",
+    "summary": "Real-world phishing via QR codes.",
+    "category": ["phishing", "social-engineering", "threats"],
+    "file": "posts/QR_Phishing_Quishing_massgov.md"
   },
   {
-  "id": "WINDOWS_RESERVED_FILENAMES_EXPLOIT_2026",
-  "title": "🧠 Windows Reserved Filenames Exploit & Ghost File Abuse",
-  "date": "April 1, 2026",
-  "summary": "A practical and conceptual deep dive into Windows reserved device names like con, nul, and aux, showing how attackers can create undeletable files and combine them with fsutil to allocate massive ghost files, leading to stealthy disk exhaustion and denial-of-service scenarios, along with real-world red team use cases, deletion techniques, and defensive strategies.",
-  "file": "posts/windows-reserved-filenames-exploit.md"
-  },
-  {
-  "id": "PENELOPE_SHELL_HANDLER_2026",
-  "title": "🧠 Penelope: The Modern Reverse Shell Handler (Netcat Killer?)",
-  "date": "April 1, 2026",
-  "summary": "A practical deep dive into Penelope, a modern Python-based reverse shell handler designed to replace Netcat by enabling multi-session management, automatic PTY upgrades, fileless execution, and streamlined post-exploitation workflows.",
-  "file": "posts/penelope-shell-handler-2026.md"
-  },
-  {
-  "id": "INFO_GATHERING_TECHNIQUES_2026",
-  "title": "🧠 Complete Information-Gathering Techniques List (Red Team Recon Dictionary)",
-  "date": "April 1, 2026",
-  "summary": "A comprehensive breakdown of information-gathering techniques used in cybersecurity, covering physical recon, social engineering, OSINT, technical enumeration, psychological manipulation, and insider risks. Includes short explanations and real-world examples to help understand how attackers and defenders think across human, system, and environmental layers.",
-  "file": "posts/complete_information_gathering_techniques_article.md"
-  },
-  {
-  "id": "TELEGRAM_ZERO_CLICK_STICKER_2026",
-  "title": "📱 Telegram Zero-Click Sticker Vulnerability? Researchers vs Telegram — Full Analysis (2026)",
-  "date": "March 31, 2026",
-  "summary": "A grounded investigation into the alleged Telegram zero-click vulnerability triggered via animated stickers, covering ZDI researcher claims (ZDI-CAN-30207), Telegram’s firm denial, CVSS score discrepancies, and what this means for modern attack surfaces like media parsing and auto-preview systems.",
-  "file": "posts/telegram-zero-click-sticker-2026.md"
-  },
-  {
-  "id": "OPEN_SOURCE_CYBER_TOOLS_MARCH_2026",
-  "title": "🧠 Hottest Open-Source Cybersecurity Tools — March 2026",
-  "date": "March 31, 2026",
-  "summary": "A practical breakdown of the most impactful open-source cybersecurity tools from March 2026, including AI-driven pentesting frameworks, memory forensics innovations, AWS security auditing, binary vulnerability detection, secrets scanning, CI/CD pipeline security, and workflow orchestration.",
-  "file": "posts/Open_Source_Cyber_Tools_March_2026.md"
-  },
-  {
-  "id": "OPENCLAW_PWNKIT_2026",
-  "title": "🧠 OpenClaw-PwnKit: Adversarial Attacks on LLM Agent Tool-Calling (2026)",
-  "date": "March 31, 2026",
-  "summary": "A grounded analysis of OpenClaw-PwnKit, a research framework demonstrating how adversarial inputs can influence LLM agents into unintended tool execution under specific conditions, highlighting real risks and defensive practices like sandboxing and private access.",
-  "file": "posts/OpenClaw_PwnKit_Analysis.md"
-  },
-  {
-  "id": "QR_PHISHING_QUISHING_2026",
-  "title": "📱 QR-Based Phishing Campaign Impersonating mass.gov (Quishing) — Full Threat Analysis (2026)",
-  "date": "March 31, 2026",
-  "summary": "A real-world investigation of a QR-based phishing (quishing) campaign using physical mail, fake CAPTCHA redirection, and subdomain impersonation to steal sensitive user data, with OSINT and MITRE ATT&CK mapping.",
-  "file": "posts/QR_Phishing_Quishing_massgov.md"
-  },
-  {
-  "id": "K8S_KERBEROS_2026",
-  "title": "🧠 Kubernetes vs Kerberos vs Kerberoasting — Infrastructure vs Identity Attacks (2026)",
-  "date": "March 30, 2026",
-  "summary": "A clear and practical breakdown of Kubernetes, Kerberos, and Kerberoasting—explaining how modern infrastructure, authentication protocols, and credential attacks connect in real-world cyber operations.",
-  "file": "posts/Kubernetes vs Kerberos vs Kerberoasting.md"
-  },
-  {
-  "id": "WITR_2026",
-  "title": "🔍 Witr: Understanding Why a Process is Running",
-  "date": "March 30, 2026",
-  "summary": "A practical guide to Witr, a tool that reveals the origin chain of processes—helping you understand not just what is running, but why it exists.",
-  "file": "posts/Witr_Understanding_Why_Processes_Run.md"
-  },
-  {
-  "id": "AI_CYBER_2026",
-  "title": "🤖 Is Cybersecurity Getting Replaced by AI? (2026 Reality Check)",
-  "date": "March 30, 2026",
-  "summary": "A clear breakdown of how AI is transforming cybersecurity—explaining which roles are at risk, which are safe, and how the industry is evolving in 2026.",
-  "file": "posts/Is_Cybersecurity_Getting_Replaced_by_AI.md"
-  },
-  {
-  "id": "EDU_REALITY_2026",
-  "title": "🎓 My Junior College, School, Tuition, and Self-Learning Journey",
-  "date": "March 30, 2026",
-  "summary": "A raw and honest story of my journey through school, junior college, and tuition culture—highlighting system flaws, pressure, fake learning practices, and why I chose self-learning, online education, and real skills over marks and memorization.",
-  "file": "posts/My_Journey_Through_Education.md"
-  },
-  {
-  "id": "TOR_RESET_CLEAN_2026",
-  "title": "🧹 Resetting and Cleaning a Tor Hidden Service (Complete Guide)",
-  "date": "March 29, 2026",
-  "summary": "A clear, step-by-step guide to safely stop Tor, remove hidden services, reset .onion identities, and start fresh. Learn how Tor stores identity and how to fully clean your lab environment.",
-  "file": "posts/Resetting and Cleaning a Tor Hidden Service.md"
-  },
-  {
-  "id": "TOR_HIDDEN_SERVICE_LAB_2026",
-  "title": "🧅 Building a Tor Hidden Service Lab (From Zero to Working Onion)",
-  "date": "March 29, 2026",
-  "summary": "A hands-on, beginner-friendly lab to build and debug a Tor hidden service from scratch. Learn correct port mapping, fix common SOCKS and Tor issues, and understand how anonymous inbound channels work.",
-  "file": "posts/Building a Tor Hidden Service Lab.md"
-  },
-  {
-  "id": "ULLM_2026",
-  "title": "🔓 Uncensored LLMs on Ollama: Power, Risk, and Cybersecurity Use-Cases",
-  "date": "March 29, 2026",
-  "summary": "An in-depth look at uncensored LLMs running locally on Ollama, exploring their capabilities, risks, and role in cybersecurity research. Covers key models, alignment removal, and the critical issue of hallucinated or incorrect outputs in offensive and defensive workflows.",
-  "file": "posts/Uncensored LLMs on Ollama.md"
-  },
-  {
-    "id": "PTG_2026",
-    "title": "🎣 The Ultimate Guide to Phishing Techniques (2026 Edition)",
+    "id": "tor-hidden-service-lab-2026",
+    "title": "Tor Hidden Service Lab",
     "date": "March 29, 2026",
-    "summary": "A complete beginner-friendly breakdown of modern phishing techniques, covering link-based, attachment-based, browser attacks, and AI-driven scams—explained in simple terms with real-world examples to understand how attackers deceive users and how these threats operate.",
+    "summary": "Build anonymous services with Tor.",
+    "category": ["tor", "network", "privacy"],
+    "file": "posts/Building a Tor Hidden Service Lab.md"
+  },
+  {
+    "id": "phishing-techniques-2026",
+    "title": "Ultimate Guide to Phishing Techniques",
+    "date": "March 29, 2026",
+    "summary": "Breakdown of phishing attacks.",
+    "category": ["phishing", "social-engineering"],
     "file": "posts/🎣 The Ultimate Guide to Phishing Techniques (2026 Edition).md"
-  },
-  {
-    "id": "TPDOY_2026",
-    "title": "🔐 Top Privacy Documentaries on YouTube (Must-Watch in 2026)",
-    "date": "March 29, 2026",
-    "summary": "A curated list of powerful YouTube documentaries that expose modern surveillance, digital tracking, and privacy threats—helping you understand how your data is collected, analyzed, and exploited in today’s world.",
-    "file": "posts/🔐 Top Privacy Documentaries on YouTube (Must-Watch in 2026).md"
-  },
-  {
-    "id": "The-Mythos-AI-Leak",
-    "title": "⚠️ The Mythos AI Leak: Breakthrough or Hype?",
-    "date": "March 29, 2026",
-    "summary": "A recent data exposure at Anthropic revealed references to a new AI model, Claude Mythos. This article separates verified facts from viral speculation and examines the cybersecurity implications behind the leak.",
-    "file": "posts/The-Mythos-AI-Leak.md"
-  },
-  {
-    "id": "PFPAT",
-    "title": "🔐 Privacy-Focused Port Forwarding & Tunneling (2026)",
-    "date": "March 27, 2026",
-    "summary": "A practical, neutral guide to modern tunneling techniques, tools, and tradeoffs. This is not about best tool it’s about choosing the right approach based on threat model, control, and privacy needs.",
-    "file": "posts/🔐 Privacy-Focused Port Forwarding & Tunneling (2026).md"
-  },
-  {
-    "id": "CLSAM",
-    "title": "Cybersecurity Learning Scams & Misinformation",
-    "date": "March 27, 2026",
-    "summary": "Cybersecurity learning is full of hype, fear, fake authority, and manipulation. This documentary follows the path of how beginners in India get pulled into scams, misleading training, fake credibility, and unsafe communities—and how to separate real learning from noise.",
-    "file": "posts/Cybersecurity Learning Scams & Misinformation.md"
-  },
-  {
-    "id": "Crunchyroll-Breach-2026",
-    "title": "Crunchyroll Breach 2026 – Verified Case Study (Analytical Edition)",
-    "date": "March 27, 2026",
-    "summary": "This document is a hybrid analytical case study based on publicly reported information and industry-standard attacker techniques (TTPs).",
-    "file": "posts/Crunchyroll Breach 2026 – Verified Case Study.md"
-  },
-  {
-    "id": "llms-really-read-source-code",
-    "title": "AI Web Pentesting Myth: Do LLMs Really Read Source Code?",
-    "date": "March 26, 2026",
-    "summary": "Can AI tools like ChatGPT, Claude, Gemini, DeepSeek actually read and analyze the real source code of a website?",
-    "file": "posts/ai-web-pentest-myth.md"
-  },
-  {
-    "id": "tor-rev-shell",
-    "title": "🕶️ Tor-Routed Reverse Shell Lab (Free Port Forwarding Alternative)",
-    "date": "March 26, 2026",
-    "summary": "Build a fully working reverse shell using Tor hidden services — no public IP, no paid TCP port forwarding.",
-    "file": "posts/🕶️ Tor-Routed Reverse Shell Lab (Free Port Forwarding Alternative).md"
-  },
-  {
-    "id": "chatgpt-apps-for-cyber",
-    "title": "🔐 ChatGPT Apps You Should Use to Stay Safe (2026 Guide)",
-    "date": "March 26, 2026",
-    "summary": "Turn ChatGPT into a cybersecurity assistant, OSINT toolkit, and scam shield using built-in apps.",
-    "file": "posts/🔐 ChatGPT Apps You Should Use to Stay Safe (2026 Guide).md"
-  },
-  {
-    "id": "ai-red-team",
-    "title": "AI-Powered Red Team Pipeline using MCP + Kali Linux",
-    "date": "March 26, 2026",
-    "summary": "A deep dive into automating penetration testing workflows using modern AI contexts.",
-    "file": "posts/AI-Powered Red Team Pipeline using MCP + Kali Linux.md"
-  },
-  {
-    "id": "ai-reality-in-cyber",
-    "title": "AI in Cybersecurity — Reality Check",
-    "date": "March 26, 2026",
-    "summary": "AI augments human pentesters, not replace them — accountability, creativity, and logical thinking still need a human behind the keyboard.",
-    "file": "posts/AI in Cybersecurity — Reality Check.md"
   }
 ]
