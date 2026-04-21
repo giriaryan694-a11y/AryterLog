@@ -1,5 +1,13 @@
 [
   {
+  "id": "llm-pentest-tool-calling-hallucination-benchmark",
+  "title": "LLMs Break in Pentest Tool-Calling: Hallucinated Recon, Fake Commands & Active/Passive Confusion",
+  "date": "April 21, 2026",
+  "summary": "Why LLMs hallucinate in active vs passive recon scenarios and how simulated tool-calling prompts help benchmark agent behavior in MCP and pentest environments.",
+  "category": ["ai", "ai-security", "llm", "pentest", "benchmarking"],
+  "file": "posts/llm-pentest-tool-calling-hallucination.md"
+  },
+  {
     "id": "official-ai-security-guides",
     "title": "Official AI Security Guides for Pentesting and Secure Design",
     "date": "April 21, 2026",
