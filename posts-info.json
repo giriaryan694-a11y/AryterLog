@@ -1,5 +1,13 @@
 [
   {
+  "id": "membership-inference-vs-model-inversion-llm-attacks",
+  "title": "Membership Inference vs Model Inversion: How LLMs Leak Training Data",
+  "date": "April 21, 2026",
+  "summary": "A practical and conceptual breakdown of membership inference and model inversion attacks in LLMs, showing how attackers detect training data presence and reconstruct sensitive information from model behavior.",
+  "category": ["ai-security", "llm-security", "privacy", "attack-techniques"],
+  "file": "posts/membership-inference-vs-model-inversion.md"
+  },
+  {
     "id": "membership-inference-llm-privacy-attack",
     "title": "Membership Inference Attacks in LLMs: Detecting Training Data Exposure",
     "date": "April 21, 2026",
