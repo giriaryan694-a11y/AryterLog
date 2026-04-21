@@ -277,7 +277,7 @@
     "date": "March 29, 2026",
     "summary": "A complete breakdown of modern phishing techniques, covering link-based, attachment-based, browser attacks, and AI-driven scams—with real-world examples to understand how attackers deceive users.",
     "category": ["phishing", "social-engineering", "threat-analysis"],
-    "file": "posts/The Ultimate Guide to Phishing Techniques (2026 Edition).md"
+    "file": "posts/🎣 The Ultimate Guide to Phishing Techniques (2026 Edition).md"
   },
   {
     "id": "tpdoy_2026",
@@ -285,7 +285,7 @@
     "date": "March 29, 2026",
     "summary": "A curated list of powerful YouTube documentaries that expose modern surveillance, digital tracking, and privacy threats—helping you understand how your data is collected, analyzed, and exploited.",
     "category": ["privacy", "surveillance", "media"],
-    "file": "posts/Top Privacy Documentaries on YouTube (Must-Watch in 2026).md"
+    "file": "posts/🔐 Top Privacy Documentaries on YouTube (Must-Watch in 2026).md"
   },
   {
     "id": "the-mythos-ai-leak",
@@ -301,7 +301,7 @@
     "date": "March 27, 2026",
     "summary": "A practical, neutral guide to modern tunneling techniques, tools, and tradeoffs—choosing the right approach based on threat model, control, and privacy needs.",
     "category": ["privacy", "network-security", "tunneling", "tooling"],
-    "file": "posts/Privacy-Focused Port Forwarding & Tunneling (2026).md"
+    "file": "posts/🔐 Privacy-Focused Port Forwarding & Tunneling (2026).md"
   },
   {
     "id": "clsam",
@@ -333,7 +333,7 @@
     "date": "March 26, 2026",
     "summary": "Build a fully working reverse shell using Tor hidden services — no public IP, no paid TCP port forwarding.",
     "category": ["red-team", "tor", "network-security", "lab-setup"],
-    "file": "posts/Tor-Routed Reverse Shell Lab (Free Port Forwarding Alternative).md"
+    "file": "posts/🕶️ Tor-Routed Reverse Shell Lab (Free Port Forwarding Alternative).md"
   },
   {
     "id": "chatgpt-apps-for-cyber",
@@ -341,7 +341,7 @@
     "date": "March 26, 2026",
     "summary": "Turn ChatGPT into a cybersecurity assistant, OSINT toolkit, and scam shield using built-in apps.",
     "category": ["ai-tools", "defensive-security", "osint"],
-    "file": "posts/ChatGPT Apps You Should Use to Stay Safe (2026 Guide).md"
+    "file": "posts/🔐 ChatGPT Apps You Should Use to Stay Safe (2026 Guide).md"
   },
   {
     "id": "ai-red-team",
