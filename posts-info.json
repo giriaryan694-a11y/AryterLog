@@ -1,5 +1,12 @@
 [
   {
+  "id": "official-ai-security-guides",
+  "title": "Official AI Security Guides for Pentesting and Secure Design",
+  "date": "April 21, 2026",
+  "summary": "A curated list of official frameworks like OWASP, MITRE ATLAS, NIST, ENISA, and CSA for AI pentesting, red teaming, and secure system design.",
+  "file": "posts/official-ai-security-guides.md"
+  },
+  {
   "id": "interactsh-free-oast-tool",
   "title": "Interactsh: Free Alternative to Burp Collaborator for OAST Testing",
   "date": "April 20, 2026",
