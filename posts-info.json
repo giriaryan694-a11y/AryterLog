@@ -1,5 +1,13 @@
 [
   {
+    "id": "stride-mitre-atlas-owasp-llm-top10-ai-security-frameworks",
+    "title": "STRIDE vs MITRE ATLAS vs OWASP LLM Top 10: Complete AI Security Framework Guide with Examples & Red-Team Payloads",
+    "date": "April 22, 2026",
+    "summary": "A complete practical and theoretical guide to STRIDE, MITRE ATLAS, and OWASP LLM Top 10. Covers purpose, differences, threat modeling, prompt injection examples, RAG poisoning, tool-call exploits, and red-team payload templates for real-world AI security testing.",
+    "category": ["ai-security","llm-security","threat-modeling","ai-pentest"],
+    "file": "posts/stride-mitre-atlas-owasp-llm-top10-article.md"
+  },
+  {
   "id": "ip-logging-myth-exact-location-reality",
   "title": "IP Logging Myth: Why IP Addresses Don’t Reveal Exact Location",
   "date": "April 22, 2026",
