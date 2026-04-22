@@ -1,11 +1,11 @@
 [
   {
-    "id": "ip-logging-myth-exact-location-reality",
-    "title": "IP Logging Myth: Why IP Addresses Don’t Reveal Exact Location",
-    "date": "April 22, 2026",
-    "summary": "Debunking the myth that IP logging reveals a user’s exact location. Explains ISP-based geolocation limits, how law enforcement actually identifies users via ISPs, and the real capabilities and limitations of VPNs.",
-    "category": ["networking-basics", "ip-intelligence", "osint", "privacy-security", "myth-busting"]
-    "file": "posts/ip-logging-myth-exact-location-reality.md"
+  "id": "ip-logging-myth-exact-location-reality",
+  "title": "IP Logging Myth: Why IP Addresses Don’t Reveal Exact Location",
+  "date": "April 22, 2026",
+  "summary": "Debunking the myth that IP logging reveals a user’s exact location. Explains ISP-based geolocation limits, how law enforcement actually identifies users via ISPs, and the real capabilities and limitations of VPNs.",
+  "category": ["networking-basics", "ip-intelligence", "osint", "privacy-security", "myth-busting"],
+  "file": "posts/ip-logging-myth-exact-location-reality.md"
   },
   {
   "id": "membership-inference-vs-model-inversion-llm-attacks",
