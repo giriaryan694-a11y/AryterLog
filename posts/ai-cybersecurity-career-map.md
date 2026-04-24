@@ -1,4 +1,4 @@
-# AI-Cybersecurity Career Map (Real Roles, No Hype)
+
 
 **Written by Aryan Giri**
 
