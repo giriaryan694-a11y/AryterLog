@@ -1,4 +1,3 @@
-# Interactsh: A Free OAST Alternative to Burp Collaborator
 
 **Written by Aryan Giri**
 
