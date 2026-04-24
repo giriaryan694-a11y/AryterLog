@@ -1,6 +1,6 @@
 Written By Aryan Giri
 
-# 🛠️ Cross-Compilation Mastery with MinGW-w64 (32-bit & 64-bit)
+## 🛠️ Cross-Compilation Mastery with MinGW-w64 (32-bit & 64-bit)
 
 *Build Windows binaries from Linux like a pro ⚔️*
 
