@@ -1,4 +1,3 @@
-# 🔥 AI-Powered Red Team Pipeline using MCP + Kali Linux
 
 > From manual pentesting → to AI-driven offensive automation
 
