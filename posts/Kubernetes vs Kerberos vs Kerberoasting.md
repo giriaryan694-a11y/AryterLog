@@ -1,4 +1,3 @@
-# 🧠 Kubernetes vs Kerberos vs Kerberoasting — Infrastructure vs Identity Attacks (2026)
 
 **Written by Aryan Giri**
 
