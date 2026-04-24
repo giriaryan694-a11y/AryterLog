@@ -1,4 +1,3 @@
-# Membership Inference vs Model Inversion
 
 **Written by Aryan Giri**
 
