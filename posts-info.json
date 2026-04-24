@@ -1,5 +1,13 @@
 [
   {
+      "id": "consentfix-clickfix-phishing",
+      "title": "Consentfix & Clickfix Phishing Attacks Explained",
+      "date": "2026-04-24",
+      "summary": "Overview of Consentfix (OAuth consent abuse) and Clickfix (interaction-based phishing) attacks, how they work, and why they bypass modern security defenses.",
+      "category": ["phishing","social-engineering","cloud-security"],
+      "file": "posts/consentfix-clickfix-phishing.md"
+  },
+  {
   "id": "opencode-setup-guide",
   "title": "OpenCode Setup for Cybersecurity Labs",
   "date": "2026-04-24",
