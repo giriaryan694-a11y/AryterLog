@@ -1,4 +1,3 @@
-# Crunchyroll Breach 2026 – Verified Case Study (Analytical Edition)
 
 > **Written by Aryan Giri**
 
