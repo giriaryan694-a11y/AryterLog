@@ -1,4 +1,3 @@
-# 🧠 Complete Information-Gathering Techniques List
 
 **Written by Aryan Giri**
 
