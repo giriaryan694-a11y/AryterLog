@@ -1,4 +1,4 @@
-# 🧹 Resetting and Cleaning a Tor Hidden Service (Complete Guide)
+
 
 **Written by Aryan Giri**
 
