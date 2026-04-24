@@ -1,4 +1,3 @@
-# Hottest Open-Source Cybersecurity Tools — March 2026
 
 ### From AI-driven pentesting to memory forensics breakthroughs
 
