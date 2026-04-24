@@ -1,4 +1,3 @@
-# Linux Privilege Escalation Techniques (Complete Guide)
 
 > Practical CTF + pentesting Linux privilege escalation reference
 
