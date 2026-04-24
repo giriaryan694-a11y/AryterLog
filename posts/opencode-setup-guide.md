@@ -1,5 +1,3 @@
-# OpenCode Setup for Cybersecurity Labs
-
 **Written by Aryan Giri**
 
 ---
