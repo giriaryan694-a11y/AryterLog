@@ -1,5 +1,3 @@
-# 🎣 The Ultimate Guide to Phishing Techniques (2026 Edition)
-
 **Written by Aryan Giri**
 
 ---
