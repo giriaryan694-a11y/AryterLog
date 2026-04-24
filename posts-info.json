@@ -1,5 +1,13 @@
 [
   {
+  "id": "opencode-setup-guide",
+  "title": "OpenCode Setup for Cybersecurity Labs",
+  "date": "2026-04-24",
+  "summary": "Step-by-step guide to installing OpenCode, connecting AI providers, and creating a custom cybersecurity agent for CTFs, bug bounty, and hands-on labs.",
+  "category": ["tooling","lab-setup","ctf","bug-bounty","red-team","ai-tools"],
+  "file": "/posts/opencode-setup-guide.md"
+  },
+  {
     "id": "ai-assets-security-what-you-need-to-know",
     "title": "AI Assets Security: What You Need to Know",
     "date": "April 22, 2026",
