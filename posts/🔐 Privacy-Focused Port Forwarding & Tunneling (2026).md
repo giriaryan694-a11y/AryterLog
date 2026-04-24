@@ -1,5 +1,3 @@
-# 🔐 Privacy-Focused Port Forwarding & Tunneling (2026)
-
 > A practical, offensive-minded guide to modern tunneling techniques, tools, and tradeoffs.  
 > Choose the right approach based on **threat model**, **control**, and **privacy needs**.
 
