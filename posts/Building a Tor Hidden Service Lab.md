@@ -1,4 +1,4 @@
-# 🧅 Building a Tor Hidden Service Lab (From Zero to Working Onion)
+
 > **Written by Aryan Giri**
 **A Practical, Controlled Lab for Understanding Anonymous Inbound Channels**
 
