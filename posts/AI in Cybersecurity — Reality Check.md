@@ -1,4 +1,3 @@
-# AI in Cybersecurity — Reality Check
 
 > **A community-driven documentary article challenging the narrative that AI will replace human penetration testers.**
 
