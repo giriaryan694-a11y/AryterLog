@@ -1,4 +1,3 @@
-# Exam Hall Chaos: When Long Papers, Distractions, and Weak Responses Make Simple Exams Harder Than They Should Be
 
 **Written by Aryan Giri**
 
