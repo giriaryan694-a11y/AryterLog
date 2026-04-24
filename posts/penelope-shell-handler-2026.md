@@ -1,5 +1,3 @@
-# 🧠 Penelope: The Modern Reverse Shell Handler (Netcat Killer?)
-
 **Written By Aryan Giri**
 
 ---
