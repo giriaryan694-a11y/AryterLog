@@ -1,4 +1,3 @@
-# 🎓 My Junior College, School, Tuition, and Self-Learning Journey
 
 **Written by Aryan**
 
