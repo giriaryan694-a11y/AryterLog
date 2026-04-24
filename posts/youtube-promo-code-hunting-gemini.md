@@ -1,5 +1,3 @@
-# YouTube Promo Code Hunting with Gemini
-
 **Written By Aryan Giri**
 
 ---
