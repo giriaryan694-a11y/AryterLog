@@ -1,4 +1,3 @@
-# 🤖 AI Assets You Need to Know (Offensive + Defensive View)
 
 **Written by Aryan Giri**
 
