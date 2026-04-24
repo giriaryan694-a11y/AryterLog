@@ -1,4 +1,3 @@
-# 🔓 Uncensored LLMs on Ollama: Power, Risk, and Cybersecurity Use-Cases
 
 **Written by Aryan Giri**
 
