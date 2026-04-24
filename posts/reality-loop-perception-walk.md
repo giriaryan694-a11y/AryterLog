@@ -1,5 +1,3 @@
-# A Walk, a Memory, and the Feeling That Reality Loops
-
 *Written by Aryan Giri*
 
 There are moments when an ordinary walk suddenly feels larger than life. A road, a breeze, a stranger passing by with a dog, and then — without warning — the mind opens a door to old memories. That is how one small moment can become a whole universe inside your head.
