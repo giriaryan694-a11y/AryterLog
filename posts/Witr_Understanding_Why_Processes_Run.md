@@ -1,4 +1,4 @@
-# 🔍 Witr: “Why is this running?” — Explained Like a Real Scenario
+
 
 **Written by Aryan**
 
