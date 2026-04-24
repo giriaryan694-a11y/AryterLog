@@ -1,4 +1,3 @@
-# 🧠 OpenClaw-PwnKit: Adversarial Attacks on LLM Agent Tool-Calling (2026)
 
 **Written by Aryan Giri**
 
