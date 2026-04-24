@@ -1,5 +1,3 @@
-# STRIDE, MITRE ATLAS, and OWASP LLM Top 10
-
 **Written by Aryan Giri**
 
 ---
