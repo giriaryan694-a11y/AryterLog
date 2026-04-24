@@ -1,5 +1,3 @@
-# 🕶️ Tor-Routed Reverse Shell Lab (Free Port Forwarding Alternative)
-
 **Author: Aryan Giri**
 
 ---
