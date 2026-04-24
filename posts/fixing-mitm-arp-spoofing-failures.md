@@ -1,4 +1,3 @@
-# Fixing MITM Failures in ARP Spoofing (Real-World Debugging Guide)
 
 **Written by Aryan Giri**
 
