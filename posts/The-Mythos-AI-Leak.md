@@ -1,4 +1,3 @@
-# ⚠️ The Mythos AI Leak: Breakthrough or Hype?
 
 **Written by Aryan**
 
