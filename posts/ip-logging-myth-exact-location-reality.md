@@ -1,4 +1,3 @@
-# 🧠 IP Logging Myth: Can You Really Track Someone’s Exact Location?
 
 **Written by Aryan Giri**
 
