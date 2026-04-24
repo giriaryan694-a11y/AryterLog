@@ -1,5 +1,3 @@
-# Telegram, Stickers, and a Zero-Click Claim: What We Know So Far
-
 **Written by Aryan Giri**
 
 A message app is supposed to be simple. You open it, read a chat, maybe react with a sticker, and move on. That is why the latest Telegram vulnerability claim caught so much attention: the alleged attack path is not a suspicious link, not a fake file you were tricked into opening, but an animated sticker.
