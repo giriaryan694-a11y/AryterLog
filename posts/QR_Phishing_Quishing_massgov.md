@@ -1,4 +1,4 @@
-# QR-Based Phishing Campaign Impersonating mass.gov (Quishing)
+
 **Written By Aryan Giri**
 ## Executive Summary
 
