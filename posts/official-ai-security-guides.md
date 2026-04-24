@@ -1,5 +1,3 @@
-# Official AI Security Guides for Pentesting and Secure Design
-
 **Written by Aryan Giri**
 
 AI systems are no longer just chatbots. They now include retrieval pipelines, tools, memory, agents, plugins, model gateways, and cloud integrations. That means the security review is bigger than classic web pentesting. You need guidance for prompt injection, data leakage, model abuse, supply-chain risk, unsafe tool use, and weak operational controls.
