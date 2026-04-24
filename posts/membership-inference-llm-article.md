@@ -1,4 +1,3 @@
-# Membership Inference Attacks in LLMs
 
 **Written by Aryan Giri**
 
