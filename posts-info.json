@@ -1,5 +1,13 @@
 [
   {
+  "id": "lfi-vs-rfi-and-csrf-vs-ssrf-practical-guide",
+  "title": "LFI vs RFI and CSRF vs SSRF (Practical Guide)",
+  "date": "2026-04-25",
+  "summary": "Practical breakdown of LFI vs RFI and CSRF vs SSRF with real payloads, vulnerable code examples, exploitation paths, and mitigation strategies from a bug bounty perspective.",
+  "category": ["web-security","bug-bounty","attack-techniques","pentesting"],
+  "file": "posts/lfi-vs-rfi-and-csrf-vs-ssrf-practical-guide.md"
+  },
+  {
   "id": "advanced-ssrf-bypass-techniques-2026",
   "title": "Advanced SSRF Bypass Techniques (2024–2026)",
   "date": "2026-04-25",
