@@ -5,7 +5,7 @@
   "date": "2026-04-25",
   "summary": "Deep dive into modern SSRF bypass techniques including parser confusion, DNS rebinding, protocol smuggling, cloud metadata abuse, and real-world exploitation chains used in bug bounty hunting.",
   "category": ["web-security","bug-bounty","attack-techniques","cloud-security"],
-  "file": "/posts/advanced-ssrf-bypass-techniques-2026.md"
+  "file": "posts/advanced-ssrf-bypass-techniques-2026.md"
   },
   {
       "id": "consentfix-clickfix-phishing",
