@@ -1,9 +1,9 @@
 [
   {
-  "id": "command-injection-without-file-upload",
-  "title": "Command Injection Without File Upload (PHP)",
+  "id": "unsafe-os-command-execution-without-file-upload",
+  "title": "Unsafe OS Command Execution Without File Upload (PHP)",
   "date": "2026-04-26",
-  "summary": "Learn how attackers achieve remote command execution in PHP without file uploads by exploiting unsafe system calls, with real-world payloads, demo labs, and mitigation strategies.",
+  "summary": "Understand how unsafe use of system-level functions in PHP leads to OS command execution without file uploads, with real-world payloads, demo labs, and proper mitigation techniques.",
   "category": ["web-security","attack-techniques","pentesting","bug-bounty","windows"],
   "file": "posts/command-injection-without-file-upload.md"
   },
