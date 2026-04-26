@@ -8,7 +8,9 @@ When people think about getting code execution on a server, they usually think a
 
 But there’s a quieter and often more dangerous path:
 
-👉 **Command Injection via existing functionality**
+👉 **Unsafe OS command execution via existing functionality**
+
+This is **NOT PHP code injection** — it’s the server passing user input into a system shell.
 
 No file upload. No shell file. Just abusing what’s already there.
 
@@ -34,17 +36,12 @@ system("ping " . $name);
 ?>
 ```
 
-Here, the developer expects something like:
+👉 Important:
 
-```
-?name=google.com
-```
+* The shell executes the final string
+* User input becomes part of a **shell command**, not PHP code
 
-But instead, we inject:
-
-```
-';system("ipconfig");//
-```
+This leads to **command/argument injection**, not PHP code execution.
 
 ---
 
@@ -64,12 +61,12 @@ http://AttackTest.com?file=';system("ipconfig");//
 
 ### Breakdown
 
-| Component            | Purpose                      |
-| -------------------- | ---------------------------- |
-| `'`                  | Breaks out of string context |
-| `;`                  | Ends the current command     |
-| `system("ipconfig")` | Executes OS command          |
-| `//`                 | Comments out remaining code  |
+| Component            | What It Does                      | Why It Matters                                                       |
+| -------------------- | --------------------------------- | -------------------------------------------------------------------- |
+| `'`                  | Breaks out of the original string | Escapes developer-controlled context so you can inject your own code |
+| `;`                  | Terminates the current command    | Lets you chain a new command after the original one                  |
+| `system("ipconfig")` | Executes OS-level command         | Gives you direct command execution on the server                     |
+| `//`                 | Comments out the rest of the line | Prevents syntax errors and ignores remaining backend code            |
 
 
 
@@ -77,22 +74,26 @@ http://AttackTest.com?file=';system("ipconfig");//
 
 ## 🧠 How the Exploit Works
 
-Let’s say the backend builds this command:
+Backend builds a shell command like:
 
 ```php
 system("ping " . $_GET['name']);
 ```
 
-Injected version becomes:
+If input is not sanitized, it becomes:
 
-```php
-system("ping ' ; system("ipconfig"); //");
+```bash
+ping example.com; dir
 ```
 
-Now the shell interprets it as:
+Shell interprets:
 
-1. Run `ping`
-2. Then run `ipconfig`
+1. Run `ping example.com`
+2. Then run `dir`
+
+👉 The shell executes both because of command chaining (`;`)
+
+⚠️ Note: This is **shell-level injection**, not execution of injected PHP code.
 
 Boom — command execution achieved.
 
