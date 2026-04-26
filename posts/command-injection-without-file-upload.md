@@ -71,11 +71,7 @@ http://AttackTest.com?file=';system("ipconfig");//
 | `system("ipconfig")` | Executes OS command          |
 | `//`                 | Comments out remaining code  |
 
-----------|--------|
-| `'` | Breaks out of string context |
-| `;` | Ends the current command |
-| `system("ipconfig")` | Executes OS command |
-| `//` | Comments out remaining code |
+
 
 ---
 
