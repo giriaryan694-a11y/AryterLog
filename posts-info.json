@@ -1,5 +1,13 @@
 [
   {
+  "id": "command-injection-without-file-upload",
+  "title": "Command Injection Without File Upload (PHP)",
+  "date": "2026-04-26",
+  "summary": "Learn how attackers achieve remote command execution in PHP without file uploads by exploiting unsafe system calls, with real-world payloads, demo labs, and mitigation strategies.",
+  "category": ["web-security","attack-techniques","pentesting","bug-bounty","windows"],
+  "file": "posts/command-injection-without-file-upload.md"
+  },
+  {
   "id": "lfi-vs-rfi-and-csrf-vs-ssrf-practical-guide",
   "title": "LFI vs RFI and CSRF vs SSRF (Practical Guide)",
   "date": "2026-04-25",
