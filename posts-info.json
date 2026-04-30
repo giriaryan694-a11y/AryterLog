@@ -1,5 +1,13 @@
 [
   {
+  "id": "mfa-fatigue-attack",
+  "title": "MFA Fatigue Attack (Push Bombing)",
+  "date": "2026-04-30",
+  "summary": "Deep dive into MFA fatigue attacks covering authentication abuse, human-factor exploitation, real-world breach case studies, and practical lab simulation with modern defense strategies.",
+  "category": ["attack-techniques","social-engineering","cloud-security","threat-analysis","case-study","awareness"],
+  "file": "posts/mfa-fatigue-attack.md"
+  }
+  {
   "id": "unsafe-os-command-execution-without-file-upload",
   "title": "Unsafe OS Command Execution Without File Upload (PHP)",
   "date": "2026-04-26",
