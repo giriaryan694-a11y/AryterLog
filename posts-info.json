@@ -6,7 +6,7 @@
   "summary": "Deep dive into MFA fatigue attacks covering authentication abuse, human-factor exploitation, real-world breach case studies, and practical lab simulation with modern defense strategies.",
   "category": ["attack-techniques","social-engineering","cloud-security","threat-analysis","case-study","awareness"],
   "file": "posts/mfa-fatigue-attack.md"
-  }
+  },
   {
   "id": "unsafe-os-command-execution-without-file-upload",
   "title": "Unsafe OS Command Execution Without File Upload (PHP)",
