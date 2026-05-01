@@ -1,5 +1,13 @@
 [
   {
+  "id": "ai-service-fingerprinting-without-nmap",
+  "title": "AI Service Fingerprinting Without Nmap: Building a Protocol-Aware Recon Agent",
+  "date": "2026-05-01",
+  "summary": "Protocol-aware fingerprinting approach to identify AI/ML services using HTTP, HTTPS, and gRPC without relying on traditional port scanning.",
+  "category": ["ai-security","red-team","recon","automation"],
+  "file": "posts/ai-service-fingerprinting-without-nmap.md"
+  },
+  {
   "id": "mfa-fatigue-attack",
   "title": "MFA Fatigue Attack (Push Bombing)",
   "date": "2026-04-30",
