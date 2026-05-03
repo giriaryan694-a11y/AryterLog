@@ -1,5 +1,13 @@
 [
   {
+  "id": "copyfail-cve-2026-31431",
+  "title": "Copy Fail (CVE-2026-31431) Kernel LPE Analysis",
+  "date": "2026-05-03",
+  "summary": "Research breakdown of CVE-2026-31431 (Copy Fail), a Linux kernel local privilege escalation affecting algif_aead. Includes attack chain model, MITRE ATT&CK mapping, AI-assisted discovery context, and defensive PoC analysis structure.",
+  "category": ["vulnerability-research","linux","privilege-escalation","ai-security","threat-research"],
+  "file": "posts/copyfail-cve-2026-31431.md"
+  },
+  {
   "id": "ai-service-fingerprinting-without-nmap",
   "title": "AI Service Fingerprinting Without Nmap: Building a Protocol-Aware Recon Agent",
   "date": "2026-05-01",
