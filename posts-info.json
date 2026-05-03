@@ -1,5 +1,13 @@
 [
   {
+  "id": "agrus-scanner-recon-tool-guide",
+  "title": "Agrus Scanner – Recon Tool Guide",
+  "date": "2026-05-03",
+  "summary": "A practical guide to Agrus Scanner covering installation on Kali Linux, usage examples, reconnaissance capabilities, and cybersecurity use cases for network and infrastructure discovery.",
+  "category": ["recon", "tooling", "network-security", "linux"],
+  "file": "posts/agrus-scanner-recon-tool-guide.md"
+  },
+  {
   "id": "copyfail-cve-2026-31431",
   "title": "Copy Fail (CVE-2026-31431) Kernel LPE Analysis",
   "date": "2026-05-03",
