@@ -1,5 +1,13 @@
 [
   {
+  "id": "thor-cloud-lite-nextron-systems-forensic-threat-hunting-platform",
+  "title": "THOR Cloud Lite — Nextron Systems Forensic Threat Hunting Platform",
+  "date": "2026-05-04",
+  "summary": "THOR Cloud Lite is a cloud-based forensic scanning platform developed by Nextron Systems (a German cybersecurity company) used for on-demand endpoint investigations. It enables SOC and incident response teams to run remote campaigns across systems, collect forensic artifacts, detect malware traces using YARA/Sigma rules, and review centralized reports through a cloud dashboard. The platform operates in a non-real-time model, focusing on post-compromise analysis rather than continuous monitoring like traditional EDR systems. The free tier includes up to 30 scans per month per account.",
+  "category": ["tooling","forensics","incident-response","defensive-security","malware-analysis"],
+  "file_path": "posts/thor-cloud-lite-nextron-systems-forensic-threat-hunting-platform.md"
+  },
+  {
   "id": "owasp-cve-lite-cli",
   "title": "OWASP CVE Lite CLI – Lightweight Vulnerability Scanning for Developers",
   "date": "2026-05-04",
@@ -12,7 +20,7 @@
   "title": "CVE-2026-41940: cPanel & WHM Authentication Bypass Analysis",
   "date": "2026-05-04",
   "summary": "A critical authentication bypass vulnerability in cPanel & WHM allowing pre-auth session manipulation leading to administrative-level compromise. The issue highlights risks in session trust handling and infrastructure control panels, with patched versions released across supported branches.",
-  "category": ["vulnerability-research","infrastructure","web-security","defensive-security","case-study"],
+  "category": ["vulnerability-research","infrastructure","web-security","attack-techniques","case-study"],
   "file": "posts/cve-2026-41940-cpanel-whm-auth-bypass.md"
   },
   {
@@ -44,7 +52,7 @@
   "title": "Copy Fail (CVE-2026-31431) Kernel LPE Analysis",
   "date": "2026-05-03",
   "summary": "Research breakdown of CVE-2026-31431 (Copy Fail), a Linux kernel local privilege escalation affecting algif_aead. Includes attack chain model, MITRE ATT&CK mapping, AI-assisted discovery context, and defensive PoC analysis structure.",
-  "category": ["vulnerability-research","linux","privilege-escalation","ai-security","threat-research"],
+  "category": ["vulnerability-research","linux","privilege-escalation","attack-techniques","threat-research"],
   "file": "posts/copyfail-cve-2026-31431.md"
   },
   {
