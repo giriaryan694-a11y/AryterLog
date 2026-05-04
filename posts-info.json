@@ -1,5 +1,13 @@
 [
   {
+  "id": "free-llm-providers-cybersecurity-work",
+  "title": "Free LLM Providers for Cybersecurity Work",
+  "date": "2026-05-04",
+  "summary": "A practical guide to free and low-cost LLM providers for cybersecurity workflows, including HuggingFace, Cloudflare, NVIDIA, and GitHub Models. Covers model ranking, provider limitations, rate limits, and safe usage for CTFs, labs, and authorized security research.",
+  "category": ["ai-security","llm-security","tooling","automation"],
+  "file": "posts/free-llm-providers-cybersecurity-work.md"
+  },
+  {
   "id": "thor-cloud-lite-nextron-systems-forensic-threat-hunting-platform",
   "title": "THOR Cloud Lite — Nextron Systems Forensic Threat Hunting Platform",
   "date": "2026-05-04",
