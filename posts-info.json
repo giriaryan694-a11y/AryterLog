@@ -1,5 +1,13 @@
 [
   {
+  "id": "cve-2026-41940-cpanel-whm-auth-bypass",
+  "title": "CVE-2026-41940: cPanel & WHM Authentication Bypass Analysis",
+  "date": "2026-05-04",
+  "summary": "A critical authentication bypass vulnerability in cPanel & WHM allowing pre-auth session manipulation leading to administrative-level compromise. The issue highlights risks in session trust handling and infrastructure control panels, with patched versions released across supported branches.",
+  "category": ["vulnerability-research","infrastructure","web-security","defensive-security","case-study"],
+  "file": "posts/cve-2026-41940-cpanel-whm-auth-bypass.md"
+  },
+  {
   "id": "llm-prompt-injection-vs-jailbreaking",
   "title": "LLM Prompt Injection vs Jailbreaking vs Direct & Indirect Injection",
   "date": "2026-05-04",
