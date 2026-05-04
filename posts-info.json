@@ -1,5 +1,13 @@
 [
   {
+  "id": "owasp-cve-lite-cli",
+  "title": "OWASP CVE Lite CLI – Lightweight Vulnerability Scanning for Developers",
+  "date": "2026-05-04",
+  "summary": "OWASP CVE Lite CLI is a lightweight, local-first vulnerability scanning tool for JavaScript/TypeScript projects that identifies vulnerable dependencies and provides direct remediation commands to speed up security fixes in development workflows.",
+  "category": ["tooling", "vulnerability-research", "defensive-security", "automation"],
+  "file_path": "posts/owasp-cve-lite-cli.md"
+  },
+  {
   "id": "cve-2026-41940-cpanel-whm-auth-bypass",
   "title": "CVE-2026-41940: cPanel & WHM Authentication Bypass Analysis",
   "date": "2026-05-04",
