@@ -1,5 +1,13 @@
 [
   {
+  "id": "llm-prompt-injection-vs-jailbreaking",
+  "title": "LLM Prompt Injection vs Jailbreaking vs Direct & Indirect Injection",
+  "date": "2026-05-04",
+  "summary": "A deep dive into LLM attack classes covering direct prompt injection, indirect prompt injection, and jailbreaking, with real-world case studies including Copilot context poisoning and RAG-based data exfiltration.",
+  "category": ["ai-security","llm-security","adversarial-ml"],
+  "file": "posts/llm-prompt-injection-vs-jailbreaking.md"
+  },
+  {
   "id": "owasp-nettacker-recon-framework",
   "title": "OWASP Nettacker — Automated Reconnaissance Framework",
   "date": "2026-05-04",
