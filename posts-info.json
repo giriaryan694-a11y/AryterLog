@@ -1,5 +1,13 @@
 [
   {
+  "id": "owasp-nettacker-recon-framework",
+  "title": "OWASP Nettacker — Automated Reconnaissance Framework",
+  "date": "2026-05-04",
+  "summary": "An overview of OWASP Nettacker, a modular automated reconnaissance and penetration testing framework used for attack surface discovery, scanning, and structured security assessments.",
+  "category": ["tooling","recon","pentesting","red-team","network-security"],
+  "file": "posts/owasp-nettacker-recon-framework.md"
+  },
+  {
   "id": "agrus-scanner-recon-tool-guide",
   "title": "Agrus Scanner – Recon Tool Guide",
   "date": "2026-05-03",
