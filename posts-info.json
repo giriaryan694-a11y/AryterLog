@@ -1,5 +1,13 @@
 [
   {
+  "id": "why-deleting-your-tryhackme-account-over-noscope-ai-might-hurt-beginners-more-than-it-helps",
+  "title": "Why Deleting Your TryHackMe Account Over NoScope AI Might Hurt Beginners More Than It Helps",
+  "date": "2026-05-07",
+  "summary": "A balanced analysis of the TryHackMe and NoScope AI backlash, why beginners should avoid deleting their learning proof impulsively, and why AI is more likely to augment cybersecurity professionals than fully replace them.",
+  "category": ["ai-security","career","education","awareness","myth-busting","philosophy"],
+  "file": "posts/why-deleting-your-tryhackme-account-over-noscope-ai-might-hurt-beginners-more-than-it-helps.md"
+  },
+  {
   "id": "free-llm-providers-cybersecurity-work",
   "title": "Free LLM Providers for Cybersecurity Work",
   "date": "2026-05-04",
