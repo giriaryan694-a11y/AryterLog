@@ -1,5 +1,13 @@
 [
   {
+  "id": "llmborghini-tryhackme-writeup",
+  "title": "LLMborghini — TryHackMe Write-up",
+  "date": "2026-05-10",
+  "summary": "A practical write-up of the TryHackMe LLMborghini room demonstrating prompt injection, output filtering bypasses, tool abuse, and indirect data exfiltration through calendar integrations.",
+  "category": ["ai-security", "llm-security", "offensive-security", "attack-techniques", "ctf"],
+  "file": "posts/LLMborghini-TryHackMe-Writeup.md"
+  },
+  {
   "id": "chatgpt-canvas-github-notes-workflow",
   "title": "ChatGPT Canvas + GitHub Repo: My Favourite Workflow for Cybersecurity Notes",
   "date": "2026-05-10",
