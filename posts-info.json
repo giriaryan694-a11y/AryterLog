@@ -1,5 +1,13 @@
 [
   {
+  "id": "chatgpt-canvas-github-notes-workflow",
+  "title": "ChatGPT Canvas + GitHub Repo: My Favourite Workflow for Cybersecurity Notes",
+  "date": "2026-05-10",
+  "summary": "A practical workflow using ChatGPT Canvas and GitHub repositories for fast markdown-based cybersecurity note-taking, revision, research organization, and technical learning.",
+  "category": ["ai-tools", "education", "productivity", "personal"],
+  "file": "posts/chatgpt-canvas-github-notes-workflow.md"
+  },
+  {
   "id": "chinese-ai-race",
   "title": "Chinese AI Race: Compute, Control, and the New AI Battlefield",
   "date": "2026-05-10",
