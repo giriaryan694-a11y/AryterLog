@@ -1,5 +1,13 @@
 [
   {
+  "id": "white-rabbit-tryhackme",
+  "title": "White Rabbit — When Understanding the AI Beats Exploiting It",
+  "date": "2026-05-10",
+  "summary": "A write-up on the White Rabbit TryHackMe room focused on prompt injection, system prompt leakage, behavioural analysis, and understanding LLM instruction hierarchy to recover hidden flags.",
+  "category": ["ai-security", "llm-security", "ctf", "education", "offensive-security"],
+  "file": "posts/white-rabbit-tryhackme.md"
+  },
+  {
   "id": "llmborghini-tryhackme-writeup",
   "title": "LLMborghini — TryHackMe Write-up",
   "date": "2026-05-10",
