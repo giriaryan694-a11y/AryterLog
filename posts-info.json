@@ -1,5 +1,13 @@
 [
   {
+  "id": "chinese-ai-race",
+  "title": "Chinese AI Race: Compute, Control, and the New AI Battlefield",
+  "date": "2026-05-10",
+  "summary": "An in-depth analysis of China's AI expansion strategy, DeepSeek V4 Pro, semiconductor independence, modular AI ecosystems, alignment tax, cheap AI pricing warfare, and the cybersecurity implications of the global AI race.",
+  "category": ["ai-security", "llm-security", "offensive-security", "threat-research", "threat-analysis", "automation", "ai-tools", "tooling", "surveillance", "philosophy"],
+  "file": "posts/chinese-ai-race.md"
+  },
+  {
   "id": "why-deleting-your-tryhackme-account-over-noscope-ai-might-hurt-beginners-more-than-it-helps",
   "title": "Why Deleting Your TryHackMe Account Over NoScope AI Might Hurt Beginners More Than It Helps",
   "date": "2026-05-07",
