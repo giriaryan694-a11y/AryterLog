@@ -1,4 +1,3 @@
-# ChatGPT Canvas + GitHub Repo: My Favourite Workflow for Cybersecurity Notes
 
 *Written by Aryan Giri*
 
