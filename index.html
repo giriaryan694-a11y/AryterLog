@@ -4,169 +4,98 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AryterLog</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+
   <style>
-    /* =========================================
-       DESIGN TOKENS & RESET
-       ========================================= */
+    /* --- THEMES --- */
     :root {
-      --bg: #090c10;
+      --bg: #0a0e13;
       --text: #c9d1d9;
-      --heading: #e6edf3;
       --card: #0f1419;
-      --card-elevated: #161b22;
+      --card2: #161b22;
       --accent: #39d353;
-      --accent-dim: rgba(57,211,83,0.15);
-      --accent2: #58a6ff;
+      --accent2: #1f6feb;
       --border: #21262d;
-      --border-subtle: #161b22;
       --code-bg: #1c2128;
       --input-bg: #0d1117;
       --muted: #8b949e;
-      --muted-faint: #484f58;
       --glow: rgba(57,211,83,0.12);
-      --shadow: rgba(0,0,0,0.4);
-      --font-body: 'Inter', system-ui, sans-serif;
-      --font-mono: 'JetBrains Mono', monospace;
-      --font-display: 'Syne', sans-serif;
-      --radius-sm: 6px;
-      --radius-md: 10px;
-      --radius-lg: 14px;
-      --radius-xl: 20px;
     }
     .light {
-      --bg: #f6f8fa;
-      --text: #1f2328;
-      --heading: #1f2328;
+      --bg: #f0f2f5;
+      --text: #1c1e21;
       --card: #ffffff;
-      --card-elevated: #f6f8fa;
+      --card2: #f8f9fa;
       --accent: #0969da;
-      --accent-dim: rgba(9,105,218,0.12);
       --accent2: #8250df;
       --border: #d0d7de;
-      --border-subtle: #eaeef2;
       --code-bg: #f6f8fa;
       --input-bg: #ffffff;
-      --muted: #656d76;
-      --muted-faint: #afb8c1;
+      --muted: #57606a;
       --glow: rgba(9,105,218,0.10);
-      --shadow: rgba(31,35,40,0.08);
     }
     .eye-saver {
       --bg: #1a1500;
       --text: #e8dcc8;
-      --heading: #f0e6d3;
       --card: #231c08;
-      --card-elevated: #2a2210;
+      --card2: #2a2210;
       --accent: #f0b429;
-      --accent-dim: rgba(240,180,41,0.15);
       --accent2: #e07b39;
       --border: #3d3418;
-      --border-subtle: #2a2210;
       --code-bg: #2a2210;
       --input-bg: #1a1500;
       --muted: #a89060;
-      --muted-faint: #7a6a40;
       --glow: rgba(240,180,41,0.12);
-      --shadow: rgba(0,0,0,0.35);
     }
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; }
-
-    html {
-      scroll-behavior: smooth;
-      scrollbar-width: thin;
-      scrollbar-color: var(--border) var(--bg);
-    }
-    ::-webkit-scrollbar { width: 8px; height: 8px; }
-    ::-webkit-scrollbar-track { background: var(--bg); }
-    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: var(--muted-faint); }
-
-    ::selection {
-      background: var(--accent-dim);
-      color: var(--heading);
-    }
+    *, *::before, *::after { box-sizing: border-box; }
 
     body {
       margin: 0;
-      font-family: var(--font-body);
+      font-family: 'JetBrains Mono', monospace;
       background: var(--bg);
       color: var(--text);
-      transition: background 0.4s ease, color 0.4s ease;
-      line-height: 1.65;
+      transition: background 0.35s ease, color 0.35s ease;
+      line-height: 1.7;
       min-height: 100vh;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
     }
 
-    /* Reduced motion */
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-        scroll-behavior: auto !important;
-      }
-    }
-
-    /* Skip link for accessibility */
-    .skip-link {
-      position: absolute;
-      top: -40px;
-      left: 0;
-      background: var(--accent);
-      color: #000;
-      padding: 8px 16px;
-      z-index: 10000;
-      font-weight: 600;
-      font-size: 13px;
-      text-decoration: none;
-      border-radius: 0 0 var(--radius-sm) 0;
-      transition: top 0.2s;
-    }
-    .skip-link:focus { top: 0; }
-
-    /* =========================================
-       READING PROGRESS BAR
-       ========================================= */
-    #reading-progress {
+    /* --- SCANLINE EFFECT --- */
+    body::before {
+      content: '';
       position: fixed;
-      top: 0;
-      left: 0;
-      height: 2.5px;
-      background: linear-gradient(90deg, var(--accent), var(--accent2));
-      z-index: 1000;
-      width: 0%;
-      transition: width 0.1s linear;
-      box-shadow: 0 0 10px var(--accent-dim);
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.03) 2px,
+        rgba(0,0,0,0.03) 4px
+      );
+      pointer-events: none;
+      z-index: 9999;
     }
 
-    /* =========================================
-       HEADER
-       ========================================= */
+    /* --- HEADER --- */
     header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 14px 24px;
+      padding: 16px 24px;
       border-bottom: 1px solid var(--border);
-      background: rgba(var(--card), 0.8);
-      backdrop-filter: blur(16px) saturate(1.5);
-      -webkit-backdrop-filter: blur(16px) saturate(1.5);
+      background: var(--card);
       position: sticky;
       top: 0;
       z-index: 100;
+      backdrop-filter: blur(12px);
       gap: 12px;
       flex-wrap: wrap;
     }
-    .light header { background: rgba(255,255,255,0.85); }
-    .eye-saver header { background: rgba(35,28,8,0.9); }
 
     .logo {
       margin: 0;
-      font-family: var(--font-display);
+      font-family: 'Syne', sans-serif;
       font-size: 20px;
       font-weight: 800;
       cursor: pointer;
@@ -174,13 +103,8 @@
       letter-spacing: -0.5px;
       white-space: nowrap;
       flex-shrink: 0;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
     }
-    .logo span { color: var(--text); opacity: 0.5; font-weight: 400; }
-    .logo:hover { opacity: 0.85; }
+    .logo span { color: var(--text); opacity: 0.5; }
 
     .header-controls {
       display: flex;
@@ -189,16 +113,15 @@
       flex-wrap: wrap;
     }
 
-    /* Buttons */
-    .btn, .nav-btn {
+    button, .nav-btn {
       background: transparent;
       border: 1px solid var(--border);
-      padding: 7px 14px;
+      padding: 6px 12px;
       cursor: pointer;
       color: var(--text);
-      border-radius: var(--radius-sm);
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      font-family: var(--font-mono);
+      border-radius: 6px;
+      transition: all 0.2s ease;
+      font-family: 'JetBrains Mono', monospace;
       font-weight: 600;
       font-size: 12px;
       display: inline-flex;
@@ -206,766 +129,243 @@
       gap: 6px;
       text-decoration: none;
       white-space: nowrap;
-      position: relative;
-      overflow: hidden;
     }
-    .btn:hover, .nav-btn:hover {
+    button:hover, .nav-btn:hover {
       background: var(--glow);
       border-color: var(--accent);
       color: var(--accent);
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px var(--glow);
-    }
-    .btn:active, .nav-btn:active { transform: translateY(0); }
-    .btn-primary {
-      background: var(--accent);
-      color: #000;
-      border-color: var(--accent);
-      font-weight: 700;
-    }
-    .light .btn-primary { color: #fff; }
-    .btn-primary:hover {
-      filter: brightness(1.1);
-      box-shadow: 0 4px 16px var(--accent-dim);
     }
 
-    /* =========================================
-       HERO SECTION
-       ========================================= */
-    .hero {
-      padding: 48px 16px 32px;
-      text-align: center;
-      max-width: 640px;
-      margin: 0 auto;
-      animation: fadeInUp 0.8s ease both;
-    }
-    .hero-avatar {
-      width: 72px;
-      height: 72px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-family: var(--font-display);
-      font-size: 28px;
-      font-weight: 800;
-      color: #000;
-      margin-bottom: 16px;
-      box-shadow: 0 8px 32px var(--accent-dim);
-      position: relative;
-    }
-    .hero-avatar::after {
-      content: '';
-      position: absolute;
-      inset: -3px;
-      border-radius: 50%;
-      border: 2px solid var(--accent);
-      opacity: 0.3;
-      animation: pulse 3s ease-in-out infinite;
-    }
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); opacity: 0.3; }
-      50% { transform: scale(1.05); opacity: 0.1; }
-    }
-    .hero h2 {
-      font-family: var(--font-display);
-      font-size: clamp(24px, 5vw, 36px);
-      font-weight: 800;
-      color: var(--heading);
-      margin-bottom: 8px;
-      line-height: 1.2;
-    }
-    .hero-gradient {
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .hero p {
-      color: var(--muted);
-      font-size: 15px;
-      max-width: 480px;
-      margin: 0 auto;
-      line-height: 1.6;
-    }
-    .hero-stats {
-      display: flex;
-      justify-content: center;
-      gap: 24px;
-      margin-top: 20px;
-      flex-wrap: wrap;
-    }
-    .hero-stat {
-      text-align: center;
-    }
-    .hero-stat-value {
-      font-family: var(--font-display);
-      font-size: 22px;
-      font-weight: 700;
-      color: var(--heading);
-      display: block;
-    }
-    .hero-stat-label {
-      font-size: 11px;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      font-weight: 600;
-    }
-
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* =========================================
-       MAIN CONTAINER
-       ========================================= */
+    /* --- MAIN CONTAINER --- */
     .container {
-      max-width: 800px;
+      max-width: 760px;
       margin: 0 auto;
-      padding: 0 16px 40px;
-      min-height: 60vh;
+      padding: 32px 16px;
+      min-height: 70vh;
     }
 
-    /* =========================================
-       SEARCH
-       ========================================= */
+    /* --- SEARCH --- */
     .search-wrapper {
       margin-bottom: 28px;
       position: relative;
-      animation: fadeInUp 0.6s 0.1s ease both;
     }
     .search-wrapper::before {
       content: '⌕';
       position: absolute;
-      left: 16px;
+      left: 14px;
       top: 50%;
       transform: translateY(-50%);
       opacity: 0.4;
       font-size: 18px;
       pointer-events: none;
-      font-family: var(--font-mono);
     }
     #search-bar {
       width: 100%;
-      padding: 14px 16px 14px 44px;
-      font-size: 14px;
-      border-radius: var(--radius-lg);
+      padding: 12px 16px 12px 40px;
+      font-size: 13px;
+      border-radius: 8px;
       border: 1px solid var(--border);
       background: var(--input-bg);
       color: var(--text);
-      font-family: var(--font-body);
-      transition: all 0.3s ease;
-      box-shadow: 0 2px 8px var(--shadow);
+      font-family: 'JetBrains Mono', monospace;
+      transition: border-color 0.3s, box-shadow 0.3s;
     }
     #search-bar::placeholder { color: var(--muted); }
     #search-bar:focus {
       outline: none;
       border-color: var(--accent);
-      box-shadow: 0 0 0 3px var(--glow), 0 4px 16px var(--shadow);
-    }
-    .search-hint {
-      position: absolute;
-      right: 14px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 11px;
-      color: var(--muted-faint);
-      font-family: var(--font-mono);
-      pointer-events: none;
-      border: 1px solid var(--border);
-      padding: 2px 6px;
-      border-radius: 4px;
-      background: var(--card);
+      box-shadow: 0 0 0 3px var(--glow);
     }
 
-    /* =========================================
-       POST CARDS
-       ========================================= */
+    /* --- POST CARDS --- */
     .posts-label {
       font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 2.5px;
+      font-weight: 600;
+      letter-spacing: 2px;
       text-transform: uppercase;
       color: var(--muted);
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      animation: fadeInUp 0.6s 0.15s ease both;
-    }
-    .posts-label::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: var(--border);
+      margin-bottom: 14px;
     }
 
     .post-card {
       background: var(--card);
-      padding: 22px 24px;
-      margin-bottom: 14px;
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border-subtle);
+      padding: 20px 22px;
+      margin-bottom: 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
       cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
       position: relative;
       overflow: hidden;
-      animation: fadeInUp 0.5s ease both;
     }
-    .post-card:nth-child(1) { animation-delay: 0.05s; }
-    .post-card:nth-child(2) { animation-delay: 0.1s; }
-    .post-card:nth-child(3) { animation-delay: 0.15s; }
-    .post-card:nth-child(4) { animation-delay: 0.2s; }
-    .post-card:nth-child(5) { animation-delay: 0.25s; }
-    .post-card:nth-child(6) { animation-delay: 0.3s; }
-    .post-card:nth-child(7) { animation-delay: 0.35s; }
-
     .post-card::before {
       content: '';
       position: absolute;
       left: 0; top: 0; bottom: 0;
       width: 3px;
-      background: linear-gradient(180deg, var(--accent), var(--accent2));
+      background: var(--accent);
       transform: scaleY(0);
-      transition: transform 0.3s ease;
+      transition: transform 0.2s ease;
       transform-origin: bottom;
-      border-radius: 0 2px 2px 0;
     }
     .post-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 12px 40px var(--shadow);
-      border-color: var(--border);
-      background: var(--card-elevated);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(0,0,0,0.2);
+      border-color: var(--accent);
     }
     .post-card:hover::before { transform: scaleY(1); }
 
-    .post-card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 12px;
-      margin-bottom: 6px;
-    }
     .post-card h2 {
-      margin: 0;
-      font-family: var(--font-display);
-      font-size: 18px;
+      margin: 0 0 6px 0;
+      font-family: 'Syne', sans-serif;
+      font-size: 17px;
       font-weight: 700;
-      color: var(--heading);
-      line-height: 1.35;
-      flex: 1;
-      transition: color 0.2s;
+      color: var(--accent);
+      line-height: 1.3;
     }
-    .post-card:hover h2 { color: var(--accent); }
-
     .post-card .meta {
-      font-size: 12px;
+      font-size: 11px;
       color: var(--muted);
-      margin-bottom: 10px;
-      font-weight: 500;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-    .post-card .meta-sep {
-      color: var(--muted-faint);
-      font-size: 10px;
+      margin-bottom: 8px;
+      font-weight: 400;
     }
     .post-card p {
       margin: 0;
-      font-size: 14px;
-      color: var(--muted);
-      line-height: 1.65;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
+      font-size: 13px;
+      color: var(--text);
+      opacity: 0.8;
+      line-height: 1.6;
     }
 
-    .card-cat-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 2px 8px;
+    .post-card .meta .card-cat-chip {
+      display: inline-block;
+      padding: 1px 7px;
       border-radius: 20px;
       border: 1px solid var(--border);
-      background: var(--card-elevated);
+      background: var(--card2);
       color: var(--muted);
       font-size: 10px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      font-weight: 600;
       vertical-align: middle;
-    }
-    .card-cat-chip::before {
-      content: '#';
-      color: var(--accent);
-      opacity: 0.7;
+      margin-left: 2px;
     }
 
-    .reading-time {
-      font-size: 11px;
-      color: var(--muted-faint);
-      font-family: var(--font-mono);
-      margin-top: 10px;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    /* =========================================
-       FULL POST VIEW
-       ========================================= */
-    .back-btn {
-      margin-bottom: 20px;
-      animation: fadeInUp 0.4s ease both;
-    }
-
-    .post-layout {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 24px;
-      animation: fadeInUp 0.5s ease both;
-    }
-    @media (min-width: 1024px) {
-      .post-layout {
-        grid-template-columns: 1fr 220px;
-        align-items: start;
-      }
-      .post-sidebar {
-        position: sticky;
-        top: 80px;
-      }
-    }
+    /* --- FULL POST VIEW --- */
+    .back-btn { margin-bottom: 20px; }
 
     .post-content {
       background: var(--card);
-      padding: 32px;
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border-subtle);
-      box-shadow: 0 4px 24px var(--shadow);
-    }
-    @media (max-width: 640px) {
-      .post-content { padding: 20px; }
+      padding: 28px 24px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
     }
 
-    .post-content * { max-width: 100%; }
+    /* KEY FIX: All text & code overflow handling */
+    .post-content * {
+      max-width: 100%;
+    }
 
     .post-content h1 {
-      font-family: var(--font-display);
-      font-size: clamp(22px, 4vw, 30px);
-      color: var(--heading);
-      margin: 0 0 10px 0;
-      line-height: 1.25;
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(18px, 4vw, 26px);
+      color: var(--accent);
+      margin: 0 0 8px 0;
+      line-height: 1.3;
       word-break: break-word;
-      font-weight: 800;
     }
-    .post-content h2, .post-content h3, .post-content h4 {
-      font-family: var(--font-display);
-      color: var(--heading);
+    .post-content h2, .post-content h3 {
+      font-family: 'Syne', sans-serif;
+      color: var(--accent);
       word-break: break-word;
-      margin-top: 32px;
-      margin-bottom: 14px;
-      font-weight: 700;
-      scroll-margin-top: 80px;
     }
-    .post-content h2 { font-size: 22px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
-    .post-content h3 { font-size: 18px; }
-    .post-content h4 { font-size: 15px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); }
-
-    .post-content p {
-      margin-bottom: 16px;
-      font-size: 15.5px;
-      line-height: 1.75;
-      color: var(--text);
-    }
-    .post-content p + p { margin-top: -4px; }
 
     .post-header-meta {
-      opacity: 0.7;
-      font-size: 13px;
+      opacity: 0.55;
+      font-size: 12px;
       border-bottom: 1px solid var(--border);
-      padding-bottom: 20px;
-      margin-bottom: 28px;
-      color: var(--muted);
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
+      padding-bottom: 18px;
+      margin-bottom: 22px;
     }
 
-    /* TOC Sidebar */
-    .toc-card {
-      background: var(--card);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-lg);
-      padding: 20px;
-      box-shadow: 0 4px 24px var(--shadow);
-    }
-    .toc-title {
-      font-family: var(--font-display);
-      font-size: 13px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      color: var(--muted);
-      margin-bottom: 14px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .toc-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-    .toc-list a {
-      display: block;
-      font-size: 12.5px;
-      color: var(--muted);
-      text-decoration: none;
-      padding: 4px 0;
-      border-left: 2px solid transparent;
-      padding-left: 10px;
-      margin-left: -10px;
-      transition: all 0.2s;
-      line-height: 1.4;
-      word-break: break-word;
-    }
-    .toc-list a:hover, .toc-list a.active {
-      color: var(--accent);
-      border-left-color: var(--accent);
-    }
-    .toc-list a.h3 { padding-left: 18px; font-size: 12px; }
-    .toc-list a.h4 { padding-left: 26px; font-size: 11.5px; opacity: 0.8; }
-
-    /* Mobile TOC */
-    .toc-mobile-toggle {
-      display: none;
-      width: 100%;
-      margin-bottom: 16px;
-    }
-    @media (max-width: 1023px) {
-      .toc-mobile-toggle { display: flex; }
-      .post-sidebar-desktop { display: none; }
-    }
-
-    /* =========================================
-       CODE BLOCKS
-       ========================================= */
+    /* --- CODE BLOCKS: THE MOBILE FIX --- */
     code {
       background: var(--code-bg);
       padding: 2px 6px;
       border-radius: 4px;
-      font-family: var(--font-mono);
-      font-size: 0.82em;
-      word-break: break-all;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85em;
+      word-break: break-all;     /* break inline code */
       overflow-wrap: break-word;
-      color: var(--accent);
-      border: 1px solid var(--border);
     }
 
     pre {
       background: var(--code-bg);
-      padding: 20px;
-      border-radius: var(--radius-md);
+      padding: 16px;
+      border-radius: 8px;
       border: 1px solid var(--border);
-      overflow-x: auto;
+      overflow-x: auto;          /* scroll for code blocks */
       max-width: 100%;
       -webkit-overflow-scrolling: touch;
-      position: relative;
-      margin: 20px 0;
     }
     pre code {
       background: transparent;
       padding: 0;
-      word-break: normal;
+      word-break: normal;        /* normal inside pre, let pre scroll */
       overflow-wrap: normal;
       white-space: pre;
       display: block;
       font-size: 13px;
-      line-height: 1.7;
-      color: var(--text);
-      border: none;
+      line-height: 1.6;
     }
 
-    .code-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 8px 16px;
-      background: rgba(0,0,0,0.2);
-      border-bottom: 1px solid var(--border);
-      border-radius: var(--radius-md) var(--radius-md) 0 0;
-      margin: -20px -20px 16px -20px;
-      font-family: var(--font-mono);
-      font-size: 11px;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      font-weight: 600;
-    }
-    .light .code-header { background: rgba(0,0,0,0.03); }
-
-    .copy-btn {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      padding: 5px 10px;
-      font-size: 11px;
-      font-family: var(--font-mono);
-      font-weight: 600;
-      background: var(--card-elevated);
-      border: 1px solid var(--border);
-      color: var(--muted);
-      border-radius: 5px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      opacity: 0;
-      letter-spacing: 0.3px;
-      z-index: 2;
-    }
-    pre:hover .copy-btn { opacity: 1; }
-    .copy-btn:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-      background: var(--glow);
-    }
-    .copy-btn.copied {
-      border-color: var(--accent);
-      color: var(--accent);
-      opacity: 1;
-    }
-
-    /* =========================================
-       LINKS, BLOCKQUOTE, TABLES, IMAGES
-       ========================================= */
+    /* --- LINKS & URLS: THE KEY MOBILE FIX --- */
     a {
       color: var(--accent);
-      word-break: break-all;
+      word-break: break-all;     /* break long URLs */
       overflow-wrap: break-word;
-      text-decoration: none;
-      transition: opacity 0.2s;
     }
-    a:hover { text-decoration: underline; text-underline-offset: 3px; }
-    .post-content a { font-weight: 500; }
+    .post-content a {
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
 
+    /* blockquote */
     blockquote {
       border-left: 3px solid var(--accent);
-      margin: 20px 0;
-      padding: 12px 20px;
-      background: var(--card-elevated);
-      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      margin: 0;
+      padding: 8px 16px;
+      background: var(--card2);
+      border-radius: 0 6px 6px 0;
       font-style: italic;
       color: var(--muted);
     }
-    blockquote p:last-child { margin-bottom: 0 !important; }
 
+    /* tables */
     table {
       width: 100%;
       border-collapse: collapse;
       display: block;
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
-      font-size: 13.5px;
-      margin: 20px 0;
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--border);
+      font-size: 13px;
     }
     th, td {
       border: 1px solid var(--border);
-      padding: 10px 14px;
+      padding: 8px 12px;
       text-align: left;
       white-space: nowrap;
     }
-    th {
-      background: var(--card-elevated);
-      color: var(--accent);
-      font-weight: 700;
-      font-family: var(--font-display);
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-    tr:nth-child(even) { background: rgba(0,0,0,0.2); }
-    .light tr:nth-child(even) { background: rgba(0,0,0,0.02); }
+    th { background: var(--card2); color: var(--accent); font-weight: 600; }
 
+    /* images */
     .post-content img {
       max-width: 100%;
       height: auto;
-      border-radius: var(--radius-md);
+      border-radius: 8px;
       display: block;
-      margin: 20px 0;
-      border: 1px solid var(--border);
-      box-shadow: 0 4px 16px var(--shadow);
     }
 
-    /* Lists */
-    .post-content ul, .post-content ol {
-      margin: 16px 0;
-      padding-left: 24px;
-    }
-    .post-content li {
-      margin-bottom: 8px;
-      line-height: 1.7;
-    }
-    .post-content ul li::marker { color: var(--accent); }
-    .post-content ol li::marker {
-      color: var(--accent);
-      font-weight: 700;
-      font-family: var(--font-mono);
-    }
-
-    /* Horizontal rule */
-    .post-content hr {
-      border: none;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--border), transparent);
-      margin: 32px 0;
-    }
-
-    /* =========================================
-       POST FOOTER: SHARE, NAV, RELATED
-       ========================================= */
-    .post-footer {
-      margin-top: 40px;
-      padding-top: 24px;
-      border-top: 1px solid var(--border);
-    }
-
-    .share-section {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 28px;
-      flex-wrap: wrap;
-    }
-    .share-label {
-      font-size: 12px;
-      color: var(--muted);
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-    .share-btn {
-      padding: 6px 12px;
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--border);
-      background: var(--card-elevated);
-      color: var(--text);
-      font-family: var(--font-mono);
-      font-size: 12px;
-      cursor: pointer;
-      transition: all 0.2s;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .share-btn:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-      background: var(--glow);
-      transform: translateY(-1px);
-    }
-
-    .post-nav {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      margin-bottom: 32px;
-    }
-    @media (max-width: 480px) {
-      .post-nav { grid-template-columns: 1fr; }
-    }
-    .post-nav-card {
-      padding: 16px;
-      border-radius: var(--radius-md);
-      border: 1px solid var(--border);
-      background: var(--card-elevated);
-      cursor: pointer;
-      transition: all 0.2s;
-      text-decoration: none;
-      color: inherit;
-    }
-    .post-nav-card:hover {
-      border-color: var(--accent);
-      background: var(--glow);
-      transform: translateY(-2px);
-    }
-    .post-nav-label {
-      font-size: 11px;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      font-weight: 700;
-      margin-bottom: 6px;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-    .post-nav-title {
-      font-family: var(--font-display);
-      font-weight: 700;
-      font-size: 14px;
-      color: var(--heading);
-      line-height: 1.3;
-    }
-    .post-nav-card.next { text-align: right; }
-    .post-nav-card.next .post-nav-label { justify-content: flex-end; }
-
-    .related-posts {
-      margin-top: 8px;
-    }
-    .related-title {
-      font-family: var(--font-display);
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--heading);
-      margin-bottom: 14px;
-    }
-    .related-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 12px;
-    }
-    .related-card {
-      padding: 14px;
-      border-radius: var(--radius-md);
-      border: 1px solid var(--border);
-      background: var(--card-elevated);
-      cursor: pointer;
-      transition: all 0.2s;
-      text-decoration: none;
-      color: inherit;
-    }
-    .related-card:hover {
-      border-color: var(--accent);
-      background: var(--glow);
-      transform: translateY(-2px);
-    }
-    .related-card-title {
-      font-family: var(--font-display);
-      font-weight: 700;
-      font-size: 13px;
-      color: var(--heading);
-      margin-bottom: 4px;
-      line-height: 1.3;
-    }
-    .related-card-meta {
-      font-size: 11px;
-      color: var(--muted);
-    }
-
-    /* =========================================
-       HAMBURGER & SIDEBAR
-       ========================================= */
+    /* --- HAMBURGER --- */
     .hamburger {
       display: flex;
       flex-direction: column;
@@ -976,10 +376,9 @@
       padding: 6px;
       background: transparent;
       border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
+      border-radius: 6px;
       cursor: pointer;
       flex-shrink: 0;
-      transition: all 0.2s;
     }
     .hamburger span {
       display: block;
@@ -992,32 +391,35 @@
     .hamburger:hover { border-color: var(--accent); }
     .hamburger:hover span { background: var(--accent); }
 
+    /* --- SIDEBAR OVERLAY --- */
     .sidebar-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.6);
+      background: rgba(0,0,0,0.55);
       z-index: 200;
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.3s ease;
-      backdrop-filter: blur(4px);
+      backdrop-filter: blur(2px);
     }
-    .sidebar-overlay.active { opacity: 1; pointer-events: all; }
+    .sidebar-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
 
+    /* --- SIDEBAR DRAWER --- */
     .sidebar {
       position: fixed;
       top: 0; left: 0; bottom: 0;
-      width: 300px;
-      max-width: 85vw;
+      width: 280px;
       background: var(--card);
       border-right: 1px solid var(--border);
       z-index: 300;
       display: flex;
       flex-direction: column;
       transform: translateX(-100%);
-      transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+      transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
       overflow-y: auto;
-      box-shadow: 4px 0 24px rgba(0,0,0,0.3);
     }
     .sidebar.open { transform: translateX(0); }
 
@@ -1025,45 +427,44 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 20px 20px 16px;
+      padding: 18px 20px 14px;
       border-bottom: 1px solid var(--border);
       flex-shrink: 0;
     }
-    .sidebar-brand {
-      font-family: var(--font-display);
-      font-weight: 800;
-      font-size: 16px;
+    .sidebar-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
       color: var(--accent);
+      letter-spacing: 0.3px;
     }
     .sidebar-close-btn {
       background: transparent;
       border: 1px solid var(--border);
       color: var(--muted);
-      width: 32px;
-      height: 32px;
+      width: 28px;
+      height: 28px;
       padding: 0;
-      border-radius: var(--radius-sm);
+      border-radius: 5px;
       cursor: pointer;
-      font-size: 14px;
+      font-size: 13px;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.2s;
     }
-    .sidebar-close-btn:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-      background: var(--glow);
-    }
+    .sidebar-close-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--glow); }
 
-    .sb-section { border-bottom: 1px solid var(--border); }
+    /* --- SIDEBAR COLLAPSIBLE SECTIONS --- */
+    .sb-section {
+      border-bottom: 1px solid var(--border);
+    }
     .sb-section-toggle {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 16px 20px;
+      padding: 14px 20px;
       cursor: pointer;
-      font-family: var(--font-mono);
+      font-family: 'JetBrains Mono', monospace;
       font-size: 11px;
       font-weight: 700;
       letter-spacing: 2px;
@@ -1088,18 +489,23 @@
     .sb-section.open .sb-section-body {
       max-height: 60vh;
       overflow-y: auto;
-      padding: 0 20px 18px;
+      padding: 0 20px 16px;
     }
 
-    .social-list { display: flex; flex-direction: column; gap: 8px; }
+    /* --- SOCIAL LINKS --- */
+    .social-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
     .social-link {
       display: flex;
       align-items: center;
-      gap: 12px;
-      padding: 12px;
-      border-radius: var(--radius-md);
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
       border: 1px solid var(--border);
-      background: var(--card-elevated);
+      background: var(--card2);
       text-decoration: none;
       color: var(--text);
       transition: all 0.2s ease;
@@ -1108,9 +514,8 @@
       border-color: var(--accent);
       background: var(--glow);
       color: var(--accent);
-      transform: translateX(4px);
     }
-    .social-icon { font-size: 20px; flex-shrink: 0; }
+    .social-icon { font-size: 18px; flex-shrink: 0; }
     .social-info {
       display: flex;
       flex-direction: column;
@@ -1118,32 +523,41 @@
       min-width: 0;
     }
     .social-name {
-      font-family: var(--font-display);
+      font-family: 'Syne', sans-serif;
       font-size: 13px;
       font-weight: 700;
       line-height: 1.2;
     }
     .social-handle {
-      font-size: 11px;
+      font-size: 10px;
       color: var(--muted);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    .social-ext { font-size: 12px; opacity: 0.4; flex-shrink: 0; }
+    .social-ext {
+      font-size: 12px;
+      opacity: 0.4;
+      flex-shrink: 0;
+    }
     .social-link:hover .social-ext { opacity: 1; }
 
-    .category-list { display: flex; flex-wrap: wrap; gap: 8px; }
+    /* --- CATEGORY CHIPS --- */
+    .category-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
     .cat-chip {
       display: inline-flex;
       align-items: center;
       gap: 5px;
-      padding: 6px 12px;
+      padding: 5px 11px;
       border-radius: 20px;
       border: 1px solid var(--border);
-      background: var(--card-elevated);
+      background: var(--card2);
       color: var(--muted);
-      font-family: var(--font-mono);
+      font-family: 'JetBrains Mono', monospace;
       font-size: 11px;
       font-weight: 600;
       cursor: pointer;
@@ -1154,59 +568,46 @@
       border-color: var(--accent);
       color: var(--accent);
       background: var(--glow);
-      transform: translateY(-1px);
     }
     .cat-chip.selected {
       border-color: var(--accent);
       background: var(--glow);
       color: var(--accent);
-      box-shadow: 0 2px 8px var(--glow);
     }
     .cat-chip .cat-count {
       opacity: 0.6;
       font-size: 10px;
-      background: var(--card);
-      padding: 1px 5px;
-      border-radius: 10px;
-      border: 1px solid var(--border);
     }
 
+    /* Active filter indicator on posts-label */
     .filter-active-bar {
       display: flex;
       align-items: center;
       gap: 8px;
       flex-wrap: wrap;
-      margin-bottom: 14px;
-      font-size: 12px;
+      margin-bottom: 12px;
+      font-size: 11px;
       color: var(--muted);
-      animation: fadeInUp 0.3s ease both;
     }
     .filter-active-bar .active-chip {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 4px 10px;
+      gap: 4px;
+      padding: 3px 9px;
       border-radius: 20px;
       background: var(--glow);
       border: 1px solid var(--accent);
       color: var(--accent);
       font-size: 11px;
-      font-weight: 700;
+      font-weight: 600;
       cursor: pointer;
-      transition: all 0.2s;
-      font-family: var(--font-mono);
     }
-    .filter-active-bar .active-chip:hover {
-      background: rgba(248,81,73,0.1);
-      border-color: #f85149;
-      color: #f85149;
-    }
+    .filter-active-bar .active-chip:hover { opacity: 0.75; }
 
     .sidebar-footer {
       padding: 16px 20px;
       border-top: 1px solid var(--border);
       flex-shrink: 0;
-      margin-top: auto;
     }
     .clear-btn {
       width: 100%;
@@ -1214,281 +615,146 @@
       background: transparent;
       border: 1px solid var(--border);
       color: var(--muted);
-      padding: 10px;
-      border-radius: var(--radius-sm);
+      padding: 8px;
+      border-radius: 6px;
       font-size: 12px;
       cursor: pointer;
-      font-family: var(--font-mono);
+      font-family: 'JetBrains Mono', monospace;
       font-weight: 600;
       transition: all 0.2s;
     }
-    .clear-btn:hover {
-      border-color: #f85149;
-      color: #f85149;
-      background: rgba(248,81,73,0.08);
+    .clear-btn:hover { border-color: #f85149; color: #f85149; background: rgba(248,81,73,0.08); }
+
+    /* --- COPY BUTTON --- */
+    .copy-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      padding: 3px 9px;
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      background: var(--card2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      opacity: 0;
+      letter-spacing: 0.3px;
+    }
+    pre:hover .copy-btn { opacity: 1; }
+    .copy-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--glow);
+    }
+    .copy-btn.copied {
+      border-color: var(--accent);
+      color: var(--accent);
+      opacity: 1;
     }
 
-    /* =========================================
-       PAGINATION
-       ========================================= */
+    /* --- FOOTER --- */
+    footer {
+      text-align: center;
+      padding: 24px 16px;
+      color: var(--muted);
+      font-size: 12px;
+      border-top: 1px solid var(--border);
+    }
+    footer span { color: var(--accent); }
+
+    /* --- STATES --- */
+    .loading {
+      text-align: center;
+      padding: 48px 16px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .loading::before { content: ''; }
+    .error { text-align: center; padding: 40px 16px; color: #f85149; font-size: 13px; }
+    .hidden { display: none !important; }
+
+    /* --- THEME EMOJI ANIMATION --- */
+    @keyframes popSpin {
+      0%   { transform: scale(0.5) rotate(-45deg); opacity: 0; }
+      60%  { transform: scale(1.2) rotate(8deg); }
+      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+    .emoji { display: inline-block; }
+
+    /* --- PAGINATION --- */
     .pagination {
       display: flex;
       justify-content: center;
       align-items: center;
       gap: 6px;
-      margin-top: 32px;
+      margin-top: 28px;
       flex-wrap: wrap;
     }
     .page-btn {
       background: transparent;
       border: 1px solid var(--border);
       color: var(--muted);
-      padding: 8px 14px;
-      border-radius: var(--radius-sm);
+      padding: 7px 13px;
+      border-radius: 6px;
       cursor: pointer;
-      font-family: var(--font-mono);
+      font-family: 'JetBrains Mono', monospace;
       font-size: 13px;
       font-weight: 600;
       transition: all 0.2s ease;
-      min-width: 40px;
+      min-width: 36px;
       text-align: center;
     }
     .page-btn:hover:not(:disabled) {
       border-color: var(--accent);
       color: var(--accent);
       background: var(--glow);
-      transform: translateY(-1px);
     }
     .page-btn.active {
       border-color: var(--accent);
       background: var(--glow);
       color: var(--accent);
-      box-shadow: 0 2px 8px var(--glow);
     }
-    .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+    .page-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
     .page-info {
-      font-size: 12px;
-      color: var(--muted);
-      text-align: center;
-      margin-top: 12px;
-      letter-spacing: 0.5px;
-      font-family: var(--font-mono);
-    }
-
-    /* =========================================
-       SKELETON LOADING
-       ========================================= */
-    .skeleton {
-      background: linear-gradient(90deg, var(--card-elevated) 25%, var(--border) 50%, var(--card-elevated) 75%);
-      background-size: 200% 100%;
-      animation: skeleton 1.5s infinite;
-      border-radius: var(--radius-sm);
-    }
-    @keyframes skeleton {
-      0% { background-position: 200% 0; }
-      100% { background-position: -200% 0; }
-    }
-    .skeleton-card {
-      background: var(--card);
-      padding: 22px 24px;
-      margin-bottom: 14px;
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border-subtle);
-    }
-    .skeleton-line {
-      height: 14px;
-      margin-bottom: 10px;
-    }
-    .skeleton-line.short { width: 40%; }
-    .skeleton-line.medium { width: 70%; }
-
-    /* =========================================
-       BACK TO TOP
-       ========================================= */
-    #back-to-top {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      background: var(--card-elevated);
-      border: 1px solid var(--border);
-      color: var(--muted);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      opacity: 0;
-      pointer-events: none;
-      transform: translateY(10px);
-      transition: all 0.3s ease;
-      z-index: 90;
-      box-shadow: 0 4px 16px var(--shadow);
-    }
-    #back-to-top.visible {
-      opacity: 1;
-      pointer-events: all;
-      transform: translateY(0);
-    }
-    #back-to-top:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-      background: var(--glow);
-      transform: translateY(-2px);
-    }
-
-    /* =========================================
-       KEYBOARD SHORTCUTS MODAL
-       ========================================= */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.6);
-      z-index: 500;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.2s ease;
-      backdrop-filter: blur(4px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-    }
-    .modal-overlay.active { opacity: 1; pointer-events: all; }
-    .modal {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-xl);
-      padding: 28px;
-      max-width: 420px;
-      width: 100%;
-      box-shadow: 0 24px 64px var(--shadow);
-      transform: scale(0.95);
-      transition: transform 0.2s ease;
-    }
-    .modal-overlay.active .modal { transform: scale(1); }
-    .modal-title {
-      font-family: var(--font-display);
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--heading);
-      margin-bottom: 20px;
-    }
-    .shortcut-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 0;
-      border-bottom: 1px solid var(--border-subtle);
-      font-size: 13px;
-    }
-    .shortcut-row:last-child { border-bottom: none; }
-    .shortcut-keys {
-      display: flex;
-      gap: 4px;
-    }
-    kbd {
-      font-family: var(--font-mono);
       font-size: 11px;
-      padding: 3px 7px;
-      border: 1px solid var(--border);
-      border-radius: 5px;
-      background: var(--card-elevated);
       color: var(--muted);
-      box-shadow: 0 2px 0 var(--border);
-    }
-
-    /* =========================================
-       FOOTER
-       ========================================= */
-    footer {
       text-align: center;
-      padding: 32px 16px;
-      color: var(--muted);
-      font-size: 13px;
-      border-top: 1px solid var(--border);
-      margin-top: 20px;
-    }
-    footer span { color: var(--accent); font-weight: 700; }
-
-    /* =========================================
-       UTILITIES
-       ========================================= */
-    .hidden { display: none !important; }
-    .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0,0,0,0);
-      white-space: nowrap;
-      border: 0;
+      margin-top: 10px;
+      letter-spacing: 0.5px;
     }
 
-    /* Search highlight */
-    .highlight {
-      background: var(--accent-dim);
-      color: var(--accent);
-      border-radius: 2px;
-      padding: 0 2px;
-      font-weight: 600;
-    }
-
-    /* Print styles */
-    @media print {
-      header, .sidebar, .sidebar-overlay, #back-to-top, .post-sidebar,
-      .share-section, .post-nav, .related-posts, .search-wrapper, .posts-label,
-      .pagination, .page-info, .filter-active-bar, #reading-progress {
-        display: none !important;
-      }
-      body { background: #fff; color: #000; }
-      .post-content {
-        box-shadow: none;
-        border: none;
-        padding: 0;
-      }
-      a { color: #000; text-decoration: underline; }
-    }
-
-    /* =========================================
-       MOBILE
-       ========================================= */
-    @media (max-width: 640px) {
+    /* --- MOBILE SPECIFIC --- */
+    @media (max-width: 480px) {
       header { padding: 12px 14px; gap: 8px; }
       .logo { font-size: 17px; }
-      .btn, .nav-btn { padding: 6px 10px; font-size: 11px; }
-      .container { padding: 0 12px 32px; }
-      .hero { padding: 32px 12px 24px; }
+      button, .nav-btn { padding: 5px 10px; font-size: 11px; }
+      .container { padding: 20px 12px; }
       .post-card { padding: 16px; }
-      .post-card h2 { font-size: 16px; }
+      .post-card h2 { font-size: 15px; }
       .post-content { padding: 18px 14px; }
-      pre { padding: 14px; font-size: 12px; }
-      .post-nav { grid-template-columns: 1fr; }
-      .related-grid { grid-template-columns: 1fr; }
-      .search-hint { display: none; }
+      pre { padding: 12px; font-size: 12px; }
     }
   </style>
 </head>
 
 <body>
 
-  <a href="#main" class="skip-link">Skip to content</a>
-  <div id="reading-progress" aria-hidden="true"></div>
-
-  <!-- Sidebar -->
+  <!-- Sidebar Drawer -->
   <div id="sidebar-overlay" class="sidebar-overlay"></div>
-  <aside id="sidebar" class="sidebar" aria-label="Sidebar">
+  <aside id="sidebar" class="sidebar">
     <div class="sidebar-header">
-      <div class="sidebar-brand">AryterLog</div>
-      <button id="sidebar-close" class="sidebar-close-btn" aria-label="Close menu">✕</button>
+      <button id="sidebar-close" class="sidebar-close-btn" aria-label="Close">✕</button>
     </div>
+    <!-- Category Section -->
     <div class="sb-section">
       <div class="sb-section-toggle" id="toggle-category">
-        <span>Categories</span>
+        <span>Category</span>
         <span class="sb-arrow">▾</span>
       </div>
       <div class="sb-section-body" id="body-category">
@@ -1497,6 +763,8 @@
         </div>
       </div>
     </div>
+
+    <!-- My Socials Section -->
     <div class="sb-section">
       <div class="sb-section-toggle" id="toggle-socials">
         <span>My Socials</span>
@@ -1508,57 +776,32 @@
         </div>
       </div>
     </div>
+
     <div class="sidebar-footer">
-      <button id="clear-filters" class="clear-btn">✕ Clear all filters</button>
+      <button id="clear-filters" class="clear-btn">✕ Clear filters</button>
     </div>
   </aside>
-
-  <!-- Shortcuts Modal -->
-  <div id="shortcuts-modal" class="modal-overlay" aria-hidden="true">
-    <div class="modal" role="dialog" aria-labelledby="modal-title">
-      <div class="modal-title" id="modal-title">Keyboard Shortcuts</div>
-      <div class="shortcut-row"><span>Focus search</span><div class="shortcut-keys"><kbd>Ctrl</kbd><kbd>K</kbd></div></div>
-      <div class="shortcut-row"><span>Toggle theme</span><div class="shortcut-keys"><kbd>Ctrl</kbd><kbd>T</kbd></div></div>
-      <div class="shortcut-row"><span>Go back home</span><div class="shortcut-keys"><kbd>Esc</kbd></div></div>
-      <div class="shortcut-row"><span>Open sidebar</span><div class="shortcut-keys"><kbd>Ctrl</kbd><kbd>B</kbd></div></div>
-      <div class="shortcut-row"><span>Show shortcuts</span><div class="shortcut-keys"><kbd>?</kbd></div></div>
-      <div style="margin-top:16px;text-align:right;">
-        <button class="btn" onclick="toggleShortcuts(false)">Close</button>
-      </div>
-    </div>
-  </div>
 
   <header>
     <div style="display:flex;align-items:center;gap:12px;flex-shrink:0;">
       <button id="hamburger" class="hamburger" aria-label="Open menu">
         <span></span><span></span><span></span>
       </button>
-      <a href="#" class="logo" onclick="window.location.hash='';return false;">Aryter<span>Log</span></a>
+      <h1 class="logo" onclick="window.location.hash = ''">AryterLog</h1>
     </div>
+
     <div class="header-controls">
-      <button id="shortcuts-btn" class="btn" aria-label="Keyboard shortcuts" title="Shortcuts (?)">?</button>
-      <button id="theme-btn" class="btn" aria-label="Cycle theme">
-        <span id="theme-emoji">🌙</span>
+      <button id="theme-btn" aria-label="Cycle Theme">
+        <span class="emoji" id="theme-emoji">🌙</span>
         <span id="theme-label">Dark</span>
       </button>
     </div>
   </header>
 
-  <main id="main" class="container">
+  <main class="container">
     <div id="home-view">
-      <div class="hero">
-        <div class="hero-avatar">A</div>
-        <h2>Welcome to <span class="hero-gradient">AryterLog</span></h2>
-        <p>Learning. Building. Breaking. A digital garden of thoughts, code, and experiments.</p>
-        <div class="hero-stats" id="hero-stats">
-          <div class="hero-stat"><span class="hero-stat-value" id="stat-posts">0</span><span class="hero-stat-label">Posts</span></div>
-          <div class="hero-stat"><span class="hero-stat-value" id="stat-cats">0</span><span class="hero-stat-label">Categories</span></div>
-        </div>
-      </div>
-
       <div class="search-wrapper">
-        <input type="text" id="search-bar" placeholder="Search posts..." autocomplete="off">
-        <span class="search-hint">Ctrl K</span>
+        <input type="text" id="search-bar" placeholder="Search posts...">
       </div>
       <div class="posts-label">// Recent Posts</div>
       <div id="active-filter-bar"></div>
@@ -1568,27 +811,18 @@
     </div>
 
     <div id="post-view" class="hidden">
-      <button class="back-btn btn" onclick="window.location.hash = ''">← Back to posts</button>
-      <div class="post-layout">
-        <article id="post-content-container" class="post-content"></article>
-        <aside class="post-sidebar post-sidebar-desktop" aria-label="Table of contents">
-          <div class="toc-card" id="toc-card">
-            <div class="toc-title">📑 Contents</div>
-            <ul class="toc-list" id="toc-list"></ul>
-          </div>
-        </aside>
-      </div>
+      <button class="back-btn" onclick="window.location.hash = ''">← Back</button>
+      <article id="post-content-container" class="post-content"></article>
     </div>
   </main>
-
-  <button id="back-to-top" aria-label="Back to top">↑</button>
 
   <footer>Learning. Building. Breaking. ⚡ &nbsp;|&nbsp; Made by <span>Aryan Giri</span></footer>
 
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
   <script>
     /* =========================================
-       1. THEME
+       1. THEME LOGIC
        ========================================= */
     const themes = ["dark", "light", "eye-saver"];
     const themeData = {
@@ -1611,54 +845,70 @@
     const themeBtn   = document.getElementById("theme-btn");
     const themeEmoji = document.getElementById("theme-emoji");
 
-    function applyTheme(theme) {
+    function applyTheme(theme, animate = false) {
       document.body.className = theme === "dark" ? "" : theme;
       themeEmoji.textContent = themeData[theme].emoji;
       document.getElementById("theme-label").textContent = themeData[theme].label;
       setCookie("site_theme", theme, 365);
+      if (animate) {
+        themeEmoji.style.animation = "none";
+        themeEmoji.offsetHeight;
+        themeEmoji.style.animation = "popSpin 0.4s cubic-bezier(0.175,0.885,0.32,1.275) forwards";
+      }
     }
+
     applyTheme(currentTheme);
     themeBtn.addEventListener("click", () => {
       currentTheme = themes[(themes.indexOf(currentTheme) + 1) % themes.length];
-      applyTheme(currentTheme);
+      applyTheme(currentTheme, true);
     });
 
     /* =========================================
-       2. SIDEBAR
+       2. SIDEBAR & CATEGORY FILTER
        ========================================= */
-    const sidebar = document.getElementById("sidebar");
-    const sidebarOverlay = document.getElementById("sidebar-overlay");
-    const hamburger = document.getElementById("hamburger");
+    const sidebar         = document.getElementById("sidebar");
+    const sidebarOverlay  = document.getElementById("sidebar-overlay");
+    const hamburger       = document.getElementById("hamburger");
     const sidebarCloseBtn = document.getElementById("sidebar-close");
-    const categoryListEl = document.getElementById("category-list");
+    const categoryListEl  = document.getElementById("category-list");
     const clearFiltersBtn = document.getElementById("clear-filters");
     const activeFilterBar = document.getElementById("active-filter-bar");
 
     let selectedCategories = new Set();
 
-    function openSidebar() { sidebar.classList.add("open"); sidebarOverlay.classList.add("active"); }
+    function openSidebar()  { sidebar.classList.add("open"); sidebarOverlay.classList.add("active"); }
     function closeSidebar() { sidebar.classList.remove("open"); sidebarOverlay.classList.remove("active"); }
 
     hamburger.addEventListener("click", openSidebar);
     sidebarCloseBtn.addEventListener("click", closeSidebar);
     sidebarOverlay.addEventListener("click", closeSidebar);
 
+    // Collapsible section toggles
     document.querySelectorAll(".sb-section-toggle").forEach(toggle => {
-      toggle.addEventListener("click", () => toggle.parentElement.classList.toggle("open"));
+      toggle.addEventListener("click", () => {
+        const section = toggle.parentElement;
+        section.classList.toggle("open");
+      });
     });
 
+    // Sections start closed — user clicks to expand
+
     function buildCategoryChips() {
+      // Count posts per category
       const countMap = {};
       blogPosts.forEach(p => {
         const cats = Array.isArray(p.category) ? p.category : (p.category ? [p.category] : []);
-        cats.forEach(c => countMap[c] = (countMap[c] || 0) + 1);
+        cats.forEach(c => { countMap[c] = (countMap[c] || 0) + 1; });
       });
+
       const cats = Object.keys(countMap).sort();
       categoryListEl.innerHTML = "";
+
       if (!cats.length) {
-        categoryListEl.innerHTML = `<span style="color:var(--muted);font-size:12px;">No categories</span>`;
+        categoryListEl.innerHTML = `<span style="color:var(--muted);font-size:12px;">No categories found</span>`;
         return;
       }
+
       cats.forEach(cat => {
         const chip = document.createElement("div");
         chip.className = "cat-chip" + (selectedCategories.has(cat) ? " selected" : "");
@@ -1675,7 +925,6 @@
         };
         categoryListEl.appendChild(chip);
       });
-      document.getElementById("stat-cats").textContent = cats.length;
     }
 
     clearFiltersBtn.addEventListener("click", () => {
@@ -1707,54 +956,24 @@
     }
 
     /* =========================================
-       3. SEARCH & PAGINATION
+       3. SEARCH & LIST RENDERING WITH PAGINATION
        ========================================= */
     const listContainer = document.getElementById("post-list");
-    const paginationEl = document.getElementById("pagination");
-    const pageInfoEl = document.getElementById("page-info");
-    const searchBar = document.getElementById("search-bar");
-    let blogPosts = [];
-    let currentPage = 1;
-    let currentQuery = "";
+    const paginationEl  = document.getElementById("pagination");
+    const pageInfoEl    = document.getElementById("page-info");
+    const searchBar     = document.getElementById("search-bar");
+    let blogPosts       = [];
+    let currentPage     = 1;
+    let currentQuery    = "";
     const POSTS_PER_PAGE = 7;
-
-    function escapeHtml(text) {
-      const div = document.createElement("div");
-      div.textContent = text;
-      return div.innerHTML;
-    }
-    function highlightText(text, query) {
-      if (!query) return escapeHtml(text);
-      const regex = new RegExp(`(${escapeHtml(query)})`, "gi");
-      return escapeHtml(text).replace(regex, '<span class="highlight">$1</span>');
-    }
-
-    function estimateReadingTime(text) {
-      const words = text.trim().split(/\s+/).length;
-      const mins = Math.ceil(words / 200);
-      return mins < 1 ? 1 : mins;
-    }
-
-    function showSkeletons(count = 5) {
-      listContainer.innerHTML = "";
-      for (let i = 0; i < count; i++) {
-        const div = document.createElement("div");
-        div.className = "skeleton-card";
-        div.innerHTML = `
-          <div class="skeleton skeleton-line" style="width:60%;height:18px;margin-bottom:14px;"></div>
-          <div class="skeleton skeleton-line short"></div>
-          <div class="skeleton skeleton-line medium"></div>
-        `;
-        listContainer.appendChild(div);
-      }
-    }
 
     function renderPostCards(filterQuery = "", page = 1) {
       currentQuery = filterQuery;
-      currentPage = page;
+      currentPage  = page;
+
       listContainer.innerHTML = "";
-      paginationEl.innerHTML = "";
-      pageInfoEl.innerHTML = "";
+      paginationEl.innerHTML  = "";
+      pageInfoEl.innerHTML    = "";
       renderActiveFilterBar();
 
       const lq = filterQuery.toLowerCase();
@@ -1767,36 +986,29 @@
       });
 
       if (!filtered.length) {
-        listContainer.innerHTML = `<div style="text-align:center;padding:48px 16px;color:var(--muted);font-size:14px;">
-          No posts found${filterQuery ? ` for "<em>${escapeHtml(filterQuery)}</em>"` : ""}${selectedCategories.size ? " with selected filters" : ""}.
-        </div>`;
+        listContainer.innerHTML = `<div class="loading">No posts found${filterQuery ? ` for "<em>${filterQuery}</em>"` : ""}${selectedCategories.size ? " with selected filters" : ""}.</div>`;
         return;
       }
 
       const totalPages = Math.ceil(filtered.length / POSTS_PER_PAGE);
       currentPage = Math.max(1, Math.min(page, totalPages));
+
       const start = (currentPage - 1) * POSTS_PER_PAGE;
       const slice = filtered.slice(start, start + POSTS_PER_PAGE);
 
-      slice.forEach((post, idx) => {
+      slice.forEach(post => {
         const cats = Array.isArray(post.category) ? post.category : (post.category ? [post.category] : []);
-        const catHTML = cats.map(c => `<span class="card-cat-chip">${c}</span>`).join("");
-        const mins = estimateReadingTime(post.summary);
+        const catHTML = cats.map(c =>
+          `<span class="card-cat-chip">${c}</span>`
+        ).join("");
 
         const card = document.createElement("div");
         card.className = "post-card";
-        card.style.animationDelay = `${idx * 0.05}s`;
         card.onclick = () => window.location.hash = `post-${post.id}`;
         card.innerHTML = `
-          <div class="post-card-header">
-            <h2>${highlightText(post.title, filterQuery)}</h2>
-          </div>
-          <div class="meta">
-            📅 ${post.date}
-            ${catHTML ? `<span class="meta-sep">·</span> ${catHTML}` : ""}
-          </div>
-          <p>${highlightText(post.summary, filterQuery)}</p>
-          <div class="reading-time">⏱ ${mins} min read</div>
+          <h2>${post.title}</h2>
+          <div class="meta">📅 ${post.date}${catHTML ? ` &nbsp;·&nbsp; ${catHTML}` : ""}</div>
+          <p>${post.summary}</p>
         `;
         listContainer.appendChild(card);
       });
@@ -1807,28 +1019,30 @@
           btn.className = "page-btn" + (isActive ? " active" : "");
           btn.textContent = label;
           btn.disabled = isDisabled;
-          if (!isDisabled) btn.onclick = () => { renderPostCards(currentQuery, pg); window.scrollTo({top:0,behavior:'smooth'}); };
+          if (!isDisabled) {
+            btn.onclick = () => { renderPostCards(currentQuery, pg); window.scrollTo(0,0); };
+          }
           paginationEl.appendChild(btn);
         };
+
         addBtn("←", currentPage - 1, false, currentPage === 1);
-        let visible = [];
-        if (totalPages <= 5) for (let i = 1; i <= totalPages; i++) visible.push(i);
-        else if (currentPage <= 3) visible = [1,2,3,4,'...',totalPages];
-        else if (currentPage >= totalPages - 2) visible = [1,'...',totalPages-3,totalPages-2,totalPages-1,totalPages];
-        else visible = [1,'...',currentPage-1,currentPage,currentPage+1,'...',totalPages];
-        visible.forEach(p => {
-          if (p === '...') {
-            const span = document.createElement("span");
-            span.textContent = "...";
-            span.style.color = "var(--muted)";
-            span.style.padding = "8px";
-            paginationEl.appendChild(span);
-          } else addBtn(p, p, p === currentPage);
-        });
+
+        let visiblePages = [];
+        if (totalPages <= 3) {
+          for (let i = 1; i <= totalPages; i++) visiblePages.push(i);
+        } else if (currentPage === 1) {
+          visiblePages = [1, 2, 3];
+        } else if (currentPage === totalPages) {
+          visiblePages = [totalPages - 2, totalPages - 1, totalPages];
+        } else {
+          visiblePages = [currentPage - 1, currentPage, currentPage + 1];
+        }
+
+        visiblePages.forEach(p => addBtn(p, p, p === currentPage));
         addBtn("→", currentPage + 1, false, currentPage === totalPages);
 
         const from = start + 1;
-        const to = Math.min(start + POSTS_PER_PAGE, filtered.length);
+        const to   = Math.min(start + POSTS_PER_PAGE, filtered.length);
         pageInfoEl.textContent = `Showing ${from}–${to} of ${filtered.length} posts`;
       }
     }
@@ -1836,147 +1050,63 @@
     searchBar.addEventListener("input", e => renderPostCards(e.target.value, 1));
 
     /* =========================================
-       4. POST VIEW & TOC
+       3. ROUTING & FETCHING
        ========================================= */
-    const homeView = document.getElementById("home-view");
-    const postView = document.getElementById("post-view");
+    const homeView    = document.getElementById("home-view");
+    const postView    = document.getElementById("post-view");
     const postContent = document.getElementById("post-content-container");
-    const tocList = document.getElementById("toc-list");
-    const tocCard = document.getElementById("toc-card");
 
-    marked.setOptions({ breaks: true, gfm: true, headerIds: true });
-
-    let currentPostId = null;
-
-    function buildTOC() {
-      tocList.innerHTML = "";
-      const headings = postContent.querySelectorAll("h2, h3, h4");
-      if (!headings.length) {
-        tocCard.style.display = "none";
-        return;
-      }
-      tocCard.style.display = "block";
-      headings.forEach((h, i) => {
-        if (!h.id) h.id = `heading-${i}`;
-        const li = document.createElement("li");
-        const a = document.createElement("a");
-        a.href = `#${h.id}`;
-        a.textContent = h.textContent;
-        a.className = h.tagName.toLowerCase();
-        a.onclick = (e) => {
-          e.preventDefault();
-          h.scrollIntoView({ behavior: "smooth", block: "start" });
-          history.replaceState(null, null, `#${h.id}`);
-        };
-        li.appendChild(a);
-        tocList.appendChild(li);
-      });
-    }
-
-    function updateTOCActive() {
-      const headings = postContent.querySelectorAll("h2, h3, h4");
-      let current = null;
-      headings.forEach(h => {
-        const rect = h.getBoundingClientRect();
-        if (rect.top <= 100) current = h.id;
-      });
-      tocList.querySelectorAll("a").forEach(a => {
-        a.classList.toggle("active", a.getAttribute("href") === `#${current}`);
-      });
-    }
+    marked.setOptions({ breaks: true, gfm: true });
 
     async function loadFullPost(postId) {
-      currentPostId = postId;
       const meta = blogPosts.find(p => p.id === postId);
       if (!meta) {
-        postContent.innerHTML = `<div style="text-align:center;padding:40px;color:#f85149;">⚠️ Post not found.</div>`;
+        postContent.innerHTML = `<div class="error">⚠️ Post not found.</div>`;
         return;
       }
 
-      postContent.innerHTML = `<div style="text-align:center;padding:48px;color:var(--muted);">⟳ Loading post...</div>`;
+      postContent.innerHTML = `<div class="loading">⟳ Loading post...</div>`;
 
       try {
         const res = await fetch(meta.file);
         if (!res.ok) throw new Error("File not found");
         const md = await res.text();
-        const mins = estimateReadingTime(md);
-
-        // Mobile TOC toggle inside post
-        const mobileToc = meta.toc !== false ? `
-          <button class="btn toc-mobile-toggle" onclick="document.querySelector('.post-sidebar-desktop').classList.toggle('hidden');this.classList.toggle('btn-primary')">
-            📑 Table of Contents
-          </button>
-          <div class="post-sidebar post-sidebar-desktop hidden" style="margin-bottom:20px;">
-            <div class="toc-card"><ul class="toc-list" id="toc-list-mobile"></ul></div>
-          </div>
-        ` : '';
 
         postContent.innerHTML = `
-          ${mobileToc}
           <h1>${meta.title}</h1>
-          <div class="post-header-meta">
-            <span>📅 ${meta.date}</span>
-            <span class="meta-sep">·</span>
-            <span>⏱ ${mins} min read</span>
-            ${Array.isArray(meta.category) ? meta.category.map(c => `<span class="meta-sep">·</span><span style="color:var(--accent);font-weight:600;">#${c}</span>`).join('') : meta.category ? `<span class="meta-sep">·</span><span style="color:var(--accent);font-weight:600;">#${meta.category}</span>` : ''}
-          </div>
+          <div class="post-header-meta">📅 Published ${meta.date}</div>
           ${marked.parse(md)}
-          <div class="post-footer">
-            <div class="share-section">
-              <span class="share-label">Share:</span>
-              <button class="share-btn" onclick="sharePost('twitter')">𝕏 Twitter</button>
-              <button class="share-btn" onclick="sharePost('linkedin')">in LinkedIn</button>
-              <button class="share-btn" onclick="sharePost('copy')">🔗 Copy Link</button>
-            </div>
-            <div class="post-nav" id="post-nav"></div>
-            <div class="related-posts" id="related-posts"></div>
-          </div>
         `;
 
-        // Build TOC
-        buildTOC();
-        if (document.getElementById("toc-list-mobile")) {
-          document.getElementById("toc-list-mobile").innerHTML = tocList.innerHTML;
-        }
-
-        // Links
+        // Open all links in new tab
         postContent.querySelectorAll("a").forEach(link => {
-          if (!link.href.startsWith(window.location.origin) && !link.href.startsWith("#")) {
-            link.setAttribute("target", "_blank");
-            link.setAttribute("rel", "noopener noreferrer");
-          }
+          link.setAttribute("target", "_blank");
+          link.setAttribute("rel", "noopener noreferrer");
         });
 
-        // Code blocks
+        // Add copy button to every code block
         postContent.querySelectorAll("pre").forEach(pre => {
           const code = pre.querySelector("code");
           if (!code) return;
+
           pre.style.position = "relative";
-
-          // Detect language from class
-          let lang = "";
-          const cls = code.className || "";
-          const match = cls.match(/language-(\w+)/);
-          if (match) lang = match[1];
-
-          if (lang) {
-            const header = document.createElement("div");
-            header.className = "code-header";
-            header.innerHTML = `<span>${lang}</span>`;
-            pre.insertBefore(header, pre.firstChild);
-          }
 
           const btn = document.createElement("button");
           btn.className = "copy-btn";
           btn.textContent = "copy";
           btn.setAttribute("aria-label", "Copy code");
+
           btn.onclick = async () => {
             try {
               await navigator.clipboard.writeText(code.innerText.trimEnd());
               btn.textContent = "✓ copied";
               btn.classList.add("copied");
-              setTimeout(() => { btn.textContent = "copy"; btn.classList.remove("copied"); }, 2000);
+              setTimeout(() => {
+                btn.textContent = "copy";
+                btn.classList.remove("copied");
+              }, 2000);
             } catch {
+              // Fallback for older browsers
               const sel = window.getSelection();
               const range = document.createRange();
               range.selectNodeContents(code);
@@ -1986,85 +1116,36 @@
               sel.removeAllRanges();
               btn.textContent = "✓ copied";
               btn.classList.add("copied");
-              setTimeout(() => { btn.textContent = "copy"; btn.classList.remove("copied"); }, 2000);
+              setTimeout(() => {
+                btn.textContent = "copy";
+                btn.classList.remove("copied");
+              }, 2000);
             }
           };
+
           pre.appendChild(btn);
         });
-
-        // Post nav
-        const idx = blogPosts.findIndex(p => p.id === postId);
-        const navEl = document.getElementById("post-nav");
-        navEl.innerHTML = "";
-        if (idx > 0) {
-          const prev = blogPosts[idx - 1];
-          navEl.innerHTML += `<a class="post-nav-card" href="#post-${prev.id}">
-            <div class="post-nav-label">← Previous</div>
-            <div class="post-nav-title">${prev.title}</div>
-          </a>`;
-        } else {
-          navEl.innerHTML += `<div></div>`;
-        }
-        if (idx < blogPosts.length - 1) {
-          const next = blogPosts[idx + 1];
-          navEl.innerHTML += `<a class="post-nav-card next" href="#post-${next.id}">
-            <div class="post-nav-label">Next →</div>
-            <div class="post-nav-title">${next.title}</div>
-          </a>`;
-        }
-
-        // Related posts
-        const relatedEl = document.getElementById("related-posts");
-        const postCats = Array.isArray(meta.category) ? meta.category : (meta.category ? [meta.category] : []);
-        const related = blogPosts.filter(p => p.id !== postId && (
-          (Array.isArray(p.category) ? p.category : [p.category]).some(c => postCats.includes(c))
-        )).slice(0, 3);
-        if (related.length) {
-          relatedEl.innerHTML = `<div class="related-title">Related Posts</div>
-            <div class="related-grid">${related.map(r => `
-              <a class="related-card" href="#post-${r.id}">
-                <div class="related-card-title">${r.title}</div>
-                <div class="related-card-meta">${r.date}</div>
-              </a>
-            `).join("")}</div>`;
-        }
-
-        // Scroll progress
-        updateReadingProgress();
-
       } catch (err) {
-        postContent.innerHTML = `<div style="text-align:center;padding:40px;color:#f85149;">
-          <p>⚠️ Could not load post.</p>
-          <code style="font-size:12px;">${meta.file}</code>
-        </div>`;
+        postContent.innerHTML = `
+          <div class="error">
+            <p>⚠️ Could not load post.</p>
+            <code>${meta.file}</code>
+          </div>`;
       }
     }
 
-    function sharePost(platform) {
-      const url = encodeURIComponent(window.location.href);
-      const title = encodeURIComponent(document.querySelector(".post-content h1")?.textContent || "AryterLog");
-      if (platform === "twitter") window.open(`https://twitter.com/intent/tweet?url=${url}&text=${title}`, "_blank");
-      else if (platform === "linkedin") window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}`, "_blank");
-      else if (platform === "copy") {
-        navigator.clipboard.writeText(window.location.href).then(() => alert("Link copied to clipboard!"));
-      }
-    }
-
-    /* =========================================
-       5. ROUTING
-       ========================================= */
     function handleRoute() {
       const hash = window.location.hash;
       if (hash.startsWith("#post-")) {
         homeView.classList.add("hidden");
         postView.classList.remove("hidden");
         loadFullPost(hash.replace("#post-", ""));
-        window.scrollTo({ top: 0, behavior: "smooth" });
+        window.scrollTo(0, 0);
       } else {
         postView.classList.add("hidden");
         homeView.classList.remove("hidden");
+        // Reset to page 1 when navigating back home
         renderPostCards(searchBar.value, 1);
-        document.getElementById("reading-progress").style.width = "0%";
       }
     }
 
@@ -2087,70 +1168,10 @@
     }
 
     /* =========================================
-       6. KEYBOARD SHORTCUTS & MODAL
-       ========================================= */
-    const shortcutsModal = document.getElementById("shortcuts-modal");
-    function toggleShortcuts(show) {
-      shortcutsModal.classList.toggle("active", show);
-      shortcutsModal.setAttribute("aria-hidden", !show);
-      if (show) shortcutsModal.querySelector(".btn").focus();
-    }
-    document.getElementById("shortcuts-btn").addEventListener("click", () => toggleShortcuts(true));
-    shortcutsModal.addEventListener("click", e => { if (e.target === shortcutsModal) toggleShortcuts(false); });
-
-    document.addEventListener("keydown", e => {
-      if (e.key === "Escape") {
-        if (shortcutsModal.classList.contains("active")) { toggleShortcuts(false); return; }
-        if (sidebar.classList.contains("open")) { closeSidebar(); return; }
-        window.location.hash = "";
-      }
-      if (e.key === "?" && !["INPUT","TEXTAREA"].includes(document.activeElement.tagName)) {
-        e.preventDefault();
-        toggleShortcuts(true);
-      }
-      if ((e.ctrlKey || e.metaKey) && e.key === "k") {
-        e.preventDefault();
-        searchBar.focus();
-      }
-      if ((e.ctrlKey || e.metaKey) && e.key === "t") {
-        e.preventDefault();
-        themeBtn.click();
-      }
-      if ((e.ctrlKey || e.metaKey) && e.key === "b") {
-        e.preventDefault();
-        openSidebar();
-      }
-    });
-
-    /* =========================================
-       7. SCROLL EFFECTS
-       ========================================= */
-    const backToTop = document.getElementById("back-to-top");
-    const readingProgress = document.getElementById("reading-progress");
-
-    function updateReadingProgress() {
-      if (postView.classList.contains("hidden")) return;
-      const scrollTop = window.scrollY;
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
-      readingProgress.style.width = progress + "%";
-      updateTOCActive();
-    }
-
-    window.addEventListener("scroll", () => {
-      backToTop.classList.toggle("visible", window.scrollY > 500);
-      updateReadingProgress();
-    });
-
-    backToTop.addEventListener("click", () => {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    });
-
-    /* =========================================
-       8. BOOT
+       4. BOOT — load posts-info.json first
        ========================================= */
     async function init() {
-      showSkeletons();
+      listContainer.innerHTML = `<div class="loading">⟳ Loading posts...</div>`;
       try {
         const [postsRes, socialsRes] = await Promise.all([
           fetch("posts-info.json"),
@@ -2158,7 +1179,6 @@
         ]);
         if (!postsRes.ok) throw new Error("posts-info.json not found");
         blogPosts = await postsRes.json();
-        document.getElementById("stat-posts").textContent = blogPosts.length;
         buildCategoryChips();
 
         if (socialsRes.ok) {
@@ -2166,9 +1186,7 @@
           buildSocialLinks(socials);
         }
       } catch (err) {
-        listContainer.innerHTML = `<div style="text-align:center;padding:40px;color:#f85149;">
-          ⚠️ Could not load posts-info.json<br><small style="color:var(--muted);">${err.message}</small>
-        </div>`;
+        listContainer.innerHTML = `<div class="error">⚠️ Could not load posts-info.json<br><small>${err.message}</small></div>`;
         return;
       }
       window.addEventListener("hashchange", handleRoute);
