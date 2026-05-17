@@ -1,5 +1,13 @@
 [
   {
+  "id": "tryhackme-vectara-ai-odyssey-ctf-writeup",
+  "title": "TryHackMe Vectara — 2026: An AI Odyssey CTF Writeup",
+  "date": "2026-05-17",
+  "summary": "Comprehensive offensive security analysis of the TryHackMe Vectara AI Odyssey CTF covering prompt injection, AI supply chain compromise, RAG exploitation, data poisoning, agentic AI abuse, workflow drift, and AI-integrated attack chains through practical challenge walkthroughs and security research insights.",
+  "category": ["ai-security", "llm-security", "adversarial-ml", "red-team", "offensive-security", "pentesting", "attack-techniques", "vulnerability-research", "web-security", "threat-research", "automation", "ctf", "logic-bugs"],
+  "file": "posts/tryhackme-vectara-ai-odyssey-ctf-writeup.md"
+  },
+  {
   "id": "white-rabbit-tryhackme",
   "title": "White Rabbit — When Understanding the AI Beats Exploiting It",
   "date": "2026-05-10",
