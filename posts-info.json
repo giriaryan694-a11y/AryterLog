@@ -5,7 +5,7 @@
     "date": "2026-05-18",
     "summary": "Multi-stage password security assessment across firewall login, employee portal, social platform, SHA256 filename recovery, and SSH access. Demonstrates OSINT-based wordlists, CeWL/CUPP usage, Hydra brute forcing, and pattern-based password discovery.",
     "category": ["ctf","osint","pentesting","attack-techniques","web-security","linux","automation"],
-    "file_path": "posts/checkmate.md"
+    "file": "posts/checkmate.md"
   },
   {
   "id": "tryhackme-vectara-ai-odyssey-ctf-writeup",
