@@ -77,7 +77,7 @@
   "date": "2026-05-04",
   "summary": "THOR Cloud Lite is a cloud-based forensic scanning platform developed by Nextron Systems (a German cybersecurity company) used for on-demand endpoint investigations. It enables SOC and incident response teams to run remote campaigns across systems, collect forensic artifacts, detect malware traces using YARA/Sigma rules, and review centralized reports through a cloud dashboard. The platform operates in a non-real-time model, focusing on post-compromise analysis rather than continuous monitoring like traditional EDR systems. The free tier includes up to 30 scans per month per account.",
   "category": ["tooling","forensics","incident-response","defensive-security","malware-analysis"],
-  "file_path": "posts/thor-cloud-lite-nextron-systems-forensic-threat-hunting-platform.md"
+  "file": "posts/thor-cloud-lite-nextron-systems-forensic-threat-hunting-platform.md"
   },
   {
   "id": "owasp-cve-lite-cli",
@@ -85,7 +85,7 @@
   "date": "2026-05-04",
   "summary": "OWASP CVE Lite CLI is a lightweight, local-first vulnerability scanning tool for JavaScript/TypeScript projects that identifies vulnerable dependencies and provides direct remediation commands to speed up security fixes in development workflows.",
   "category": ["tooling", "vulnerability-research", "defensive-security", "automation"],
-  "file_path": "posts/owasp-cve-lite-cli.md"
+  "file": "posts/owasp-cve-lite-cli.md"
   },
   {
   "id": "cve-2026-41940-cpanel-whm-auth-bypass",
