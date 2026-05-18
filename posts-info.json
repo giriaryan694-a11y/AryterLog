@@ -1,5 +1,13 @@
 [
   {
+  "id": "pickle-fickling-modelscan-ml-supply-chain",
+  "title": "Pickle Internals, Fickling & ModelScan Usage for ML Artifact Security",
+  "date": "2026-05-18",
+  "summary": "Explains how Python pickle serialization can be abused for code execution in ML pipelines, and demonstrates how pickletools, Fickling, and ModelScan are used to analyze, decompile, and detect malicious model artifacts across pickle and HDF5-based formats.",
+  "category": ["ai-security","vulnerability-research","tooling","malware-analysis","red-team"],
+  "file": "posts/pickle-internals-fickling-modelscan.md"
+  },
+  {
     "id": "checkmate-01",
     "title": "Checkmate – Marco Password Attack Chain",
     "date": "2026-05-18",
