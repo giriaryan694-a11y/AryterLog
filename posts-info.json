@@ -1,5 +1,13 @@
 [
   {
+    "id": "checkmate-01",
+    "title": "Checkmate – Marco Password Attack Chain",
+    "date": "2026-05-18",
+    "summary": "Multi-stage password security assessment across firewall login, employee portal, social platform, SHA256 filename recovery, and SSH access. Demonstrates OSINT-based wordlists, CeWL/CUPP usage, Hydra brute forcing, and pattern-based password discovery.",
+    "category": ["ctf","osint","pentesting","attack-techniques","web-security","linux","automation"],
+    "file_path": "posts/checkmate.md"
+  },
+  {
   "id": "tryhackme-vectara-ai-odyssey-ctf-writeup",
   "title": "TryHackMe Vectara — 2026: An AI Odyssey CTF Writeup",
   "date": "2026-05-17",
