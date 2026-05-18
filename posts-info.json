@@ -1,5 +1,13 @@
 [
   {
+  "id": "practical-ethical-hacking-core-concepts-quick-revision",
+  "title": "Practical Ethical Hacking: Core Concepts & Quick Revision",
+  "date": "2026-05-18",
+  "summary": "A beginner-friendly yet practical breakdown of ethical hacking foundations covering networking, TCP/UDP, OSI model, subnetting, enumeration, note-taking, hacker methodology, and attacker mindset with real-world security context.",
+  "category": ["offensive-security", "pentesting", "network-security", "attack-techniques", "linux", "education", "reference"],
+  "file": "posts/practical-ethical-hacking-core-concepts-quick-revision.md"
+  },
+  {
   "id": "pickle-fickling-modelscan-ml-supply-chain",
   "title": "Pickle Internals, Fickling & ModelScan Usage for ML Artifact Security",
   "date": "2026-05-18",
