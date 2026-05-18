@@ -1,5 +1,13 @@
 [
   {
+  "id": "active-directory-attacks-made-simple",
+  "title": "Active Directory Attacks Made Simple",
+  "date": "2026-05-18",
+  "summary": "A beginner-friendly breakdown of Active Directory concepts, Kerberos, LDAP, LLMNR poisoning, Kerberoasting, credential attacks, enumeration, and common AD attack chains with practical examples and lab-based understanding.",
+  "category": ["active-directory", "windows", "pentesting", "attack-techniques", "network-security", "offensive-security", "red-team", "lab-setup"],
+  "file": "posts/active-directory-attacks-made-simple.md"
+  },
+  {
   "id": "practical-ethical-hacking-core-concepts-quick-revision",
   "title": "Practical Ethical Hacking: Core Concepts & Quick Revision",
   "date": "2026-05-18",
