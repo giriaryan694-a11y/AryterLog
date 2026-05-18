@@ -1,4 +1,3 @@
-# Practical Ethical Hacking Foundations: Networking, Methodology, and Hacker Mindset
 
 **Written by Aryan Giri**
 
