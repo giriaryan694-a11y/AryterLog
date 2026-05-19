@@ -1,5 +1,13 @@
 [
   {
+  "id": "tryhackme-checkpoint-supply-chain-ai-review",
+  "title": "TryHackMe Checkpoint: Supply Chain AI Review",
+  "date": "2026-05-19",
+  "summary": "CTF-style analysis of an AI supply-chain evaluation lab involving four model candidates, focusing on unsafe deserialization, guardrail bypass, policy template injection, and production safety decision-making.",
+  "category": ["ctf","ai-security","llm-security","evaluation"],
+  "file": "posts/tryhackme-checkpoint-supply-chain-ai-review.md"
+  },
+  {
   "id": "active-directory-attacks-made-simple",
   "title": "Active Directory Attacks Made Simple",
   "date": "2026-05-18",
