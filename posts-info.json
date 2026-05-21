@@ -1,11 +1,18 @@
 [
   {
+  "id": "modern-llm-jailbreak-ecosystem",
+  "title": "The Modern LLM Jailbreak Ecosystem",
+  "summary": "An analysis of the modern LLM jailbreak ecosystem including adversarial suffix attacks, transferability research, benchmarking frameworks, red teaming datasets, and automated jailbreak generation systems.",
+  "category": ["ai-security","llm-security","adversarial-ml","red-team","offensive-security","threat-research","benchmarking","evaluation","reference"],
+  "file": "posts/modern-llm-jailbreak-ecosystem.md"
+  },
+  {
   "id": "rag-attack-surfaces-threat-modelling",
   "title": "RAG Attack Surfaces and Threat Modelling",
   "summary": "A technical breakdown of Retrieval-Augmented Generation attack surfaces including document ingestion, embeddings, retrieval poisoning, and indirect prompt injection risks.",
   "category": ["ai-security","llm-security","threat-research","offensive-security"],
   "file": "posts/rag-attack-surfaces-threat-modelling.md"
-  }
+  },
   {
   "id": "tryhackme-checkpoint-supply-chain-ai-review",
   "title": "TryHackMe Checkpoint: Supply Chain AI Review",
