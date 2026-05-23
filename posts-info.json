@@ -10,6 +10,7 @@
   {
   "id": "modern-llm-jailbreak-ecosystem",
   "title": "The Modern LLM Jailbreak Ecosystem",
+  "date" : "2026-05-21",
   "summary": "An analysis of the modern LLM jailbreak ecosystem including adversarial suffix attacks, transferability research, benchmarking frameworks, red teaming datasets, and automated jailbreak generation systems.",
   "category": ["ai-security","llm-security","adversarial-ml","red-team","offensive-security","threat-research","benchmarking","evaluation","reference"],
   "file": "posts/modern-llm-jailbreak-ecosystem.md"
