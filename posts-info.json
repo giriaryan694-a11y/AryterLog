@@ -2,6 +2,7 @@
   {
   "id": "tryhackme-unindexed-rag-retrieval-boundary-failure",
   "title": "TryHackMe UnIndexed — RAG Retrieval Boundary Failure",
+  "date": "2026-05-23",
   "summary": "An analysis of the TryHackMe UnIndexed room focusing on RAG retrieval boundary collapse, semantic overreach, infrastructure leakage, and progressive disclosure attacks against enterprise AI assistants.",
   "category": ["ai-security","llm-security","offensive-security","threat-research","attack-techniques","ctf"],
   "file": "posts/tryhackme-unindexed-rag-retrieval-boundary-failure.md"
