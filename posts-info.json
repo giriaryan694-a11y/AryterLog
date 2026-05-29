@@ -1,5 +1,13 @@
 [
   {
+  "id": "when-phone-number-becomes-authentication",
+  "title": "When a Phone Number Becomes Authentication",
+  "date": "2026-05-29",
+  "summary": "A case study of a high-severity business logic flaw in an educational admission portal where knowledge of a student phone number effectively granted unauthorized access to sensitive admission records and uploaded documents.",
+  "category": ["logic-bugs","web-security","privacy","case-study","awareness","vulnerability-research","education"],
+  "file": "posts/when-phone-number-becomes-authentication.md"
+  },
+  {
   "id": "tryhackme-unindexed-rag-retrieval-boundary-failure",
   "title": "TryHackMe UnIndexed — RAG Retrieval Boundary Failure",
   "date": "2026-05-23",
