@@ -1,5 +1,13 @@
 [
   {
+  "id": "cname-ns-recon-infrastructure-mapping",
+  "title": "CNAME and NS Records in Recon: Infrastructure Mapping & Attack Surface Expansion",
+  "date": "2026-05-30",
+  "summary": "Explains how CNAME and NS DNS records expose backend infrastructure, cloud dependencies, and DNS authority, enabling deeper attack surface discovery during reconnaissance.",
+  "category": ["recon","infrastructure"],
+  "file": "posts/cname-ns-recon-infrastructure-mapping.md"
+  },
+  {
   "id": "when-phone-number-becomes-authentication",
   "title": "When a Phone Number Becomes Authentication",
   "date": "2026-05-29",
