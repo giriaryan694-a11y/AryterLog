@@ -135,7 +135,16 @@
     .social-handle{font-size:10px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
     .social-ext{font-size:12px;opacity:0.3;flex-shrink:0;transition:all 0.2s;}
 
-    .sidebar-footer{padding:13px 16px;border-top:1px solid var(--border);flex-shrink:0;margin-top:auto;}
+    .sidebar-footer{padding:13px 16px;border-top:1px solid var(--border);flex-shrink:0;margin-top:auto;display:flex;flex-direction:column;gap:8px;}
+    .web-resources-btn {
+      display:flex; align-items:center; gap:8px; justify-content:space-between;
+      width:100%; padding:9px 12px; border-radius:6px;
+      border:1px solid var(--border2); background:var(--surface2);
+      color:var(--text); font-family:'Fira Code',monospace; font-size:11px;
+      font-weight:500; text-decoration:none; transition:all 0.2s; cursor:pointer;
+    }
+    .web-resources-btn:hover{border-color:var(--accent2);color:var(--accent2);background:rgba(14,165,233,0.08);}
+    .web-resources-btn:hover .social-ext{opacity:1;transform:translate(2px,-2px);}
     .clear-btn {
       width:100%;justify-content:center;background:transparent;border:1px solid var(--border2);
       color:var(--text2);padding:8px;border-radius:6px;font-size:11px;cursor:pointer;
@@ -445,6 +454,10 @@
     </div>
 
     <div class="sidebar-footer">
+      <a href="web/index.html" class="web-resources-btn">
+        <span>🌐</span> My Web Resources
+        <span class="social-ext">↗</span>
+      </a>
       <button id="clear-filters" class="clear-btn">✕&nbsp; Clear filters</button>
     </div>
   </aside>
@@ -666,9 +679,11 @@
     async function loadFullPost(postId){
       const meta=blogPosts.find(p=>p.id===postId);
       if(!meta){postContent.innerHTML=`<div class="error">⚠️ Post not found.</div>`;return;}
+      const filePath = meta.file || meta.file_path;
+      if (!filePath) { postContent.innerHTML = `<div class="error"><p>⚠️ No file path defined for this post.</p><code>id: ${meta.id}</code></div>`; return; }
       postContent.innerHTML=`<div class="loading">⟳ Loading...</div>`;
       try{
-        const res=await fetch(meta.file);
+        const res=await fetch(filePath);
         if(!res.ok)throw new Error("File not found");
         const md=await res.text();
         postContent.innerHTML=`<h1>${meta.title}</h1><div class="post-header-meta">📅 Published ${meta.date}</div>${marked.parse(md)}`;
@@ -686,7 +701,7 @@
           };
           pre.appendChild(btn);
         });
-      }catch(err){postContent.innerHTML=`<div class="error"><p>⚠️ Could not load post.</p><code>${meta.file}</code></div>`;}
+      }catch(err){postContent.innerHTML=`<div class="error"><p>⚠️ Could not load post.</p><code>${filePath}</code></div>`;}
     }
 
     function handleRoute(){
