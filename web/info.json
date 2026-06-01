@@ -1,0 +1,127 @@
+[
+  {
+    "name": "Notes & Cheatsheets",
+    "tools": [
+      {
+        "name": "DEF CON 27 SEV Notes",
+        "url": "https://giriaryan694-a11y.github.io/DEF-CON-27-Social-Engineering-Village-Notes/",
+        "description": "Curated, structured collection of notes from DEF CON 27 Social Engineering Village talks on social engineering, psychology, OSINT, red teaming, human behavior, and defensive strategies."
+      },
+      {
+        "name": "RedTeam Arsenal",
+        "url": "https://giriaryan694-a11y.github.io/RedTeam-Arsenal/",
+        "description": "Your Ultimate Pentest & Red Team Cheatsheets Hub — curated resources, cheatsheets, and tools for security professionals, penetration testers, and red teamers."
+      },
+      {
+        "name": "SQLi Auth Bypass Cheatsheet",
+        "url": "https://giriaryan694-a11y.github.io/SQLi-Auth-Bypass-Cheatsheet/",
+        "description": "Ready-to-use SQLi payloads for bypassing login pages. Designed for educational purposes and authorized security testing."
+      },
+      {
+        "name": "Privacy Cheatsheets Hub",
+        "url": "https://giriaryan694-a11y.github.io/Privacy-Cheatsheets-Hub/",
+        "description": "Comprehensive guide to online privacy and security."
+      },
+      {
+        "name": "Google Bughunting Dork Cheatsheet",
+        "url": "https://giriaryan694-a11y.github.io/Google-Bughunting-Dork-Cheatsheet/",
+        "description": "Categorized collection of Google Dorks for security researchers and bug bounty hunters to streamline reconnaissance and vulnerability discovery."
+      }
+    ]
+  },
+  {
+    "name": "OSINT & Reconnaissance",
+    "tools": [
+      {
+        "name": "ary.osint",
+        "url": "https://giriaryan694-a11y.github.io/ary.osint/",
+        "description": "Comprehensive, well-organized directory of Open Source Intelligence (OSINT) tools, resources, and research materials. Centralized launcher for security researchers and OSINT enthusiasts."
+      },
+      {
+        "name": "Ary Recon",
+        "url": "https://giriaryan694-a11y.github.io/Ary-Recon/",
+        "description": "Comprehensive web-based passive reconnaissance tools directory."
+      },
+      {
+        "name": "Awesome Search Engines for CyberSec",
+        "url": "https://giriaryan694-a11y.github.io/Awsome-Search-Engines-For-CyberSec/",
+        "description": "Curated collection of powerful search engines used by cybersecurity professionals for OSINT, red teaming, threat intelligence, malware research, and cyber investigations."
+      }
+    ]
+  },
+  {
+    "name": "Learning & Education",
+    "tools": [
+      {
+        "name": "ARY.UNIVERSITY",
+        "url": "https://giriaryan694-a11y.github.io/ARY.UNIVERSITY/",
+        "description": "Your gateway to free cybersecurity knowledge. Explore curated online courses, hands-on labs, AI tools, and learning paths for beginners to advanced learners."
+      }
+    ]
+  },
+  {
+    "name": "Forensics & Metadata",
+    "tools": [
+      {
+        "name": "MetaLyzer",
+        "url": "https://giriaryan694-a11y.github.io/MetaLyzer/",
+        "description": "Client-side web app that extracts deep metadata (EXIF, XMP, IPTC, GPS) from images, videos, and documents entirely in your browser — no data ever uploaded."
+      },
+      {
+        "name": "ARYSIG",
+        "url": "https://giriaryan694-a11y.github.io/ARYSIG/",
+        "description": "Browser-based tool for viewing and modifying file magic bytes (file signatures), built for cybersecurity research, CTF challenges, and forensics work."
+      }
+    ]
+  },
+  {
+    "name": "URL & Web Security",
+    "tools": [
+      {
+        "name": "PhantomPath",
+        "url": "https://giriaryan694-a11y.github.io/PhantomPath/",
+        "description": "Client-side utility demonstrating URL obfuscation techniques. Understand how attackers mask malicious destinations for robust defense and user training."
+      },
+      {
+        "name": "MemoryPoison",
+        "url": "https://giriaryan694-a11y.github.io/MemoryPoison/",
+        "description": "AI Recommendation Poisoning — a real-world attack technique where adversaries inject persistent instructions into AI assistant memory through crafted URLs."
+      }
+    ]
+  },
+  {
+    "name": "Toolkits & Generators",
+    "tools": [
+      {
+        "name": "HunterVault",
+        "url": "https://giriaryan694-a11y.github.io/HunterVault/",
+        "description": "Web-based repository of 200+ bug bounty and penetration testing tools. Organized reference for security researchers, ethical hackers, and bug bounty hunters."
+      },
+      {
+        "name": "SQL Reverse Shell Generator",
+        "url": "https://giriaryan694-a11y.github.io/SQL-REVERSE-SHELL-GENERATOR/",
+        "description": "Exclusively designed for authorized security testing, educational purposes, and controlled red teaming simulations."
+      }
+    ]
+  },
+  {
+    "name": "Labs & Attack Simulators",
+    "tools": [
+      {
+        "name": "SVG Attack Lab",
+        "url": "https://giriaryan694-a11y.github.io/SVG-Attack-Lab/",
+        "description": "Fully client-side browser tool for demonstrating, injecting, and analyzing SVG-based attack vectors — for authorized security research, CTFs, and controlled lab environments."
+      },
+      {
+        "name": "SMUGGLR",
+        "url": "https://giriaryan694-a11y.github.io/SMUGGLR/",
+        "description": "Browser-based Unicode steganography and text obfuscation toolkit for invisible characters, homoglyphs, whitespace ciphers, and Unicode payload hiding — all client-side, zero network calls."
+      },
+      {
+        "name": "TrustNoChar",
+        "url": "https://giriaryan694-a11y.github.io/TrustNoChar/",
+        "description": "Zero-dependency browser lab demonstrating how Unicode homoglyphs and typosquatting exploit human visual perception. Transforms text into deceptive lookalike variants in real time."
+      }
+    ]
+  }
+]
