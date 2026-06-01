@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Web Resources</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .banner {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border-bottom: 2px solid #3b82f6;
+            padding: 40px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899, #3b82f6);
+            background-size: 300% 100%;
+            animation: gradient-shift 4s ease infinite;
+        }
+
+        @keyframes gradient-shift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .banner h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #f8fafc;
+            text-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+            letter-spacing: -0.5px;
+        }
+
+        .banner p {
+            color: #94a3b8;
+            margin-top: 8px;
+            font-size: 1rem;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: 10px;
+            background: #1e293b;
+            padding: 6px;
+            border-radius: 10px;
+            border: 1px solid #334155;
+        }
+
+        .view-toggle button {
+            padding: 8px 16px;
+            border: none;
+            background: transparent;
+            color: #94a3b8;
+            cursor: pointer;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .view-toggle button.active {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .view-toggle button:hover:not(.active) {
+            background: #334155;
+            color: #e2e8f0;
+        }
+
+        .filter-box {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .filter-box input {
+            padding: 10px 16px;
+            border: 1px solid #334155;
+            background: #1e293b;
+            color: #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            width: 260px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .filter-box input:focus {
+            border-color: #3b82f6;
+        }
+
+        .filter-box input::placeholder {
+            color: #64748b;
+        }
+
+        .main-content {
+            flex: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 0 40px 40px;
+        }
+
+        .category-section {
+            margin-bottom: 40px;
+        }
+
+        .category-title {
+            font-size: 1.3rem;
+            color: #f8fafc;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #334155;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .category-title .icon {
+            width: 8px;
+            height: 8px;
+            background: #3b82f6;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        /* Grid View */
+        .grid-view {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .tool-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tool-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s;
+        }
+
+        .tool-card:hover {
+            border-color: #3b82f6;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .tool-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .tool-card h3 {
+            color: #f8fafc;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+
+        .tool-card p {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        .tool-card .url-text {
+            color: #3b82f6;
+            font-size: 0.75rem;
+            margin-top: 12px;
+            word-break: break-all;
+            opacity: 0.7;
+        }
+
+        /* Button View */
+        .button-view {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .tool-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            color: #e2e8f0;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .tool-button:hover {
+            background: #334155;
+            border-color: #3b82f6;
+            color: #f8fafc;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+        }
+
+        .tool-button .btn-icon {
+            width: 6px;
+            height: 6px;
+            background: #3b82f6;
+            border-radius: 50%;
+        }
+
+        .footer {
+            background: #0f172a;
+            border-top: 1px solid #1e293b;
+            padding: 30px;
+            text-align: center;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .footer a {
+            color: #3b82f6;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #64748b;
+        }
+
+        .empty-state h2 {
+            color: #94a3b8;
+            margin-bottom: 10px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: #64748b;
+        }
+
+        .error {
+            text-align: center;
+            padding: 60px;
+            color: #ef4444;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 768px) {
+            .controls {
+                padding: 15px 20px;
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-box input {
+                width: 100%;
+            }
+
+            .main-content {
+                padding: 0 20px 30px;
+            }
+
+            .banner h1 {
+                font-size: 1.8rem;
+            }
+
+            .grid-view {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+<base target="_blank">
+</head>
+<body>
+    <div class="banner">
+        <h1>My Web Resources</h1>
+        <p>Curated tools and resources hosted on GitHub</p>
+    </div>
+
+    <div class="controls">
+        <div class="view-toggle">
+            <button id="btn-grid" class="active" onclick="setView('grid')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                </svg>
+                Grid
+            </button>
+            <button id="btn-button" onclick="setView('button')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+                Button
+            </button>
+        </div>
+        <div class="filter-box">
+            <input type="text" id="search-input" placeholder="Search tools..." oninput="filterTools()">
+        </div>
+    </div>
+
+    <div class="main-content" id="content">
+        <div class="loading">Loading resources...</div>
+    </div>
+
+    <div class="footer">
+        Made By Aryan Giri | <a href="https://github.com/giriaryan694-a11y" target="_blank">giriaryan694-a11y</a>
+    </div>
+
+    <script>
+        let allData = [];
+        let currentView = 'grid';
+
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+            return null;
+        }
+
+        function setCookie(name, value, days) {
+            const expires = new Date(Date.now() + days * 864e5).toUTCString();
+            document.cookie = `${name}=${value}; expires=${expires}; path=/`;
+        }
+
+        function setView(view) {
+            currentView = view;
+            setCookie('viewPreference', view, 365);
+
+            document.getElementById('btn-grid').classList.toggle('active', view === 'grid');
+            document.getElementById('btn-button').classList.toggle('active', view === 'button');
+
+            render();
+        }
+
+        async function loadData() {
+            try {
+                const response = await fetch('info.json');
+                if (!response.ok) throw new Error('Failed to load info.json');
+                allData = await response.json();
+                render();
+            } catch (err) {
+                document.getElementById('content').innerHTML = `
+                    <div class="error">
+                        <h3>Error loading info.json</h3>
+                        <p>${err.message}</p>
+                        <p style="margin-top:10px; color:#64748b;">Make sure info.json is in the same directory as index.html</p>
+                    </div>
+                `;
+            }
+        }
+
+        function filterTools() {
+            render();
+        }
+
+        function getFilteredData() {
+            const query = document.getElementById('search-input').value.toLowerCase().trim();
+            if (!query) return allData;
+
+            return allData.map(cat => ({
+                ...cat,
+                tools: cat.tools.filter(tool => 
+                    tool.name.toLowerCase().includes(query) ||
+                    (tool.description && tool.description.toLowerCase().includes(query)) ||
+                    tool.url.toLowerCase().includes(query)
+                )
+            })).filter(cat => cat.tools.length > 0);
+        }
+
+        function render() {
+            const data = getFilteredData();
+            const container = document.getElementById('content');
+
+            if (data.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <h2>No tools found</h2>
+                        <p>Try adjusting your search or check info.json</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            data.forEach(category => {
+                html += `
+                    <div class="category-section">
+                        <div class="category-title">
+                            <span class="icon"></span>
+                            ${escapeHtml(category.name)}
+                        </div>
+                        <div class="${currentView === 'grid' ? 'grid-view' : 'button-view'}">
+                `;
+
+                category.tools.forEach(tool => {
+                    if (currentView === 'grid') {
+                        html += `
+                            <a href="${escapeHtml(tool.url)}" target="_blank" class="tool-card">
+                                <h3>${escapeHtml(tool.name)}</h3>
+                                <p>${escapeHtml(tool.description || '')}</p>
+                                <div class="url-text">${escapeHtml(tool.url)}</div>
+                            </a>
+                        `;
+                    } else {
+                        html += `
+                            <a href="${escapeHtml(tool.url)}" target="_blank" class="tool-button">
+                                <span class="btn-icon"></span>
+                                ${escapeHtml(tool.name)}
+                            </a>
+                        `;
+                    }
+                });
+
+                html += `</div></div>`;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Initialize
+        const savedView = getCookie('viewPreference');
+        if (savedView && (savedView === 'grid' || savedView === 'button')) {
+            currentView = savedView;
+            document.getElementById('btn-grid').classList.toggle('active', savedView === 'grid');
+            document.getElementById('btn-button').classList.toggle('active', savedView === 'button');
+        }
+
+        loadData();
+    </script>
+</body>
+</html>
