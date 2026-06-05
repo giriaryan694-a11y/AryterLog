@@ -3,6 +3,11 @@
     "name": "Notes & Cheatsheets",
     "tools": [
       {
+        "name": "Pentest Framework Cheat Sheet",
+        "url": "https://giriaryan694-a11y.github.io/Pentest-Framework-Cheat-Sheet/",
+        "description": "Interactive reference guide for 9 penetration testing frameworks across 6 categories — PTES, NIST SP 800-115, ISSAF, OWASP WSTG, WASC TCv2, MITRE ATT&CK, OSSTMM, CSA CCM, OWASP MASTG. Includes when to use each framework, full descriptions, strengths, limitations, and direct links to official documentation. Dark/light/eye-saver themes, searchable, filterable by category."
+      },
+      {
         "name": "DEF CON 27 SEV Notes",
         "url": "https://giriaryan694-a11y.github.io/DEF-CON-27-Social-Engineering-Village-Notes/",
         "description": "Curated, structured collection of notes from DEF CON 27 Social Engineering Village talks on social engineering, psychology, OSINT, red teaming, human behavior, and defensive strategies."
