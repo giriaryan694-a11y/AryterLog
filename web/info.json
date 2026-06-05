@@ -61,6 +61,21 @@
         "name": "ARY.UNIVERSITY",
         "url": "https://giriaryan694-a11y.github.io/ARY.UNIVERSITY/",
         "description": "Your gateway to free cybersecurity knowledge. Explore curated online courses, hands-on labs, AI tools, and learning paths for beginners to advanced learners."
+      },
+      {
+        "name": "ip-subnet-calculator",
+        "url": "https://giriaryan694-a11y.github.io/ip-subnet-calculator/",
+        "description": "A modern, interactive IPv4 subnet calculator built for learners and pentesters. This web app calculates network addresses, broadcast addresses, usable host range, block size, and more, while explaining each step so you understand why the calculations work."
+      },
+      {
+        "name": "Ip-Range-Calculator",
+        "url": "https://giriaryan694-a11y.github.io/Ip-Range-Calculator/",
+        "description": "This webpage helps you understand and calculate IPv4 address ranges using simple math and clear explanations. It is designed for learners, pentesters, and networking beginners who want to see how IP ranges actually work instead of memorizing formulas."
+      },
+      {
+        "name": "Interactive OSI Model Simulator",
+        "url": "https://giriaryan694-a11y.github.io/Interactive-OSI-Model-Simulator/",
+        "description": "An interactive, emoji-based simulator of the OSI model designed to help users visualize how data travels from one computer to another. Covers OSI layers, encapsulation, de-encapsulation, TCP vs UDP, and network transmission with adjustable speed and full animations."
       }
     ]
   },
@@ -91,6 +106,26 @@
         "name": "MemoryPoison",
         "url": "https://giriaryan694-a11y.github.io/MemoryPoison/",
         "description": "AI Recommendation Poisoning — a real-world attack technique where adversaries inject persistent instructions into AI assistant memory through crafted URLs."
+      },
+      {
+        "name": "popstate-hijack-demo",
+        "url": "https://giriaryan694-a11y.github.io/popstate-hijack-demo/",
+        "description": "Client-side History API abuse, shown as a safe educational PoC."
+      }
+    ]
+  },
+  {
+    "name": "Cryptography & Privacy",
+    "tools": [
+      {
+        "name": "ARYCRYPT",
+        "url": "https://giriaryan694-a11y.github.io/ARYCRYPT/",
+        "description": "A sleek, hacker-themed file encryption web app that lets you encrypt any file into .ary format and decrypt it back with a password. Perfect for secure file sharing or just playing with crypto!"
+      },
+      {
+        "name": "ZeroTrustText",
+        "url": "https://giriaryan694-a11y.github.io/ZeroTrustText/",
+        "description": "Secure, Password-Based Text Encryption & Decryption."
       }
     ]
   },
@@ -106,6 +141,11 @@
         "name": "SQL Reverse Shell Generator",
         "url": "https://giriaryan694-a11y.github.io/SQL-REVERSE-SHELL-GENERATOR/",
         "description": "Exclusively designed for authorized security testing, educational purposes, and controlled red teaming simulations."
+      },
+      {
+        "name": "KeyCraft",
+        "url": "https://giriaryan694-a11y.github.io/KeyCraft/",
+        "description": "A modern, sleek, and customizable password generator web application built with vanilla HTML, CSS, and JavaScript."
       }
     ]
   },
@@ -126,6 +166,16 @@
         "name": "TrustNoChar",
         "url": "https://giriaryan694-a11y.github.io/TrustNoChar/",
         "description": "Zero-dependency browser lab demonstrating how Unicode homoglyphs and typosquatting exploit human visual perception. Transforms text into deceptive lookalike variants in real time."
+      },
+      {
+        "name": "Ref_XSS",
+        "url": "https://giriaryan694-a11y.github.io/Ref_XSS/",
+        "description": "A Hands-On DOM Cross-Site Scripting (XSS) Learning Lab."
+      },
+      {
+        "name": "JSStressTester",
+        "url": "https://giriaryan694-a11y.github.io/JSStressTester/",
+        "description": "JSStressTester is a lightweight, browser-based educational load/stress tester that simulates repeated HTTP requests (via image requests) to help you learn about request patterns, server logging, and basic load effects. Made for authorized testing and labs only."
       }
     ]
   }
