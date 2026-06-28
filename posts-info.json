@@ -1,5 +1,13 @@
 [
   {
+  "id": "tryhackme-recruit-writeup",
+  "title": "TryHackMe Recruit Writeup",
+  "date": "28-6-2026",
+  "summary": "Complete walkthrough of the TryHackMe Recruit room covering enumeration, information disclosure, Local File Inclusion, SQL Injection, and administrator compromise.",
+  "category": ["ctf", "web-security", "pentesting", "attack-techniques"],
+  "file": "posts/tryhackme-recruit-writeup.md"
+  },
+  {
   "id": "cname-ns-recon-infrastructure-mapping",
   "title": "CNAME and NS Records in Recon: Infrastructure Mapping & Attack Surface Expansion",
   "date": "2026-05-30",
