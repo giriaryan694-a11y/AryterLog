@@ -246,8 +246,6 @@ Next, test the search field for SQL Injection by entering:
 '
 ```
 <img width="1434" height="202" alt="Screenshot 2026-06-28 203857" src="https://github.com/user-attachments/assets/78fedec4-a324-4760-904d-62ad21955556" />
-<img width="773" height="641" alt="Screenshot 2026-06-28 204940" src="https://github.com/user-attachments/assets/d3eac015-3673-4f77-a62d-1ea29f1b7e9c" />
-<img width="773" height="641" alt="Screenshot 2026-06-28 204940" src="https://github.com/user-attachments/assets/2719b156-af34-4cc3-96ed-1644d7b5924b" />
 
 Instead of a normal response, the application returns an SQL error.
 
