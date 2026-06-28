@@ -216,7 +216,6 @@ we can successfully authenticate as the HR user.
 
 After login, the HR dashboard becomes accessible.
 
-<img width="1434" height="202" alt="Screenshot 2026-06-28 203857" src="https://github.com/user-attachments/assets/c87b1653-ef93-4b32-b598-8e4001735c88" />
 <img width="1571" height="655" alt="Screenshot 2026-06-28 203549" src="https://github.com/user-attachments/assets/0d774db7-d7d0-47c0-9ebe-abf1181296d4" />
 
 
