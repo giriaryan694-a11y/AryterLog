@@ -31,6 +31,11 @@
         "name": "Google Bughunting Dork Cheatsheet",
         "url": "https://giriaryan694-a11y.github.io/Google-Bughunting-Dork-Cheatsheet/",
         "description": "Categorized collection of Google Dorks for security researchers and bug bounty hunters to streamline reconnaissance and vulnerability discovery."
+      },
+      {
+        "name": "EscapeArtist",
+        "url": "https://giriaryan694-a11y.github.io/EscapeArtist/",
+        "description": "Interactive OS Command Injection Bypass Cheatsheet that dynamically generates syntactically valid command injection bypass payloads based on a target command and active character restrictions. Built for security researchers, penetration testers, and CTF players."
       }
     ]
   },
@@ -76,6 +81,11 @@
         "name": "Interactive OSI Model Simulator",
         "url": "https://giriaryan694-a11y.github.io/Interactive-OSI-Model-Simulator/",
         "description": "An interactive, emoji-based simulator of the OSI model designed to help users visualize how data travels from one computer to another. Covers OSI layers, encapsulation, de-encapsulation, TCP vs UDP, and network transmission with adjustable speed and full animations."
+      },
+      {
+        "name": "MD:// Viewer",
+        "url": "https://giriaryan694-a11y.github.io/MD-Viewer/",
+        "description": "Fully offline, client-side Markdown and mini-repository viewer. Render Markdown, Mermaid diagrams, images, videos, and ZIP repositories entirely in your browser with searchable navigation, syntax highlighting, multiple themes, and built-in local text-to-speech."
       }
     ]
   },
@@ -146,6 +156,11 @@
         "name": "KeyCraft",
         "url": "https://giriaryan694-a11y.github.io/KeyCraft/",
         "description": "A modern, sleek, and customizable password generator web application built with vanilla HTML, CSS, and JavaScript."
+      },
+      {
+        "name": "ShellCamo",
+        "url": "https://giriaryan694-a11y.github.io/ShellCamo/",
+        "description": "Advanced client-side command obfuscation generator for Bash, PowerShell, and cmd.exe. Produces heavily obfuscated payloads while keeping the original command hidden. Designed for authorized penetration testing, red teaming, CTFs, and security research."
       }
     ]
   },
