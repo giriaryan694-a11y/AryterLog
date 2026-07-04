@@ -1,5 +1,13 @@
 [
   {
+  "id": "ffuf-content-fuzzing-regex",
+  "title": "FFUF Content-Based Fuzzing: Eliminating False Positives with Regex",
+  "date": "04-07-2026",
+  "summary": "A practical guide to using ffuf's regex matching (-mr) and redirect following (-r) to detect sensitive data leaks in web applications, overcoming the limitations of status-code-based filtering.",
+  "category": ["web-security", "tooling", "offensive-security"],
+  "file": "posts/ffuf-content-fuzzing-regex.md"
+  },
+  {
   "id": "tryhackme-recruit-writeup",
   "title": "TryHackMe Recruit Writeup",
   "date": "28-6-2026",
