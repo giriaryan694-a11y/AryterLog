@@ -1,5 +1,13 @@
 [
   {
+  "id": "tryhackme-support-writeup",
+  "title": "TryHackMe Support Writeup",
+  "date": "5-7-2026",
+  "summary": "Web exploitation walkthrough covering brute force login, cookie manipulation, IDOR, LFI, and command injection leading to full system compromise.",
+  "category": ["ctf","web-security","pentesting","attack-techniques","post-exploitation"],
+  "file": "posts/tryhackme-support.md"
+  },
+  {
   "id": "ffuf-content-fuzzing-regex",
   "title": "FFUF Content-Based Fuzzing: Eliminating False Positives with Regex",
   "date": "04-07-2026",
