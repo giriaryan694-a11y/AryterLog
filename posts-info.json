@@ -1,5 +1,13 @@
 [
   {
+  "id": "google-calendar-invitation-phishing",
+  "title": "Google Calendar Invitation Phishing: How Attackers Abuse Calendar Invites for Social Engineering",
+  "date": "06-07-2026",
+  "summary": "An analysis of how attackers abuse legitimate Google Calendar invitations as phishing lures through social engineering, including a practical demonstration, MITRE ATT&CK mapping, and mitigation guidance.",
+  "category": ["phishing", "social-engineering", "awareness", "threat-research"],
+  "file": "posts/google-calendar-invitation-phishing.md"
+  },
+  {
   "id": "tryhackme-support-writeup",
   "title": "TryHackMe Support Writeup",
   "date": "5-7-2026",
