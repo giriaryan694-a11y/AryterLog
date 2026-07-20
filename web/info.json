@@ -1,6 +1,6 @@
 [
   {
-    "name": "Notes & Cheatsheets",
+    "name": "Notes, Cheatsheets & Workflow",
     "tools": [
       {
         "name": "Pentest Framework Cheat Sheet",
@@ -36,6 +36,11 @@
         "name": "EscapeArtist",
         "url": "https://giriaryan694-a11y.github.io/EscapeArtist/",
         "description": "Interactive OS Command Injection Bypass Cheatsheet that dynamically generates syntactically valid command injection bypass payloads based on a target command and active character restrictions. Built for security researchers, penetration testers, and CTF players."
+      },
+      {
+        "name": "AryNotes",
+        "url": "https://giriaryan694-a11y.github.io/AryNotes/",
+        "description": "Local, offline engagement notebook for authorized penetration testing workflows and general note-keeping. A lightweight, browser-based note-taking application designed to securely store findings, commands, and evidence. All data remains strictly on your device—no cloud, no servers, 100% offline."
       }
     ]
   },
@@ -90,7 +95,7 @@
     ]
   },
   {
-    "name": "Forensics & Metadata",
+    "name": "Forensics, Metadata & Sanitization",
     "tools": [
       {
         "name": "MetaLyzer",
@@ -101,6 +106,11 @@
         "name": "ARYSIG",
         "url": "https://giriaryan694-a11y.github.io/ARYSIG/",
         "description": "Browser-based tool for viewing and modifying file magic bytes (file signatures), built for cybersecurity research, CTF challenges, and forensics work."
+      },
+      {
+        "name": "Cleanslate",
+        "url": "https://giriaryan694-a11y.github.io/Cleanslate/",
+        "description": "A small, local-only tool for stripping hidden metadata from files before you share them. Everything runs in the browser — no upload, no server, no account."
       }
     ]
   },
