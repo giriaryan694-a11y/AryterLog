@@ -1,5 +1,19 @@
 [
   {
+  "id": "the-concierge-knows-too-much",
+  "title": "The Concierge Knows Too Much - TryHackMe Hacker Holidays 2026 Writeup",
+  "date": "28-07-2026",
+  "summary": "Writeup of the first Hacker Holidays 2026 room demonstrating prompt injection, trust boundary enumeration, system prompt leakage, and LLM authorization bypass against VERA.",
+  "category": [
+    "ai-security",
+    "llm-security",
+    "offensive-security",
+    "prompt-injection",
+    "tryhackme"
+  ],
+  "file": "posts/the-concierge-knows-too-much.md"
+  },
+  {
   "id": "google-calendar-invitation-phishing",
   "title": "Google Calendar Invitation Phishing: How Attackers Abuse Calendar Invites for Social Engineering",
   "date": "06-07-2026",
