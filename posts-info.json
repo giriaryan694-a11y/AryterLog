@@ -1,5 +1,18 @@
 [
   {
+  "id": "thm-room-404-hacker-holidays-2026",
+  "title": "TryHackMe Hacker Holidays 2026: Room 404 Writeup",
+  "date": "29-07-2026",
+  "summary": "Walkthrough of the TryHackMe Hacker Holidays 2026 Room 404 challenge covering exposed Git repositories, repository recovery using git-dumper, and the security risks of publicly accessible .git directories.",
+  "category": [
+    "ctf",
+    "web-security",
+    "recon",
+    "tooling"
+  ],
+  "file": "posts/thm-room-404-hacker-holidays-2026.md"
+  },
+  {
   "id": "the-concierge-knows-too-much",
   "title": "The Concierge Knows Too Much - TryHackMe Hacker Holidays 2026 Writeup",
   "date": "28-07-2026",
