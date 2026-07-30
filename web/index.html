@@ -1,504 +1,420 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Web Resources</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Web Resources — AryterLog</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+  <base target="_blank">
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #0f172a;
-            color: #e2e8f0;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
+  <style>
+    :root {
+      --bg:#080b10; --surface:#0d1117; --surface2:#111820; --surface3:#161d27;
+      --text:#d0dbe8; --text2:#7a8a9a; --accent:#00ff88; --accent2:#0ea5e9;
+      --danger:#ff4560; --border:#1e2a38; --border2:#2a3848; --code-bg:#0a0f16;
+      --glow:rgba(0,255,136,0.08); --glow2:rgba(0,255,136,0.18);
+    }
+    .light {
+      --bg:#f5f7fa; --surface:#ffffff; --surface2:#f0f4f8; --surface3:#e8eef5;
+      --text:#111827; --text2:#6b7280; --accent:#059669; --accent2:#0284c7;
+      --danger:#dc2626; --border:#e2e8f0; --border2:#cbd5e1; --code-bg:#f1f5f9;
+      --glow:rgba(5,150,105,0.07); --glow2:rgba(5,150,105,0.14);
+    }
+    .eye-saver {
+      --bg:#12100a; --surface:#1a1608; --surface2:#211c0c; --surface3:#282210;
+      --text:#e8d8b0; --text2:#9a8860; --accent:#f5c542; --accent2:#e08030;
+      --danger:#e05050; --border:#302810; --border2:#3d3418; --code-bg:#0f0d06;
+      --glow:rgba(245,197,66,0.08); --glow2:rgba(245,197,66,0.18);
+    }
 
-        .banner {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            border-bottom: 2px solid #3b82f6;
-            padding: 40px 20px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
 
-        .banner::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899, #3b82f6);
-            background-size: 300% 100%;
-            animation: gradient-shift 4s ease infinite;
-        }
+    body {
+      font-family:'Fira Code',monospace;
+      background:var(--bg); color:var(--text);
+      min-height:100vh; overflow-x:hidden;
+      transition:background 0.4s,color 0.4s;
+      display:flex; flex-direction:column;
+    }
 
-        @keyframes gradient-shift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
+    body::before {
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+      background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
+      background-size:44px 44px; opacity:0.25;
+    }
 
-        .banner h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #f8fafc;
-            text-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
-            letter-spacing: -0.5px;
-        }
+    /* ── HEADER ── */
+    header {
+      position:sticky; top:0; z-index:200;
+      background:rgba(8,11,16,0.86); backdrop-filter:blur(16px);
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 22px; height:56px; gap:12px;
+    }
+    .light header{background:rgba(245,247,250,0.9);}
+    .eye-saver header{background:rgba(18,16,10,0.9);}
+    header::after {
+      content:''; position:absolute; bottom:-1px; left:8%; right:8%; height:1px;
+      background:linear-gradient(90deg,transparent,var(--accent),transparent); opacity:0.35;
+    }
+    .header-left{display:flex;align-items:center;gap:14px;flex-shrink:0;}
 
-        .banner p {
-            color: #94a3b8;
-            margin-top: 8px;
-            font-size: 1rem;
-        }
+    .back-link {
+      display:inline-flex; align-items:center; gap:6px;
+      background:transparent; border:1px solid var(--border2); color:var(--text2);
+      padding:6px 12px; border-radius:6px; cursor:pointer; transition:all 0.2s;
+      font-family:'Fira Code',monospace; font-size:11px; text-decoration:none;
+    }
+    .back-link:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
 
-        .controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 40px;
-            max-width: 1400px;
-            margin: 0 auto;
-            width: 100%;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
+    .logo {
+      font-family:'Bebas Neue',sans-serif; font-size:24px; font-weight:400;
+      letter-spacing:3px; color:var(--text); cursor:pointer; white-space:nowrap;
+      flex-shrink:0; line-height:1; transition:color 0.2s;
+    }
+    .logo .lo-a{color:var(--accent);}
+    .logo:hover .lo-a{text-shadow:0 0 14px var(--accent);}
 
-        .view-toggle {
-            display: flex;
-            gap: 10px;
-            background: #1e293b;
-            padding: 6px;
-            border-radius: 10px;
-            border: 1px solid #334155;
-        }
+    #theme-btn {
+      background:transparent; border:1px solid var(--border2);
+      padding:5px 11px; cursor:pointer; color:var(--text2); border-radius:6px;
+      transition:all 0.2s; font-family:'Fira Code',monospace; font-size:11px;
+      display:inline-flex; align-items:center; gap:6px; white-space:nowrap;
+    }
+    #theme-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
 
-        .view-toggle button {
-            padding: 8px 16px;
-            border: none;
-            background: transparent;
-            color: #94a3b8;
-            cursor: pointer;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
+    @keyframes popSpin{0%{transform:scale(0.4) rotate(-60deg);opacity:0;}70%{transform:scale(1.15) rotate(5deg);}100%{transform:scale(1) rotate(0deg);opacity:1;}}
+    .emoji{display:inline-block;}
 
-        .view-toggle button.active {
-            background: #3b82f6;
-            color: white;
-        }
+    /* ── HERO ── */
+    .hero{position:relative;z-index:1;padding:44px 22px 32px;max-width:1300px;margin:0 auto;width:100%;}
+    .hero-tag {
+      display:inline-flex; align-items:center; gap:8px;
+      font-family:'Fira Code',monospace; font-size:10px; letter-spacing:2px;
+      text-transform:uppercase; color:var(--accent); margin-bottom:14px;
+    }
+    .hero-tag::before{content:'';display:inline-block;width:18px;height:1px;background:var(--accent);}
+    .hero h2 {
+      font-family:'Space Grotesk',sans-serif;
+      font-size:clamp(26px,5vw,40px); font-weight:700; line-height:1.15;
+      color:var(--text); margin-bottom:12px;
+    }
+    .hero h2 em{font-style:normal;color:var(--accent);}
+    .hero-sub{font-family:'Fira Code',monospace;font-size:12px;color:var(--text2);line-height:1.7;max-width:520px;}
+    .cursor{display:inline-block;width:7px;height:13px;background:var(--accent);vertical-align:middle;margin-left:2px;animation:blink 1.1s step-end infinite;}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
 
-        .view-toggle button:hover:not(.active) {
-            background: #334155;
-            color: #e2e8f0;
-        }
+    /* ── CONTROLS ── */
+    .controls {
+      display:flex; justify-content:space-between; align-items:center;
+      padding:0 22px 24px; max-width:1300px; margin:0 auto; width:100%;
+      flex-wrap:wrap; gap:14px; position:relative; z-index:1;
+    }
 
-        .filter-box {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
+    .view-toggle {
+      display:flex; gap:4px; background:var(--surface); padding:4px;
+      border-radius:8px; border:1px solid var(--border2);
+    }
+    .view-toggle button {
+      padding:7px 14px; border:none; background:transparent; color:var(--text2);
+      cursor:pointer; border-radius:5px; font-size:11px; font-family:'Fira Code',monospace;
+      font-weight:500; transition:all 0.2s; display:flex; align-items:center; gap:6px;
+    }
+    .view-toggle button.active{background:var(--glow2);color:var(--accent);box-shadow:0 0 8px var(--glow2);}
+    .view-toggle button:hover:not(.active){background:var(--surface2);color:var(--text);}
 
-        .filter-box input {
-            padding: 10px 16px;
-            border: 1px solid #334155;
-            background: #1e293b;
-            color: #e2e8f0;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            width: 260px;
-            outline: none;
-            transition: border-color 0.2s;
-        }
+    .filter-box{position:relative;}
+    .search-prefix{
+      position:absolute;left:14px;top:50%;transform:translateY(-50%);
+      color:var(--accent);font-family:'Fira Code',monospace;font-size:13px;
+      font-weight:500;pointer-events:none;user-select:none;
+    }
+    .filter-box input {
+      padding:9px 14px 9px 36px; border:1px solid var(--border2); background:var(--surface);
+      color:var(--text); border-radius:8px; font-size:12px; font-family:'Fira Code',monospace;
+      width:250px; outline:none; transition:border-color 0.25s,box-shadow 0.25s;
+    }
+    .filter-box input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--glow),0 0 18px var(--glow);}
+    .filter-box input::placeholder{color:var(--text2);opacity:0.7;}
 
-        .filter-box input:focus {
-            border-color: #3b82f6;
-        }
+    /* ── MAIN CONTENT ── */
+    .main-content{flex:1;max-width:1300px;margin:0 auto;width:100%;padding:0 22px 50px;position:relative;z-index:1;}
 
-        .filter-box input::placeholder {
-            color: #64748b;
-        }
+    .category-section{margin-bottom:36px;}
+    .category-title {
+      display:flex; align-items:center; gap:10px;
+      font-family:'Fira Code',monospace; font-size:10px; letter-spacing:2.5px;
+      text-transform:uppercase; color:var(--text2); margin-bottom:16px;
+    }
+    .category-title .icon{
+      width:6px;height:6px;border-radius:50%;background:var(--accent);
+      box-shadow:0 0 6px var(--accent); flex-shrink:0;
+    }
+    .category-title::after{content:'';flex:1;height:1px;background:var(--border);}
 
-        .main-content {
-            flex: 1;
-            max-width: 1400px;
-            margin: 0 auto;
-            width: 100%;
-            padding: 0 40px 40px;
-        }
+    /* Grid view */
+    @keyframes cardIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
 
-        .category-section {
-            margin-bottom: 40px;
-        }
+    .grid-view{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px;}
 
-        .category-title {
-            font-size: 1.3rem;
-            color: #f8fafc;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #334155;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+    .tool-card {
+      background:var(--surface); border:1px solid var(--border); border-radius:10px;
+      padding:20px 22px; transition:border-color 0.25s,box-shadow 0.25s,transform 0.2s;
+      text-decoration:none; color:inherit; display:block; position:relative;
+      overflow:hidden; animation:cardIn 0.35s ease both;
+    }
+    .tool-card::before {
+      content:''; position:absolute; inset:0;
+      background:radial-gradient(ellipse at 0% 50%,var(--glow2) 0%,transparent 65%);
+      opacity:0; transition:opacity 0.3s; pointer-events:none;
+    }
+    .tool-card::after {
+      content:''; position:absolute; left:0; top:14px; bottom:14px; width:2px;
+      background:var(--accent); border-radius:2px;
+      transform:scaleY(0); transition:transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
+      transform-origin:center;
+    }
+    .tool-card:hover{border-color:var(--border2);box-shadow:0 4px 24px rgba(0,0,0,0.28);transform:translateX(4px);}
+    .tool-card:hover::before{opacity:1;}
+    .tool-card:hover::after{transform:scaleY(1);}
 
-        .category-title .icon {
-            width: 8px;
-            height: 8px;
-            background: #3b82f6;
-            border-radius: 50%;
-            display: inline-block;
-        }
+    .tool-card h3 {
+      font-family:'Space Grotesk',sans-serif; font-size:15px; font-weight:600;
+      color:var(--text); margin-bottom:7px; line-height:1.35; transition:color 0.2s;
+    }
+    .tool-card:hover h3{color:var(--accent);}
+    .tool-card p{font-family:'Fira Code',monospace;font-size:12px;color:var(--text2);line-height:1.65;}
+    .tool-card .url-text {
+      color:var(--accent2); font-size:10px; margin-top:12px; word-break:break-all;
+      opacity:0.65; font-family:'Fira Code',monospace;
+    }
 
-        /* Grid View */
-        .grid-view {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-        }
+    /* Button view */
+    .button-view{display:flex;flex-wrap:wrap;gap:10px;}
+    .tool-button {
+      display:inline-flex; align-items:center; gap:8px; padding:10px 18px;
+      background:var(--surface); border:1px solid var(--border2); border-radius:7px;
+      color:var(--text); text-decoration:none; font-size:12px; font-family:'Fira Code',monospace;
+      font-weight:500; transition:all 0.2s; cursor:pointer;
+    }
+    .tool-button:hover {
+      background:var(--glow); border-color:var(--accent); color:var(--accent);
+      transform:translateY(-2px); box-shadow:0 4px 14px var(--glow2);
+    }
+    .tool-button .btn-icon{width:5px;height:5px;border-radius:50%;background:var(--accent);flex-shrink:0;}
 
-        .tool-card {
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 12px;
-            padding: 24px;
-            transition: all 0.3s;
-            text-decoration: none;
-            color: inherit;
-            display: block;
-            position: relative;
-            overflow: hidden;
-        }
+    /* ── FOOTER ── */
+    footer{
+      text-align:center;padding:22px 16px;color:var(--text2);
+      font-family:'Fira Code',monospace;font-size:11px;
+      border-top:1px solid var(--border);position:relative;z-index:1;
+    }
+    .f-accent{color:var(--accent);}
+    footer a{color:var(--accent);text-decoration:none;}
+    footer a:hover{opacity:0.75;}
 
-        .tool-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
-            transform: scaleX(0);
-            transform-origin: left;
-            transition: transform 0.3s;
-        }
+    /* States */
+    .empty-state,.loading,.error{text-align:center;padding:60px 20px;font-family:'Fira Code',monospace;}
+    .empty-state h2{color:var(--text);margin-bottom:10px;font-family:'Space Grotesk',sans-serif;font-size:18px;}
+    .empty-state p,.loading{color:var(--text2);font-size:13px;}
+    .error{color:var(--danger);font-size:13px;}
+    .error p{margin-top:6px;}
+    .hidden{display:none!important;}
 
-        .tool-card:hover {
-            border-color: #3b82f6;
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        .tool-card:hover::before {
-            transform: scaleX(1);
-        }
-
-        .tool-card h3 {
-            color: #f8fafc;
-            font-size: 1.1rem;
-            margin-bottom: 8px;
-        }
-
-        .tool-card p {
-            color: #94a3b8;
-            font-size: 0.85rem;
-            line-height: 1.5;
-        }
-
-        .tool-card .url-text {
-            color: #3b82f6;
-            font-size: 0.75rem;
-            margin-top: 12px;
-            word-break: break-all;
-            opacity: 0.7;
-        }
-
-        /* Button View */
-        .button-view {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-
-        .tool-button {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 12px 24px;
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 8px;
-            color: #e2e8f0;
-            text-decoration: none;
-            font-size: 0.95rem;
-            transition: all 0.2s;
-            cursor: pointer;
-        }
-
-        .tool-button:hover {
-            background: #334155;
-            border-color: #3b82f6;
-            color: #f8fafc;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
-        }
-
-        .tool-button .btn-icon {
-            width: 6px;
-            height: 6px;
-            background: #3b82f6;
-            border-radius: 50%;
-        }
-
-        .footer {
-            background: #0f172a;
-            border-top: 1px solid #1e293b;
-            padding: 30px;
-            text-align: center;
-            color: #64748b;
-            font-size: 0.9rem;
-        }
-
-        .footer a {
-            color: #3b82f6;
-            text-decoration: none;
-        }
-
-        .footer a:hover {
-            text-decoration: underline;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #64748b;
-        }
-
-        .empty-state h2 {
-            color: #94a3b8;
-            margin-bottom: 10px;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 60px;
-            color: #64748b;
-        }
-
-        .error {
-            text-align: center;
-            padding: 60px;
-            color: #ef4444;
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        @media (max-width: 768px) {
-            .controls {
-                padding: 15px 20px;
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .filter-box input {
-                width: 100%;
-            }
-
-            .main-content {
-                padding: 0 20px 30px;
-            }
-
-            .banner h1 {
-                font-size: 1.8rem;
-            }
-
-            .grid-view {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
-<base target="_blank">
+    @media(max-width:768px){
+      .controls{flex-direction:column;align-items:stretch;padding:0 16px 20px;}
+      .filter-box input{width:100%;}
+      .main-content{padding:0 16px 40px;}
+      .hero{padding:28px 16px 20px;}
+      .hero h2{font-size:24px;}
+      .grid-view{grid-template-columns:1fr;}
+      header{padding:0 14px;height:52px;}
+      .logo{font-size:21px;letter-spacing:2px;}
+      .back-link span.back-label{display:none;}
+    }
+  </style>
 </head>
 <body>
-    <div class="banner">
-        <h1>My Web Resources</h1>
-        <p>Curated tools and resources hosted on GitHub</p>
+
+  <header>
+    <div class="header-left">
+      <a href="../index.html" class="back-link">
+        ← <span class="back-label">Back to Blog</span>
+      </a>
+      <h1 class="logo">Aryter<span class="lo-a">Log</span></h1>
     </div>
+    <button id="theme-btn" aria-label="Cycle Theme">
+      <span class="emoji" id="theme-emoji">🌙</span>
+      <span id="theme-label">Dark</span>
+    </button>
+  </header>
 
-    <div class="controls">
-        <div class="view-toggle">
-            <button id="btn-grid" class="active" onclick="setView('grid')">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="3" y="3" width="7" height="7"></rect>
-                    <rect x="14" y="3" width="7" height="7"></rect>
-                    <rect x="3" y="14" width="7" height="7"></rect>
-                    <rect x="14" y="14" width="7" height="7"></rect>
-                </svg>
-                Grid
-            </button>
-            <button id="btn-button" onclick="setView('button')">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="3" y1="6" x2="21" y2="6"></line>
-                    <line x1="3" y1="12" x2="21" y2="12"></line>
-                    <line x1="3" y1="18" x2="21" y2="18"></line>
-                </svg>
-                Button
-            </button>
-        </div>
-        <div class="filter-box">
-            <input type="text" id="search-input" placeholder="Search tools..." oninput="filterTools()">
-        </div>
+  <div class="hero">
+    <div class="hero-tag">Resource Library</div>
+    <h2>My Web <em>Resources</em></h2>
+    <p class="hero-sub">Curated tools, frameworks &amp; utilities I use for security research and pentesting<span class="cursor"></span></p>
+  </div>
+
+  <div class="controls">
+    <div class="view-toggle">
+      <button id="btn-grid" class="active" onclick="setView('grid')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="7" height="7"></rect>
+          <rect x="14" y="3" width="7" height="7"></rect>
+          <rect x="3" y="14" width="7" height="7"></rect>
+          <rect x="14" y="14" width="7" height="7"></rect>
+        </svg>
+        Grid
+      </button>
+      <button id="btn-button" onclick="setView('button')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+        Button
+      </button>
     </div>
-
-    <div class="main-content" id="content">
-        <div class="loading">Loading resources...</div>
+    <div class="filter-box">
+      <span class="search-prefix">&gt;_</span>
+      <input type="text" id="search-input" placeholder="search tools..." oninput="filterTools()">
     </div>
+  </div>
 
-    <div class="footer">
-        Made By Aryan Giri | <a href="https://github.com/giriaryan694-a11y" target="_blank">giriaryan694-a11y</a>
-    </div>
+  <div class="main-content" id="content">
+    <div class="loading">⟳ Loading resources...</div>
+  </div>
 
-    <script>
-        let allData = [];
-        let currentView = 'grid';
+  <footer>
+    <span class="f-accent">$</span> echo "Made by <span class="f-accent">Aryan Giri</span>" &nbsp;·&nbsp; <a href="https://github.com/giriaryan694-a11y" target="_blank">giriaryan694-a11y</a>
+  </footer>
 
-        function getCookie(name) {
-            const value = `; ${document.cookie}`;
-            const parts = value.split(`; ${name}=`);
-            if (parts.length === 2) return parts.pop().split(';').shift();
-            return null;
-        }
+  <script>
+    /* THEME — synced with main site via same cookie */
+    const themes=["dark","light","eye-saver"];
+    const themeData={"dark":{emoji:"🌙",label:"Dark"},"light":{emoji:"☀️",label:"Light"},"eye-saver":{emoji:"☕",label:"Reading"}};
+    function setCookie(n,v,d){const e=new Date();e.setTime(e.getTime()+d*86400000);document.cookie=`${n}=${v};expires=${e.toUTCString()};path=/`;}
+    function getCookie(n){const m=document.cookie.match(new RegExp('(^| )'+n+'=([^;]+)'));return m?m[2]:null;}
+    let currentTheme=getCookie("site_theme")||"dark";
+    const themeBtn=document.getElementById("theme-btn");
+    const themeEmoji=document.getElementById("theme-emoji");
+    function applyTheme(theme,animate=false){
+      document.body.className=theme==="dark"?"":theme;
+      themeEmoji.textContent=themeData[theme].emoji;
+      document.getElementById("theme-label").textContent=themeData[theme].label;
+      setCookie("site_theme",theme,365);
+      if(animate){themeEmoji.style.animation="none";themeEmoji.offsetHeight;themeEmoji.style.animation="popSpin 0.4s cubic-bezier(0.175,0.885,0.32,1.275) forwards";}
+    }
+    applyTheme(currentTheme);
+    themeBtn.addEventListener("click",()=>{currentTheme=themes[(themes.indexOf(currentTheme)+1)%themes.length];applyTheme(currentTheme,true);});
 
-        function setCookie(name, value, days) {
-            const expires = new Date(Date.now() + days * 864e5).toUTCString();
-            document.cookie = `${name}=${value}; expires=${expires}; path=/`;
-        }
+    /* DATA & VIEW */
+    let allData=[];
+    let currentView='grid';
 
-        function setView(view) {
-            currentView = view;
-            setCookie('viewPreference', view, 365);
+    function setView(view){
+      currentView=view;
+      setCookie('viewPreference',view,365);
+      document.getElementById('btn-grid').classList.toggle('active',view==='grid');
+      document.getElementById('btn-button').classList.toggle('active',view==='button');
+      render();
+    }
 
-            document.getElementById('btn-grid').classList.toggle('active', view === 'grid');
-            document.getElementById('btn-button').classList.toggle('active', view === 'button');
+    async function loadData(){
+      try{
+        const response=await fetch('info.json');
+        if(!response.ok)throw new Error('Failed to load info.json');
+        allData=await response.json();
+        render();
+      }catch(err){
+        document.getElementById('content').innerHTML=`
+          <div class="error">
+            <h3>⚠️ Error loading info.json</h3>
+            <p>${err.message}</p>
+            <p style="margin-top:8px;color:var(--text2);">Make sure info.json is in the /web directory.</p>
+          </div>`;
+      }
+    }
 
-            render();
-        }
+    function filterTools(){render();}
 
-        async function loadData() {
-            try {
-                const response = await fetch('info.json');
-                if (!response.ok) throw new Error('Failed to load info.json');
-                allData = await response.json();
-                render();
-            } catch (err) {
-                document.getElementById('content').innerHTML = `
-                    <div class="error">
-                        <h3>Error loading info.json</h3>
-                        <p>${err.message}</p>
-                        <p style="margin-top:10px; color:#64748b;">Make sure info.json is in the same directory as index.html</p>
-                    </div>
-                `;
-            }
-        }
+    function getFilteredData(){
+      const query=document.getElementById('search-input').value.toLowerCase().trim();
+      if(!query)return allData;
+      return allData.map(cat=>({
+        ...cat,
+        tools:cat.tools.filter(tool=>
+          tool.name.toLowerCase().includes(query)||
+          (tool.description&&tool.description.toLowerCase().includes(query))||
+          tool.url.toLowerCase().includes(query)
+        )
+      })).filter(cat=>cat.tools.length>0);
+    }
 
-        function filterTools() {
-            render();
-        }
+    function render(){
+      const data=getFilteredData();
+      const container=document.getElementById('content');
 
-        function getFilteredData() {
-            const query = document.getElementById('search-input').value.toLowerCase().trim();
-            if (!query) return allData;
+      if(data.length===0){
+        container.innerHTML=`
+          <div class="empty-state">
+            <h2>No tools found</h2>
+            <p>Try adjusting your search or check info.json</p>
+          </div>`;
+        return;
+      }
 
-            return allData.map(cat => ({
-                ...cat,
-                tools: cat.tools.filter(tool => 
-                    tool.name.toLowerCase().includes(query) ||
-                    (tool.description && tool.description.toLowerCase().includes(query)) ||
-                    tool.url.toLowerCase().includes(query)
-                )
-            })).filter(cat => cat.tools.length > 0);
-        }
+      let html='';
+      data.forEach(category=>{
+        html+=`
+          <div class="category-section">
+            <div class="category-title">
+              <span class="icon"></span>
+              ${escapeHtml(category.name)}
+            </div>
+            <div class="${currentView==='grid'?'grid-view':'button-view'}">`;
 
-        function render() {
-            const data = getFilteredData();
-            const container = document.getElementById('content');
+        category.tools.forEach(tool=>{
+          if(currentView==='grid'){
+            html+=`
+              <a href="${escapeHtml(tool.url)}" target="_blank" class="tool-card">
+                <h3>${escapeHtml(tool.name)}</h3>
+                <p>${escapeHtml(tool.description||'')}</p>
+                <div class="url-text">${escapeHtml(tool.url)}</div>
+              </a>`;
+          }else{
+            html+=`
+              <a href="${escapeHtml(tool.url)}" target="_blank" class="tool-button">
+                <span class="btn-icon"></span>
+                ${escapeHtml(tool.name)}
+              </a>`;
+          }
+        });
 
-            if (data.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <h2>No tools found</h2>
-                        <p>Try adjusting your search or check info.json</p>
-                    </div>
-                `;
-                return;
-            }
+        html+=`</div></div>`;
+      });
 
-            let html = '';
-            data.forEach(category => {
-                html += `
-                    <div class="category-section">
-                        <div class="category-title">
-                            <span class="icon"></span>
-                            ${escapeHtml(category.name)}
-                        </div>
-                        <div class="${currentView === 'grid' ? 'grid-view' : 'button-view'}">
-                `;
+      container.innerHTML=html;
+    }
 
-                category.tools.forEach(tool => {
-                    if (currentView === 'grid') {
-                        html += `
-                            <a href="${escapeHtml(tool.url)}" target="_blank" class="tool-card">
-                                <h3>${escapeHtml(tool.name)}</h3>
-                                <p>${escapeHtml(tool.description || '')}</p>
-                                <div class="url-text">${escapeHtml(tool.url)}</div>
-                            </a>
-                        `;
-                    } else {
-                        html += `
-                            <a href="${escapeHtml(tool.url)}" target="_blank" class="tool-button">
-                                <span class="btn-icon"></span>
-                                ${escapeHtml(tool.name)}
-                            </a>
-                        `;
-                    }
-                });
+    function escapeHtml(text){
+      if(!text)return'';
+      const div=document.createElement('div');
+      div.textContent=text;
+      return div.innerHTML;
+    }
 
-                html += `</div></div>`;
-            });
+    /* INIT */
+    const savedView=getCookie('viewPreference');
+    if(savedView&&(savedView==='grid'||savedView==='button')){
+      currentView=savedView;
+      document.getElementById('btn-grid').classList.toggle('active',savedView==='grid');
+      document.getElementById('btn-button').classList.toggle('active',savedView==='button');
+    }
 
-            container.innerHTML = html;
-        }
-
-        function escapeHtml(text) {
-            if (!text) return '';
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        // Initialize
-        const savedView = getCookie('viewPreference');
-        if (savedView && (savedView === 'grid' || savedView === 'button')) {
-            currentView = savedView;
-            document.getElementById('btn-grid').classList.toggle('active', savedView === 'grid');
-            document.getElementById('btn-button').classList.toggle('active', savedView === 'button');
-        }
-
-        loadData();
-    </script>
+    loadData();
+  </script>
 </body>
 </html>
