@@ -1,7 +1,5 @@
 Written By Aryan Giri
 
-# TryHackMe Hacker Holidays 2026 — Complimentary Writeup
-
 **Room:** Complimentary  
 **Difficulty:** Easy  
 **Category:** Cloud  
