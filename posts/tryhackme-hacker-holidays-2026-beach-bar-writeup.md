@@ -260,7 +260,7 @@ This greatly simplifies post-exploitation during CTFs.
 
 With stable shell access established, navigate through the filesystem and locate the user flag.
 
-<img width="1090" height="813" alt="Screenshot 2026-08-01 183719" src="https://github.com/user-attachments/assets/54c979ca-186c-4148-bf52-df08ea926b91" />
+<img width="1090" height="813" alt="Screenshot 2026-08-01 183719" src="https://github.com/user-attachments/assets/1375a3c9-6ebf-46cd-8239-36e7f4982624" />
 
 > User Flag
 
