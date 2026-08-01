@@ -1,5 +1,21 @@
 [
   {
+  "id": "tryhackme-hacker-holidays-2026-beach-bar-writeup",
+  "title": "TryHackMe Hacker Holidays 2026 — Beach Bar Writeup",
+  "date": "01-08-2026",
+  "summary": "Complete walkthrough of the Beach Bar Boot2Root room covering source code reconnaissance, YAML deserialization leading to RCE, reverse shell access, process enumeration, and Linux privilege escalation.",
+  "category": [
+    "ctf",
+    "pentesting",
+    "web-security",
+    "post-exploitation",
+    "privilege-escalation",
+    "linux",
+    "attack-techniques"
+  ],
+  "file": "posts/tryhackme-hacker-holidays-2026-beach-bar-writeup.md"
+  },
+  {
   "id": "tryhackme-hacker-holidays-2026-packed-light",
   "title": "TryHackMe Hacker Holidays 2026 — Packed Light Writeup",
   "date": "31-07-2026",
