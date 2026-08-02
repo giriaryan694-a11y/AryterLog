@@ -1,7 +1,5 @@
 Written By Aryan Giri
 
-# TryHackMe Hacker Holidays 2026 — Packed Light Writeup
-
 **Room:** Packed Light  
 **Category:** Forensics  
 **Difficulty:** Easy  
