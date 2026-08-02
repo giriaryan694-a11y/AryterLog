@@ -1,7 +1,5 @@
 Written By Aryan Giri
 
-# Room 404 — TryHackMe Hacker Holidays 2026 Writeup
-
 **Room:** Room 404  
 **Event:** Hacker Holidays 2026 – The Byte Lotus Hotel  
 **Category:** Web  
