@@ -1,5 +1,18 @@
 [
   {
+  "id": "tryhackme-hacker-holidays-2026-overheard-at-breakfast-writeup",
+  "title": "TryHackMe Hacker Holidays 2026 — Overheard at Breakfast Writeup",
+  "date": "2-8-2026",
+  "summary": "Walkthrough of the Hacker Holidays 2026 'Overheard at Breakfast' room, demonstrating OSINT techniques by pivoting from an exposed email address to a Gravatar profile and decoding a Base64-encoded flag.",
+  "category": [
+    "ctf",
+    "osint",
+    "social-engineering",
+    "recon"
+  ],
+  "file": "posts/tryhackme-hacker-holidays-2026-overheard-at-breakfast-writeup.md"
+  },
+  {
   "id": "tryhackme-hacker-holidays-2026-beach-bar-writeup",
   "title": "TryHackMe Hacker Holidays 2026 — Beach Bar Writeup",
   "date": "01-08-2026",
