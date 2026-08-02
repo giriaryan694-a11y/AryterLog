@@ -1,7 +1,5 @@
 Written By Aryan Giri
 
-# TryHackMe Hacker Holidays 2026 — Beach Bar Writeup
-
 **Room:** Beach Bar  
 **Category:** Boot2Root  
 **Difficulty:** Easy  
