@@ -260,6 +260,7 @@
       position:relative; overflow:hidden;
       transition:border-color 0.25s,box-shadow 0.25s,transform 0.2s;
       animation:cardIn 0.35s ease both;
+      display:block; text-decoration:none; color:inherit;
     }
     .post-card:nth-child(1){animation-delay:0.03s;} .post-card:nth-child(2){animation-delay:0.07s;}
     .post-card:nth-child(3){animation-delay:0.11s;} .post-card:nth-child(4){animation-delay:0.15s;}
@@ -636,9 +637,15 @@
       slice.forEach(post=>{
         const cats=Array.isArray(post.category)?post.category:(post.category?[post.category]:[]);
         const catHTML=cats.map(c=>`<span class="card-cat-chip">${c}</span>`).join("");
-        const card=document.createElement("div");
+        const card=document.createElement("a");
         card.className="post-card";
-        card.onclick=()=>window.location.hash=`post-${post.id}`;
+        card.href=`posts/${post.id}/`;
+        card.addEventListener("click", e=>{
+          // Allow ctrl/cmd/middle click to open real static page in new tab
+          if(e.ctrlKey||e.metaKey||e.shiftKey||e.button===1) return;
+          e.preventDefault();
+          window.location.hash=`post-${post.id}`;
+        });
         card.innerHTML=`
           <h2>${post.title}</h2>
           <div class="post-meta-row">
