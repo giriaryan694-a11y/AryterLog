@@ -1,5 +1,19 @@
 [
   {
+  "id": "tryhackme-hacker-holidays-2026-towel-on-the-sunbed",
+  "title": "TryHackMe Hacker Holidays 2026 — Towel on the Sunbed Writeup",
+  "date": "04-08-2026",
+  "summary": "A walkthrough of the Hacker Holidays 2026 'Towel on the Sunbed' room demonstrating how a business logic race condition can be exploited using Burp Suite's parallel request feature to bypass a 24-hour reward restriction and unlock the Whale Vault.",
+  "category": [
+    "ctf",
+    "web-security",
+    "logic-bugs",
+    "bug-bounty",
+    "pentesting"
+  ],
+  "file": "posts/tryhackme-hacker-holidays-2026-towel-on-the-sunbed.md"
+  },
+  {
   "id": "hh-donotdisturb-writeup",
   "title": "TryHackMe Hacker Holidays 2026 — Byte Lotus Hotel: Do Not Disturb",
   "date": "04-08-2026",
