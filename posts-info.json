@@ -1,5 +1,18 @@
 [
   {
+  "id": "hh-donotdisturb-writeup",
+  "title": "Byte Lotus Hotel: Do Not Disturb",
+  "date": "04-08-2026",
+  "summary": "Boot2Root walkthrough for the Do Not Disturb room, covering NoSQLi, ERB SSTI, custom Node.js webshell deployment, and privilege escalation via Node Inspector and direct block device access.",
+  "category": [
+    "ctf",
+    "web-security",
+    "post-exploitation",
+    "privilege-escalation"
+  ],
+  "file": "posts/hh-donotdisturb-writeup.md"
+  },
+  {
   "id": "tryhackme-hacker-holidays-2026-overheard-at-breakfast-writeup",
   "title": "TryHackMe Hacker Holidays 2026 — Overheard at Breakfast Writeup",
   "date": "2-8-2026",
