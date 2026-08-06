@@ -11,7 +11,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: "pages"
+  group: "pages-${{ github.ref }}"
   cancel-in-progress: true
 
 jobs:
@@ -29,7 +29,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "22"
-          # cache: 'npm' removed to prevent lock file dependency error
 
       - name: Install dependencies
         run: npm install
@@ -37,18 +36,11 @@ jobs:
       - name: Generate static post pages, sitemap.xml & robots.txt
         run: npm run build
 
-      - name: Clean workspace before upload (Fixes missing files & prevents source leaks)
+      - name: Clean workspace before upload
         run: |
-          # Remove heavy/unnecessary directories that cause upload timeouts or size limits
-          rm -rf node_modules
-          rm -rf .github
-          rm -rf scripts
-          
-          # Remove config files not needed for the live site
+          rm -rf node_modules .github scripts
           rm -f package.json package-lock.json .gitignore
-          
           echo "✅ Workspace cleaned. Verifying generated files exist..."
-          # Verify files in the root directory where build.js generates them
           ls -la sitemap.xml robots.txt
 
       - name: Setup Pages
