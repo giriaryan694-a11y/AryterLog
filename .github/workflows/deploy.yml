@@ -11,7 +11,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: "pages-${{ github.ref }}"
+  group: "pages"
   cancel-in-progress: true
 
 jobs:
@@ -20,7 +20,6 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-      
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -36,34 +35,14 @@ jobs:
       - name: Generate static post pages, sitemap.xml & robots.txt
         run: npm run build
 
-      - name: "Clean workspace before upload (CRITICAL: Reduces artifact size)"
-        run: |
-          # Remove build tools and configs
-          rm -rf node_modules .github scripts
-          rm -f package.json package-lock.json .gitignore
-          
-          # CRITICAL FIX: Delete raw markdown source files.
-          # Your live site only needs the generated HTML files (posts/<id>/index.html).
-          # Raw .md files are bloating the artifact and causing the 10-minute timeout.
-          find posts -type f -name "*.md" -delete
-          
-          echo "✅ Workspace cleaned. Verifying generated files exist..."
-          ls -la sitemap.xml robots.txt
-          
-          # Print the final artifact size for diagnostics
-          echo "📦 Final artifact size:"
-          du -sh .
-
       - name: Setup Pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v4
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: '.'
+          path: "."
 
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-        with:
-          timeout: 600000
