@@ -54,3 +54,6 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          # Increase timeout to 20 minutes to survive GitHub Pages backend queue stalls
+          timeout: 1200000
