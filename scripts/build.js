@@ -2,9 +2,9 @@
  * build.js — Static page generator for AryterLog
  *
  * Reads posts-info.json + posts/*.md and generates:
- *   - posts/<id>/index.html   (fully baked static page, crawlable by Google)
- *   - sitemap.xml
- *   - robots.txt
+ *   - dist/posts/<id>/index.html   (fully baked static page, crawlable by Google)
+ *   - dist/sitemap.xml
+ *   - dist/robots.txt
  *
  * Run: npm install && npm run build
  * (GitHub Actions runs this automatically on every push — see
@@ -15,13 +15,13 @@ const fs = require("fs");
 const path = require("path");
 const { marked } = require("marked");
 
-
 const SITE_URL = "https://giriaryan694-a11y.github.io/AryterLog";
 
 const ROOT = path.join(__dirname, "..");
+const DIST_DIR = path.join(ROOT, "dist");
 const POSTS_INFO_PATH = path.join(ROOT, "posts-info.json");
 const POSTS_DIR = path.join(ROOT, "posts");
-const OUT_POSTS_DIR = path.join(ROOT, "posts"); // static pages live at /posts/<id>/index.html
+const OUT_POSTS_DIR = path.join(DIST_DIR, "posts"); // static pages live at dist/posts/<id>/index.html
 
 marked.setOptions({ breaks: true, gfm: true });
 
@@ -338,6 +338,44 @@ function postPage({ post, contentHtml }) {
 }
 
 function main() {
+  // 1. Clean and create dist directory
+  console.log("🧹 Cleaning and preparing dist/ directory...");
+  if (fs.existsSync(DIST_DIR)) {
+    fs.rmSync(DIST_DIR, { recursive: true, force: true });
+  }
+  fs.mkdirSync(DIST_DIR, { recursive: true });
+
+  // 2. Copy static assets to dist
+  const rootFilesToCopy = [
+    "index.html",
+    "posts-info.json",
+    "socials.json",
+    ".nojekyll",
+    "google8ea0fd2c32371f0f.html",
+    "BingSiteAuth.xml",
+    "favicon.ico",
+    "README.md",
+    "LICENSE"
+  ];
+
+  rootFilesToCopy.forEach(file => {
+    const src = path.join(ROOT, file);
+    const dest = path.join(DIST_DIR, file);
+    if (fs.existsSync(src)) {
+      fs.copyFileSync(src, dest);
+    }
+  });
+
+  const dirsToCopy = ["web", "posts"];
+  dirsToCopy.forEach(dir => {
+    const src = path.join(ROOT, dir);
+    const dest = path.join(DIST_DIR, dir);
+    if (fs.existsSync(src)) {
+      fs.cpSync(src, dest, { recursive: true });
+    }
+  });
+  console.log("📋 Copied static assets and directories to dist/");
+
   if (!fs.existsSync(POSTS_INFO_PATH)) {
     console.error("❌ posts-info.json not found at repo root.");
     process.exit(1);
@@ -391,6 +429,7 @@ function main() {
     const md = fs.readFileSync(mdAbsPath, "utf-8");
     const contentHtml = marked.parse(md);
 
+    // Write to dist directory
     const outDir = path.join(OUT_POSTS_DIR, post.id);
     fs.mkdirSync(outDir, { recursive: true });
     fs.writeFileSync(path.join(outDir, "index.html"), postPage({ post, contentHtml }), "utf-8");
@@ -400,11 +439,11 @@ function main() {
       lastmod: toISODate(post.date)
     });
 
-    console.log(`✅ Built posts/${post.id}/index.html`);
+    console.log(`✅ Built dist/posts/${post.id}/index.html`);
   });
 
   // Also index the web resources page if it exists
-  if (fs.existsSync(path.join(ROOT, "web", "index.html"))) {
+  if (fs.existsSync(path.join(DIST_DIR, "web", "index.html"))) {
     sitemapEntries.push({ loc: `${SITE_URL}/web/`, lastmod: new Date().toISOString() });
   }
 
@@ -414,8 +453,8 @@ function main() {
 ${sitemapEntries.map(e => `  <url>\n    <loc>${e.loc}</loc>\n    <lastmod>${e.lastmod.split("T")[0]}</lastmod>\n  </url>`).join("\n")}
 </urlset>
 `;
-  fs.writeFileSync(path.join(ROOT, "sitemap.xml"), sitemapXml, "utf-8");
-  console.log("✅ Built sitemap.xml");
+  fs.writeFileSync(path.join(DIST_DIR, "sitemap.xml"), sitemapXml, "utf-8");
+  console.log("✅ Built dist/sitemap.xml");
 
   // ── robots.txt ──
   const robotsTxt = `User-agent: *
@@ -423,16 +462,12 @@ Allow: /
 
 Sitemap: ${SITE_URL}/sitemap.xml
 `;
-  fs.writeFileSync(path.join(ROOT, "robots.txt"), robotsTxt, "utf-8");
-  console.log("✅ Built robots.txt");
+  fs.writeFileSync(path.join(DIST_DIR, "robots.txt"), robotsTxt, "utf-8");
+  console.log("✅ Built dist/robots.txt");
 
-  console.log(`\n🎉 Built ${sitemapEntries.length - 1} post page(s) successfully.`);
+  console.log(`\n🎉 Built ${sitemapEntries.length - 1} post page(s) successfully into dist/`);
 
   if (problems.length) {
-    // Print as GitHub Actions warning annotations — shows up prominently in
-    // the Actions run summary / "Annotations" panel, but does NOT fail the
-    // job. This way the other 89 valid posts still deploy instead of the
-    // whole site getting stuck on a stale build because of one bad entry.
     console.log(`\n⚠️  ${problems.length} post(s) were skipped (site still deployed successfully):\n`);
     problems.forEach(p => {
       console.log(`   • ${p}`);
@@ -440,8 +475,6 @@ Sitemap: ${SITE_URL}/sitemap.xml
     });
     console.log(`\n📁 Files actually found in posts/: ${actualFiles.length ? actualFiles.join(", ") : "(none — is the posts/ folder committed?)"}`);
     console.log(`\nFix the "file" path (or commit the missing .md) in posts-info.json, then push again.\n`);
-    // Intentionally NOT exiting with an error code — a bad post should not
-    // block the other valid ones from deploying.
   }
 }
 
