@@ -48,6 +48,7 @@ jobs:
           rm -f package.json package-lock.json .gitignore
           
           echo "✅ Workspace cleaned. Verifying generated files exist..."
+          # Verify files in the root directory where build.js generates them
           ls -la sitemap.xml robots.txt
 
       - name: Setup Pages
