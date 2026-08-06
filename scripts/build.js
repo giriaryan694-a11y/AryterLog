@@ -5,8 +5,6 @@
  *   - posts/<id>/index.html   (fully baked static page, crawlable by Google)
  *   - sitemap.xml
  *   - robots.txt
- *   - .nojekyll               (CRITICAL: stops GitHub Pages/Jekyll from
- *                               hijacking your output with its own theme)
  *
  * Run: npm install && npm run build
  * (GitHub Actions runs this automatically on every push — see
@@ -23,7 +21,7 @@ const SITE_URL = "https://giriaryan694-a11y.github.io/AryterLog";
 const ROOT = path.join(__dirname, "..");
 const POSTS_INFO_PATH = path.join(ROOT, "posts-info.json");
 const POSTS_DIR = path.join(ROOT, "posts");
-const OUT_POSTS_DIR = path.join(ROOT, "posts");
+const OUT_POSTS_DIR = path.join(ROOT, "posts"); // static pages live at /posts/<id>/index.html
 
 marked.setOptions({ breaks: true, gfm: true });
 
@@ -88,7 +86,6 @@ function postPage({ post, contentHtml }) {
   <script type="application/ld+json">${JSON.stringify(jsonLd)}</script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
 
   <style>
@@ -128,7 +125,6 @@ function postPage({ post, contentHtml }) {
     header {
       position:sticky; top:0; z-index:200;
       background:rgba(8,11,16,0.86); backdrop-filter:blur(16px);
-      -webkit-backdrop-filter:blur(16px);
       border-bottom:1px solid var(--border);
       display:flex; align-items:center; justify-content:space-between;
       padding:0 22px; height:56px; gap:12px;
@@ -219,9 +215,7 @@ function postPage({ post, contentHtml }) {
     }
     pre {
       background:var(--code-bg);border:1px solid var(--border);padding:18px;border-radius:8px;
-      max-width:100%;
-      overflow-x:auto;
-      -webkit-overflow-scrolling:touch;
+      max-width:100%; overflow:hidden;
       position:relative;margin-bottom:14px;
     }
     pre::before{
@@ -232,6 +226,7 @@ function postPage({ post, contentHtml }) {
     pre code{
       background:transparent;border:none;padding:0 60px 0 0;word-break:normal;
       overflow-wrap:normal;white-space:pre;display:block;
+      overflow-x:auto;-webkit-overflow-scrolling:touch;
       font-size:13px;line-height:1.65;color:var(--text);
     }
     blockquote{
@@ -247,7 +242,7 @@ function postPage({ post, contentHtml }) {
       position:absolute;top:9px;right:9px;padding:3px 8px;font-size:10px;
       font-family:'Fira Code',monospace;font-weight:500;background:var(--surface2);
       border:1px solid var(--border2);color:var(--text2);border-radius:4px;cursor:pointer;
-      transition:all 0.2s;opacity:0;letter-spacing:0.3px;z-index:2;
+      transition:all 0.2s;opacity:0;letter-spacing:0.3px;
     }
     pre:hover .copy-btn{opacity:1;}
     .copy-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
@@ -274,7 +269,7 @@ function postPage({ post, contentHtml }) {
 <body>
   <header>
     <div class="header-left">
-      <a href="${SITE_URL}/" class="logo">Aryter<span class="lo-a">Log</span></a>
+      <a href="../../index.html" class="logo">Aryter<span class="lo-a">Log</span></a>
     </div>
     <button id="theme-btn" aria-label="Cycle Theme">
       <span class="emoji" id="theme-emoji">🌙</span>
@@ -283,7 +278,7 @@ function postPage({ post, contentHtml }) {
   </header>
 
   <main>
-    <a href="${SITE_URL}/#post-${post.id}" class="back-btn">← Back to Blog</a>
+    <a href="../../index.html#post-${post.id}" class="back-btn">← Back to Blog</a>
     <article class="post-content">
       <h1>${title}</h1>
       <div class="post-header-meta">
@@ -302,37 +297,37 @@ function postPage({ post, contentHtml }) {
     /* Theme — synced with main site via same cookie */
     const themes=["dark","light","eye-saver"];
     const themeData={"dark":{emoji:"🌙",label:"Dark"},"light":{emoji:"☀️",label:"Light"},"eye-saver":{emoji:"☕",label:"Reading"}};
-    function setCookie(n,v,d){const e=new Date();e.setTime(e.getTime()+d*86400000);document.cookie=n+"="+v+";expires="+e.toUTCString()+";path=/";}
+    function setCookie(n,v,d){const e=new Date();e.setTime(e.getTime()+d*86400000);document.cookie=\`\${n}=\${v};expires=\${e.toUTCString()};path=/\`;}
     function getCookie(n){const m=document.cookie.match(new RegExp('(^| )'+n+'=([^;]+)'));return m?m[2]:null;}
     let currentTheme=getCookie("site_theme")||"dark";
     const themeBtn=document.getElementById("theme-btn");
     const themeEmoji=document.getElementById("theme-emoji");
-    function applyTheme(theme,animate){
+    function applyTheme(theme,animate=false){
       document.body.className=theme==="dark"?"":theme;
       themeEmoji.textContent=themeData[theme].emoji;
       document.getElementById("theme-label").textContent=themeData[theme].label;
       setCookie("site_theme",theme,365);
       if(animate){themeEmoji.style.animation="none";themeEmoji.offsetHeight;themeEmoji.style.animation="popSpin 0.4s cubic-bezier(0.175,0.885,0.32,1.275) forwards";}
     }
-    applyTheme(currentTheme,false);
-    themeBtn.addEventListener("click",function(){currentTheme=themes[(themes.indexOf(currentTheme)+1)%themes.length];applyTheme(currentTheme,true);});
+    applyTheme(currentTheme);
+    themeBtn.addEventListener("click",()=>{currentTheme=themes[(themes.indexOf(currentTheme)+1)%themes.length];applyTheme(currentTheme,true);});
 
     /* Links → new tab + copy buttons on code blocks */
-    document.querySelectorAll(".post-content a").forEach(function(l){
-      l.setAttribute("target","_blank");
-      l.setAttribute("rel","noopener noreferrer");
+    document.querySelectorAll(".post-content a").forEach(l => {
+      l.setAttribute("target", "_blank");
+      l.setAttribute("rel", "noopener noreferrer");
     });
-    document.querySelectorAll("pre").forEach(function(pre){
-      var code=pre.querySelector("code");
-      if(!code)return;
-      var btn=document.createElement("button");
-      btn.className="copy-btn";
-      btn.textContent="copy";
-      btn.onclick=function(){
-        navigator.clipboard.writeText(code.innerText.trimEnd()).then(function(){
-          btn.textContent="\\u2713 copied";btn.classList.add("copied");
-          setTimeout(function(){btn.textContent="copy";btn.classList.remove("copied");},2000);
-        }).catch(function(){});
+    document.querySelectorAll("pre").forEach(pre => {
+      const code = pre.querySelector("code");
+      if (!code) return;
+      const btn = document.createElement("button");
+      btn.className = "copy-btn";
+      btn.textContent = "copy";
+      btn.onclick = async () => {
+        try { await navigator.clipboard.writeText(code.innerText.trimEnd()); }
+        catch {}
+        btn.textContent = "✓ copied"; btn.classList.add("copied");
+        setTimeout(() => { btn.textContent = "copy"; btn.classList.remove("copied"); }, 2000);
       };
       pre.appendChild(btn);
     });
@@ -352,17 +347,44 @@ function main() {
   const sitemapEntries = [
     { loc: `${SITE_URL}/`, lastmod: new Date().toISOString() }
   ];
+  const problems = [];
+
+  // Snapshot of what .md files actually exist, for diagnostics
+  const actualFiles = fs.existsSync(POSTS_DIR)
+    ? fs.readdirSync(POSTS_DIR).filter(f => f.endsWith(".md"))
+    : [];
+
+  // Duplicate id check
+  const seenIds = new Set();
+  posts.forEach(post => {
+    if (seenIds.has(post.id)) {
+      problems.push(`Duplicate id "${post.id}" in posts-info.json — each post needs a unique id.`);
+    }
+    seenIds.add(post.id);
+  });
 
   posts.forEach(post => {
     const filePath = post.file || post.file_path;
+
     if (!filePath) {
-      console.warn(`⚠️  Skipping "${post.id}" — no "file" field.`);
+      problems.push(`"${post.id}" — no "file" field in posts-info.json.`);
       return;
     }
 
     const mdAbsPath = path.join(ROOT, filePath);
+
     if (!fs.existsSync(mdAbsPath)) {
-      console.warn(`⚠️  Skipping "${post.id}" — markdown file not found at ${filePath}`);
+      const expectedName = path.basename(filePath);
+      const closeMatches = actualFiles.filter(f =>
+        f.toLowerCase().replace(/\s+/g, "") === expectedName.toLowerCase().replace(/\s+/g, "")
+      );
+      let hint = "";
+      if (closeMatches.length) {
+        hint = ` (found a similarly-named file: "posts/${closeMatches[0]}" — check for typos, extra spaces, or a different emoji byte sequence)`;
+      } else {
+        hint = ` (no similarly-named file exists in posts/ — did you commit and push the .md file?)`;
+      }
+      problems.push(`"${post.id}" — markdown file not found at "${filePath}"${hint}`);
       return;
     }
 
@@ -386,12 +408,6 @@ function main() {
     sitemapEntries.push({ loc: `${SITE_URL}/web/`, lastmod: new Date().toISOString() });
   }
 
-  // ── .nojekyll ── (CRITICAL: prevents GitHub Pages from running Jekyll,
-  //    which would hijack your posts/ dir, inject its own theme/banner,
-  //    and serve raw .md files instead of your built HTML)
-  fs.writeFileSync(path.join(ROOT, ".nojekyll"), "", "utf-8");
-  console.log("✅ Built .nojekyll");
-
   // ── sitemap.xml ──
   const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -410,7 +426,15 @@ Sitemap: ${SITE_URL}/sitemap.xml
   fs.writeFileSync(path.join(ROOT, "robots.txt"), robotsTxt, "utf-8");
   console.log("✅ Built robots.txt");
 
-  console.log(`\n🎉 Done. Generated ${sitemapEntries.length - 1} post page(s).`);
+  console.log(`\n🎉 Built ${sitemapEntries.length - 1} post page(s) successfully.`);
+
+  if (problems.length) {
+    console.error(`\n❌ BUILD FAILED — ${problems.length} post(s) could not be built:\n`);
+    problems.forEach(p => console.error(`   • ${p}`));
+    console.error(`\n📁 Files actually found in posts/: ${actualFiles.length ? actualFiles.join(", ") : "(none — is the posts/ folder committed?)"}`);
+    console.error(`\nFix the "file" path (or missing .md commit) in posts-info.json above, then push again.`);
+    process.exit(1);
+  }
 }
 
 main();
