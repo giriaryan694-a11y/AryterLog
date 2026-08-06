@@ -20,6 +20,7 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+      
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -28,6 +29,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "22"
+          cache: 'npm'
 
       - name: Install dependencies
         run: npm install
@@ -35,13 +37,30 @@ jobs:
       - name: Generate static post pages, sitemap.xml & robots.txt
         run: npm run build
 
+      - name: Clean workspace before upload (Fixes missing files & prevents source leaks)
+        run: |
+          # Remove heavy/unnecessary directories that cause upload timeouts or size limits
+          rm -rf node_modules
+          rm -rf .github
+          rm -rf scripts
+          
+          # Remove config files not needed for the live site
+          rm -f package.json package-lock.json .gitignore
+          
+          # Optional: Uncomment the line below if you want to hide your raw .md source files 
+          # from being publicly accessible via direct URL (e.g., /posts/checkmate.md)
+          # find posts -type f -name "*.md" -delete
+          
+          echo "✅ Workspace cleaned. Verifying generated files exist..."
+          ls -la sitemap.xml robots.txt
+
       - name: Setup Pages
-        uses: actions/configure-pages@v4
+        uses: actions/configure-pages@v5
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: "."
+          path: '.'
 
       - name: Deploy to GitHub Pages
         id: deployment
