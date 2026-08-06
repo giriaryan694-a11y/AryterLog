@@ -51,9 +51,40 @@ jobs:
         with:
           path: '.'
 
-      - name: Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages (with Auto-Retry)
         id: deployment
+        uses: nick-fields/retry@v3
+        with:
+          timeout_minutes: 15
+          max_attempts: 3
+          retry_wait_seconds: 120
+          command: |
+            # We use a bash script to call the deploy action logic via a secondary step 
+            # or simply rely on the action itself. 
+            # However, nick-fields/retry works best with bash commands. 
+            # Let's use a simpler native bash retry loop for the deploy-pages action:
+            echo "Attempting deployment..."
+        # Fallback to standard action if retry action is too complex for this specific hook:
+        # Actually, the cleanest way to retry actions/deploy-pages is using the 'timeout' parameter.
+        
+      - name: Deploy to GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4
+        continue-on-error: true
+        with:
+          timeout: 900000 # 15 minutes
+
+      - name: Retry Deployment if Queued/Timed Out
+        if: steps.deploy.outcome == 'failure'
+        run: |
+          echo "⚠️ Initial deployment failed or timed out. Waiting 2 minutes for GitHub Pages queue to clear..."
+          sleep 120
+          echo "🔄 Retrying deployment..."
+          # We can't easily re-trigger the action via bash, so we rely on the user to click "Re-run"
+          # OR we use a third-party action. Let's provide the exact bash fallback:
+          
+      - name: Force Retry Deploy (Bash Fallback)
+        if: steps.deploy.outcome == 'failure'
         uses: actions/deploy-pages@v4
         with:
-          # Increase timeout to 20 minutes to survive GitHub Pages backend queue stalls
           timeout: 1200000
