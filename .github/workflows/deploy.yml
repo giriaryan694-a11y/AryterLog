@@ -36,7 +36,7 @@ jobs:
       - name: Generate static post pages, sitemap.xml & robots.txt
         run: npm run build
 
-      - name: Clean workspace before upload (CRITICAL: Reduces artifact size)
+      - name: "Clean workspace before upload (CRITICAL: Reduces artifact size)"
         run: |
           # Remove build tools and configs
           rm -rf node_modules .github scripts
@@ -66,4 +66,4 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
         with:
-          timeout: 600000 # Max allowed limit
+          timeout: 600000
