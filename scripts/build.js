@@ -429,11 +429,19 @@ Sitemap: ${SITE_URL}/sitemap.xml
   console.log(`\n🎉 Built ${sitemapEntries.length - 1} post page(s) successfully.`);
 
   if (problems.length) {
-    console.error(`\n❌ BUILD FAILED — ${problems.length} post(s) could not be built:\n`);
-    problems.forEach(p => console.error(`   • ${p}`));
-    console.error(`\n📁 Files actually found in posts/: ${actualFiles.length ? actualFiles.join(", ") : "(none — is the posts/ folder committed?)"}`);
-    console.error(`\nFix the "file" path (or missing .md commit) in posts-info.json above, then push again.`);
-    process.exit(1);
+    // Print as GitHub Actions warning annotations — shows up prominently in
+    // the Actions run summary / "Annotations" panel, but does NOT fail the
+    // job. This way the other 89 valid posts still deploy instead of the
+    // whole site getting stuck on a stale build because of one bad entry.
+    console.log(`\n⚠️  ${problems.length} post(s) were skipped (site still deployed successfully):\n`);
+    problems.forEach(p => {
+      console.log(`   • ${p}`);
+      console.log(`::warning::Skipped post — ${p}`);
+    });
+    console.log(`\n📁 Files actually found in posts/: ${actualFiles.length ? actualFiles.join(", ") : "(none — is the posts/ folder committed?)"}`);
+    console.log(`\nFix the "file" path (or commit the missing .md) in posts-info.json, then push again.\n`);
+    // Intentionally NOT exiting with an error code — a bad post should not
+    // block the other valid ones from deploying.
   }
 }
 
