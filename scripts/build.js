@@ -15,6 +15,11 @@ const fs = require("fs");
 const path = require("path");
 const { marked } = require("marked");
 
+// ─────────────────────────────────────────────
+// ⚠️  EDIT THIS to your real GitHub Pages URL
+// e.g. "https://giriaryan694-a11y.github.io/AryterLog"
+// (no trailing slash)
+// ─────────────────────────────────────────────
 const SITE_URL = "https://giriaryan694-a11y.github.io/AryterLog";
 
 const ROOT = path.join(__dirname, "..");
@@ -65,6 +70,12 @@ function postPage({ post, contentHtml }) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${title} — AryterLog</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="../../manifest.json">
+  <meta name="theme-color" content="#080b10">
+  <link rel="icon" href="../../icons/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="../../icons/apple-touch-icon.png">
   <meta name="description" content="${desc}">
   <link rel="canonical" href="${url}">
 
