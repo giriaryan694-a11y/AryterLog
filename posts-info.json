@@ -1,5 +1,18 @@
 [
   {
+  "id": "tryhackme-the-hollow-shell-writeup",
+  "title": "TryHackMe Hacker Holidays 2026 — The Hollow Shell Writeup",
+  "date": "07-08-2026",
+  "summary": "Walkthrough of The Hollow Shell room demonstrating source code credential disclosure, upload functionality analysis, Zip Slip exploitation, extension validation bypass, automated hook execution, and flag retrieval.",
+  "category": [
+    "ctf",
+    "web-security",
+    "attack-techniques",
+    "pentesting"
+  ],
+  "file": "posts/tryhackme-the-hollow-shell-writeup.md"
+  },
+  {
   "id": "tryhackme-hacker-holidays-2026-cryptocabana",
   "title": "TryHackMe Hacker Holidays 2026 — CryptoCabana Writeup",
   "date": "06-08-2026",
