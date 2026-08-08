@@ -1,5 +1,20 @@
 [
   {
+  "id": "infinity-pool",
+  "title": "TryHackMe Hacker Holidays 2026: Infinity Pool",
+  "date": "08-08-2026",
+  "summary": "A Boot2Root writeup covering command injection, reverse-shell access, localhost service enumeration, SSH port forwarding, FreePBX credential discovery, automation-key extraction, and root-level command injection.",
+  "category": [
+    "ctf",
+    "pentesting",
+    "web-security",
+    "post-exploitation",
+    "privilege-escalation",
+    "tunneling"
+  ],
+  "file": "posts/infinity-pool.md"
+  },
+  {
   "id": "tryhackme-the-hollow-shell-writeup",
   "title": "TryHackMe Hacker Holidays 2026 — The Hollow Shell Writeup",
   "date": "07-08-2026",
