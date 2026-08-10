@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Witr: Understanding Why a Process is Running — AryterLog</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="../../manifest.json">
+  <meta name="theme-color" content="#080b10">
+  <link rel="icon" href="../../icons/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="../../icons/apple-touch-icon.png">
+  <meta name="description" content="A practical guide to Witr, a tool that reveals the origin chain of processes—helping you understand not just what is running, but why it exists.">
+  <link rel="canonical" href="https://giriaryan694-a11y.github.io/AryterLog/posts/witr_2026/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Witr: Understanding Why a Process is Running">
+  <meta property="og:description" content="A practical guide to Witr, a tool that reveals the origin chain of processes—helping you understand not just what is running, but why it exists.">
+  <meta property="og:url" content="https://giriaryan694-a11y.github.io/AryterLog/posts/witr_2026/">
+  <meta property="og:site_name" content="AryterLog">
+  <meta property="article:published_time" content="2026-03-30T00:00:00.000Z">
+  <meta property="article:tag" content="linux">
+  <meta property="article:tag" content="tooling">
+  <meta property="article:tag" content="forensics">
+  <meta property="article:tag" content="defensive-security">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Witr: Understanding Why a Process is Running">
+  <meta name="twitter:description" content="A practical guide to Witr, a tool that reveals the origin chain of processes—helping you understand not just what is running, but why it exists.">
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Witr: Understanding Why a Process is Running","description":"A practical guide to Witr, a tool that reveals the origin chain of processes—helping you understand not just what is running, but why it exists.","datePublished":"2026-03-30T00:00:00.000Z","author":{"@type":"Person","name":"Aryan Giri"},"publisher":{"@type":"Organization","name":"AryterLog"},"mainEntityOfPage":"https://giriaryan694-a11y.github.io/AryterLog/posts/witr_2026/","keywords":"linux, tooling, forensics, defensive-security"}</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:#080b10; --surface:#0d1117; --surface2:#111820; --surface3:#161d27;
+      --text:#d0dbe8; --text2:#7a8a9a; --accent:#00ff88; --accent2:#0ea5e9;
+      --danger:#ff4560; --border:#1e2a38; --border2:#2a3848; --code-bg:#0a0f16;
+      --glow:rgba(0,255,136,0.08); --glow2:rgba(0,255,136,0.18);
+    }
+    .light {
+      --bg:#f5f7fa; --surface:#ffffff; --surface2:#f0f4f8; --surface3:#e8eef5;
+      --text:#111827; --text2:#6b7280; --accent:#059669; --accent2:#0284c7;
+      --danger:#dc2626; --border:#e2e8f0; --border2:#cbd5e1; --code-bg:#f1f5f9;
+      --glow:rgba(5,150,105,0.07); --glow2:rgba(5,150,105,0.14);
+    }
+    .eye-saver {
+      --bg:#12100a; --surface:#1a1608; --surface2:#211c0c; --surface3:#282210;
+      --text:#e8d8b0; --text2:#9a8860; --accent:#f5c542; --accent2:#e08030;
+      --danger:#e05050; --border:#302810; --border2:#3d3418; --code-bg:#0f0d06;
+      --glow:rgba(245,197,66,0.08); --glow2:rgba(245,197,66,0.18);
+    }
+
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body {
+      font-family:'Fira Code',monospace;
+      background:var(--bg); color:var(--text);
+      min-height:100vh; overflow-x:hidden;
+      transition:background 0.4s,color 0.4s;
+    }
+    body::before {
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+      background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
+      background-size:44px 44px; opacity:0.25;
+    }
+
+    header {
+      position:sticky; top:0; z-index:200;
+      background:rgba(8,11,16,0.86); backdrop-filter:blur(16px);
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 22px; height:56px; gap:12px;
+    }
+    .light header{background:rgba(245,247,250,0.9);}
+    .eye-saver header{background:rgba(18,16,10,0.9);}
+    header::after {
+      content:''; position:absolute; bottom:-1px; left:8%; right:8%; height:1px;
+      background:linear-gradient(90deg,transparent,var(--accent),transparent); opacity:0.35;
+    }
+    .header-left{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+
+    .logo {
+      font-family:'Bebas Neue',sans-serif; font-size:24px; font-weight:400;
+      letter-spacing:3px; color:var(--text); text-decoration:none; white-space:nowrap;
+      flex-shrink:0; line-height:1; transition:color 0.2s;
+    }
+    .logo .lo-a{color:var(--accent);}
+    .logo:hover .lo-a{text-shadow:0 0 14px var(--accent);}
+
+    .back-link {
+      display:inline-flex; align-items:center; gap:6px;
+      background:transparent; border:1px solid var(--border2); color:var(--text2);
+      padding:6px 12px; border-radius:6px; cursor:pointer; transition:all 0.2s;
+      font-family:'Fira Code',monospace; font-size:11px; text-decoration:none;
+    }
+    .back-link:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    #theme-btn {
+      background:transparent; border:1px solid var(--border2);
+      padding:5px 11px; cursor:pointer; color:var(--text2); border-radius:6px;
+      transition:all 0.2s; font-family:'Fira Code',monospace; font-size:11px;
+      display:inline-flex; align-items:center; gap:6px; white-space:nowrap;
+    }
+    #theme-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    @keyframes popSpin{0%{transform:scale(0.4) rotate(-60deg);opacity:0;}70%{transform:scale(1.15) rotate(5deg);}100%{transform:scale(1) rotate(0deg);opacity:1;}}
+    .emoji{display:inline-block;}
+
+    main{max-width:760px;margin:0 auto;padding:34px 20px 60px;position:relative;z-index:1;}
+
+    .back-btn {
+      display:inline-flex;align-items:center;gap:7px;margin-bottom:20px;
+      background:var(--surface);border:1px solid var(--border2);color:var(--text2);
+      padding:7px 13px;border-radius:6px;font-family:'Fira Code',monospace;font-size:11px;
+      cursor:pointer;transition:all 0.2s;text-decoration:none;
+    }
+    .back-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    .post-content {
+      background:var(--surface);border:1px solid var(--border);border-radius:12px;
+      padding:34px 30px;position:relative;overflow:hidden;
+    }
+    .post-content::before {
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      border-radius:12px 12px 0 0;
+    }
+    .post-content *{max-width:100%;}
+
+    h1 {
+      font-family:'Space Grotesk',sans-serif;font-size:clamp(19px,4vw,26px);
+      font-weight:700;color:var(--text);margin-bottom:8px;line-height:1.25;word-break:break-word;
+    }
+    .post-header-meta{
+      font-family:'Fira Code',monospace;font-size:11px;color:var(--text2);
+      padding-bottom:18px;margin-bottom:22px;border-bottom:1px solid var(--border);
+      display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+    }
+    .card-cat-chip {
+      display:inline-flex;align-items:center;padding:1px 7px;border-radius:3px;
+      border:1px solid var(--border2);background:var(--surface2);color:var(--text2);
+      font-size:9px;font-family:'Fira Code',monospace;font-weight:500;letter-spacing:0.4px;
+    }
+    h2,h3{font-family:'Space Grotesk',sans-serif;font-weight:600;color:var(--text);margin:26px 0 10px;word-break:break-word;}
+    h2{font-size:19px;} h3{font-size:15px;color:var(--accent);}
+    p{font-size:14px;line-height:1.8;margin-bottom:14px;color:var(--text);}
+    ul,ol{padding-left:20px;margin-bottom:14px;font-size:14px;line-height:1.8;}
+    li{margin-bottom:4px;}
+
+    a{color:var(--accent);word-break:break-all;overflow-wrap:break-word;transition:opacity 0.2s;}
+    a:hover{opacity:0.75;}
+    .post-content a{text-decoration:underline;text-underline-offset:3px;}
+
+    code {
+      background:var(--code-bg);border:1px solid var(--border);padding:2px 6px;
+      border-radius:4px;font-family:'Fira Code',monospace;font-size:0.85em;
+      color:var(--accent);word-break:break-all;overflow-wrap:break-word;
+    }
+    pre {
+      background:var(--code-bg);border:1px solid var(--border);padding:18px;border-radius:8px;
+      max-width:100%; overflow:hidden;
+      position:relative;margin-bottom:14px;
+    }
+    pre::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      opacity:0.5;border-radius:8px 8px 0 0;
+    }
+    pre code{
+      background:transparent;border:none;padding:0 60px 0 0;word-break:normal;
+      overflow-wrap:normal;white-space:pre;display:block;
+      overflow-x:auto;-webkit-overflow-scrolling:touch;
+      font-size:13px;line-height:1.65;color:var(--text);
+    }
+    blockquote{
+      border-left:2px solid var(--accent);margin:14px 0;padding:10px 16px;
+      background:var(--glow);border-radius:0 6px 6px 0;font-style:italic;color:var(--text2);
+    }
+    table{width:100%;border-collapse:collapse;display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;font-size:13px;margin-bottom:14px;}
+    th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;white-space:nowrap;}
+    th{background:var(--surface2);color:var(--accent);font-weight:600;}
+    img{max-width:100%;height:auto;border-radius:8px;display:block;margin:14px 0;}
+
+    .copy-btn {
+      position:absolute;top:9px;right:9px;padding:3px 8px;font-size:10px;
+      font-family:'Fira Code',monospace;font-weight:500;background:var(--surface2);
+      border:1px solid var(--border2);color:var(--text2);border-radius:4px;cursor:pointer;
+      transition:all 0.2s;opacity:0;letter-spacing:0.3px;
+    }
+    pre:hover .copy-btn{opacity:1;}
+    .copy-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    .copy-btn.copied{border-color:var(--accent);color:var(--accent);opacity:1;}
+
+    footer{
+      text-align:center;padding:22px 16px;color:var(--text2);
+      font-family:'Fira Code',monospace;font-size:11px;
+      border-top:1px solid var(--border);position:relative;z-index:1;
+    }
+    .f-accent{color:var(--accent);}
+    footer a{color:var(--accent);text-decoration:none;}
+    footer a:hover{opacity:0.75;}
+
+    @media(max-width:480px){
+      header{padding:0 13px;height:50px;}
+      .logo{font-size:21px;letter-spacing:2px;}
+      main{padding:20px 14px 44px;}
+      .post-content{padding:20px 14px;}
+      pre{padding:13px;}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <a href="../../index.html" class="logo">Aryter<span class="lo-a">Log</span></a>
+    </div>
+    <button id="theme-btn" aria-label="Cycle Theme">
+      <span class="emoji" id="theme-emoji">🌙</span>
+      <span id="theme-label">Dark</span>
+    </button>
+  </header>
+
+  <main>
+    <a href="../../index.html#post-witr_2026" class="back-btn">← Back to Blog</a>
+    <article class="post-content">
+      <h1>Witr: Understanding Why a Process is Running</h1>
+      <div class="post-header-meta">
+        <span>📅 Published March 30, 2026</span>
+        <span>·</span><span class="card-cat-chip">linux</span><span class="card-cat-chip">tooling</span><span class="card-cat-chip">forensics</span><span class="card-cat-chip">defensive-security</span>
+      </div>
+      <p><strong>Written by Aryan</strong></p>
+<hr>
+<h2>🧠 The Real Problem</h2>
+<p>You’re in your lab… or maybe debugging your own project…</p>
+<p>You run:</p>
+<pre><code class="language-bash">ps aux | grep node
+</code></pre>
+<p>You see:</p>
+<pre><code class="language-bash">node server.js
+</code></pre>
+<p>Cool.</p>
+<p>But then…</p>
+<p>👉 Your CPU is high<br>👉 Port 5000 is open<br>👉 Something feels <em>off</em></p>
+<p>Now the real question hits:</p>
+<blockquote>
+<p><strong>“Bro… WHY is this even running?”</strong></p>
+</blockquote>
+<p>Not <em>what</em>.<br>Not <em>where</em>.<br>👉 <strong>WHY.</strong></p>
+<hr>
+<h2>⚡ Enter Witr (Game-Changer Moment)</h2>
+<p>Instead of guessing like a caveman 🪨</p>
+<p>Run:</p>
+<pre><code class="language-bash">witr node
+</code></pre>
+<p>And suddenly…</p>
+<pre><code class="language-bash">systemd → pm2 → node → server.js
+</code></pre>
+<p>💡 Instant clarity:</p>
+<ul>
+<li>systemd started pm2</li>
+<li>pm2 started node</li>
+<li>node is running your app</li>
+</ul>
+<p>No more guessing. No more switching tools.</p>
+<hr>
+<h2>🔥 Make It Real: A Scenario You’ll Actually Face</h2>
+<h3>🧪 Situation:</h3>
+<p>You’re building:</p>
+<ul>
+<li>a phishing lab</li>
+<li>or a backend server</li>
+<li>or testing some payload</li>
+</ul>
+<p>Suddenly:</p>
+<p>👉 Port <code>5000</code> is open<br>👉 You don’t remember starting anything</p>
+<hr>
+<h3>Without Witr:</h3>
+<pre><code class="language-bash">netstat -tulnp
+ps aux
+lsof -i :5000
+</code></pre>
+<p>🧠 Brain:</p>
+<blockquote>
+<p>“Maybe docker? maybe pm2? maybe I forgot?”</p>
+</blockquote>
+<hr>
+<h3>With Witr:</h3>
+<pre><code class="language-bash">witr --port 5000
+</code></pre>
+<p>Output:</p>
+<pre><code class="language-bash">systemd → pm2 → node → app.js
+</code></pre>
+<p>💥 Done in 2 seconds.</p>
+<hr>
+<h2>🧬 Why This Hits Different (Core Concept)</h2>
+<p>Most tools show:</p>
+<ul>
+<li>state</li>
+<li>numbers</li>
+<li>raw data</li>
+</ul>
+<p>Witr shows:</p>
+<blockquote>
+<p><strong>CAUSALITY (cause → effect)</strong></p>
+</blockquote>
+<hr>
+<h3>🧠 Think like this:</h3>
+<p>Every process is a <strong>chain reaction</strong>:</p>
+<pre><code class="language-bash">cron → bash → python → payload.py
+</code></pre>
+<p>OR</p>
+<pre><code class="language-bash">ssh → bash → script.sh → reverse_shell
+</code></pre>
+<p>👉 Witr reconstructs this chain.</p>
+<p>That’s <strong>incident response level visibility</strong>.</p>
+<hr>
+<h2>⚔️ Cybersecurity Angle (Your Level)</h2>
+<h3>🔍 Detect Persistence (Attacker Mindset)</h3>
+<p>If you see:</p>
+<pre><code class="language-bash">cron → bash → python → backdoor.py
+</code></pre>
+<p>🚨 That’s not normal.</p>
+<p>You just found:</p>
+<ul>
+<li>persistence mechanism</li>
+<li>execution path</li>
+<li>payload location</li>
+</ul>
+<hr>
+<h3>🔥 Post Exploitation Awareness</h3>
+<p>After getting access to a system:</p>
+<p>Instead of blindly exploring:</p>
+<pre><code class="language-bash">ps aux
+</code></pre>
+<p>Use:</p>
+<pre><code class="language-bash">witr
+</code></pre>
+<p>👉 Launch TUI mode</p>
+<p>Now you get:</p>
+<ul>
+<li>live process dashboard</li>
+<li>ports → processes mapping</li>
+<li>full ancestry tree</li>
+</ul>
+<hr>
+<h2>🖥️ Interactive Mode (This is 🔥)</h2>
+<p><img src="https://images.openai.com/static-rsc-4/0L3dZv28igMGSn1iaDjdJ9lkTu21y6LVM4sQxpti4k5bXrkTf5b9eJlKONYSMSTcAMMkVZwKupcl6MxxPIvHpywjQuw10rQTU8SHq1S-C30jIpjfUL7FDD_BvTMLO-04vqGf09h1XqNOjnb24OMXrNAPSFJP6iW0TVePgp9ehjQ0FdJAsueP6BwLkurksb2U?purpose=fullsize" alt="Image"></p>
+<p>Run:</p>
+<pre><code class="language-bash">witr -i
+</code></pre>
+<p>You get:</p>
+<ul>
+<li>real-time process explorer</li>
+<li>clickable (mouse supported)</li>
+<li>inspect → kill → analyze</li>
+</ul>
+<p>👉 It’s like <code>htop</code> but with <strong>brain</strong></p>
+<hr>
+<h2>⚙️ Install (Keep It Simple)</h2>
+<h3>Linux / macOS:</h3>
+<pre><code class="language-bash">curl -fsSL https://raw.githubusercontent.com/pranshuparmar/witr/main/install.sh | bash
+</code></pre>
+<h3>Windows:</h3>
+<pre><code class="language-powershell">irm https://raw.githubusercontent.com/pranshuparmar/witr/main/install.ps1 | iex
+</code></pre>
+<hr>
+<h2>🧪 Quick Commands (Daily Use)</h2>
+<pre><code class="language-bash">witr nginx          # check service
+witr --port 5000    # who owns port
+witr --pid 1337     # inspect specific process
+witr -i             # interactive mode
+</code></pre>
+<hr>
+<h2>⚖️ Ethics (Real Talk)</h2>
+<p>Same tool.</p>
+<p>Different mindset.</p>
+<ul>
+<li><p>🟢 Defender:</p>
+<ul>
+<li>find malware</li>
+<li>debug infra</li>
+<li>audit systems</li>
+</ul>
+</li>
+<li><p>🔴 Attacker:</p>
+<ul>
+<li>map environment</li>
+<li>understand persistence</li>
+<li>identify weak points</li>
+</ul>
+</li>
+</ul>
+<p>👉 Skill is neutral. Intent defines direction.</p>
+<hr>
+
+    </article>
+  </main>
+
+  <footer>
+    <span class="f-accent">$</span> echo "Made by <span class="f-accent">Aryan Giri</span>" &nbsp;·&nbsp; <a href="https://github.com/giriaryan694-a11y" target="_blank" rel="noopener noreferrer">GitHub</a>
+  </footer>
+
+  <script>
+    /* Theme — synced with main site via same cookie */
+    const themes=["dark","light","eye-saver"];
+    const themeData={"dark":{emoji:"🌙",label:"Dark"},"light":{emoji:"☀️",label:"Light"},"eye-saver":{emoji:"☕",label:"Reading"}};
+    function setCookie(n,v,d){const e=new Date();e.setTime(e.getTime()+d*86400000);document.cookie=`${n}=${v};expires=${e.toUTCString()};path=/`;}
+    function getCookie(n){const m=document.cookie.match(new RegExp('(^| )'+n+'=([^;]+)'));return m?m[2]:null;}
+    let currentTheme=getCookie("site_theme")||"dark";
+    const themeBtn=document.getElementById("theme-btn");
+    const themeEmoji=document.getElementById("theme-emoji");
+    function applyTheme(theme,animate=false){
+      document.body.className=theme==="dark"?"":theme;
+      themeEmoji.textContent=themeData[theme].emoji;
+      document.getElementById("theme-label").textContent=themeData[theme].label;
+      setCookie("site_theme",theme,365);
+      if(animate){themeEmoji.style.animation="none";themeEmoji.offsetHeight;themeEmoji.style.animation="popSpin 0.4s cubic-bezier(0.175,0.885,0.32,1.275) forwards";}
+    }
+    applyTheme(currentTheme);
+    themeBtn.addEventListener("click",()=>{currentTheme=themes[(themes.indexOf(currentTheme)+1)%themes.length];applyTheme(currentTheme,true);});
+
+    /* Links → new tab + copy buttons on code blocks */
+    document.querySelectorAll(".post-content a").forEach(l => {
+      l.setAttribute("target", "_blank");
+      l.setAttribute("rel", "noopener noreferrer");
+    });
+    document.querySelectorAll("pre").forEach(pre => {
+      const code = pre.querySelector("code");
+      if (!code) return;
+      const btn = document.createElement("button");
+      btn.className = "copy-btn";
+      btn.textContent = "copy";
+      btn.onclick = async () => {
+        try { await navigator.clipboard.writeText(code.innerText.trimEnd()); }
+        catch {}
+        btn.textContent = "✓ copied"; btn.classList.add("copied");
+        setTimeout(() => { btn.textContent = "copy"; btn.classList.remove("copied"); }, 2000);
+      };
+      pre.appendChild(btn);
+    });
+  </script>
+</body>
+</html>

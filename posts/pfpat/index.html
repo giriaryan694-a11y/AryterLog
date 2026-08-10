@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy-Focused Port Forwarding &amp; Tunneling (2026) — AryterLog</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="../../manifest.json">
+  <meta name="theme-color" content="#080b10">
+  <link rel="icon" href="../../icons/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="../../icons/apple-touch-icon.png">
+  <meta name="description" content="A practical, neutral guide to modern tunneling techniques, tools, and tradeoffs—choosing the right approach based on threat model, control, and privacy needs.">
+  <link rel="canonical" href="https://giriaryan694-a11y.github.io/AryterLog/posts/pfpat/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Privacy-Focused Port Forwarding &amp; Tunneling (2026)">
+  <meta property="og:description" content="A practical, neutral guide to modern tunneling techniques, tools, and tradeoffs—choosing the right approach based on threat model, control, and privacy needs.">
+  <meta property="og:url" content="https://giriaryan694-a11y.github.io/AryterLog/posts/pfpat/">
+  <meta property="og:site_name" content="AryterLog">
+  <meta property="article:published_time" content="2026-03-27T00:00:00.000Z">
+  <meta property="article:tag" content="privacy">
+  <meta property="article:tag" content="network-security">
+  <meta property="article:tag" content="tunneling">
+  <meta property="article:tag" content="tooling">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Privacy-Focused Port Forwarding &amp; Tunneling (2026)">
+  <meta name="twitter:description" content="A practical, neutral guide to modern tunneling techniques, tools, and tradeoffs—choosing the right approach based on threat model, control, and privacy needs.">
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Privacy-Focused Port Forwarding & Tunneling (2026)","description":"A practical, neutral guide to modern tunneling techniques, tools, and tradeoffs—choosing the right approach based on threat model, control, and privacy needs.","datePublished":"2026-03-27T00:00:00.000Z","author":{"@type":"Person","name":"Aryan Giri"},"publisher":{"@type":"Organization","name":"AryterLog"},"mainEntityOfPage":"https://giriaryan694-a11y.github.io/AryterLog/posts/pfpat/","keywords":"privacy, network-security, tunneling, tooling"}</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:#080b10; --surface:#0d1117; --surface2:#111820; --surface3:#161d27;
+      --text:#d0dbe8; --text2:#7a8a9a; --accent:#00ff88; --accent2:#0ea5e9;
+      --danger:#ff4560; --border:#1e2a38; --border2:#2a3848; --code-bg:#0a0f16;
+      --glow:rgba(0,255,136,0.08); --glow2:rgba(0,255,136,0.18);
+    }
+    .light {
+      --bg:#f5f7fa; --surface:#ffffff; --surface2:#f0f4f8; --surface3:#e8eef5;
+      --text:#111827; --text2:#6b7280; --accent:#059669; --accent2:#0284c7;
+      --danger:#dc2626; --border:#e2e8f0; --border2:#cbd5e1; --code-bg:#f1f5f9;
+      --glow:rgba(5,150,105,0.07); --glow2:rgba(5,150,105,0.14);
+    }
+    .eye-saver {
+      --bg:#12100a; --surface:#1a1608; --surface2:#211c0c; --surface3:#282210;
+      --text:#e8d8b0; --text2:#9a8860; --accent:#f5c542; --accent2:#e08030;
+      --danger:#e05050; --border:#302810; --border2:#3d3418; --code-bg:#0f0d06;
+      --glow:rgba(245,197,66,0.08); --glow2:rgba(245,197,66,0.18);
+    }
+
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body {
+      font-family:'Fira Code',monospace;
+      background:var(--bg); color:var(--text);
+      min-height:100vh; overflow-x:hidden;
+      transition:background 0.4s,color 0.4s;
+    }
+    body::before {
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+      background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
+      background-size:44px 44px; opacity:0.25;
+    }
+
+    header {
+      position:sticky; top:0; z-index:200;
+      background:rgba(8,11,16,0.86); backdrop-filter:blur(16px);
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 22px; height:56px; gap:12px;
+    }
+    .light header{background:rgba(245,247,250,0.9);}
+    .eye-saver header{background:rgba(18,16,10,0.9);}
+    header::after {
+      content:''; position:absolute; bottom:-1px; left:8%; right:8%; height:1px;
+      background:linear-gradient(90deg,transparent,var(--accent),transparent); opacity:0.35;
+    }
+    .header-left{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+
+    .logo {
+      font-family:'Bebas Neue',sans-serif; font-size:24px; font-weight:400;
+      letter-spacing:3px; color:var(--text); text-decoration:none; white-space:nowrap;
+      flex-shrink:0; line-height:1; transition:color 0.2s;
+    }
+    .logo .lo-a{color:var(--accent);}
+    .logo:hover .lo-a{text-shadow:0 0 14px var(--accent);}
+
+    .back-link {
+      display:inline-flex; align-items:center; gap:6px;
+      background:transparent; border:1px solid var(--border2); color:var(--text2);
+      padding:6px 12px; border-radius:6px; cursor:pointer; transition:all 0.2s;
+      font-family:'Fira Code',monospace; font-size:11px; text-decoration:none;
+    }
+    .back-link:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    #theme-btn {
+      background:transparent; border:1px solid var(--border2);
+      padding:5px 11px; cursor:pointer; color:var(--text2); border-radius:6px;
+      transition:all 0.2s; font-family:'Fira Code',monospace; font-size:11px;
+      display:inline-flex; align-items:center; gap:6px; white-space:nowrap;
+    }
+    #theme-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    @keyframes popSpin{0%{transform:scale(0.4) rotate(-60deg);opacity:0;}70%{transform:scale(1.15) rotate(5deg);}100%{transform:scale(1) rotate(0deg);opacity:1;}}
+    .emoji{display:inline-block;}
+
+    main{max-width:760px;margin:0 auto;padding:34px 20px 60px;position:relative;z-index:1;}
+
+    .back-btn {
+      display:inline-flex;align-items:center;gap:7px;margin-bottom:20px;
+      background:var(--surface);border:1px solid var(--border2);color:var(--text2);
+      padding:7px 13px;border-radius:6px;font-family:'Fira Code',monospace;font-size:11px;
+      cursor:pointer;transition:all 0.2s;text-decoration:none;
+    }
+    .back-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    .post-content {
+      background:var(--surface);border:1px solid var(--border);border-radius:12px;
+      padding:34px 30px;position:relative;overflow:hidden;
+    }
+    .post-content::before {
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      border-radius:12px 12px 0 0;
+    }
+    .post-content *{max-width:100%;}
+
+    h1 {
+      font-family:'Space Grotesk',sans-serif;font-size:clamp(19px,4vw,26px);
+      font-weight:700;color:var(--text);margin-bottom:8px;line-height:1.25;word-break:break-word;
+    }
+    .post-header-meta{
+      font-family:'Fira Code',monospace;font-size:11px;color:var(--text2);
+      padding-bottom:18px;margin-bottom:22px;border-bottom:1px solid var(--border);
+      display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+    }
+    .card-cat-chip {
+      display:inline-flex;align-items:center;padding:1px 7px;border-radius:3px;
+      border:1px solid var(--border2);background:var(--surface2);color:var(--text2);
+      font-size:9px;font-family:'Fira Code',monospace;font-weight:500;letter-spacing:0.4px;
+    }
+    h2,h3{font-family:'Space Grotesk',sans-serif;font-weight:600;color:var(--text);margin:26px 0 10px;word-break:break-word;}
+    h2{font-size:19px;} h3{font-size:15px;color:var(--accent);}
+    p{font-size:14px;line-height:1.8;margin-bottom:14px;color:var(--text);}
+    ul,ol{padding-left:20px;margin-bottom:14px;font-size:14px;line-height:1.8;}
+    li{margin-bottom:4px;}
+
+    a{color:var(--accent);word-break:break-all;overflow-wrap:break-word;transition:opacity 0.2s;}
+    a:hover{opacity:0.75;}
+    .post-content a{text-decoration:underline;text-underline-offset:3px;}
+
+    code {
+      background:var(--code-bg);border:1px solid var(--border);padding:2px 6px;
+      border-radius:4px;font-family:'Fira Code',monospace;font-size:0.85em;
+      color:var(--accent);word-break:break-all;overflow-wrap:break-word;
+    }
+    pre {
+      background:var(--code-bg);border:1px solid var(--border);padding:18px;border-radius:8px;
+      max-width:100%; overflow:hidden;
+      position:relative;margin-bottom:14px;
+    }
+    pre::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      opacity:0.5;border-radius:8px 8px 0 0;
+    }
+    pre code{
+      background:transparent;border:none;padding:0 60px 0 0;word-break:normal;
+      overflow-wrap:normal;white-space:pre;display:block;
+      overflow-x:auto;-webkit-overflow-scrolling:touch;
+      font-size:13px;line-height:1.65;color:var(--text);
+    }
+    blockquote{
+      border-left:2px solid var(--accent);margin:14px 0;padding:10px 16px;
+      background:var(--glow);border-radius:0 6px 6px 0;font-style:italic;color:var(--text2);
+    }
+    table{width:100%;border-collapse:collapse;display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;font-size:13px;margin-bottom:14px;}
+    th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;white-space:nowrap;}
+    th{background:var(--surface2);color:var(--accent);font-weight:600;}
+    img{max-width:100%;height:auto;border-radius:8px;display:block;margin:14px 0;}
+
+    .copy-btn {
+      position:absolute;top:9px;right:9px;padding:3px 8px;font-size:10px;
+      font-family:'Fira Code',monospace;font-weight:500;background:var(--surface2);
+      border:1px solid var(--border2);color:var(--text2);border-radius:4px;cursor:pointer;
+      transition:all 0.2s;opacity:0;letter-spacing:0.3px;
+    }
+    pre:hover .copy-btn{opacity:1;}
+    .copy-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    .copy-btn.copied{border-color:var(--accent);color:var(--accent);opacity:1;}
+
+    footer{
+      text-align:center;padding:22px 16px;color:var(--text2);
+      font-family:'Fira Code',monospace;font-size:11px;
+      border-top:1px solid var(--border);position:relative;z-index:1;
+    }
+    .f-accent{color:var(--accent);}
+    footer a{color:var(--accent);text-decoration:none;}
+    footer a:hover{opacity:0.75;}
+
+    @media(max-width:480px){
+      header{padding:0 13px;height:50px;}
+      .logo{font-size:21px;letter-spacing:2px;}
+      main{padding:20px 14px 44px;}
+      .post-content{padding:20px 14px;}
+      pre{padding:13px;}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <a href="../../index.html" class="logo">Aryter<span class="lo-a">Log</span></a>
+    </div>
+    <button id="theme-btn" aria-label="Cycle Theme">
+      <span class="emoji" id="theme-emoji">🌙</span>
+      <span id="theme-label">Dark</span>
+    </button>
+  </header>
+
+  <main>
+    <a href="../../index.html#post-pfpat" class="back-btn">← Back to Blog</a>
+    <article class="post-content">
+      <h1>Privacy-Focused Port Forwarding &amp; Tunneling (2026)</h1>
+      <div class="post-header-meta">
+        <span>📅 Published March 27, 2026</span>
+        <span>·</span><span class="card-cat-chip">privacy</span><span class="card-cat-chip">network-security</span><span class="card-cat-chip">tunneling</span><span class="card-cat-chip">tooling</span>
+      </div>
+      <blockquote>
+<p>A practical, offensive-minded guide to modern tunneling techniques, tools, and tradeoffs.<br>Choose the right approach based on <strong>threat model</strong>, <strong>control</strong>, and <strong>privacy needs</strong>.</p>
+</blockquote>
+<p><strong>Written by Aryan Giri</strong></p>
+<hr>
+<h2>🧠 Core Idea</h2>
+<p>Traditional port forwarding <strong>exposes</strong> systems:</p>
+<pre><code>Internet ──▶ Open Port ──▶ Service
+</code></pre>
+<p>Modern tunneling <strong>reduces exposure</strong>:</p>
+<pre><code>Outbound Connection ──▶ Encrypted Tunnel ──▶ Controlled Access
+</code></pre>
+<p>Key shift: from <strong>network exposure</strong> → to <strong>access control &amp; encryption</strong></p>
+<hr>
+<h2>🧅 Tor — Hidden Services (Anonymous Access)</h2>
+<h3>What this model does</h3>
+<p>Replaces your IP + port with a <code>.onion</code> address. Traffic routes through the Tor network — no IP exposure, no DNS leaks, no open inbound ports needed.</p>
+<pre><code>Client ──▶ Guard Relay ──▶ Middle Relay ──▶ Rendezvous Point ──▶ Hidden Service
+</code></pre>
+<h3>Example config</h3>
+<pre><code class="language-bash">HiddenServiceDir /var/lib/tor/my_hidden_service/
+HiddenServicePort 80 127.0.0.1:8080
+</code></pre>
+<h3>Quick setup</h3>
+<pre><code class="language-bash">apt install tor
+
+echo &quot;HiddenServiceDir /var/lib/tor/c2/
+HiddenServicePort 443 127.0.0.1:4444&quot; &gt;&gt; /etc/tor/torrc
+
+systemctl restart tor
+cat /var/lib/tor/c2/hostname   # your .onion address
+</code></pre>
+<h3>Strengths</h3>
+<ul>
+<li>True anonymity — server IP never revealed to client or any relay</li>
+<li>Bypasses NAT, CGNAT, and firewalls with zero router config</li>
+<li>Built-in end-to-end encryption via layered onion routing</li>
+<li>Free, no account, no DNS registration required</li>
+<li>Survives takedown attempts — no centralized infrastructure</li>
+</ul>
+<h3>Tradeoffs</h3>
+<ul>
+<li>High latency (~500ms–2s) — not suitable for real-time traffic</li>
+<li>Bandwidth limited by the relay network</li>
+<li><code>.onion</code> v3 addresses are 56 characters — not memorable</li>
+<li>Blocked by some ISPs and corporate firewalls</li>
+<li>Requires Tor Browser on the client side</li>
+</ul>
+<h3>When to use</h3>
+<ul>
+<li>Anonymous C2 infrastructure with no attribution risk</li>
+<li>Whistleblowing or censorship-resistant services</li>
+<li>Research and anonymity-focused setups</li>
+</ul>
+<hr>
+<h2>🔒 Tailscale — WireGuard Mesh VPN</h2>
+<h3>What this model does</h3>
+<p>Creates a peer-to-peer encrypted WireGuard mesh between all your devices. Every node gets a stable <code>100.x.x.x</code> IP. Port forwarding becomes irrelevant — connect directly to the internal mesh IP from anywhere.</p>
+<pre><code>[Laptop 100.64.0.1] ◀──WireGuard──▶ [VPS 100.64.0.2] ◀──WireGuard──▶ [Phone 100.64.0.3]
+                              ▲
+                    Tailscale Control Plane
+                    (key exchange only)
+</code></pre>
+<h3>Quick setup</h3>
+<pre><code class="language-bash"># Install and connect
+curl -fsSL https://tailscale.com/install.sh | sh
+tailscale up
+
+# Expose a local service publicly (Funnel)
+tailscale funnel 8080
+
+# Act as exit node — route all traffic through this device
+tailscale up --advertise-exit-node
+
+# Subnet routing — expose 192.168.1.0/24 to tailnet
+tailscale up --advertise-routes=192.168.1.0/24
+</code></pre>
+<h3>Strengths</h3>
+<ul>
+<li>Zero open ports — P2P WireGuard punches through NAT automatically</li>
+<li><code>100.x.x.x</code> stable IPs — devices always reachable regardless of location</li>
+<li>MagicDNS — use hostnames like <code>my-server</code> instead of IPs</li>
+<li>Subnet routing — expose entire internal networks with one exit node</li>
+<li>Tailscale Funnel — expose local ports publicly without a VPS</li>
+<li>ACL policies — fine-grained access control per device/user</li>
+<li>Free for personal use (up to 100 devices, 3 users)</li>
+</ul>
+<h3>Tradeoffs</h3>
+<ul>
+<li>Requires a Tailscale account (proprietary control plane)</li>
+<li>Traffic metadata visible to Tailscale&#39;s coordination server</li>
+<li>Not suitable for anonymous ops</li>
+<li>Funnel bandwidth limited on free tier</li>
+</ul>
+<h3>When to use</h3>
+<ul>
+<li>Remote access to personal or lab systems</li>
+<li>Internal tools, dashboards, and self-hosted services</li>
+<li>Secure team infrastructure without VPN complexity</li>
+</ul>
+<hr>
+<h2>⚙️ Self-Hosted Tunnels — Chisel / FRP / Bore</h2>
+<h3>What this model does</h3>
+<p>Uses a VPS or external server to relay traffic. You own the full infrastructure — no third-party trust required.</p>
+<pre><code>Client ──▶ VPS Relay (you own it) ──▶ Internal Service
+</code></pre>
+<h3>Example — Chisel (Red Team Favorite)</h3>
+<pre><code class="language-bash"># On your VPS
+chisel server -p 8000 --reverse
+
+# On target / client
+chisel client VPS_IP:8000 R:4444:localhost:22
+</code></pre>
+<h3>Example — FRP (Fast Reverse Proxy)</h3>
+<pre><code class="language-ini"># frps.ini (server)
+[common]
+bind_port = 7000
+
+# frpc.ini (client)
+[common]
+server_addr = VPS_IP
+server_port = 7000
+
+[ssh]
+type = tcp
+local_ip = 127.0.0.1
+local_port = 22
+remote_port = 6000
+</code></pre>
+<h3>Example — Bore</h3>
+<pre><code class="language-bash"># Expose local port 8080 publicly
+bore local 8080 --to bore.pub
+</code></pre>
+<h3>Strengths</h3>
+<ul>
+<li>Full control over infrastructure — no third-party trust</li>
+<li>Works through strict firewalls and deep packet inspection</li>
+<li>Flexible routing — SSH, web, custom protocols</li>
+<li>Ligolo-ng variant creates a full TUN interface — no SOCKS proxy needed</li>
+</ul>
+<h3>Tradeoffs</h3>
+<ul>
+<li>Requires server management and maintenance</li>
+<li>Misconfiguration can silently expose services</li>
+<li>VPS costs money</li>
+</ul>
+<h3>When to use</h3>
+<ul>
+<li>Internal network pivoting post-exploitation</li>
+<li>Custom lab and range environments</li>
+<li>Controlled red team engagements</li>
+</ul>
+<hr>
+<h2>☁️ Managed Tunnels — Cloudflare / Ngrok</h2>
+<h3>What this model does</h3>
+<p>Uses a third-party service to expose local apps securely. No VPS required — the provider handles relay infrastructure.</p>
+<h3>Cloudflare Tunnel</h3>
+<pre><code class="language-bash"># Install cloudflared
+wget https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64
+chmod +x cloudflared-linux-amd64
+
+# Authenticate and create tunnel
+cloudflared tunnel login
+cloudflared tunnel create my-tunnel
+cloudflared tunnel route dns my-tunnel subdomain.yourdomain.com
+
+# Run
+cloudflared tunnel run my-tunnel
+</code></pre>
+<h3>Ngrok</h3>
+<pre><code class="language-bash"># Expose HTTP
+ngrok http 8080
+
+# Expose raw TCP (C2 relay)
+ngrok tcp 4444
+
+# Static domain (paid)
+ngrok http --domain=your.ngrok.app 8080
+</code></pre>
+<h3>Strengths</h3>
+<ul>
+<li>Zero server management</li>
+<li>Built-in access control, TLS, and DDoS protection (Cloudflare)</li>
+<li>Instant public URLs with traffic inspection UI (Ngrok)</li>
+<li>Works behind CGNAT with no router config</li>
+</ul>
+<h3>Tradeoffs</h3>
+<ul>
+<li>Centralized trust — traffic passes through provider infrastructure</li>
+<li>Ngrok free tier has no static IPs or custom domains</li>
+<li>Not suitable for ops requiring full infrastructure control</li>
+</ul>
+<h3>When to use</h3>
+<ul>
+<li>Quick webhook testing and local dev exposure</li>
+<li>Hosting internal tools with zero-trust access</li>
+<li>Rapid C2 relay setup during engagements (Ngrok TCP)</li>
+</ul>
+<hr>
+<h2>🕸️ Mesh VPN — ZeroTier / Nebula</h2>
+<h3>What this model does</h3>
+<p>Creates a software-defined private network between devices. No central relay — peers connect directly after initial coordination.</p>
+<h3>ZeroTier</h3>
+<pre><code class="language-bash"># Install
+curl -s https://install.zerotier.com | sudo bash
+
+# Join a network
+zerotier-cli join &lt;NETWORK_ID&gt;
+</code></pre>
+<h3>Nebula (Slack&#39;s open-source mesh)</h3>
+<pre><code class="language-bash"># Generate certs
+./nebula-cert ca -name &quot;My Org&quot;
+./nebula-cert sign -name &quot;laptop&quot; -ip &quot;192.168.100.1/24&quot;
+
+# Run with config
+./nebula -config /etc/nebula/config.yml
+</code></pre>
+<h3>Strengths</h3>
+<ul>
+<li>No router configuration required</li>
+<li>Encrypted peer-to-peer — no central relay after handshake</li>
+<li>Works behind NAT and firewalls</li>
+<li>Nebula is fully self-hosted — no vendor dependency</li>
+</ul>
+<h3>Tradeoffs</h3>
+<ul>
+<li>Not anonymous — identity or certificates required</li>
+<li>ZeroTier uses coordination servers (self-hostable)</li>
+<li>Slightly higher setup complexity than Tailscale</li>
+</ul>
+<h3>When to use</h3>
+<ul>
+<li>Lab environments and internal tooling</li>
+<li>Teams needing a fully self-hosted mesh (Nebula)</li>
+<li>Remote access without opening firewall ports</li>
+</ul>
+<hr>
+<h2>⚡ Convenience Tools — Low Control</h2>
+<p>Tools like <strong>Pinggy</strong>, <strong>LocalTunnel</strong>, and <strong>LocalXpose</strong> get you a public URL in seconds.</p>
+<pre><code class="language-bash"># LocalTunnel
+npx localtunnel --port 8080
+
+# Pinggy
+ssh -p 443 -R0:localhost:8080 a.pinggy.io
+</code></pre>
+<h3>Strengths</h3>
+<ul>
+<li>Sub-60-second setup</li>
+<li>No account required for most</li>
+<li>Good for webhook debugging and demos</li>
+</ul>
+<h3>Tradeoffs</h3>
+<ul>
+<li>Shared infrastructure — limited privacy guarantees</li>
+<li>No persistent URLs on free tiers</li>
+<li>Zero control over logging or data handling</li>
+</ul>
+<h3>When to use</h3>
+<ul>
+<li>Temporary webhook testing (Stripe, GitHub, Twilio)</li>
+<li>Quick local demos</li>
+<li>Nothing involving sensitive data</li>
+</ul>
+<hr>
+<h2>📊 Full Comparison Table</h2>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Anonymity</th>
+<th>Latency</th>
+<th>Open Ports?</th>
+<th>Self-Hostable</th>
+<th>Free</th>
+<th>Best For</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Tor</strong></td>
+<td>⭐⭐⭐⭐⭐</td>
+<td>High</td>
+<td>❌</td>
+<td>✅</td>
+<td>✅</td>
+<td>Anonymous C2, censorship bypass</td>
+</tr>
+<tr>
+<td><strong>Tailscale</strong></td>
+<td>⭐⭐</td>
+<td>Low (WireGuard)</td>
+<td>❌</td>
+<td>Partial</td>
+<td>✅</td>
+<td>Mesh access, lab infra</td>
+</tr>
+<tr>
+<td><strong>Chisel</strong></td>
+<td>⭐⭐⭐</td>
+<td>Medium</td>
+<td>❌</td>
+<td>✅</td>
+<td>✅</td>
+<td>Pivoting, firewall bypass</td>
+</tr>
+<tr>
+<td><strong>Ligolo-ng</strong></td>
+<td>⭐⭐⭐</td>
+<td>Low</td>
+<td>❌</td>
+<td>✅</td>
+<td>✅</td>
+<td>Post-exploit network pivot</td>
+</tr>
+<tr>
+<td><strong>Cloudflare Tunnel</strong></td>
+<td>⭐⭐</td>
+<td>Low</td>
+<td>❌</td>
+<td>❌</td>
+<td>✅</td>
+<td>Production hosting</td>
+</tr>
+<tr>
+<td><strong>Ngrok</strong></td>
+<td>⭐</td>
+<td>Low</td>
+<td>❌</td>
+<td>❌</td>
+<td>✅</td>
+<td>Quick dev/relay exposure</td>
+</tr>
+<tr>
+<td><strong>ZeroTier</strong></td>
+<td>⭐⭐</td>
+<td>Low</td>
+<td>❌</td>
+<td>✅</td>
+<td>✅</td>
+<td>P2P mesh networking</td>
+</tr>
+<tr>
+<td><strong>Nebula</strong></td>
+<td>⭐⭐⭐</td>
+<td>Low</td>
+<td>❌</td>
+<td>✅</td>
+<td>✅</td>
+<td>Full self-hosted mesh</td>
+</tr>
+<tr>
+<td><strong>LocalTunnel</strong></td>
+<td>⭐</td>
+<td>Low</td>
+<td>❌</td>
+<td>✅</td>
+<td>✅</td>
+<td>Webhook testing only</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>⚠️ Practical Security Notes</h2>
+<ul>
+<li>Tunnels <strong>bypass traditional firewall assumptions</strong> — treat them as new attack surface</li>
+<li>Always bind services to <code>127.0.0.1</code> unless explicitly needed on <code>0.0.0.0</code></li>
+<li>Monitor open connections: <code>ss -tulnp</code> / <code>netstat -an</code></li>
+<li>Understand the logging behavior of every tool before use in sensitive ops</li>
+<li>Rotate <code>.onion</code> addresses and Ngrok URLs between engagements</li>
+<li>Never run tunnel clients as root unless required</li>
+<li>Use firewall rules to restrict which processes can reach tunnel endpoints</li>
+</ul>
+<hr>
+<h2>🎯 OpSec Combinations</h2>
+<h3>Anonymous C2 Infrastructure</h3>
+<pre><code>Tor Hidden Service (.onion) ──▶ C2 Listener (localhost)
+</code></pre>
+<p>No IP exposed anywhere. Client beacons over Tor. Zero attribution.</p>
+<h3>Layered Team Infrastructure</h3>
+<pre><code>Tailscale Mesh (trusted internal) + Tor Funnel (public anonymous entry)
+</code></pre>
+<p>Internal team communicates over WireGuard mesh. Public-facing endpoints use Tor.</p>
+<h3>Pivot Chain (Post-Exploitation)</h3>
+<pre><code>Attacker ──▶ Chisel/Ligolo-ng ──▶ Compromised Host ──▶ Internal Network
+</code></pre>
+<p>Firewall sees only outbound traffic from compromised host to attacker VPS.</p>
+<h3>Zero-Infrastructure Relay</h3>
+<pre><code>Ngrok TCP ──▶ Local Listener ──▶ Payload Callback
+</code></pre>
+<p>Fast setup, no VPS needed. Rotate URLs per engagement.</p>
+<hr>
+<h2>🧪 Practice Lab</h2>
+<p>Build a simple lab to understand each layer:</p>
+<pre><code>Device A (attacker) ◀──▶ Device B (victim/server)
+          │
+          └──▶ VPS Relay (Chisel)
+                    │
+                    └──▶ Tor Hidden Service (.onion)
+</code></pre>
+<p>Test each layer:</p>
+<pre><code class="language-bash"># 1. Connectivity (Tailscale mesh)
+ping 100.x.x.x
+
+# 2. Tunnel latency
+time curl http://VPS_IP:PORT
+
+# 3. Anonymity check (Tor)
+curl --socks5-hostname 127.0.0.1:9050 http://check.torproject.org
+
+# 4. Traffic visibility
+sudo wireshark -i any -k
+</code></pre>
+<p>What to observe: which hops are visible in Wireshark for each approach, latency differences between direct/tunneled/Tor traffic, and what gets logged where.</p>
+<hr>
+<h2>📈 Suggested Learning Path</h2>
+<pre><code>1. Tailscale          →  Understand peer-to-peer connectivity
+2. Chisel / FRP       →  Understand relay routing and firewall bypass
+3. Tor Hidden Service →  Understand anonymity vs usability tradeoffs
+4. Combine all three  →  Build layered, production-grade infrastructure
+</code></pre>
+<hr>
+<h2>🧠 Final Insight</h2>
+<p>There is no universally <strong>best</strong> tool. Each approach solves a different problem:</p>
+<pre><code>Mesh VPN  →  Connectivity without exposed ports
+Tunnels   →  Controlled exposure through firewalls
+Tor       →  Anonymity with zero IP attribution
+</code></pre>
+<p>Effective setups come from <strong>combining them thoughtfully</strong> — not relying on a single solution. Map your threat model first, then choose your stack.</p>
+<hr>
+<blockquote>
+<p>🚀 Build, test, break, and understand the tradeoffs.</p>
+</blockquote>
+<hr>
+<p><em>Made by Aryan Giri</em></p>
+
+    </article>
+  </main>
+
+  <footer>
+    <span class="f-accent">$</span> echo "Made by <span class="f-accent">Aryan Giri</span>" &nbsp;·&nbsp; <a href="https://github.com/giriaryan694-a11y" target="_blank" rel="noopener noreferrer">GitHub</a>
+  </footer>
+
+  <script>
+    /* Theme — synced with main site via same cookie */
+    const themes=["dark","light","eye-saver"];
+    const themeData={"dark":{emoji:"🌙",label:"Dark"},"light":{emoji:"☀️",label:"Light"},"eye-saver":{emoji:"☕",label:"Reading"}};
+    function setCookie(n,v,d){const e=new Date();e.setTime(e.getTime()+d*86400000);document.cookie=`${n}=${v};expires=${e.toUTCString()};path=/`;}
+    function getCookie(n){const m=document.cookie.match(new RegExp('(^| )'+n+'=([^;]+)'));return m?m[2]:null;}
+    let currentTheme=getCookie("site_theme")||"dark";
+    const themeBtn=document.getElementById("theme-btn");
+    const themeEmoji=document.getElementById("theme-emoji");
+    function applyTheme(theme,animate=false){
+      document.body.className=theme==="dark"?"":theme;
+      themeEmoji.textContent=themeData[theme].emoji;
+      document.getElementById("theme-label").textContent=themeData[theme].label;
+      setCookie("site_theme",theme,365);
+      if(animate){themeEmoji.style.animation="none";themeEmoji.offsetHeight;themeEmoji.style.animation="popSpin 0.4s cubic-bezier(0.175,0.885,0.32,1.275) forwards";}
+    }
+    applyTheme(currentTheme);
+    themeBtn.addEventListener("click",()=>{currentTheme=themes[(themes.indexOf(currentTheme)+1)%themes.length];applyTheme(currentTheme,true);});
+
+    /* Links → new tab + copy buttons on code blocks */
+    document.querySelectorAll(".post-content a").forEach(l => {
+      l.setAttribute("target", "_blank");
+      l.setAttribute("rel", "noopener noreferrer");
+    });
+    document.querySelectorAll("pre").forEach(pre => {
+      const code = pre.querySelector("code");
+      if (!code) return;
+      const btn = document.createElement("button");
+      btn.className = "copy-btn";
+      btn.textContent = "copy";
+      btn.onclick = async () => {
+        try { await navigator.clipboard.writeText(code.innerText.trimEnd()); }
+        catch {}
+        btn.textContent = "✓ copied"; btn.classList.add("copied");
+        setTimeout(() => { btn.textContent = "copy"; btn.classList.remove("copied"); }, 2000);
+      };
+      pre.appendChild(btn);
+    });
+  </script>
+</body>
+</html>

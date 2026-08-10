@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FFUF Content-Based Fuzzing: Eliminating False Positives with Regex — AryterLog</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="../../manifest.json">
+  <meta name="theme-color" content="#080b10">
+  <link rel="icon" href="../../icons/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="../../icons/apple-touch-icon.png">
+  <meta name="description" content="A practical guide to using ffuf&#039;s regex matching (-mr) and redirect following (-r) to detect sensitive data leaks in web applications, overcoming the limitations of status-code-based filtering.">
+  <link rel="canonical" href="https://giriaryan694-a11y.github.io/AryterLog/posts/ffuf-content-fuzzing-regex/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="FFUF Content-Based Fuzzing: Eliminating False Positives with Regex">
+  <meta property="og:description" content="A practical guide to using ffuf&#039;s regex matching (-mr) and redirect following (-r) to detect sensitive data leaks in web applications, overcoming the limitations of status-code-based filtering.">
+  <meta property="og:url" content="https://giriaryan694-a11y.github.io/AryterLog/posts/ffuf-content-fuzzing-regex/">
+  <meta property="og:site_name" content="AryterLog">
+  <meta property="article:published_time" content="2026-04-07T00:00:00.000Z">
+  <meta property="article:tag" content="web-security">
+  <meta property="article:tag" content="tooling">
+  <meta property="article:tag" content="offensive-security">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="FFUF Content-Based Fuzzing: Eliminating False Positives with Regex">
+  <meta name="twitter:description" content="A practical guide to using ffuf&#039;s regex matching (-mr) and redirect following (-r) to detect sensitive data leaks in web applications, overcoming the limitations of status-code-based filtering.">
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"FFUF Content-Based Fuzzing: Eliminating False Positives with Regex","description":"A practical guide to using ffuf's regex matching (-mr) and redirect following (-r) to detect sensitive data leaks in web applications, overcoming the limitations of status-code-based filtering.","datePublished":"2026-04-07T00:00:00.000Z","author":{"@type":"Person","name":"Aryan Giri"},"publisher":{"@type":"Organization","name":"AryterLog"},"mainEntityOfPage":"https://giriaryan694-a11y.github.io/AryterLog/posts/ffuf-content-fuzzing-regex/","keywords":"web-security, tooling, offensive-security"}</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:#080b10; --surface:#0d1117; --surface2:#111820; --surface3:#161d27;
+      --text:#d0dbe8; --text2:#7a8a9a; --accent:#00ff88; --accent2:#0ea5e9;
+      --danger:#ff4560; --border:#1e2a38; --border2:#2a3848; --code-bg:#0a0f16;
+      --glow:rgba(0,255,136,0.08); --glow2:rgba(0,255,136,0.18);
+    }
+    .light {
+      --bg:#f5f7fa; --surface:#ffffff; --surface2:#f0f4f8; --surface3:#e8eef5;
+      --text:#111827; --text2:#6b7280; --accent:#059669; --accent2:#0284c7;
+      --danger:#dc2626; --border:#e2e8f0; --border2:#cbd5e1; --code-bg:#f1f5f9;
+      --glow:rgba(5,150,105,0.07); --glow2:rgba(5,150,105,0.14);
+    }
+    .eye-saver {
+      --bg:#12100a; --surface:#1a1608; --surface2:#211c0c; --surface3:#282210;
+      --text:#e8d8b0; --text2:#9a8860; --accent:#f5c542; --accent2:#e08030;
+      --danger:#e05050; --border:#302810; --border2:#3d3418; --code-bg:#0f0d06;
+      --glow:rgba(245,197,66,0.08); --glow2:rgba(245,197,66,0.18);
+    }
+
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body {
+      font-family:'Fira Code',monospace;
+      background:var(--bg); color:var(--text);
+      min-height:100vh; overflow-x:hidden;
+      transition:background 0.4s,color 0.4s;
+    }
+    body::before {
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+      background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
+      background-size:44px 44px; opacity:0.25;
+    }
+
+    header {
+      position:sticky; top:0; z-index:200;
+      background:rgba(8,11,16,0.86); backdrop-filter:blur(16px);
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 22px; height:56px; gap:12px;
+    }
+    .light header{background:rgba(245,247,250,0.9);}
+    .eye-saver header{background:rgba(18,16,10,0.9);}
+    header::after {
+      content:''; position:absolute; bottom:-1px; left:8%; right:8%; height:1px;
+      background:linear-gradient(90deg,transparent,var(--accent),transparent); opacity:0.35;
+    }
+    .header-left{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+
+    .logo {
+      font-family:'Bebas Neue',sans-serif; font-size:24px; font-weight:400;
+      letter-spacing:3px; color:var(--text); text-decoration:none; white-space:nowrap;
+      flex-shrink:0; line-height:1; transition:color 0.2s;
+    }
+    .logo .lo-a{color:var(--accent);}
+    .logo:hover .lo-a{text-shadow:0 0 14px var(--accent);}
+
+    .back-link {
+      display:inline-flex; align-items:center; gap:6px;
+      background:transparent; border:1px solid var(--border2); color:var(--text2);
+      padding:6px 12px; border-radius:6px; cursor:pointer; transition:all 0.2s;
+      font-family:'Fira Code',monospace; font-size:11px; text-decoration:none;
+    }
+    .back-link:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    #theme-btn {
+      background:transparent; border:1px solid var(--border2);
+      padding:5px 11px; cursor:pointer; color:var(--text2); border-radius:6px;
+      transition:all 0.2s; font-family:'Fira Code',monospace; font-size:11px;
+      display:inline-flex; align-items:center; gap:6px; white-space:nowrap;
+    }
+    #theme-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    @keyframes popSpin{0%{transform:scale(0.4) rotate(-60deg);opacity:0;}70%{transform:scale(1.15) rotate(5deg);}100%{transform:scale(1) rotate(0deg);opacity:1;}}
+    .emoji{display:inline-block;}
+
+    main{max-width:760px;margin:0 auto;padding:34px 20px 60px;position:relative;z-index:1;}
+
+    .back-btn {
+      display:inline-flex;align-items:center;gap:7px;margin-bottom:20px;
+      background:var(--surface);border:1px solid var(--border2);color:var(--text2);
+      padding:7px 13px;border-radius:6px;font-family:'Fira Code',monospace;font-size:11px;
+      cursor:pointer;transition:all 0.2s;text-decoration:none;
+    }
+    .back-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    .post-content {
+      background:var(--surface);border:1px solid var(--border);border-radius:12px;
+      padding:34px 30px;position:relative;overflow:hidden;
+    }
+    .post-content::before {
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      border-radius:12px 12px 0 0;
+    }
+    .post-content *{max-width:100%;}
+
+    h1 {
+      font-family:'Space Grotesk',sans-serif;font-size:clamp(19px,4vw,26px);
+      font-weight:700;color:var(--text);margin-bottom:8px;line-height:1.25;word-break:break-word;
+    }
+    .post-header-meta{
+      font-family:'Fira Code',monospace;font-size:11px;color:var(--text2);
+      padding-bottom:18px;margin-bottom:22px;border-bottom:1px solid var(--border);
+      display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+    }
+    .card-cat-chip {
+      display:inline-flex;align-items:center;padding:1px 7px;border-radius:3px;
+      border:1px solid var(--border2);background:var(--surface2);color:var(--text2);
+      font-size:9px;font-family:'Fira Code',monospace;font-weight:500;letter-spacing:0.4px;
+    }
+    h2,h3{font-family:'Space Grotesk',sans-serif;font-weight:600;color:var(--text);margin:26px 0 10px;word-break:break-word;}
+    h2{font-size:19px;} h3{font-size:15px;color:var(--accent);}
+    p{font-size:14px;line-height:1.8;margin-bottom:14px;color:var(--text);}
+    ul,ol{padding-left:20px;margin-bottom:14px;font-size:14px;line-height:1.8;}
+    li{margin-bottom:4px;}
+
+    a{color:var(--accent);word-break:break-all;overflow-wrap:break-word;transition:opacity 0.2s;}
+    a:hover{opacity:0.75;}
+    .post-content a{text-decoration:underline;text-underline-offset:3px;}
+
+    code {
+      background:var(--code-bg);border:1px solid var(--border);padding:2px 6px;
+      border-radius:4px;font-family:'Fira Code',monospace;font-size:0.85em;
+      color:var(--accent);word-break:break-all;overflow-wrap:break-word;
+    }
+    pre {
+      background:var(--code-bg);border:1px solid var(--border);padding:18px;border-radius:8px;
+      max-width:100%; overflow:hidden;
+      position:relative;margin-bottom:14px;
+    }
+    pre::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      opacity:0.5;border-radius:8px 8px 0 0;
+    }
+    pre code{
+      background:transparent;border:none;padding:0 60px 0 0;word-break:normal;
+      overflow-wrap:normal;white-space:pre;display:block;
+      overflow-x:auto;-webkit-overflow-scrolling:touch;
+      font-size:13px;line-height:1.65;color:var(--text);
+    }
+    blockquote{
+      border-left:2px solid var(--accent);margin:14px 0;padding:10px 16px;
+      background:var(--glow);border-radius:0 6px 6px 0;font-style:italic;color:var(--text2);
+    }
+    table{width:100%;border-collapse:collapse;display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;font-size:13px;margin-bottom:14px;}
+    th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;white-space:nowrap;}
+    th{background:var(--surface2);color:var(--accent);font-weight:600;}
+    img{max-width:100%;height:auto;border-radius:8px;display:block;margin:14px 0;}
+
+    .copy-btn {
+      position:absolute;top:9px;right:9px;padding:3px 8px;font-size:10px;
+      font-family:'Fira Code',monospace;font-weight:500;background:var(--surface2);
+      border:1px solid var(--border2);color:var(--text2);border-radius:4px;cursor:pointer;
+      transition:all 0.2s;opacity:0;letter-spacing:0.3px;
+    }
+    pre:hover .copy-btn{opacity:1;}
+    .copy-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    .copy-btn.copied{border-color:var(--accent);color:var(--accent);opacity:1;}
+
+    footer{
+      text-align:center;padding:22px 16px;color:var(--text2);
+      font-family:'Fira Code',monospace;font-size:11px;
+      border-top:1px solid var(--border);position:relative;z-index:1;
+    }
+    .f-accent{color:var(--accent);}
+    footer a{color:var(--accent);text-decoration:none;}
+    footer a:hover{opacity:0.75;}
+
+    @media(max-width:480px){
+      header{padding:0 13px;height:50px;}
+      .logo{font-size:21px;letter-spacing:2px;}
+      main{padding:20px 14px 44px;}
+      .post-content{padding:20px 14px;}
+      pre{padding:13px;}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <a href="../../index.html" class="logo">Aryter<span class="lo-a">Log</span></a>
+    </div>
+    <button id="theme-btn" aria-label="Cycle Theme">
+      <span class="emoji" id="theme-emoji">🌙</span>
+      <span id="theme-label">Dark</span>
+    </button>
+  </header>
+
+  <main>
+    <a href="../../index.html#post-ffuf-content-fuzzing-regex" class="back-btn">← Back to Blog</a>
+    <article class="post-content">
+      <h1>FFUF Content-Based Fuzzing: Eliminating False Positives with Regex</h1>
+      <div class="post-header-meta">
+        <span>📅 Published 04-07-2026</span>
+        <span>·</span><span class="card-cat-chip">web-security</span><span class="card-cat-chip">tooling</span><span class="card-cat-chip">offensive-security</span>
+      </div>
+      <p>Written By Aryan Giri</p>
+<p>In web application security, automation is only as good as its filtering logic. A common pitfall in directory and parameter fuzzing is relying solely on HTTP status codes. When applications return generic redirects (302) or custom error pages for both valid and invalid inputs, standard filters like <code>-mc 200</code> fail to distinguish signal from noise.</p>
+<p>This guide details a content-based approach using <code>ffuf</code>’s regex matching capabilities (<code>-mr</code>) to identify sensitive data leaks, configuration files, and source code exposure, even when the server attempts to hide them behind redirects. We will explore why status-code matching fails, how to implement robust regex filters, and provide a comprehensive library of patterns for offensive security assessments.</p>
+<h2>The Problem: Why Status Code Matching Fails</h2>
+<p>Consider a vulnerable endpoint that accepts a file path via a GET parameter:</p>
+<pre><code class="language-http">GET /dashboard.php?skin=FUZZ
+</code></pre>
+<p>A typical wordlist might include paths like <code>../config</code>, <code>index.php</code>, and random strings like <code>asdf123</code>.</p>
+<h3>Scenario Analysis</h3>
+<ol>
+<li><strong>Valid Input (<code>../config</code>)</strong>: The server attempts to include the file. If successful, it might render the content. However, due to application logic, it might first issue a <code>302 Found</code> redirect to a login page or a dashboard home.</li>
+<li><strong>Invalid Input (<code>random_path</code>)</strong>: The server fails to find the file. Instead of returning a <code>404 Not Found</code>, the application’s global error handler catches the exception and issues a <code>302 Found</code> redirect to a generic &quot;Error&quot; or &quot;Home&quot; page.</li>
+</ol>
+<p>If you run <code>ffuf</code> with <code>-mc 200</code>, both results are ignored because they return <code>302</code>. If you run it without filtering, you get hundreds of <code>302</code> responses, making it impossible to spot the one that actually returned sensitive data.</p>
+<h3>Method 1: Status Code Matching (Fails)</h3>
+<pre><code class="language-bash">ffuf -u http://TARGET/dashboard.php?skin=FUZZ \
+-w lfi.txt \
+-mc 200
+</code></pre>
+<p><strong>Output:</strong></p>
+<pre><code class="language-text">[Status: 302, Size: 0, Words: 1, Lines: 1] ../config
+[Status: 302, Size: 0, Words: 1, Lines: 1] random_path
+...
+</code></pre>
+<p><em>Result:</em> No useful findings. The tool ignores all <code>302</code>s.</p>
+<h3>Method 2: No Filtering (Noisy)</h3>
+<pre><code class="language-bash">ffuf -u http://TARGET/dashboard.php?skin=FUZZ \
+-w lfi.txt
+</code></pre>
+<p><strong>Output:</strong><br>Hundreds of lines with <code>Status: 302</code>. You must manually inspect each one. This is inefficient and prone to human error.</p>
+<h2>The Solution: Follow Redirects and Match Content</h2>
+<p>To solve this, we need two things:</p>
+<ol>
+<li><strong>Follow Redirects</strong>: Tell <code>ffuf</code> to follow the <code>302</code> and analyze the final response body.</li>
+<li><strong>Content Matching</strong>: Use regex to search for specific patterns in the final response body, not just the status code.</li>
+</ol>
+<h3>Method 3: Follow Redirects</h3>
+<p>The <code>-r</code> flag tells <code>ffuf</code> to follow HTTP redirects.</p>
+<pre><code class="language-bash">ffuf \
+-u http://TARGET/dashboard.php?skin=FUZZ \
+-w lfi.txt \
+-r
+</code></pre>
+<p>Now, <code>ffuf</code> reports the status code of the <em>final</em> destination. If <code>../config</code> redirects to a page containing PHP source code, the final status might be <code>200</code>. However, if the error page also returns <code>200</code>, we still have noise.</p>
+<h3>Method 4: Regex Matching (Best Practice)</h3>
+<p>The <code>-mr</code> flag allows us to specify a regular expression. <code>ffuf</code> will only report results where the response body matches the regex.</p>
+<pre><code class="language-bash">ffuf \
+-u http://TARGET/dashboard.php?skin=FUZZ \
+-w lfi.txt \
+-r \
+-mr &#39;(?i)(password|secret|token|api[_-]?key|database|mysql|&lt;\?php)&#39;
+</code></pre>
+<p><strong>Output:</strong></p>
+<pre><code class="language-text">../config                 [Status: 200, Size: 2591, Words: 866, Lines: 93]
+</code></pre>
+<p>Only the payload that triggered a response containing sensitive keywords is reported. The hundreds of false positive <code>302</code>s leading to generic error pages are silently discarded.</p>
+<h2>Understanding the Output</h2>
+<p>When <code>ffuf</code> reports a match, it provides key metrics:</p>
+<ul>
+<li><strong>Status</strong>: The HTTP status code of the final response (after redirects).</li>
+<li><strong>Size</strong>: The length of the response body in bytes. Significant differences in size can indicate unique content.</li>
+<li><strong>Words/Lines</strong>: Useful for filtering out standard error pages. If all false positives have ~50 words, and your finding has ~800 words, it’s likely unique.</li>
+</ul>
+<h2>Complete Regex Library for Offensive Fuzzing</h2>
+<p>Below is a curated list of regex patterns designed to detect sensitive information in web responses. These can be used with <code>ffuf -mr</code> or other command-line tools.</p>
+<h3>Credentials &amp; Secrets</h3>
+<table>
+<thead>
+<tr>
+<th>Pattern</th>
+<th>Description</th>
+<th>Matches</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>(?i)(password|passwd|pass|pwd)</code></td>
+<td>Common password variables</td>
+<td><code>$password</code>, <code>db_pass</code></td>
+</tr>
+<tr>
+<td><code>(?i)(secret|token|jwt|bearer)</code></td>
+<td>Authentication tokens</td>
+<td><code>secret_key</code>, <code>access_token</code></td>
+</tr>
+<tr>
+<td><code>(?i)(apikey|api[_-]?key|client[_-]?secret)</code></td>
+<td>API credentials</td>
+<td><code>api_key</code>, <code>client_secret</code></td>
+</tr>
+</tbody></table>
+<h3>Infrastructure &amp; Configuration</h3>
+<table>
+<thead>
+<tr>
+<th>Pattern</th>
+<th>Description</th>
+<th>Matches</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>(?i)(mysql|mysqli|pdo|database|host|port)</code></td>
+<td>Database config</td>
+<td><code>mysql_host</code>, <code>db_port</code></td>
+</tr>
+<tr>
+<td><code>(?i)(AKIA|ASIA|aws|bucket|s3)</code></td>
+<td>AWS Credentials</td>
+<td><code>AKIAIOSFODNN7EXAMPLE</code></td>
+</tr>
+<tr>
+<td><code>(?i)(BEGIN RSA PRIVATE KEY|BEGIN OPENSSH)</code></td>
+<td>SSH Keys</td>
+<td>Private key headers</td>
+</tr>
+</tbody></table>
+<h3>Source Code &amp; Debug Info</h3>
+<table>
+<thead>
+<tr>
+<th>Pattern</th>
+<th>Description</th>
+<th>Matches</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>(?i)(&lt;\?php|\$[A-Za-z_][A-Za-z0-9_]*\s*=)</code></td>
+<td>PHP Source</td>
+<td>Raw PHP code leakage</td>
+</tr>
+<tr>
+<td><code>(?i)(root:x:|daemon:|/bin/bash)</code></td>
+<td>Linux <code>/etc/passwd</code></td>
+<td>User account listings</td>
+</tr>
+<tr>
+<td><code>eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+</code></td>
+<td>JWT Tokens</td>
+<td>JSON Web Tokens</td>
+</tr>
+<tr>
+<td><code>(?i)(stack trace|fatal error|warning:)</code></td>
+<td>Error Messages</td>
+<td>Debug output</td>
+</tr>
+</tbody></table>
+<h3>Combining Patterns</h3>
+<p>You can combine multiple patterns using the <code>|</code> (OR) operator. For a comprehensive sweep:</p>
+<pre><code class="language-bash">ffuf \
+-u http://TARGET/dashboard.php?skin=FUZZ \
+-w lfi.txt \
+-r \
+-mr &#39;(?i)(password|secret|token|api[_-]?key|database|mysql|&lt;\?php|AKIA|BEGIN RSA)&#39;
+</code></pre>
+<h2>FFUF Filter Reference</h2>
+<p>Understanding filters is crucial for tuning your scans.</p>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>Description</th>
+<th>Example Use Case</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>-mc</code></td>
+<td>Match Status Codes</td>
+<td><code>-mc 200,301</code></td>
+</tr>
+<tr>
+<td><code>-fc</code></td>
+<td>Filter Status Codes</td>
+<td><code>-fc 404,500</code></td>
+</tr>
+<tr>
+<td><code>-ms</code></td>
+<td>Match Size</td>
+<td><code>-ms 1234</code></td>
+</tr>
+<tr>
+<td><code>-fs</code></td>
+<td>Filter Size</td>
+<td><code>-fs 0</code> (Ignore empty responses)</td>
+</tr>
+<tr>
+<td><code>-mw</code></td>
+<td>Match Word Count</td>
+<td><code>-mw 100</code></td>
+</tr>
+<tr>
+<td><code>-fw</code></td>
+<td>Filter Word Count</td>
+<td><code>-fw 5</code> (Ignore short errors)</td>
+</tr>
+<tr>
+<td><code>-ml</code></td>
+<td>Match Line Count</td>
+<td><code>-ml 50</code></td>
+</tr>
+<tr>
+<td><code>-fl</code></td>
+<td>Filter Line Count</td>
+<td><code>-fl 1</code></td>
+</tr>
+<tr>
+<td><code>-mr</code></td>
+<td>Match Regex</td>
+<td><code>-mr &#39;(?i)password&#39;</code></td>
+</tr>
+<tr>
+<td><code>-fr</code></td>
+<td>Filter Regex</td>
+<td><code>-fr &#39;Not Found&#39;</code></td>
+</tr>
+<tr>
+<td><code>-r</code></td>
+<td>Follow Redirects</td>
+<td>Essential for 302 analysis</td>
+</tr>
+<tr>
+<td><code>-ac</code></td>
+<td>Auto-Calibrate</td>
+<td>Automatically filter common false positives</td>
+</tr>
+</tbody></table>
+<h2>Real Lab Walkthrough</h2>
+<p>Let’s replicate the scenario where traditional automation fails.</p>
+<p><strong>Target:</strong> <code>http://TARGET/dashboard.php?skin=../config</code></p>
+<ol>
+<li><p><strong>Initial Request</strong>:</p>
+<pre><code class="language-http">GET /dashboard.php?skin=../config HTTP/1.1
+Host: TARGET
+</code></pre>
+</li>
+<li><p><strong>Server Response</strong>:</p>
+<pre><code class="language-http">HTTP/1.1 302 Found
+Location: /login.php
+</code></pre>
+</li>
+<li><p><strong>Following Redirect (Manual)</strong>:<br>If we follow the redirect to <code>/login.php</code>, we might see a standard login form. However, in our specific case, the <code>include()</code> function in PHP executed <em>before</em> the redirect header was sent, or the redirect was conditional.</p>
+<p><em>Correction</em>: In many LFI cases, the PHP code executes, outputs the file content, and <em>then</em> the script continues. If the script has a <code>header(&#39;Location: ...&#39;)</code> at the end, the browser redirects, but the body already contains the leaked file. Some servers strip the body on redirect, but others do not.</p>
+<p>Let’s assume the server returns the file content in the body of the <code>302</code> response (non-standard but possible) or follows a redirect to a page that <em>displays</em> the included content.</p>
+<p><strong>Developer Tools Inspection</strong>:</p>
+<ul>
+<li>Navigate to the <strong>Network</strong> tab.</li>
+<li>Click on the request.</li>
+<li>Check the <strong>Response</strong> tab.</li>
+<li>Content:<pre><code class="language-php">&lt;?php
+$MASTER_PASSWORD=&#39;support@110&#39;;
+$DB_HOST=&#39;localhost&#39;;
+?&gt;
+</code></pre>
+</li>
+</ul>
+</li>
+<li><p><strong>Automation Failure</strong>:</p>
+<ul>
+<li><code>ffuf -mc 200</code>: Misses it (Status 302).</li>
+<li><code>ffuf</code> (no filter): Buried in noise.</li>
+</ul>
+</li>
+<li><p><strong>Automation Success</strong>:</p>
+<pre><code class="language-bash">ffuf -u http://TARGET/dashboard.php?skin=FUZZ -w lfi.txt -r -mr &#39;(?i)password&#39;
+</code></pre>
+<ul>
+<li><code>ffuf</code> follows the redirect.</li>
+<li>It scans the final body.</li>
+<li>It finds <code>password</code>.</li>
+<li>It reports the finding.</li>
+</ul>
+</li>
+</ol>
+<h2>Pro Tips for Content-Based Fuzzing</h2>
+<ul>
+<li><strong>Always Follow Redirects</strong>: Use <code>-r</code> in <code>ffuf</code>. Many apps hide errors behind redirects.</li>
+<li><strong>Never Trust Status Codes Alone</strong>: A <code>200 OK</code> can be a generic error page. A <code>404</code> can contain stack traces. Always inspect the body.</li>
+<li><strong>Build Reusable Regex Libraries</strong>: Save your regex patterns in a text file. Combine them for broad sweeps or use specific ones for targeted searches.</li>
+<li><strong>Compare Metrics</strong>: If regex matching is too broad, use <code>-fs</code> (filter size) to exclude standard error page sizes. If all false positives are 500 bytes, filter out 500.</li>
+<li><strong>Context Matters</strong>: Adjust regex based on the technology stack. If you know it’s a Java app, look for <code>stack trace</code> and <code>javax</code>. If it’s PHP, look for <code>&lt;?php</code> and <code>$var</code>.</li>
+</ul>
+<p>By shifting focus from HTTP status codes to response content, you transform noisy, ineffective scans into precise, high-signal operations. This approach is essential for uncovering hidden vulnerabilities in modern web applications that employ complex error handling and redirection logic.</p>
+
+    </article>
+  </main>
+
+  <footer>
+    <span class="f-accent">$</span> echo "Made by <span class="f-accent">Aryan Giri</span>" &nbsp;·&nbsp; <a href="https://github.com/giriaryan694-a11y" target="_blank" rel="noopener noreferrer">GitHub</a>
+  </footer>
+
+  <script>
+    /* Theme — synced with main site via same cookie */
+    const themes=["dark","light","eye-saver"];
+    const themeData={"dark":{emoji:"🌙",label:"Dark"},"light":{emoji:"☀️",label:"Light"},"eye-saver":{emoji:"☕",label:"Reading"}};
+    function setCookie(n,v,d){const e=new Date();e.setTime(e.getTime()+d*86400000);document.cookie=`${n}=${v};expires=${e.toUTCString()};path=/`;}
+    function getCookie(n){const m=document.cookie.match(new RegExp('(^| )'+n+'=([^;]+)'));return m?m[2]:null;}
+    let currentTheme=getCookie("site_theme")||"dark";
+    const themeBtn=document.getElementById("theme-btn");
+    const themeEmoji=document.getElementById("theme-emoji");
+    function applyTheme(theme,animate=false){
+      document.body.className=theme==="dark"?"":theme;
+      themeEmoji.textContent=themeData[theme].emoji;
+      document.getElementById("theme-label").textContent=themeData[theme].label;
+      setCookie("site_theme",theme,365);
+      if(animate){themeEmoji.style.animation="none";themeEmoji.offsetHeight;themeEmoji.style.animation="popSpin 0.4s cubic-bezier(0.175,0.885,0.32,1.275) forwards";}
+    }
+    applyTheme(currentTheme);
+    themeBtn.addEventListener("click",()=>{currentTheme=themes[(themes.indexOf(currentTheme)+1)%themes.length];applyTheme(currentTheme,true);});
+
+    /* Links → new tab + copy buttons on code blocks */
+    document.querySelectorAll(".post-content a").forEach(l => {
+      l.setAttribute("target", "_blank");
+      l.setAttribute("rel", "noopener noreferrer");
+    });
+    document.querySelectorAll("pre").forEach(pre => {
+      const code = pre.querySelector("code");
+      if (!code) return;
+      const btn = document.createElement("button");
+      btn.className = "copy-btn";
+      btn.textContent = "copy";
+      btn.onclick = async () => {
+        try { await navigator.clipboard.writeText(code.innerText.trimEnd()); }
+        catch {}
+        btn.textContent = "✓ copied"; btn.classList.add("copied");
+        setTimeout(() => { btn.textContent = "copy"; btn.classList.remove("copied"); }, 2000);
+      };
+      pre.appendChild(btn);
+    });
+  </script>
+</body>
+</html>

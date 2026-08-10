@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Google Calendar Invitation Phishing: How Attackers Abuse Calendar Invites for Social Engineering — AryterLog</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="../../manifest.json">
+  <meta name="theme-color" content="#080b10">
+  <link rel="icon" href="../../icons/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="../../icons/apple-touch-icon.png">
+  <meta name="description" content="An analysis of how attackers abuse legitimate Google Calendar invitations as phishing lures through social engineering, including a practical demonstration, MITRE ATT&amp;CK mapping, and mitigation guidance.">
+  <link rel="canonical" href="https://giriaryan694-a11y.github.io/AryterLog/posts/google-calendar-invitation-phishing/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Google Calendar Invitation Phishing: How Attackers Abuse Calendar Invites for Social Engineering">
+  <meta property="og:description" content="An analysis of how attackers abuse legitimate Google Calendar invitations as phishing lures through social engineering, including a practical demonstration, MITRE ATT&amp;CK mapping, and mitigation guidance.">
+  <meta property="og:url" content="https://giriaryan694-a11y.github.io/AryterLog/posts/google-calendar-invitation-phishing/">
+  <meta property="og:site_name" content="AryterLog">
+  <meta property="article:published_time" content="2026-06-07T00:00:00.000Z">
+  <meta property="article:tag" content="phishing">
+  <meta property="article:tag" content="social-engineering">
+  <meta property="article:tag" content="awareness">
+  <meta property="article:tag" content="threat-research">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Google Calendar Invitation Phishing: How Attackers Abuse Calendar Invites for Social Engineering">
+  <meta name="twitter:description" content="An analysis of how attackers abuse legitimate Google Calendar invitations as phishing lures through social engineering, including a practical demonstration, MITRE ATT&amp;CK mapping, and mitigation guidance.">
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Google Calendar Invitation Phishing: How Attackers Abuse Calendar Invites for Social Engineering","description":"An analysis of how attackers abuse legitimate Google Calendar invitations as phishing lures through social engineering, including a practical demonstration, MITRE ATT&CK mapping, and mitigation guidance.","datePublished":"2026-06-07T00:00:00.000Z","author":{"@type":"Person","name":"Aryan Giri"},"publisher":{"@type":"Organization","name":"AryterLog"},"mainEntityOfPage":"https://giriaryan694-a11y.github.io/AryterLog/posts/google-calendar-invitation-phishing/","keywords":"phishing, social-engineering, awareness, threat-research"}</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:#080b10; --surface:#0d1117; --surface2:#111820; --surface3:#161d27;
+      --text:#d0dbe8; --text2:#7a8a9a; --accent:#00ff88; --accent2:#0ea5e9;
+      --danger:#ff4560; --border:#1e2a38; --border2:#2a3848; --code-bg:#0a0f16;
+      --glow:rgba(0,255,136,0.08); --glow2:rgba(0,255,136,0.18);
+    }
+    .light {
+      --bg:#f5f7fa; --surface:#ffffff; --surface2:#f0f4f8; --surface3:#e8eef5;
+      --text:#111827; --text2:#6b7280; --accent:#059669; --accent2:#0284c7;
+      --danger:#dc2626; --border:#e2e8f0; --border2:#cbd5e1; --code-bg:#f1f5f9;
+      --glow:rgba(5,150,105,0.07); --glow2:rgba(5,150,105,0.14);
+    }
+    .eye-saver {
+      --bg:#12100a; --surface:#1a1608; --surface2:#211c0c; --surface3:#282210;
+      --text:#e8d8b0; --text2:#9a8860; --accent:#f5c542; --accent2:#e08030;
+      --danger:#e05050; --border:#302810; --border2:#3d3418; --code-bg:#0f0d06;
+      --glow:rgba(245,197,66,0.08); --glow2:rgba(245,197,66,0.18);
+    }
+
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body {
+      font-family:'Fira Code',monospace;
+      background:var(--bg); color:var(--text);
+      min-height:100vh; overflow-x:hidden;
+      transition:background 0.4s,color 0.4s;
+    }
+    body::before {
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+      background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
+      background-size:44px 44px; opacity:0.25;
+    }
+
+    header {
+      position:sticky; top:0; z-index:200;
+      background:rgba(8,11,16,0.86); backdrop-filter:blur(16px);
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 22px; height:56px; gap:12px;
+    }
+    .light header{background:rgba(245,247,250,0.9);}
+    .eye-saver header{background:rgba(18,16,10,0.9);}
+    header::after {
+      content:''; position:absolute; bottom:-1px; left:8%; right:8%; height:1px;
+      background:linear-gradient(90deg,transparent,var(--accent),transparent); opacity:0.35;
+    }
+    .header-left{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+
+    .logo {
+      font-family:'Bebas Neue',sans-serif; font-size:24px; font-weight:400;
+      letter-spacing:3px; color:var(--text); text-decoration:none; white-space:nowrap;
+      flex-shrink:0; line-height:1; transition:color 0.2s;
+    }
+    .logo .lo-a{color:var(--accent);}
+    .logo:hover .lo-a{text-shadow:0 0 14px var(--accent);}
+
+    .back-link {
+      display:inline-flex; align-items:center; gap:6px;
+      background:transparent; border:1px solid var(--border2); color:var(--text2);
+      padding:6px 12px; border-radius:6px; cursor:pointer; transition:all 0.2s;
+      font-family:'Fira Code',monospace; font-size:11px; text-decoration:none;
+    }
+    .back-link:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    #theme-btn {
+      background:transparent; border:1px solid var(--border2);
+      padding:5px 11px; cursor:pointer; color:var(--text2); border-radius:6px;
+      transition:all 0.2s; font-family:'Fira Code',monospace; font-size:11px;
+      display:inline-flex; align-items:center; gap:6px; white-space:nowrap;
+    }
+    #theme-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    @keyframes popSpin{0%{transform:scale(0.4) rotate(-60deg);opacity:0;}70%{transform:scale(1.15) rotate(5deg);}100%{transform:scale(1) rotate(0deg);opacity:1;}}
+    .emoji{display:inline-block;}
+
+    main{max-width:760px;margin:0 auto;padding:34px 20px 60px;position:relative;z-index:1;}
+
+    .back-btn {
+      display:inline-flex;align-items:center;gap:7px;margin-bottom:20px;
+      background:var(--surface);border:1px solid var(--border2);color:var(--text2);
+      padding:7px 13px;border-radius:6px;font-family:'Fira Code',monospace;font-size:11px;
+      cursor:pointer;transition:all 0.2s;text-decoration:none;
+    }
+    .back-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    .post-content {
+      background:var(--surface);border:1px solid var(--border);border-radius:12px;
+      padding:34px 30px;position:relative;overflow:hidden;
+    }
+    .post-content::before {
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      border-radius:12px 12px 0 0;
+    }
+    .post-content *{max-width:100%;}
+
+    h1 {
+      font-family:'Space Grotesk',sans-serif;font-size:clamp(19px,4vw,26px);
+      font-weight:700;color:var(--text);margin-bottom:8px;line-height:1.25;word-break:break-word;
+    }
+    .post-header-meta{
+      font-family:'Fira Code',monospace;font-size:11px;color:var(--text2);
+      padding-bottom:18px;margin-bottom:22px;border-bottom:1px solid var(--border);
+      display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+    }
+    .card-cat-chip {
+      display:inline-flex;align-items:center;padding:1px 7px;border-radius:3px;
+      border:1px solid var(--border2);background:var(--surface2);color:var(--text2);
+      font-size:9px;font-family:'Fira Code',monospace;font-weight:500;letter-spacing:0.4px;
+    }
+    h2,h3{font-family:'Space Grotesk',sans-serif;font-weight:600;color:var(--text);margin:26px 0 10px;word-break:break-word;}
+    h2{font-size:19px;} h3{font-size:15px;color:var(--accent);}
+    p{font-size:14px;line-height:1.8;margin-bottom:14px;color:var(--text);}
+    ul,ol{padding-left:20px;margin-bottom:14px;font-size:14px;line-height:1.8;}
+    li{margin-bottom:4px;}
+
+    a{color:var(--accent);word-break:break-all;overflow-wrap:break-word;transition:opacity 0.2s;}
+    a:hover{opacity:0.75;}
+    .post-content a{text-decoration:underline;text-underline-offset:3px;}
+
+    code {
+      background:var(--code-bg);border:1px solid var(--border);padding:2px 6px;
+      border-radius:4px;font-family:'Fira Code',monospace;font-size:0.85em;
+      color:var(--accent);word-break:break-all;overflow-wrap:break-word;
+    }
+    pre {
+      background:var(--code-bg);border:1px solid var(--border);padding:18px;border-radius:8px;
+      max-width:100%; overflow:hidden;
+      position:relative;margin-bottom:14px;
+    }
+    pre::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      opacity:0.5;border-radius:8px 8px 0 0;
+    }
+    pre code{
+      background:transparent;border:none;padding:0 60px 0 0;word-break:normal;
+      overflow-wrap:normal;white-space:pre;display:block;
+      overflow-x:auto;-webkit-overflow-scrolling:touch;
+      font-size:13px;line-height:1.65;color:var(--text);
+    }
+    blockquote{
+      border-left:2px solid var(--accent);margin:14px 0;padding:10px 16px;
+      background:var(--glow);border-radius:0 6px 6px 0;font-style:italic;color:var(--text2);
+    }
+    table{width:100%;border-collapse:collapse;display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;font-size:13px;margin-bottom:14px;}
+    th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;white-space:nowrap;}
+    th{background:var(--surface2);color:var(--accent);font-weight:600;}
+    img{max-width:100%;height:auto;border-radius:8px;display:block;margin:14px 0;}
+
+    .copy-btn {
+      position:absolute;top:9px;right:9px;padding:3px 8px;font-size:10px;
+      font-family:'Fira Code',monospace;font-weight:500;background:var(--surface2);
+      border:1px solid var(--border2);color:var(--text2);border-radius:4px;cursor:pointer;
+      transition:all 0.2s;opacity:0;letter-spacing:0.3px;
+    }
+    pre:hover .copy-btn{opacity:1;}
+    .copy-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    .copy-btn.copied{border-color:var(--accent);color:var(--accent);opacity:1;}
+
+    footer{
+      text-align:center;padding:22px 16px;color:var(--text2);
+      font-family:'Fira Code',monospace;font-size:11px;
+      border-top:1px solid var(--border);position:relative;z-index:1;
+    }
+    .f-accent{color:var(--accent);}
+    footer a{color:var(--accent);text-decoration:none;}
+    footer a:hover{opacity:0.75;}
+
+    @media(max-width:480px){
+      header{padding:0 13px;height:50px;}
+      .logo{font-size:21px;letter-spacing:2px;}
+      main{padding:20px 14px 44px;}
+      .post-content{padding:20px 14px;}
+      pre{padding:13px;}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <a href="../../index.html" class="logo">Aryter<span class="lo-a">Log</span></a>
+    </div>
+    <button id="theme-btn" aria-label="Cycle Theme">
+      <span class="emoji" id="theme-emoji">🌙</span>
+      <span id="theme-label">Dark</span>
+    </button>
+  </header>
+
+  <main>
+    <a href="../../index.html#post-google-calendar-invitation-phishing" class="back-btn">← Back to Blog</a>
+    <article class="post-content">
+      <h1>Google Calendar Invitation Phishing: How Attackers Abuse Calendar Invites for Social Engineering</h1>
+      <div class="post-header-meta">
+        <span>📅 Published 06-07-2026</span>
+        <span>·</span><span class="card-cat-chip">phishing</span><span class="card-cat-chip">social-engineering</span><span class="card-cat-chip">awareness</span><span class="card-cat-chip">threat-research</span>
+      </div>
+      <p>Written By Aryan Giri</p>
+<p>Google Calendar is designed to make scheduling meetings simple, but the same convenience can also be abused by attackers as part of phishing campaigns.</p>
+<p>Unlike traditional phishing emails that rely solely on convincing email content, this technique leverages <strong>calendar invitations</strong> to deliver phishing lures directly into a victim&#39;s calendar. Since many users inherently trust notifications coming from applications like Google Calendar, these invitations can appear more legitimate than ordinary spam emails.</p>
+<p>This is <strong>not a vulnerability in Google Calendar</strong>. Instead, it is a <strong>social engineering technique</strong> that abuses legitimate calendar invitation functionality.</p>
+<blockquote>
+<p><strong>Disclaimer</strong></p>
+<p>All email accounts used during this demonstration were created solely for testing purposes and have since been deleted.</p>
+</blockquote>
+<hr>
+<h1>Attack Overview</h1>
+<p>The attacker creates a calendar event containing a convincing title and description, then sends it as an invitation to the target.</p>
+<p>If the victim&#39;s Google Calendar settings allow invitations to be added automatically, the event appears inside their calendar without requiring manual approval.</p>
+<p>When the event time approaches, Google Calendar sends a notification to the victim, potentially increasing the credibility of the phishing attempt.</p>
+<hr>
+<h1>Demonstration</h1>
+<h2>Step 1 — Creating the Malicious Event</h2>
+<p>From the attacker&#39;s Google Calendar account, create a new event.</p>
+<p>For this demonstration the event title was:</p>
+<blockquote>
+<p><strong>Your Account Has Been Hacked</strong></p>
+</blockquote>
+<p>Inside the event description, a fake recovery message and phishing URL were included.</p>
+<p>The phishing message used in this demonstration was intentionally obvious and easy to identify. In a real attack, attackers can use AI-generated content to create far more convincing messages that closely resemble official communications.</p>
+<img width="1346" height="878" alt="Screenshot 2026-07-06 081013" src="https://github.com/user-attachments/assets/942481e7-d661-47ef-bb43-c08605a47811" />
+
+
+<hr>
+<h2>Step 2 — Sending the Invitation</h2>
+<p>After inviting the victim, Google generates a normal invitation email containing an <code>.ics</code> calendar attachment.</p>
+<p>The email itself appears completely legitimate because it is a genuine calendar invitation.</p>
+<img width="859" height="326" alt="Screenshot 2026-07-06 081033" src="https://github.com/user-attachments/assets/059a1141-2ddf-4fac-8495-956402820089" />
+<img width="1569" height="809" alt="Screenshot 2026-07-06 081200" src="https://github.com/user-attachments/assets/5bdfd114-b69f-4962-b490-f5737746817c" />
+<img width="1428" height="732" alt="Screenshot 2026-07-06 081212" src="https://github.com/user-attachments/assets/ccfa8cb4-3fe4-499c-9564-9fbd08575fa2" />
+
+
+<hr>
+<h2>Step 3 — Automatic Calendar Entry</h2>
+<p>On the victim account, the invitation was automatically added to Google Calendar.</p>
+<p>No manual calendar creation was required.</p>
+<img width="878" height="1600" alt="WhatsApp Image 2026-07-06 at 8 50 14 AM" src="https://github.com/user-attachments/assets/31f9b5c0-77fa-4f8c-a1b3-94e11cf663ac" />
+
+
+<hr>
+<h2>Step 4 — Notification on the Victim Device</h2>
+<p>When the scheduled time arrived, Google Calendar generated a push notification on the victim&#39;s phone.</p>
+<p>Because the notification originated from the Calendar application itself, it appeared more trustworthy than a standard phishing email notification.</p>
+<img width="1080" height="415" alt="WhatsApp Image 2026-07-06 at 8 24 54 AM" src="https://github.com/user-attachments/assets/d5d6256b-f09f-4d53-9c90-6f590fca8528" />
+
+<hr>
+<h2>Step 5 — Opening the Event</h2>
+<p>Opening the notification displayed the event details, including:</p>
+<ul>
+<li>Event title</li>
+<li>Event description</li>
+<li>Embedded phishing URL</li>
+</ul>
+<p>If the victim trusts the notification and follows the provided instructions, they may be redirected to a credential harvesting website.</p>
+<img width="791" height="1600" alt="WhatsApp Image 2026-07-06 at 8 24 54 AM (1)" src="https://github.com/user-attachments/assets/539e4a25-ffb9-4264-b9fe-aeebacbf919d" />
+
+
+<hr>
+<h1>Why This Works</h1>
+<p>Many technically experienced users immediately become suspicious when receiving an unexpected calendar invitation.</p>
+<p>Typical questions include:</p>
+<ul>
+<li>Who invited me?</li>
+<li>Why is there a meeting?</li>
+<li>Why would Google Calendar ask me to verify my account?</li>
+</ul>
+<p>However, attackers are not targeting only technically experienced users.</p>
+<p>Several psychological factors make this attack surprisingly effective.</p>
+<h2>Trust in the Application</h2>
+<p>Users generally trust notifications from installed applications more than random emails.</p>
+<p>A notification coming from the Calendar app often feels official.</p>
+<hr>
+<h2>Context Matters</h2>
+<p>Attackers rarely use obvious event names.</p>
+<p>Instead, they may choose titles such as:</p>
+<ul>
+<li>Interview — 2:00 PM</li>
+<li>Invoice Due Today</li>
+<li>Package Delivery Attempt</li>
+<li>Password Expiration Notice</li>
+</ul>
+<p>These subjects create urgency or curiosity that encourages victims to open the event.</p>
+<hr>
+<h2>Mobile Behavior</h2>
+<p>Many people quickly tap phone notifications without carefully inspecting:</p>
+<ul>
+<li>who sent the invitation</li>
+<li>the sender&#39;s email address</li>
+<li>event details</li>
+</ul>
+<p>The smaller screen also reduces visible context.</p>
+<hr>
+<h2>Workplace Habits</h2>
+<p>Employees often receive dozens of legitimate calendar invitations every week.</p>
+<p>An unexpected invitation is therefore less unusual than receiving an unexpected email.</p>
+<p>Attackers abuse this normal workplace behavior.</p>
+<hr>
+<h2>Phishing Doesn&#39;t Need Everyone</h2>
+<p>Most phishing campaigns expect low success rates.</p>
+<p>If:</p>
+<ul>
+<li>99 people ignore the invitation</li>
+<li>1 person enters their credentials</li>
+</ul>
+<p>the campaign may still be profitable.</p>
+<hr>
+<h1>MITRE ATT&amp;CK Mapping</h1>
+<table>
+<thead>
+<tr>
+<th>Technique</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>MITRE ATT&amp;CK T1566</td>
+<td>Phishing</td>
+</tr>
+<tr>
+<td>Social Engineering</td>
+<td>Overall attack strategy</td>
+</tr>
+<tr>
+<td>Credential Phishing</td>
+<td>Goal of stealing login credentials</td>
+</tr>
+</tbody></table>
+<p>The calendar invitation is simply the <strong>delivery mechanism</strong>.</p>
+<p>It does <strong>not</strong> exploit a security vulnerability in Google Calendar.</p>
+<hr>
+<h1>Mitigation</h1>
+<p>Google allows users to control how invitations are automatically added to their calendars.</p>
+<h2>Change Calendar Invitation Settings</h2>
+<ol>
+<li>Open Google Calendar (Web)</li>
+<li>Click <strong>Settings</strong></li>
+<li>Navigate to <strong>General → Event settings</strong></li>
+<li>Locate <strong>Add invitations to my calendar</strong></li>
+<li>Change the option from <strong>From everyone</strong> to one of the following:</li>
+</ol>
+<h3>Only if the sender is known (Recommended)</h3>
+<p>Invitations are automatically added only when the sender is:</p>
+<ul>
+<li>in your contacts</li>
+<li>part of your organization</li>
+<li>someone you&#39;ve previously interacted with</li>
+</ul>
+<hr>
+<h3>When I respond to the invitation in email (Most Secure)</h3>
+<p>Calendar events are <strong>not</strong> added automatically.</p>
+<p>The invitation only appears after you explicitly accept it from the email.</p>
+<p>This provides the strongest protection against unsolicited calendar invitations.</p>
+<hr>
+<h1>Alternative Calendar Applications</h1>
+<p>Google Calendar is not the only option.</p>
+<p>Privacy-focused alternatives such as <strong>Proton Calendar</strong> require users to explicitly import or accept calendar events rather than automatically adding them from incoming invitations, reducing the likelihood of this particular social engineering technique succeeding.</p>
+<p>As with any calendar application, users should still verify invitations before accepting them.</p>
+<hr>
+<h1>Key Takeaways</h1>
+<ul>
+<li>This is a <strong>social engineering attack</strong>, not a Google Calendar vulnerability.</li>
+<li>Attackers abuse legitimate calendar invitations as phishing lures.</li>
+<li>Calendar notifications often appear more trustworthy than email notifications.</li>
+<li>Mobile users are particularly susceptible because notifications are frequently opened quickly.</li>
+<li>Changing Google Calendar invitation settings significantly reduces exposure.</li>
+<li>Users should always verify unexpected calendar invitations before interacting with embedded links.</li>
+</ul>
+
+    </article>
+  </main>
+
+  <footer>
+    <span class="f-accent">$</span> echo "Made by <span class="f-accent">Aryan Giri</span>" &nbsp;·&nbsp; <a href="https://github.com/giriaryan694-a11y" target="_blank" rel="noopener noreferrer">GitHub</a>
+  </footer>
+
+  <script>
+    /* Theme — synced with main site via same cookie */
+    const themes=["dark","light","eye-saver"];
+    const themeData={"dark":{emoji:"🌙",label:"Dark"},"light":{emoji:"☀️",label:"Light"},"eye-saver":{emoji:"☕",label:"Reading"}};
+    function setCookie(n,v,d){const e=new Date();e.setTime(e.getTime()+d*86400000);document.cookie=`${n}=${v};expires=${e.toUTCString()};path=/`;}
+    function getCookie(n){const m=document.cookie.match(new RegExp('(^| )'+n+'=([^;]+)'));return m?m[2]:null;}
+    let currentTheme=getCookie("site_theme")||"dark";
+    const themeBtn=document.getElementById("theme-btn");
+    const themeEmoji=document.getElementById("theme-emoji");
+    function applyTheme(theme,animate=false){
+      document.body.className=theme==="dark"?"":theme;
+      themeEmoji.textContent=themeData[theme].emoji;
+      document.getElementById("theme-label").textContent=themeData[theme].label;
+      setCookie("site_theme",theme,365);
+      if(animate){themeEmoji.style.animation="none";themeEmoji.offsetHeight;themeEmoji.style.animation="popSpin 0.4s cubic-bezier(0.175,0.885,0.32,1.275) forwards";}
+    }
+    applyTheme(currentTheme);
+    themeBtn.addEventListener("click",()=>{currentTheme=themes[(themes.indexOf(currentTheme)+1)%themes.length];applyTheme(currentTheme,true);});
+
+    /* Links → new tab + copy buttons on code blocks */
+    document.querySelectorAll(".post-content a").forEach(l => {
+      l.setAttribute("target", "_blank");
+      l.setAttribute("rel", "noopener noreferrer");
+    });
+    document.querySelectorAll("pre").forEach(pre => {
+      const code = pre.querySelector("code");
+      if (!code) return;
+      const btn = document.createElement("button");
+      btn.className = "copy-btn";
+      btn.textContent = "copy";
+      btn.onclick = async () => {
+        try { await navigator.clipboard.writeText(code.innerText.trimEnd()); }
+        catch {}
+        btn.textContent = "✓ copied"; btn.classList.add("copied");
+        setTimeout(() => { btn.textContent = "copy"; btn.classList.remove("copied"); }, 2000);
+      };
+      pre.appendChild(btn);
+    });
+  </script>
+</body>
+</html>

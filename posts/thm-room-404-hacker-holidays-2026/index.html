@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TryHackMe Hacker Holidays 2026: Room 404 Writeup — AryterLog</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="../../manifest.json">
+  <meta name="theme-color" content="#080b10">
+  <link rel="icon" href="../../icons/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="../../icons/apple-touch-icon.png">
+  <meta name="description" content="Walkthrough of the TryHackMe Hacker Holidays 2026 Room 404 challenge covering exposed Git repositories, repository recovery using git-dumper, and the security risks of publicly accessible .git directories.">
+  <link rel="canonical" href="https://giriaryan694-a11y.github.io/AryterLog/posts/thm-room-404-hacker-holidays-2026/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="TryHackMe Hacker Holidays 2026: Room 404 Writeup">
+  <meta property="og:description" content="Walkthrough of the TryHackMe Hacker Holidays 2026 Room 404 challenge covering exposed Git repositories, repository recovery using git-dumper, and the security risks of publicly accessible .git directories.">
+  <meta property="og:url" content="https://giriaryan694-a11y.github.io/AryterLog/posts/thm-room-404-hacker-holidays-2026/">
+  <meta property="og:site_name" content="AryterLog">
+  <meta property="article:published_time" content="2026-08-10T01:53:36.077Z">
+  <meta property="article:tag" content="ctf">
+  <meta property="article:tag" content="web-security">
+  <meta property="article:tag" content="recon">
+  <meta property="article:tag" content="tooling">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="TryHackMe Hacker Holidays 2026: Room 404 Writeup">
+  <meta name="twitter:description" content="Walkthrough of the TryHackMe Hacker Holidays 2026 Room 404 challenge covering exposed Git repositories, repository recovery using git-dumper, and the security risks of publicly accessible .git directories.">
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"TryHackMe Hacker Holidays 2026: Room 404 Writeup","description":"Walkthrough of the TryHackMe Hacker Holidays 2026 Room 404 challenge covering exposed Git repositories, repository recovery using git-dumper, and the security risks of publicly accessible .git directories.","datePublished":"2026-08-10T01:53:36.077Z","author":{"@type":"Person","name":"Aryan Giri"},"publisher":{"@type":"Organization","name":"AryterLog"},"mainEntityOfPage":"https://giriaryan694-a11y.github.io/AryterLog/posts/thm-room-404-hacker-holidays-2026/","keywords":"ctf, web-security, recon, tooling"}</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:#080b10; --surface:#0d1117; --surface2:#111820; --surface3:#161d27;
+      --text:#d0dbe8; --text2:#7a8a9a; --accent:#00ff88; --accent2:#0ea5e9;
+      --danger:#ff4560; --border:#1e2a38; --border2:#2a3848; --code-bg:#0a0f16;
+      --glow:rgba(0,255,136,0.08); --glow2:rgba(0,255,136,0.18);
+    }
+    .light {
+      --bg:#f5f7fa; --surface:#ffffff; --surface2:#f0f4f8; --surface3:#e8eef5;
+      --text:#111827; --text2:#6b7280; --accent:#059669; --accent2:#0284c7;
+      --danger:#dc2626; --border:#e2e8f0; --border2:#cbd5e1; --code-bg:#f1f5f9;
+      --glow:rgba(5,150,105,0.07); --glow2:rgba(5,150,105,0.14);
+    }
+    .eye-saver {
+      --bg:#12100a; --surface:#1a1608; --surface2:#211c0c; --surface3:#282210;
+      --text:#e8d8b0; --text2:#9a8860; --accent:#f5c542; --accent2:#e08030;
+      --danger:#e05050; --border:#302810; --border2:#3d3418; --code-bg:#0f0d06;
+      --glow:rgba(245,197,66,0.08); --glow2:rgba(245,197,66,0.18);
+    }
+
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body {
+      font-family:'Fira Code',monospace;
+      background:var(--bg); color:var(--text);
+      min-height:100vh; overflow-x:hidden;
+      transition:background 0.4s,color 0.4s;
+    }
+    body::before {
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+      background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
+      background-size:44px 44px; opacity:0.25;
+    }
+
+    header {
+      position:sticky; top:0; z-index:200;
+      background:rgba(8,11,16,0.86); backdrop-filter:blur(16px);
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 22px; height:56px; gap:12px;
+    }
+    .light header{background:rgba(245,247,250,0.9);}
+    .eye-saver header{background:rgba(18,16,10,0.9);}
+    header::after {
+      content:''; position:absolute; bottom:-1px; left:8%; right:8%; height:1px;
+      background:linear-gradient(90deg,transparent,var(--accent),transparent); opacity:0.35;
+    }
+    .header-left{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+
+    .logo {
+      font-family:'Bebas Neue',sans-serif; font-size:24px; font-weight:400;
+      letter-spacing:3px; color:var(--text); text-decoration:none; white-space:nowrap;
+      flex-shrink:0; line-height:1; transition:color 0.2s;
+    }
+    .logo .lo-a{color:var(--accent);}
+    .logo:hover .lo-a{text-shadow:0 0 14px var(--accent);}
+
+    .back-link {
+      display:inline-flex; align-items:center; gap:6px;
+      background:transparent; border:1px solid var(--border2); color:var(--text2);
+      padding:6px 12px; border-radius:6px; cursor:pointer; transition:all 0.2s;
+      font-family:'Fira Code',monospace; font-size:11px; text-decoration:none;
+    }
+    .back-link:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    #theme-btn {
+      background:transparent; border:1px solid var(--border2);
+      padding:5px 11px; cursor:pointer; color:var(--text2); border-radius:6px;
+      transition:all 0.2s; font-family:'Fira Code',monospace; font-size:11px;
+      display:inline-flex; align-items:center; gap:6px; white-space:nowrap;
+    }
+    #theme-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    @keyframes popSpin{0%{transform:scale(0.4) rotate(-60deg);opacity:0;}70%{transform:scale(1.15) rotate(5deg);}100%{transform:scale(1) rotate(0deg);opacity:1;}}
+    .emoji{display:inline-block;}
+
+    main{max-width:760px;margin:0 auto;padding:34px 20px 60px;position:relative;z-index:1;}
+
+    .back-btn {
+      display:inline-flex;align-items:center;gap:7px;margin-bottom:20px;
+      background:var(--surface);border:1px solid var(--border2);color:var(--text2);
+      padding:7px 13px;border-radius:6px;font-family:'Fira Code',monospace;font-size:11px;
+      cursor:pointer;transition:all 0.2s;text-decoration:none;
+    }
+    .back-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    .post-content {
+      background:var(--surface);border:1px solid var(--border);border-radius:12px;
+      padding:34px 30px;position:relative;overflow:hidden;
+    }
+    .post-content::before {
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      border-radius:12px 12px 0 0;
+    }
+    .post-content *{max-width:100%;}
+
+    h1 {
+      font-family:'Space Grotesk',sans-serif;font-size:clamp(19px,4vw,26px);
+      font-weight:700;color:var(--text);margin-bottom:8px;line-height:1.25;word-break:break-word;
+    }
+    .post-header-meta{
+      font-family:'Fira Code',monospace;font-size:11px;color:var(--text2);
+      padding-bottom:18px;margin-bottom:22px;border-bottom:1px solid var(--border);
+      display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+    }
+    .card-cat-chip {
+      display:inline-flex;align-items:center;padding:1px 7px;border-radius:3px;
+      border:1px solid var(--border2);background:var(--surface2);color:var(--text2);
+      font-size:9px;font-family:'Fira Code',monospace;font-weight:500;letter-spacing:0.4px;
+    }
+    h2,h3{font-family:'Space Grotesk',sans-serif;font-weight:600;color:var(--text);margin:26px 0 10px;word-break:break-word;}
+    h2{font-size:19px;} h3{font-size:15px;color:var(--accent);}
+    p{font-size:14px;line-height:1.8;margin-bottom:14px;color:var(--text);}
+    ul,ol{padding-left:20px;margin-bottom:14px;font-size:14px;line-height:1.8;}
+    li{margin-bottom:4px;}
+
+    a{color:var(--accent);word-break:break-all;overflow-wrap:break-word;transition:opacity 0.2s;}
+    a:hover{opacity:0.75;}
+    .post-content a{text-decoration:underline;text-underline-offset:3px;}
+
+    code {
+      background:var(--code-bg);border:1px solid var(--border);padding:2px 6px;
+      border-radius:4px;font-family:'Fira Code',monospace;font-size:0.85em;
+      color:var(--accent);word-break:break-all;overflow-wrap:break-word;
+    }
+    pre {
+      background:var(--code-bg);border:1px solid var(--border);padding:18px;border-radius:8px;
+      max-width:100%; overflow:hidden;
+      position:relative;margin-bottom:14px;
+    }
+    pre::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      opacity:0.5;border-radius:8px 8px 0 0;
+    }
+    pre code{
+      background:transparent;border:none;padding:0 60px 0 0;word-break:normal;
+      overflow-wrap:normal;white-space:pre;display:block;
+      overflow-x:auto;-webkit-overflow-scrolling:touch;
+      font-size:13px;line-height:1.65;color:var(--text);
+    }
+    blockquote{
+      border-left:2px solid var(--accent);margin:14px 0;padding:10px 16px;
+      background:var(--glow);border-radius:0 6px 6px 0;font-style:italic;color:var(--text2);
+    }
+    table{width:100%;border-collapse:collapse;display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;font-size:13px;margin-bottom:14px;}
+    th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;white-space:nowrap;}
+    th{background:var(--surface2);color:var(--accent);font-weight:600;}
+    img{max-width:100%;height:auto;border-radius:8px;display:block;margin:14px 0;}
+
+    .copy-btn {
+      position:absolute;top:9px;right:9px;padding:3px 8px;font-size:10px;
+      font-family:'Fira Code',monospace;font-weight:500;background:var(--surface2);
+      border:1px solid var(--border2);color:var(--text2);border-radius:4px;cursor:pointer;
+      transition:all 0.2s;opacity:0;letter-spacing:0.3px;
+    }
+    pre:hover .copy-btn{opacity:1;}
+    .copy-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    .copy-btn.copied{border-color:var(--accent);color:var(--accent);opacity:1;}
+
+    footer{
+      text-align:center;padding:22px 16px;color:var(--text2);
+      font-family:'Fira Code',monospace;font-size:11px;
+      border-top:1px solid var(--border);position:relative;z-index:1;
+    }
+    .f-accent{color:var(--accent);}
+    footer a{color:var(--accent);text-decoration:none;}
+    footer a:hover{opacity:0.75;}
+
+    @media(max-width:480px){
+      header{padding:0 13px;height:50px;}
+      .logo{font-size:21px;letter-spacing:2px;}
+      main{padding:20px 14px 44px;}
+      .post-content{padding:20px 14px;}
+      pre{padding:13px;}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <a href="../../index.html" class="logo">Aryter<span class="lo-a">Log</span></a>
+    </div>
+    <button id="theme-btn" aria-label="Cycle Theme">
+      <span class="emoji" id="theme-emoji">🌙</span>
+      <span id="theme-label">Dark</span>
+    </button>
+  </header>
+
+  <main>
+    <a href="../../index.html#post-thm-room-404-hacker-holidays-2026" class="back-btn">← Back to Blog</a>
+    <article class="post-content">
+      <h1>TryHackMe Hacker Holidays 2026: Room 404 Writeup</h1>
+      <div class="post-header-meta">
+        <span>📅 Published 29-07-2026</span>
+        <span>·</span><span class="card-cat-chip">ctf</span><span class="card-cat-chip">web-security</span><span class="card-cat-chip">recon</span><span class="card-cat-chip">tooling</span>
+      </div>
+      <p>Written By Aryan Giri</p>
+<p><strong>Room:</strong> Room 404<br><strong>Event:</strong> Hacker Holidays 2026 – The Byte Lotus Hotel<br><strong>Category:</strong> Web<br><strong>Difficulty:</strong> Very Easy<br><strong>Platform:</strong> TryHackMe<br><strong>Room Link:</strong> <a href="https://tryhackme.com/room/hh-room404-804573bf">https://tryhackme.com/room/hh-room404-804573bf</a></p>
+<hr>
+<h2>Room Description</h2>
+<blockquote>
+<p>He booked the quiet room. It&#39;s not on the floor plan, not in the brochure, not on any door. But port <strong>8080</strong> is wide open, and the rooms it never lists are the ones worth finding.</p>
+</blockquote>
+<p>The objective of this room is straightforward:</p>
+<ul>
+<li>Dump the exposed source code</li>
+<li>Recover the flag</li>
+</ul>
+<p>This challenge introduces one of the most common real-world web security mistakes—<strong>an exposed <code>.git</code> repository</strong>.</p>
+<hr>
+<h1>Initial Recon</h1>
+<p>After opening the target in our browser:</p>
+<pre><code>http://10.49.176.139:8080/
+</code></pre>
+<p>we are presented with the application&#39;s homepage.</p>
+<img width="1233" height="762" alt="Screenshot 2026-07-29 205832" src="https://github.com/user-attachments/assets/eb674fca-a37b-45d5-98f0-1d090fc125df" />
+
+<hr>
+<h2>Reading the Challenge Carefully</h2>
+<p>The room itself gives an important clue.</p>
+<p>Under <strong>🏖️ TODAY&#39;S ITINERARY</strong> it says:</p>
+<blockquote>
+<p>Dump the exposed source code.</p>
+</blockquote>
+<p>This immediately hints that the website&#39;s source code is accidentally exposed rather than needing exploitation through SQL injection, authentication bypass, or other web attacks.</p>
+<p>One of the first things worth checking in these situations is whether the website exposes its <strong>Git repository</strong>.</p>
+<hr>
+<h1>Checking for an Exposed <code>.git</code> Directory</h1>
+<p>Appending <code>.git</code> to the website URL reveals that the directory exists.</p>
+<pre><code>http://10.49.176.139:8080/.git/
+</code></pre>
+<img width="1287" height="806" alt="Screenshot 2026-07-29 204622" src="https://github.com/user-attachments/assets/f9417827-3d99-4cde-bf4a-095cfed40f06" />
+
+
+<p>Finding an accessible <code>.git</code> directory is a serious security issue because it may allow attackers to recover the application&#39;s entire source code and version history.</p>
+<hr>
+<h1>What is the <code>.git</code> Directory?</h1>
+<p>The <strong><code>.git</code></strong> directory is Git&#39;s internal repository metadata and object database.</p>
+<p>It stores:</p>
+<ul>
+<li>Commit history</li>
+<li>Source code objects (blobs)</li>
+<li>Trees</li>
+<li>References</li>
+<li>Branches</li>
+<li>Configuration</li>
+<li>Repository metadata</li>
+</ul>
+<p>Even if directory listing is disabled, individual Git objects can often still be downloaded and reconstructed into the original repository.</p>
+<p>This is why accidentally exposing <code>.git</code> can completely compromise the application&#39;s source code.</p>
+<hr>
+<h1>Recovering the Repository</h1>
+<p>A well-known tool for recovering exposed Git repositories is <strong>git-dumper</strong>.</p>
+<h2>Installation</h2>
+<p>Using <strong>pipx (recommended)</strong></p>
+<pre><code class="language-bash">pipx install git-dumper
+</code></pre>
+<p>or using pip</p>
+<pre><code class="language-bash">pip install git-dumper
+</code></pre>
+<hr>
+<h2>Dumping the Repository</h2>
+<p>Run:</p>
+<pre><code class="language-bash">git-dumper http://10.49.176.139:8080/.git/ recovered_repo
+</code></pre>
+<p>The tool downloads Git objects and reconstructs the repository.</p>
+<img width="631" height="336" alt="Screenshot 2026-07-29 205444" src="https://github.com/user-attachments/assets/f181b7e4-01b0-4c3a-b8e7-bb304b3ffb35" />
+
+
+
+<hr>
+<h1>Exploring the Recovered Repository</h1>
+<p>After the dump completes, a new directory appears:</p>
+<pre><code class="language-text">recovered_repo
+</code></pre>
+<p>Navigate into it:</p>
+<pre><code class="language-bash">cd recovered_repo
+</code></pre>
+<p>Listing the contents shows the recovered project files.</p>
+<pre><code class="language-bash">ls
+</code></pre>
+<p>Inside we can see files such as the README and the application&#39;s source code.</p>
+<hr>
+<h1>Finding the Flag</h1>
+<p>Opening the README reveals the room flag.</p>
+<pre><code class="language-bash">cat README.md
+</code></pre>
+<p>As per TryHackMe&#39;s rules, the flag has been redacted in this writeup.</p>
+<img width="650" height="423" alt="Screenshot 2026-07-29 205512" src="https://github.com/user-attachments/assets/2b761295-fe73-4bf1-81bd-c31d992e4293" />
+
+
+
+<p>Congratulations!</p>
+<p>Room completed.</p>
+<hr>
+<h1>Why This Matters in the Real World</h1>
+<p>An exposed <code>.git</code> repository is much more than just leaked source code.</p>
+<p>Attackers can often recover:</p>
+<ul>
+<li>Hardcoded credentials</li>
+<li>API keys</li>
+<li>Database passwords</li>
+<li>Internal endpoints</li>
+<li>Hidden admin panels</li>
+<li>Old commits containing sensitive information</li>
+<li>Application architecture</li>
+<li>Secrets removed from newer versions but still present in Git history</li>
+</ul>
+<p>Even if developers delete sensitive information later, Git history frequently retains previous commits unless the repository is properly cleaned.</p>
+<p>Because of this, checking for an exposed <code>.git</code> directory is a standard reconnaissance technique during:</p>
+<ul>
+<li>Penetration Tests</li>
+<li>Bug Bounty engagements</li>
+<li>CTF challenges</li>
+<li>Red Team assessments</li>
+</ul>
+<hr>
+<h1>Key Takeaways</h1>
+<ul>
+<li>Always inspect web servers for accidentally exposed repositories.</li>
+<li><code>.git</code> exposure can lead to complete source code disclosure.</li>
+<li>Tools like <strong>git-dumper</strong> make repository reconstruction straightforward.</li>
+<li>Git history often exposes secrets that no longer exist in the current application.</li>
+<li>Proper deployment should never expose version control directories to the public internet.</li>
+</ul>
+
+    </article>
+  </main>
+
+  <footer>
+    <span class="f-accent">$</span> echo "Made by <span class="f-accent">Aryan Giri</span>" &nbsp;·&nbsp; <a href="https://github.com/giriaryan694-a11y" target="_blank" rel="noopener noreferrer">GitHub</a>
+  </footer>
+
+  <script>
+    /* Theme — synced with main site via same cookie */
+    const themes=["dark","light","eye-saver"];
+    const themeData={"dark":{emoji:"🌙",label:"Dark"},"light":{emoji:"☀️",label:"Light"},"eye-saver":{emoji:"☕",label:"Reading"}};
+    function setCookie(n,v,d){const e=new Date();e.setTime(e.getTime()+d*86400000);document.cookie=`${n}=${v};expires=${e.toUTCString()};path=/`;}
+    function getCookie(n){const m=document.cookie.match(new RegExp('(^| )'+n+'=([^;]+)'));return m?m[2]:null;}
+    let currentTheme=getCookie("site_theme")||"dark";
+    const themeBtn=document.getElementById("theme-btn");
+    const themeEmoji=document.getElementById("theme-emoji");
+    function applyTheme(theme,animate=false){
+      document.body.className=theme==="dark"?"":theme;
+      themeEmoji.textContent=themeData[theme].emoji;
+      document.getElementById("theme-label").textContent=themeData[theme].label;
+      setCookie("site_theme",theme,365);
+      if(animate){themeEmoji.style.animation="none";themeEmoji.offsetHeight;themeEmoji.style.animation="popSpin 0.4s cubic-bezier(0.175,0.885,0.32,1.275) forwards";}
+    }
+    applyTheme(currentTheme);
+    themeBtn.addEventListener("click",()=>{currentTheme=themes[(themes.indexOf(currentTheme)+1)%themes.length];applyTheme(currentTheme,true);});
+
+    /* Links → new tab + copy buttons on code blocks */
+    document.querySelectorAll(".post-content a").forEach(l => {
+      l.setAttribute("target", "_blank");
+      l.setAttribute("rel", "noopener noreferrer");
+    });
+    document.querySelectorAll("pre").forEach(pre => {
+      const code = pre.querySelector("code");
+      if (!code) return;
+      const btn = document.createElement("button");
+      btn.className = "copy-btn";
+      btn.textContent = "copy";
+      btn.onclick = async () => {
+        try { await navigator.clipboard.writeText(code.innerText.trimEnd()); }
+        catch {}
+        btn.textContent = "✓ copied"; btn.classList.add("copied");
+        setTimeout(() => { btn.textContent = "copy"; btn.classList.remove("copied"); }, 2000);
+      };
+      pre.appendChild(btn);
+    });
+  </script>
+</body>
+</html>

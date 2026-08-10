@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Complete Information-Gathering Techniques List (Red Team Recon Dictionary) — AryterLog</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="../../manifest.json">
+  <meta name="theme-color" content="#080b10">
+  <link rel="icon" href="../../icons/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="../../icons/apple-touch-icon.png">
+  <meta name="description" content="A comprehensive breakdown of information-gathering techniques covering physical recon, social engineering, OSINT, technical enumeration, psychological manipulation, and insider risks.">
+  <link rel="canonical" href="https://giriaryan694-a11y.github.io/AryterLog/posts/info_gathering_techniques_2026/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Complete Information-Gathering Techniques List (Red Team Recon Dictionary)">
+  <meta property="og:description" content="A comprehensive breakdown of information-gathering techniques covering physical recon, social engineering, OSINT, technical enumeration, psychological manipulation, and insider risks.">
+  <meta property="og:url" content="https://giriaryan694-a11y.github.io/AryterLog/posts/info_gathering_techniques_2026/">
+  <meta property="og:site_name" content="AryterLog">
+  <meta property="article:published_time" content="2026-04-01T00:00:00.000Z">
+  <meta property="article:tag" content="osint">
+  <meta property="article:tag" content="recon">
+  <meta property="article:tag" content="red-team">
+  <meta property="article:tag" content="social-engineering">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Complete Information-Gathering Techniques List (Red Team Recon Dictionary)">
+  <meta name="twitter:description" content="A comprehensive breakdown of information-gathering techniques covering physical recon, social engineering, OSINT, technical enumeration, psychological manipulation, and insider risks.">
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Complete Information-Gathering Techniques List (Red Team Recon Dictionary)","description":"A comprehensive breakdown of information-gathering techniques covering physical recon, social engineering, OSINT, technical enumeration, psychological manipulation, and insider risks.","datePublished":"2026-04-01T00:00:00.000Z","author":{"@type":"Person","name":"Aryan Giri"},"publisher":{"@type":"Organization","name":"AryterLog"},"mainEntityOfPage":"https://giriaryan694-a11y.github.io/AryterLog/posts/info_gathering_techniques_2026/","keywords":"osint, recon, red-team, social-engineering"}</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:#080b10; --surface:#0d1117; --surface2:#111820; --surface3:#161d27;
+      --text:#d0dbe8; --text2:#7a8a9a; --accent:#00ff88; --accent2:#0ea5e9;
+      --danger:#ff4560; --border:#1e2a38; --border2:#2a3848; --code-bg:#0a0f16;
+      --glow:rgba(0,255,136,0.08); --glow2:rgba(0,255,136,0.18);
+    }
+    .light {
+      --bg:#f5f7fa; --surface:#ffffff; --surface2:#f0f4f8; --surface3:#e8eef5;
+      --text:#111827; --text2:#6b7280; --accent:#059669; --accent2:#0284c7;
+      --danger:#dc2626; --border:#e2e8f0; --border2:#cbd5e1; --code-bg:#f1f5f9;
+      --glow:rgba(5,150,105,0.07); --glow2:rgba(5,150,105,0.14);
+    }
+    .eye-saver {
+      --bg:#12100a; --surface:#1a1608; --surface2:#211c0c; --surface3:#282210;
+      --text:#e8d8b0; --text2:#9a8860; --accent:#f5c542; --accent2:#e08030;
+      --danger:#e05050; --border:#302810; --border2:#3d3418; --code-bg:#0f0d06;
+      --glow:rgba(245,197,66,0.08); --glow2:rgba(245,197,66,0.18);
+    }
+
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body {
+      font-family:'Fira Code',monospace;
+      background:var(--bg); color:var(--text);
+      min-height:100vh; overflow-x:hidden;
+      transition:background 0.4s,color 0.4s;
+    }
+    body::before {
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+      background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
+      background-size:44px 44px; opacity:0.25;
+    }
+
+    header {
+      position:sticky; top:0; z-index:200;
+      background:rgba(8,11,16,0.86); backdrop-filter:blur(16px);
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 22px; height:56px; gap:12px;
+    }
+    .light header{background:rgba(245,247,250,0.9);}
+    .eye-saver header{background:rgba(18,16,10,0.9);}
+    header::after {
+      content:''; position:absolute; bottom:-1px; left:8%; right:8%; height:1px;
+      background:linear-gradient(90deg,transparent,var(--accent),transparent); opacity:0.35;
+    }
+    .header-left{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+
+    .logo {
+      font-family:'Bebas Neue',sans-serif; font-size:24px; font-weight:400;
+      letter-spacing:3px; color:var(--text); text-decoration:none; white-space:nowrap;
+      flex-shrink:0; line-height:1; transition:color 0.2s;
+    }
+    .logo .lo-a{color:var(--accent);}
+    .logo:hover .lo-a{text-shadow:0 0 14px var(--accent);}
+
+    .back-link {
+      display:inline-flex; align-items:center; gap:6px;
+      background:transparent; border:1px solid var(--border2); color:var(--text2);
+      padding:6px 12px; border-radius:6px; cursor:pointer; transition:all 0.2s;
+      font-family:'Fira Code',monospace; font-size:11px; text-decoration:none;
+    }
+    .back-link:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    #theme-btn {
+      background:transparent; border:1px solid var(--border2);
+      padding:5px 11px; cursor:pointer; color:var(--text2); border-radius:6px;
+      transition:all 0.2s; font-family:'Fira Code',monospace; font-size:11px;
+      display:inline-flex; align-items:center; gap:6px; white-space:nowrap;
+    }
+    #theme-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    @keyframes popSpin{0%{transform:scale(0.4) rotate(-60deg);opacity:0;}70%{transform:scale(1.15) rotate(5deg);}100%{transform:scale(1) rotate(0deg);opacity:1;}}
+    .emoji{display:inline-block;}
+
+    main{max-width:760px;margin:0 auto;padding:34px 20px 60px;position:relative;z-index:1;}
+
+    .back-btn {
+      display:inline-flex;align-items:center;gap:7px;margin-bottom:20px;
+      background:var(--surface);border:1px solid var(--border2);color:var(--text2);
+      padding:7px 13px;border-radius:6px;font-family:'Fira Code',monospace;font-size:11px;
+      cursor:pointer;transition:all 0.2s;text-decoration:none;
+    }
+    .back-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    .post-content {
+      background:var(--surface);border:1px solid var(--border);border-radius:12px;
+      padding:34px 30px;position:relative;overflow:hidden;
+    }
+    .post-content::before {
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      border-radius:12px 12px 0 0;
+    }
+    .post-content *{max-width:100%;}
+
+    h1 {
+      font-family:'Space Grotesk',sans-serif;font-size:clamp(19px,4vw,26px);
+      font-weight:700;color:var(--text);margin-bottom:8px;line-height:1.25;word-break:break-word;
+    }
+    .post-header-meta{
+      font-family:'Fira Code',monospace;font-size:11px;color:var(--text2);
+      padding-bottom:18px;margin-bottom:22px;border-bottom:1px solid var(--border);
+      display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+    }
+    .card-cat-chip {
+      display:inline-flex;align-items:center;padding:1px 7px;border-radius:3px;
+      border:1px solid var(--border2);background:var(--surface2);color:var(--text2);
+      font-size:9px;font-family:'Fira Code',monospace;font-weight:500;letter-spacing:0.4px;
+    }
+    h2,h3{font-family:'Space Grotesk',sans-serif;font-weight:600;color:var(--text);margin:26px 0 10px;word-break:break-word;}
+    h2{font-size:19px;} h3{font-size:15px;color:var(--accent);}
+    p{font-size:14px;line-height:1.8;margin-bottom:14px;color:var(--text);}
+    ul,ol{padding-left:20px;margin-bottom:14px;font-size:14px;line-height:1.8;}
+    li{margin-bottom:4px;}
+
+    a{color:var(--accent);word-break:break-all;overflow-wrap:break-word;transition:opacity 0.2s;}
+    a:hover{opacity:0.75;}
+    .post-content a{text-decoration:underline;text-underline-offset:3px;}
+
+    code {
+      background:var(--code-bg);border:1px solid var(--border);padding:2px 6px;
+      border-radius:4px;font-family:'Fira Code',monospace;font-size:0.85em;
+      color:var(--accent);word-break:break-all;overflow-wrap:break-word;
+    }
+    pre {
+      background:var(--code-bg);border:1px solid var(--border);padding:18px;border-radius:8px;
+      max-width:100%; overflow:hidden;
+      position:relative;margin-bottom:14px;
+    }
+    pre::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      opacity:0.5;border-radius:8px 8px 0 0;
+    }
+    pre code{
+      background:transparent;border:none;padding:0 60px 0 0;word-break:normal;
+      overflow-wrap:normal;white-space:pre;display:block;
+      overflow-x:auto;-webkit-overflow-scrolling:touch;
+      font-size:13px;line-height:1.65;color:var(--text);
+    }
+    blockquote{
+      border-left:2px solid var(--accent);margin:14px 0;padding:10px 16px;
+      background:var(--glow);border-radius:0 6px 6px 0;font-style:italic;color:var(--text2);
+    }
+    table{width:100%;border-collapse:collapse;display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;font-size:13px;margin-bottom:14px;}
+    th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;white-space:nowrap;}
+    th{background:var(--surface2);color:var(--accent);font-weight:600;}
+    img{max-width:100%;height:auto;border-radius:8px;display:block;margin:14px 0;}
+
+    .copy-btn {
+      position:absolute;top:9px;right:9px;padding:3px 8px;font-size:10px;
+      font-family:'Fira Code',monospace;font-weight:500;background:var(--surface2);
+      border:1px solid var(--border2);color:var(--text2);border-radius:4px;cursor:pointer;
+      transition:all 0.2s;opacity:0;letter-spacing:0.3px;
+    }
+    pre:hover .copy-btn{opacity:1;}
+    .copy-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    .copy-btn.copied{border-color:var(--accent);color:var(--accent);opacity:1;}
+
+    footer{
+      text-align:center;padding:22px 16px;color:var(--text2);
+      font-family:'Fira Code',monospace;font-size:11px;
+      border-top:1px solid var(--border);position:relative;z-index:1;
+    }
+    .f-accent{color:var(--accent);}
+    footer a{color:var(--accent);text-decoration:none;}
+    footer a:hover{opacity:0.75;}
+
+    @media(max-width:480px){
+      header{padding:0 13px;height:50px;}
+      .logo{font-size:21px;letter-spacing:2px;}
+      main{padding:20px 14px 44px;}
+      .post-content{padding:20px 14px;}
+      pre{padding:13px;}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <a href="../../index.html" class="logo">Aryter<span class="lo-a">Log</span></a>
+    </div>
+    <button id="theme-btn" aria-label="Cycle Theme">
+      <span class="emoji" id="theme-emoji">🌙</span>
+      <span id="theme-label">Dark</span>
+    </button>
+  </header>
+
+  <main>
+    <a href="../../index.html#post-info_gathering_techniques_2026" class="back-btn">← Back to Blog</a>
+    <article class="post-content">
+      <h1>Complete Information-Gathering Techniques List (Red Team Recon Dictionary)</h1>
+      <div class="post-header-meta">
+        <span>📅 Published April 1, 2026</span>
+        <span>·</span><span class="card-cat-chip">osint</span><span class="card-cat-chip">recon</span><span class="card-cat-chip">red-team</span><span class="card-cat-chip">social-engineering</span>
+      </div>
+      <p><strong>Written by Aryan Giri</strong></p>
+<p>Information-gathering is the first step in many security assessments. In defensive security, the goal is to understand how data can be exposed through people, systems, and the physical environment so organizations can reduce risk.</p>
+<h2>🗑️ Physical Recon</h2>
+<p><strong>Dumpster Diving</strong> — Searching discarded materials for useful information.<br><em>Example:</em> Finding printed meeting notes or old network diagrams in office trash.</p>
+<p><strong>Tailgating / Piggybacking</strong> — Entering a restricted area by following an authorized person.<br><em>Example:</em> Walking in behind an employee when a door is unlocked.</p>
+<p><strong>Shoulder Surfing</strong> — Watching someone enter sensitive information.<br><em>Example:</em> Seeing a password or PIN typed on a public screen.</p>
+<p><strong>Physical Surveillance</strong> — Observing a location or routine from outside.<br><em>Example:</em> Noticing when employees arrive, leave, or use access controls.</p>
+<p><strong>Badge Cloning / RFID Skimming</strong> — Capturing badge data to understand access risks.<br><em>Example:</em> Learning that a low-security badge can be copied if poorly protected.</p>
+<p><strong>Lock Picking (recon phase)</strong> — Examining weak physical locks during security testing.<br><em>Example:</em> Identifying that a storage room uses an easy-to-defeat lock.</p>
+<p><strong>Hidden Camera Observation</strong> — Watching for exposed processes or weak physical controls.<br><em>Example:</em> A camera angle revealing who enters a secure room.</p>
+<p><strong>Document Harvesting (desks/printers)</strong> — Finding sensitive papers left unattended.<br><em>Example:</em> A printer tray containing internal reports.</p>
+<p><strong>Hardware Implant Placement (USB drops, keyloggers)</strong> — A physical compromise path used in red-team scenarios.<br><em>Example:</em> A forgotten USB device testing employee awareness.</p>
+<h2>🎭 Social Engineering (Human Exploitation)</h2>
+<p><strong>Phishing</strong> — Fake messages that try to make someone click, reply, or share data.<br><em>Example:</em> A message pretending to be from a login portal.</p>
+<p><strong>Spear Phishing</strong> — A targeted phishing attempt aimed at one person or team.<br><em>Example:</em> A fake invoice sent to the finance department.</p>
+<p><strong>Whaling</strong> — Phishing aimed at executives or high-value targets.<br><em>Example:</em> A message pretending to be for the CEO’s urgent approval.</p>
+<p><strong>Clone Phishing</strong> — A real message copied and altered to appear safe.<br><em>Example:</em> A legitimate email resent with a swapped attachment or link.</p>
+<p><strong>Business Email Compromise (BEC)</strong> — Email-based fraud that impersonates trusted business communication.<br><em>Example:</em> A fake payment request from a “vendor” account.</p>
+<p><strong>Pretexting</strong> — Creating a believable story to obtain information.<br><em>Example:</em> Calling as IT support to ask whether a system is in use.</p>
+<p><strong>Impersonation</strong> — Pretending to be someone trusted.<br><em>Example:</em> Claiming to be a new employee from another department.</p>
+<p><strong>Baiting</strong> — Offering something tempting to trigger a risky action.<br><em>Example:</em> A misleading download labeled as a useful document.</p>
+<p><strong>Quid Pro Quo</strong> — Offering help in exchange for information or access.<br><em>Example:</em> “I can fix that issue if you tell me your account details.”</p>
+<p><strong>Elicitation</strong> — Extracting facts through casual conversation.<br><em>Example:</em> Asking friendly questions that reveal internal tools or schedules.</p>
+<p><strong>Reverse Social Engineering</strong> — Creating a situation where the target asks the attacker for help.<br><em>Example:</em> Causing confusion so someone reaches out for support.</p>
+<p><strong>Honey Trap / Romance Scam</strong> — Emotional manipulation used to gain trust or data.<br><em>Example:</em> A fake online identity building a relationship to collect details.</p>
+<p><strong>Scareware</strong> — Fake warnings that pressure users into action.<br><em>Example:</em> A pop-up claiming a device is infected and needs urgent attention.</p>
+<p><strong>Watering Hole Attack</strong> — Compromising a site that a target group often visits.<br><em>Example:</em> A trusted community site being altered to lure specific visitors.</p>
+<h2>📞 Communication-Based Attacks</h2>
+<p><strong>Vishing (voice phishing)</strong> — Phishing by phone call.<br><em>Example:</em> A caller pretending to be bank support.</p>
+<p><strong>Smishing (SMS phishing)</strong> — Phishing by text message.<br><em>Example:</em> A text asking you to verify a login.</p>
+<p><strong>Email Spoofing</strong> — Making an email look like it came from a trusted sender.<br><em>Example:</em> A message that appears to come from an internal address.</p>
+<p><strong>Caller ID Spoofing</strong> — Faking the number shown on a phone call.<br><em>Example:</em> A call that appears to come from a familiar office number.</p>
+<p><strong>Deepfake Voice Attacks</strong> — AI-generated voice used to imitate someone.<br><em>Example:</em> A synthetic voice sounding like a manager during a fraud attempt.</p>
+<p><strong>Fake Support Calls</strong> — Pretending to be technical support to gain trust.<br><em>Example:</em> Calling an employee about a fake account problem.</p>
+<p><strong>MFA Fatigue Attacks</strong> — Repeated approval prompts meant to wear a user down.<br><em>Example:</em> A user receiving many login prompts until they accept one by mistake.</p>
+<h2>🌐 OSINT (Open Source Intelligence)</h2>
+<p><strong>Search Engine Recon (Google Dorking)</strong> — Using search operators to find exposed data.<br><em>Example:</em> Discovering public documents or misconfigured pages.</p>
+<p><strong>WHOIS Lookup</strong> — Checking domain registration details.<br><em>Example:</em> Learning ownership or administrative contact patterns.</p>
+<p><strong>DNS Enumeration</strong> — Studying domain records and subdomains.<br><em>Example:</em> Finding test systems or forgotten service names.</p>
+<p><strong>Social Media Profiling</strong> — Collecting public details from profiles and posts.<br><em>Example:</em> Learning team structure from LinkedIn updates.</p>
+<p><strong>Metadata Extraction (EXIF, docs)</strong> — Reading hidden data inside files.<br><em>Example:</em> A photo revealing device details or document author names.</p>
+<p><strong>Public Records Mining</strong> — Using public documents and filings for context.<br><em>Example:</em> Finding company leadership or address history.</p>
+<p><strong>Breach Data Analysis (leaked creds)</strong> — Studying known leaks for exposure patterns.<br><em>Example:</em> Seeing whether reused passwords appear in older incidents.</p>
+<p><strong>GitHub / Code Leak Hunting</strong> — Looking for secrets accidentally published in code.<br><em>Example:</em> A repository containing API keys in plain text.</p>
+<p><strong>Job Listings Intelligence</strong> — Reading hiring posts to infer a tech stack.<br><em>Example:</em> A vacancy listing tools, cloud platforms, or frameworks.</p>
+<p><strong>Dark Web Monitoring</strong> — Checking criminal marketplaces or forums for mentions of an organization.<br><em>Example:</em> Noticing a company name in breach chatter.</p>
+<p><strong>Username Enumeration</strong> — Checking which usernames are valid across services.<br><em>Example:</em> Finding that one account format is used consistently.</p>
+<h2>🖥️ Technical Recon (Pre-Exploitation)</h2>
+<p><strong>Footprinting</strong> — Gathering basic details about an environment.<br><em>Example:</em> Learning what systems, domains, or services exist.</p>
+<p><strong>Scanning</strong> — Checking what hosts or services respond.<br><em>Example:</em> Identifying open ports on a test lab machine.</p>
+<p><strong>Banner Grabbing</strong> — Reading service identification data.<br><em>Example:</em> Seeing a web server version in a response header.</p>
+<p><strong>OS Fingerprinting</strong> — Estimating the operating system behind a host.<br><em>Example:</em> Distinguishing between Linux and Windows behavior.</p>
+<p><strong>Subdomain Enumeration</strong> — Finding subdomains connected to a target domain.<br><em>Example:</em> Discovering dev, staging, or portal hosts.</p>
+<p><strong>Directory Bruteforcing</strong> — Looking for hidden paths on a website.<br><em>Example:</em> Finding an admin panel or backup folder.</p>
+<p><strong>Network Sniffing</strong> — Observing network traffic for analysis.<br><em>Example:</em> Spotting unencrypted service communication in a lab.</p>
+<p><strong>Traffic Analysis</strong> — Studying patterns in network flows.<br><em>Example:</em> Noticing unusual repeated requests or connections.</p>
+<p><strong>Service Enumeration</strong> — Learning what a service exposes.<br><em>Example:</em> Checking features, versions, and configurations.</p>
+<p><strong>Vulnerability Scanning</strong> — Identifying known weaknesses.<br><em>Example:</em> Detecting outdated software in an authorized assessment.</p>
+<h2>🧠 Behavioral / Psychological Exploits</h2>
+<p><strong>Authority Exploitation</strong> — Using titles or status to pressure a target.<br><em>Example:</em> A message pretending to come from a manager.</p>
+<p><strong>Urgency Manipulation</strong> — Forcing quick action before thinking.<br><em>Example:</em> “Act now or the account will be locked.”</p>
+<p><strong>Fear Exploitation</strong> — Triggering concern to lower defenses.<br><em>Example:</em> A fake security warning about account compromise.</p>
+<p><strong>Curiosity Trigger</strong> — Enticing someone to open or click.<br><em>Example:</em> A file named as an interesting report.</p>
+<p><strong>Trust Building</strong> — Slowly gaining confidence over time.<br><em>Example:</em> Repeated friendly contact before making a request.</p>
+<p><strong>Social Proof Abuse</strong> — Making something seem safe because others appear to use it.<br><em>Example:</em> A fake review or fake internal reference.</p>
+<p><strong>Reciprocity Principle</strong> — Offering something to encourage compliance.<br><em>Example:</em> “I helped you, so please send that file.”</p>
+<p><strong>Cognitive Overload</strong> — Flooding someone with too much information.<br><em>Example:</em> Too many prompts, forms, or warnings at once.</p>
+<p><strong>Habit Exploitation</strong> — Taking advantage of routine actions.<br><em>Example:</em> Users clicking familiar-looking approvals without checking.</p>
+<h2>🏢 Insider &amp; Organizational Weaknesses</h2>
+<p><strong>Insider Threat Exploitation</strong> — Risk created by trusted users misusing access.<br><em>Example:</em> Someone using legitimate access in an unsafe way.</p>
+<p><strong>Privilege Abuse</strong> — Overuse or misuse of elevated permissions.<br><em>Example:</em> An admin account being used for normal browsing.</p>
+<p><strong>Weak Password Practices</strong> — Easy-to-guess or reused passwords.<br><em>Example:</em> A password that appears in multiple systems.</p>
+<p><strong>Shared Credentials</strong> — One login used by many people.<br><em>Example:</em> A team account that everyone knows.</p>
+<p><strong>Misconfigured Access Control</strong> — Permissions set too loosely.<br><em>Example:</em> A shared folder visible to more users than intended.</p>
+<p><strong>Overexposed Internal Docs</strong> — Sensitive documents accessible too widely.<br><em>Example:</em> Internal plans stored in a public or shared space.</p>
+<p><strong>Shadow IT Discovery</strong> — Unofficial tools or services adopted without approval.<br><em>Example:</em> A team using an unsanctioned cloud file service.</p>
+<h2>⚔️ How Real Attack Chains Look</h2>
+<p>A real assessment often combines multiple techniques:</p>
+<ol>
+<li>OSINT to learn public details.</li>
+<li>Social media analysis to identify staff or tools.</li>
+<li>Pretexting to build believable contact.</li>
+<li>Phishing or vishing to test human defenses.</li>
+<li>Physical recon to identify weak controls.</li>
+<li>Document or trash analysis to confirm exposure.</li>
+</ol>
+<p>The important lesson is that data rarely comes from one place only. It often comes from a mix of humans, systems, and the physical environment.</p>
+<h2>🧠 Mental Model</h2>
+<p>Think of information exposure in three layers:</p>
+<ul>
+<li><strong>Humans</strong> — conversations, habits, trust, and mistakes.</li>
+<li><strong>Systems</strong> — domains, services, code, and network behavior.</li>
+<li><strong>Environment</strong> — offices, papers, devices, and access controls.</li>
+</ul>
+<p>A strong defender learns how each layer leaks information and then closes those gaps.</p>
+<h2>✅ Defensive Takeaway</h2>
+<p>These techniques matter because they show where organizations are most exposed. The goal is not to copy harmful behavior, but to understand how to prevent it through awareness, access control, secure disposal, training, and monitoring.</p>
+<p><strong>Written by Aryan Giri</strong></p>
+
+    </article>
+  </main>
+
+  <footer>
+    <span class="f-accent">$</span> echo "Made by <span class="f-accent">Aryan Giri</span>" &nbsp;·&nbsp; <a href="https://github.com/giriaryan694-a11y" target="_blank" rel="noopener noreferrer">GitHub</a>
+  </footer>
+
+  <script>
+    /* Theme — synced with main site via same cookie */
+    const themes=["dark","light","eye-saver"];
+    const themeData={"dark":{emoji:"🌙",label:"Dark"},"light":{emoji:"☀️",label:"Light"},"eye-saver":{emoji:"☕",label:"Reading"}};
+    function setCookie(n,v,d){const e=new Date();e.setTime(e.getTime()+d*86400000);document.cookie=`${n}=${v};expires=${e.toUTCString()};path=/`;}
+    function getCookie(n){const m=document.cookie.match(new RegExp('(^| )'+n+'=([^;]+)'));return m?m[2]:null;}
+    let currentTheme=getCookie("site_theme")||"dark";
+    const themeBtn=document.getElementById("theme-btn");
+    const themeEmoji=document.getElementById("theme-emoji");
+    function applyTheme(theme,animate=false){
+      document.body.className=theme==="dark"?"":theme;
+      themeEmoji.textContent=themeData[theme].emoji;
+      document.getElementById("theme-label").textContent=themeData[theme].label;
+      setCookie("site_theme",theme,365);
+      if(animate){themeEmoji.style.animation="none";themeEmoji.offsetHeight;themeEmoji.style.animation="popSpin 0.4s cubic-bezier(0.175,0.885,0.32,1.275) forwards";}
+    }
+    applyTheme(currentTheme);
+    themeBtn.addEventListener("click",()=>{currentTheme=themes[(themes.indexOf(currentTheme)+1)%themes.length];applyTheme(currentTheme,true);});
+
+    /* Links → new tab + copy buttons on code blocks */
+    document.querySelectorAll(".post-content a").forEach(l => {
+      l.setAttribute("target", "_blank");
+      l.setAttribute("rel", "noopener noreferrer");
+    });
+    document.querySelectorAll("pre").forEach(pre => {
+      const code = pre.querySelector("code");
+      if (!code) return;
+      const btn = document.createElement("button");
+      btn.className = "copy-btn";
+      btn.textContent = "copy";
+      btn.onclick = async () => {
+        try { await navigator.clipboard.writeText(code.innerText.trimEnd()); }
+        catch {}
+        btn.textContent = "✓ copied"; btn.classList.add("copied");
+        setTimeout(() => { btn.textContent = "copy"; btn.classList.remove("copied"); }, 2000);
+      };
+      pre.appendChild(btn);
+    });
+  </script>
+</body>
+</html>

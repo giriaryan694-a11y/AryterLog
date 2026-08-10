@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://giriaryan694-a11y.github.io/AryterLog/sitemap.xml

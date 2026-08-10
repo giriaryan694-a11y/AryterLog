@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Practical Ethical Hacking: Core Concepts &amp; Quick Revision — AryterLog</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="../../manifest.json">
+  <meta name="theme-color" content="#080b10">
+  <link rel="icon" href="../../icons/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="../../icons/apple-touch-icon.png">
+  <meta name="description" content="A beginner-friendly yet practical breakdown of ethical hacking foundations covering networking, TCP/UDP, OSI model, subnetting, enumeration, note-taking, hacker methodology, and attacker mindset with real-world security context.">
+  <link rel="canonical" href="https://giriaryan694-a11y.github.io/AryterLog/posts/practical-ethical-hacking-core-concepts-quick-revision/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Practical Ethical Hacking: Core Concepts &amp; Quick Revision">
+  <meta property="og:description" content="A beginner-friendly yet practical breakdown of ethical hacking foundations covering networking, TCP/UDP, OSI model, subnetting, enumeration, note-taking, hacker methodology, and attacker mindset with real-world security context.">
+  <meta property="og:url" content="https://giriaryan694-a11y.github.io/AryterLog/posts/practical-ethical-hacking-core-concepts-quick-revision/">
+  <meta property="og:site_name" content="AryterLog">
+  <meta property="article:published_time" content="2026-05-18T00:00:00.000Z">
+  <meta property="article:tag" content="offensive-security">
+  <meta property="article:tag" content="pentesting">
+  <meta property="article:tag" content="network-security">
+  <meta property="article:tag" content="attack-techniques">
+  <meta property="article:tag" content="linux">
+  <meta property="article:tag" content="education">
+  <meta property="article:tag" content="reference">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Practical Ethical Hacking: Core Concepts &amp; Quick Revision">
+  <meta name="twitter:description" content="A beginner-friendly yet practical breakdown of ethical hacking foundations covering networking, TCP/UDP, OSI model, subnetting, enumeration, note-taking, hacker methodology, and attacker mindset with real-world security context.">
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Practical Ethical Hacking: Core Concepts & Quick Revision","description":"A beginner-friendly yet practical breakdown of ethical hacking foundations covering networking, TCP/UDP, OSI model, subnetting, enumeration, note-taking, hacker methodology, and attacker mindset with real-world security context.","datePublished":"2026-05-18T00:00:00.000Z","author":{"@type":"Person","name":"Aryan Giri"},"publisher":{"@type":"Organization","name":"AryterLog"},"mainEntityOfPage":"https://giriaryan694-a11y.github.io/AryterLog/posts/practical-ethical-hacking-core-concepts-quick-revision/","keywords":"offensive-security, pentesting, network-security, attack-techniques, linux, education, reference"}</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:#080b10; --surface:#0d1117; --surface2:#111820; --surface3:#161d27;
+      --text:#d0dbe8; --text2:#7a8a9a; --accent:#00ff88; --accent2:#0ea5e9;
+      --danger:#ff4560; --border:#1e2a38; --border2:#2a3848; --code-bg:#0a0f16;
+      --glow:rgba(0,255,136,0.08); --glow2:rgba(0,255,136,0.18);
+    }
+    .light {
+      --bg:#f5f7fa; --surface:#ffffff; --surface2:#f0f4f8; --surface3:#e8eef5;
+      --text:#111827; --text2:#6b7280; --accent:#059669; --accent2:#0284c7;
+      --danger:#dc2626; --border:#e2e8f0; --border2:#cbd5e1; --code-bg:#f1f5f9;
+      --glow:rgba(5,150,105,0.07); --glow2:rgba(5,150,105,0.14);
+    }
+    .eye-saver {
+      --bg:#12100a; --surface:#1a1608; --surface2:#211c0c; --surface3:#282210;
+      --text:#e8d8b0; --text2:#9a8860; --accent:#f5c542; --accent2:#e08030;
+      --danger:#e05050; --border:#302810; --border2:#3d3418; --code-bg:#0f0d06;
+      --glow:rgba(245,197,66,0.08); --glow2:rgba(245,197,66,0.18);
+    }
+
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body {
+      font-family:'Fira Code',monospace;
+      background:var(--bg); color:var(--text);
+      min-height:100vh; overflow-x:hidden;
+      transition:background 0.4s,color 0.4s;
+    }
+    body::before {
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+      background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
+      background-size:44px 44px; opacity:0.25;
+    }
+
+    header {
+      position:sticky; top:0; z-index:200;
+      background:rgba(8,11,16,0.86); backdrop-filter:blur(16px);
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 22px; height:56px; gap:12px;
+    }
+    .light header{background:rgba(245,247,250,0.9);}
+    .eye-saver header{background:rgba(18,16,10,0.9);}
+    header::after {
+      content:''; position:absolute; bottom:-1px; left:8%; right:8%; height:1px;
+      background:linear-gradient(90deg,transparent,var(--accent),transparent); opacity:0.35;
+    }
+    .header-left{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+
+    .logo {
+      font-family:'Bebas Neue',sans-serif; font-size:24px; font-weight:400;
+      letter-spacing:3px; color:var(--text); text-decoration:none; white-space:nowrap;
+      flex-shrink:0; line-height:1; transition:color 0.2s;
+    }
+    .logo .lo-a{color:var(--accent);}
+    .logo:hover .lo-a{text-shadow:0 0 14px var(--accent);}
+
+    .back-link {
+      display:inline-flex; align-items:center; gap:6px;
+      background:transparent; border:1px solid var(--border2); color:var(--text2);
+      padding:6px 12px; border-radius:6px; cursor:pointer; transition:all 0.2s;
+      font-family:'Fira Code',monospace; font-size:11px; text-decoration:none;
+    }
+    .back-link:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    #theme-btn {
+      background:transparent; border:1px solid var(--border2);
+      padding:5px 11px; cursor:pointer; color:var(--text2); border-radius:6px;
+      transition:all 0.2s; font-family:'Fira Code',monospace; font-size:11px;
+      display:inline-flex; align-items:center; gap:6px; white-space:nowrap;
+    }
+    #theme-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    @keyframes popSpin{0%{transform:scale(0.4) rotate(-60deg);opacity:0;}70%{transform:scale(1.15) rotate(5deg);}100%{transform:scale(1) rotate(0deg);opacity:1;}}
+    .emoji{display:inline-block;}
+
+    main{max-width:760px;margin:0 auto;padding:34px 20px 60px;position:relative;z-index:1;}
+
+    .back-btn {
+      display:inline-flex;align-items:center;gap:7px;margin-bottom:20px;
+      background:var(--surface);border:1px solid var(--border2);color:var(--text2);
+      padding:7px 13px;border-radius:6px;font-family:'Fira Code',monospace;font-size:11px;
+      cursor:pointer;transition:all 0.2s;text-decoration:none;
+    }
+    .back-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    .post-content {
+      background:var(--surface);border:1px solid var(--border);border-radius:12px;
+      padding:34px 30px;position:relative;overflow:hidden;
+    }
+    .post-content::before {
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      border-radius:12px 12px 0 0;
+    }
+    .post-content *{max-width:100%;}
+
+    h1 {
+      font-family:'Space Grotesk',sans-serif;font-size:clamp(19px,4vw,26px);
+      font-weight:700;color:var(--text);margin-bottom:8px;line-height:1.25;word-break:break-word;
+    }
+    .post-header-meta{
+      font-family:'Fira Code',monospace;font-size:11px;color:var(--text2);
+      padding-bottom:18px;margin-bottom:22px;border-bottom:1px solid var(--border);
+      display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+    }
+    .card-cat-chip {
+      display:inline-flex;align-items:center;padding:1px 7px;border-radius:3px;
+      border:1px solid var(--border2);background:var(--surface2);color:var(--text2);
+      font-size:9px;font-family:'Fira Code',monospace;font-weight:500;letter-spacing:0.4px;
+    }
+    h2,h3{font-family:'Space Grotesk',sans-serif;font-weight:600;color:var(--text);margin:26px 0 10px;word-break:break-word;}
+    h2{font-size:19px;} h3{font-size:15px;color:var(--accent);}
+    p{font-size:14px;line-height:1.8;margin-bottom:14px;color:var(--text);}
+    ul,ol{padding-left:20px;margin-bottom:14px;font-size:14px;line-height:1.8;}
+    li{margin-bottom:4px;}
+
+    a{color:var(--accent);word-break:break-all;overflow-wrap:break-word;transition:opacity 0.2s;}
+    a:hover{opacity:0.75;}
+    .post-content a{text-decoration:underline;text-underline-offset:3px;}
+
+    code {
+      background:var(--code-bg);border:1px solid var(--border);padding:2px 6px;
+      border-radius:4px;font-family:'Fira Code',monospace;font-size:0.85em;
+      color:var(--accent);word-break:break-all;overflow-wrap:break-word;
+    }
+    pre {
+      background:var(--code-bg);border:1px solid var(--border);padding:18px;border-radius:8px;
+      max-width:100%; overflow:hidden;
+      position:relative;margin-bottom:14px;
+    }
+    pre::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      opacity:0.5;border-radius:8px 8px 0 0;
+    }
+    pre code{
+      background:transparent;border:none;padding:0 60px 0 0;word-break:normal;
+      overflow-wrap:normal;white-space:pre;display:block;
+      overflow-x:auto;-webkit-overflow-scrolling:touch;
+      font-size:13px;line-height:1.65;color:var(--text);
+    }
+    blockquote{
+      border-left:2px solid var(--accent);margin:14px 0;padding:10px 16px;
+      background:var(--glow);border-radius:0 6px 6px 0;font-style:italic;color:var(--text2);
+    }
+    table{width:100%;border-collapse:collapse;display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;font-size:13px;margin-bottom:14px;}
+    th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;white-space:nowrap;}
+    th{background:var(--surface2);color:var(--accent);font-weight:600;}
+    img{max-width:100%;height:auto;border-radius:8px;display:block;margin:14px 0;}
+
+    .copy-btn {
+      position:absolute;top:9px;right:9px;padding:3px 8px;font-size:10px;
+      font-family:'Fira Code',monospace;font-weight:500;background:var(--surface2);
+      border:1px solid var(--border2);color:var(--text2);border-radius:4px;cursor:pointer;
+      transition:all 0.2s;opacity:0;letter-spacing:0.3px;
+    }
+    pre:hover .copy-btn{opacity:1;}
+    .copy-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    .copy-btn.copied{border-color:var(--accent);color:var(--accent);opacity:1;}
+
+    footer{
+      text-align:center;padding:22px 16px;color:var(--text2);
+      font-family:'Fira Code',monospace;font-size:11px;
+      border-top:1px solid var(--border);position:relative;z-index:1;
+    }
+    .f-accent{color:var(--accent);}
+    footer a{color:var(--accent);text-decoration:none;}
+    footer a:hover{opacity:0.75;}
+
+    @media(max-width:480px){
+      header{padding:0 13px;height:50px;}
+      .logo{font-size:21px;letter-spacing:2px;}
+      main{padding:20px 14px 44px;}
+      .post-content{padding:20px 14px;}
+      pre{padding:13px;}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <a href="../../index.html" class="logo">Aryter<span class="lo-a">Log</span></a>
+    </div>
+    <button id="theme-btn" aria-label="Cycle Theme">
+      <span class="emoji" id="theme-emoji">🌙</span>
+      <span id="theme-label">Dark</span>
+    </button>
+  </header>
+
+  <main>
+    <a href="../../index.html#post-practical-ethical-hacking-core-concepts-quick-revision" class="back-btn">← Back to Blog</a>
+    <article class="post-content">
+      <h1>Practical Ethical Hacking: Core Concepts &amp; Quick Revision</h1>
+      <div class="post-header-meta">
+        <span>📅 Published 2026-05-18</span>
+        <span>·</span><span class="card-cat-chip">offensive-security</span><span class="card-cat-chip">pentesting</span><span class="card-cat-chip">network-security</span><span class="card-cat-chip">attack-techniques</span><span class="card-cat-chip">linux</span><span class="card-cat-chip">education</span><span class="card-cat-chip">reference</span>
+      </div>
+      <p><strong>Written by Aryan Giri</strong></p>
+<h2>Introduction</h2>
+<p>A lot of beginners think ethical hacking starts with exploits, payloads, or fancy tools.</p>
+<p>In reality, hacking starts much earlier.</p>
+<p>Before an attacker exploits anything, they first:</p>
+<ul>
+<li>understand the target,</li>
+<li>collect information,</li>
+<li>study the network,</li>
+<li>identify weak points,</li>
+<li>and document everything.</li>
+</ul>
+<p>This is why foundational skills matter more than flashy tools.</p>
+<p>A person who understands networking, note-taking, protocols, and hacker methodology will usually outperform someone who only memorizes commands.</p>
+<p>This article explains the core foundations behind practical ethical hacking in simple English with practical examples.</p>
+<hr>
+<h1>What Is Ethical Hacking?</h1>
+<p>Ethical hacking means legally testing systems to discover security weaknesses before malicious attackers do.</p>
+<p>Instead of attacking random targets illegally, ethical hackers work with permission.</p>
+<p>Their job is to:</p>
+<ul>
+<li>discover vulnerabilities,</li>
+<li>show proof of impact,</li>
+<li>explain risks,</li>
+<li>and help improve security.</li>
+</ul>
+<p>Ethical hackers are also called:</p>
+<ul>
+<li>penetration testers,</li>
+<li>red teamers,</li>
+<li>offensive security professionals.</li>
+</ul>
+<hr>
+<h1>Why Ethical Hacking Is Different From Normal IT</h1>
+<p>Normal IT work usually focuses on:</p>
+<ul>
+<li>maintaining systems,</li>
+<li>fixing issues,</li>
+<li>configuring networks,</li>
+<li>managing users.</li>
+</ul>
+<p>Ethical hacking focuses on:</p>
+<ul>
+<li>thinking like an attacker,</li>
+<li>bypassing protections,</li>
+<li>chaining weaknesses together,</li>
+<li>and understanding how compromise happens.</li>
+</ul>
+<h2>Example</h2>
+<p>A system administrator may see:</p>
+<ul>
+<li>open SMB sharing.</li>
+</ul>
+<p>An ethical hacker immediately thinks:</p>
+<ul>
+<li>can SMB be abused?</li>
+<li>is SMB signing disabled?</li>
+<li>is NTLM relay possible?</li>
+<li>are there old EternalBlue-style vulnerabilities?</li>
+<li>are anonymous shares enabled?</li>
+</ul>
+<p>That attacker mindset is the difference.</p>
+<hr>
+<h1>The Hacker Methodology</h1>
+<p>Most ethical hacking follows a general workflow.</p>
+<h2>1. Reconnaissance</h2>
+<p>This stage is about collecting information.</p>
+<p>Examples:</p>
+<ul>
+<li>finding domains,</li>
+<li>searching employee names,</li>
+<li>collecting emails,</li>
+<li>identifying technologies,</li>
+<li>checking exposed services.</li>
+</ul>
+<h3>Practical Example</h3>
+<p>A target company may expose:</p>
+<ul>
+<li>employee LinkedIn profiles,</li>
+<li>technology stack information,</li>
+<li>public GitHub repositories,</li>
+<li>development subdomains.</li>
+</ul>
+<p>Even small details can help attackers later.</p>
+<hr>
+<h2>2. Scanning and Enumeration</h2>
+<p>After collecting information, attackers begin interacting with the target.</p>
+<p>This usually includes:</p>
+<ul>
+<li>port scanning,</li>
+<li>service detection,</li>
+<li>version identification,</li>
+<li>SMB enumeration,</li>
+<li>DNS enumeration,</li>
+<li>web enumeration.</li>
+</ul>
+<p>Enumeration is one of the most important hacking skills.</p>
+<h3>Important mindset</h3>
+<p>Good hackers do not randomly exploit.</p>
+<p>They first understand:</p>
+<ul>
+<li>what exists,</li>
+<li>what versions are running,</li>
+<li>what services are exposed,</li>
+<li>and what attack surface is available.</li>
+</ul>
+<hr>
+<h2>3. Exploitation</h2>
+<p>Once weaknesses are identified, exploitation begins.</p>
+<p>Examples:</p>
+<ul>
+<li>weak passwords,</li>
+<li>vulnerable software,</li>
+<li>insecure file uploads,</li>
+<li>command injection,</li>
+<li>exposed services.</li>
+</ul>
+<h3>Example attack chain</h3>
+<p>An attacker may:</p>
+<ol>
+<li>discover SMB open,</li>
+<li>identify SMB signing disabled,</li>
+<li>perform NTLM relay,</li>
+<li>gain credentials,</li>
+<li>move laterally through the network.</li>
+</ol>
+<p>This is called attack chaining.</p>
+<p>Small weaknesses become dangerous when combined.</p>
+<hr>
+<h2>4. Post Exploitation</h2>
+<p>After gaining access, attackers attempt to:</p>
+<ul>
+<li>escalate privileges,</li>
+<li>maintain persistence,</li>
+<li>dump credentials,</li>
+<li>move laterally,</li>
+<li>access sensitive data.</li>
+</ul>
+<h3>Real-world idea</h3>
+<p>Initial access is often not the final objective.</p>
+<p>The real objective may be:</p>
+<ul>
+<li>domain admin access,</li>
+<li>database theft,</li>
+<li>ransomware deployment,</li>
+<li>or cloud compromise.</li>
+</ul>
+<hr>
+<h2>5. Reporting</h2>
+<p>Reporting is one of the most underrated security skills.</p>
+<p>A great hacker with terrible reporting is still a weak consultant.</p>
+<p>Reports should explain:</p>
+<ul>
+<li>what was discovered,</li>
+<li>why it matters,</li>
+<li>how exploitation worked,</li>
+<li>business impact,</li>
+<li>and remediation.</li>
+</ul>
+<hr>
+<h1>Why Note-Taking Is Extremely Important</h1>
+<p>Many beginners ignore note-taking.</p>
+<p>That is a mistake.</p>
+<p>Professional penetration testers document everything.</p>
+<h2>Good notes should include</h2>
+<ul>
+<li>IP addresses</li>
+<li>usernames</li>
+<li>discovered ports</li>
+<li>commands used</li>
+<li>screenshots</li>
+<li>credentials</li>
+<li>payloads</li>
+<li>findings</li>
+<li>timestamps</li>
+</ul>
+<hr>
+<h1>Example of Bad vs Good Notes</h1>
+<h2>Bad notes</h2>
+<p><code>Port 80 open</code></p>
+<p>That tells almost nothing.</p>
+<hr>
+<h2>Good notes</h2>
+<ul>
+<li><code>10.10.10.5</code></li>
+<li>Port <code>80/tcp</code> open</li>
+<li>Apache <code>2.4.49</code></li>
+<li>Directory listing enabled</li>
+<li><code>/backup/</code> exposed publicly</li>
+<li>Potential sensitive file exposure</li>
+</ul>
+<p>Now the finding is useful.</p>
+<hr>
+<h1>Useful Note-Taking Tools</h1>
+<p>Common tools include:</p>
+<ul>
+<li>CherryTree</li>
+<li>KeepNote</li>
+<li>OneNote</li>
+<li>Joplin</li>
+</ul>
+<p>The tool itself matters less than organization.</p>
+<hr>
+<h1>Screenshot Tools Matter Too</h1>
+<p>Screenshots are critical in penetration testing.</p>
+<p>Good screenshots:</p>
+<ul>
+<li>provide evidence,</li>
+<li>support reports,</li>
+<li>and help explain technical findings.</li>
+</ul>
+<p>Tools like Greenshot are useful because they allow:</p>
+<ul>
+<li>highlighting,</li>
+<li>obfuscation,</li>
+<li>annotations,</li>
+<li>and clean exports.</li>
+</ul>
+<hr>
+<h1>Networking Foundations Every Hacker Needs</h1>
+<p>Networking is one of the most important skills in offensive security.</p>
+<p>A hacker who does not understand networking will struggle during:</p>
+<ul>
+<li>scanning,</li>
+<li>exploitation,</li>
+<li>pivoting,</li>
+<li>and troubleshooting.</li>
+</ul>
+<hr>
+<h1>Understanding IP Addresses</h1>
+<p>An IP address identifies a device on a network.</p>
+<h2>IPv4</h2>
+<p>Most common format:</p>
+<p><code>192.168.1.10</code></p>
+<p>IPv4 uses:</p>
+<ul>
+<li>32 bits,</li>
+<li>divided into four octets.</li>
+</ul>
+<p>Each octet ranges from:</p>
+<ul>
+<li><code>0</code> to <code>255</code></li>
+</ul>
+<hr>
+<h2>IPv6</h2>
+<p>IPv6 is much larger and uses hexadecimal notation.</p>
+<p>Example:</p>
+<p><code>2001:0db8:85a3::8a2e:0370:7334</code></p>
+<p>IPv6 exists because IPv4 address space became limited.</p>
+<hr>
+<h1>Private vs Public IP Addresses</h1>
+<h2>Private IP ranges</h2>
+<p>Common private ranges:</p>
+<ul>
+<li><code>192.168.x.x</code></li>
+<li><code>10.x.x.x</code></li>
+<li><code>172.16.x.x - 172.31.x.x</code></li>
+</ul>
+<p>These are used internally.</p>
+<hr>
+<h2>Public IP addresses</h2>
+<p>Public IPs communicate on the internet.</p>
+<p>Your router usually shares one public IP across many private devices using NAT.</p>
+<hr>
+<h1>NAT Explained Simply</h1>
+<p>NAT means:</p>
+<p><strong>Network Address Translation</strong></p>
+<p>It allows multiple private devices to communicate externally through one public IP.</p>
+<h2>Practical Example</h2>
+<p>Your:</p>
+<ul>
+<li>phone,</li>
+<li>laptop,</li>
+<li>smart TV,</li>
+<li>and tablet</li>
+</ul>
+<p>may all use private addresses internally.</p>
+<p>But externally, websites only see your router&#39;s public IP.</p>
+<hr>
+<h1>MAC Addresses</h1>
+<p>A MAC address is a hardware-level network identifier.</p>
+<p>Example:</p>
+<p><code>00:0C:29:AB:CD:EF</code></p>
+<p>MAC addresses operate at Layer 2.</p>
+<hr>
+<h1>Why MAC Addresses Matter in Security</h1>
+<p>Attackers sometimes analyze MAC prefixes to identify vendors.</p>
+<h2>Example</h2>
+<p>A MAC prefix may reveal:</p>
+<ul>
+<li>VMware,</li>
+<li>Cisco,</li>
+<li>Dell,</li>
+<li>Apple.</li>
+</ul>
+<p>This helps identify target infrastructure.</p>
+<hr>
+<h1>TCP vs UDP</h1>
+<p>These are transport layer protocols.</p>
+<p>Understanding them is extremely important.</p>
+<hr>
+<h1>TCP</h1>
+<p>TCP is:</p>
+<ul>
+<li>connection-oriented,</li>
+<li>reliable,</li>
+<li>and verifies communication.</li>
+</ul>
+<p>Used by:</p>
+<ul>
+<li>HTTP/HTTPS,</li>
+<li>SSH,</li>
+<li>FTP.</li>
+</ul>
+<hr>
+<h1>TCP Three-Way Handshake</h1>
+<p>TCP communication usually follows:</p>
+<ol>
+<li>SYN</li>
+<li>SYN-ACK</li>
+<li>ACK</li>
+</ol>
+<h2>Simple analogy</h2>
+<p>Person A:<br>&quot;Hello&quot;</p>
+<p>Person B:<br>&quot;Hello, I heard you&quot;</p>
+<p>Person A:<br>&quot;Great, connection established&quot;</p>
+<hr>
+<h1>UDP</h1>
+<p>UDP is:</p>
+<ul>
+<li>faster,</li>
+<li>lightweight,</li>
+<li>connectionless.</li>
+</ul>
+<p>Used by:</p>
+<ul>
+<li>DNS,</li>
+<li>streaming,</li>
+<li>VoIP,</li>
+<li>gaming traffic.</li>
+</ul>
+<p>UDP does not verify every packet like TCP does.</p>
+<hr>
+<h1>Why Attackers Care About TCP and UDP</h1>
+<p>Scanning techniques differ.</p>
+<p>TCP scans are usually easier.<br>UDP scans can be slower and less reliable.</p>
+<p>Understanding protocol behavior helps identify:</p>
+<ul>
+<li>firewalls,</li>
+<li>filtering,</li>
+<li>exposed services,</li>
+<li>and attack opportunities.</li>
+</ul>
+<hr>
+<h1>Common Ports Every Beginner Should Memorize</h1>
+<table>
+<thead>
+<tr>
+<th>Port</th>
+<th>Protocol</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>21</td>
+<td>FTP</td>
+<td>File transfer</td>
+</tr>
+<tr>
+<td>22</td>
+<td>SSH</td>
+<td>Secure remote access</td>
+</tr>
+<tr>
+<td>23</td>
+<td>Telnet</td>
+<td>Insecure remote access</td>
+</tr>
+<tr>
+<td>25</td>
+<td>SMTP</td>
+<td>Mail transfer</td>
+</tr>
+<tr>
+<td>53</td>
+<td>DNS</td>
+<td>Name resolution</td>
+</tr>
+<tr>
+<td>80</td>
+<td>HTTP</td>
+<td>Web traffic</td>
+</tr>
+<tr>
+<td>443</td>
+<td>HTTPS</td>
+<td>Secure web traffic</td>
+</tr>
+<tr>
+<td>139</td>
+<td>SMB</td>
+<td>File sharing</td>
+</tr>
+<tr>
+<td>445</td>
+<td>SMB</td>
+<td>Windows sharing</td>
+</tr>
+</tbody></table>
+<hr>
+<h1>Why SMB Is Important</h1>
+<p>SMB appears constantly in penetration testing.</p>
+<p>Historically, SMB has been involved in:</p>
+<ul>
+<li>worms,</li>
+<li>lateral movement,</li>
+<li>credential attacks,</li>
+<li>ransomware spread.</li>
+</ul>
+<h2>Example</h2>
+<p>The WannaCry outbreak abused SMB vulnerabilities to spread rapidly across networks.</p>
+<p>This is why SMB exposure matters so much.</p>
+<hr>
+<h1>DNS Explained Simply</h1>
+<p>DNS converts names into IP addresses.</p>
+<p>Humans remember:</p>
+<ul>
+<li><code>google.com</code></li>
+</ul>
+<p>Computers use:</p>
+<ul>
+<li>IP addresses.</li>
+</ul>
+<p>DNS acts like the internet&#39;s phonebook.</p>
+<hr>
+<h1>The OSI Model</h1>
+<p>The OSI model explains networking in layers.</p>
+<h2>Mnemonic</h2>
+<p><strong>Please Do Not Throw Sausage Pizza Away</strong></p>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>Physical</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Data Link</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Network</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Transport</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Session</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Presentation</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Application</td>
+</tr>
+</tbody></table>
+<hr>
+<h1>Important Security Mapping</h1>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Security Relevance</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Layer 2</td>
+<td>MAC attacks, VLAN issues</td>
+</tr>
+<tr>
+<td>Layer 3</td>
+<td>Routing, IP filtering</td>
+</tr>
+<tr>
+<td>Layer 4</td>
+<td>TCP/UDP scanning</td>
+</tr>
+<tr>
+<td>Layer 7</td>
+<td>Web attacks, authentication</td>
+</tr>
+</tbody></table>
+<hr>
+<h1>Subnetting Explained Simply</h1>
+<p>Subnetting divides networks into smaller sections.</p>
+<p>This helps organizations:</p>
+<ul>
+<li>organize devices,</li>
+<li>control traffic,</li>
+<li>improve management,</li>
+<li>and separate environments.</li>
+</ul>
+<hr>
+<h1>CIDR Notation</h1>
+<p>Examples:</p>
+<ul>
+<li><code>/24</code></li>
+<li><code>/16</code></li>
+<li><code>/8</code></li>
+</ul>
+<p>These indicate subnet size.</p>
+<hr>
+<h1>Easy Way to Remember</h1>
+<ul>
+<li>Bigger number after slash = smaller network</li>
+<li>Smaller number after slash = bigger network</li>
+</ul>
+<h2>Example</h2>
+<h3><code>/24</code></h3>
+<p>Common in homes/small offices.</p>
+<p>Usually around:</p>
+<ul>
+<li>254 usable hosts.</li>
+</ul>
+<hr>
+<h3><code>/16</code></h3>
+<p>Much larger.</p>
+<p>Can support thousands of devices.</p>
+<p>Often seen in enterprises.</p>
+<hr>
+<h1>Why Subnetting Matters for Attackers</h1>
+<p>Subnet size affects:</p>
+<ul>
+<li>scan scope,</li>
+<li>enumeration speed,</li>
+<li>network segmentation,</li>
+<li>attack planning.</li>
+</ul>
+<h2>Example</h2>
+<p>Scanning a <code>/24</code> network is much faster than scanning a <code>/16</code> network.</p>
+<p>A <code>/16</code> may contain thousands of hosts.</p>
+<hr>
+<h1>Beginner Enumeration Workflow</h1>
+<p>A strong beginner workflow looks like this:</p>
+<ol>
+<li>Discover hosts</li>
+<li>Scan ports</li>
+<li>Identify services</li>
+<li>Identify versions</li>
+<li>Research attack surface</li>
+<li>Document findings</li>
+<li>Attempt exploitation carefully</li>
+</ol>
+<hr>
+<h1>Practical Enumeration Example</h1>
+<p>Suppose a scan reveals:</p>
+<ul>
+<li><code>22/tcp</code> SSH</li>
+<li><code>80/tcp</code> HTTP</li>
+<li><code>445/tcp</code> SMB</li>
+</ul>
+<p>An attacker&#39;s thinking may become:</p>
+<h2>SSH</h2>
+<ul>
+<li>weak credentials?</li>
+<li>old version?</li>
+<li>password reuse?</li>
+</ul>
+<h2>HTTP</h2>
+<ul>
+<li>hidden directories?</li>
+<li>outdated CMS?</li>
+<li>file upload?</li>
+<li>injection vulnerabilities?</li>
+</ul>
+<h2>SMB</h2>
+<ul>
+<li>anonymous shares?</li>
+<li>SMB signing?</li>
+<li>relay opportunities?</li>
+<li>old vulnerabilities?</li>
+</ul>
+<p>Enumeration creates direction.</p>
+<hr>
+<h1>Soft Skills Matter Too</h1>
+<p>Technical skills alone are not enough.</p>
+<p>Strong penetration testers also need:</p>
+<ul>
+<li>communication skills,</li>
+<li>patience,</li>
+<li>curiosity,</li>
+<li>persistence,</li>
+<li>and reporting ability.</li>
+</ul>
+<hr>
+<h1>The Most Important Mindset: Never Stop Learning</h1>
+<p>Cybersecurity changes constantly.</p>
+<p>New:</p>
+<ul>
+<li>vulnerabilities,</li>
+<li>bypasses,</li>
+<li>defenses,</li>
+<li>frameworks,</li>
+<li>and attack chains</li>
+</ul>
+<p>appear all the time.</p>
+<p>A hacker who stops learning eventually becomes outdated.</p>
+<hr>
+<h1>Final Thoughts</h1>
+<p>Ethical hacking is not magic.</p>
+<p>It is the combination of:</p>
+<ul>
+<li>networking knowledge,</li>
+<li>methodology,</li>
+<li>patience,</li>
+<li>attacker thinking,</li>
+<li>and consistent practice.</li>
+</ul>
+<p>Before learning advanced exploitation, beginners should become comfortable with:</p>
+<ul>
+<li>networking,</li>
+<li>IP addresses,</li>
+<li>TCP/UDP,</li>
+<li>ports,</li>
+<li>the OSI model,</li>
+<li>subnetting,</li>
+<li>enumeration,</li>
+<li>and documentation.</li>
+</ul>
+<p>These fundamentals are what everything else builds upon.</p>
+<p>A strong foundation creates stronger hackers.</p>
+<hr>
+
+    </article>
+  </main>
+
+  <footer>
+    <span class="f-accent">$</span> echo "Made by <span class="f-accent">Aryan Giri</span>" &nbsp;·&nbsp; <a href="https://github.com/giriaryan694-a11y" target="_blank" rel="noopener noreferrer">GitHub</a>
+  </footer>
+
+  <script>
+    /* Theme — synced with main site via same cookie */
+    const themes=["dark","light","eye-saver"];
+    const themeData={"dark":{emoji:"🌙",label:"Dark"},"light":{emoji:"☀️",label:"Light"},"eye-saver":{emoji:"☕",label:"Reading"}};
+    function setCookie(n,v,d){const e=new Date();e.setTime(e.getTime()+d*86400000);document.cookie=`${n}=${v};expires=${e.toUTCString()};path=/`;}
+    function getCookie(n){const m=document.cookie.match(new RegExp('(^| )'+n+'=([^;]+)'));return m?m[2]:null;}
+    let currentTheme=getCookie("site_theme")||"dark";
+    const themeBtn=document.getElementById("theme-btn");
+    const themeEmoji=document.getElementById("theme-emoji");
+    function applyTheme(theme,animate=false){
+      document.body.className=theme==="dark"?"":theme;
+      themeEmoji.textContent=themeData[theme].emoji;
+      document.getElementById("theme-label").textContent=themeData[theme].label;
+      setCookie("site_theme",theme,365);
+      if(animate){themeEmoji.style.animation="none";themeEmoji.offsetHeight;themeEmoji.style.animation="popSpin 0.4s cubic-bezier(0.175,0.885,0.32,1.275) forwards";}
+    }
+    applyTheme(currentTheme);
+    themeBtn.addEventListener("click",()=>{currentTheme=themes[(themes.indexOf(currentTheme)+1)%themes.length];applyTheme(currentTheme,true);});
+
+    /* Links → new tab + copy buttons on code blocks */
+    document.querySelectorAll(".post-content a").forEach(l => {
+      l.setAttribute("target", "_blank");
+      l.setAttribute("rel", "noopener noreferrer");
+    });
+    document.querySelectorAll("pre").forEach(pre => {
+      const code = pre.querySelector("code");
+      if (!code) return;
+      const btn = document.createElement("button");
+      btn.className = "copy-btn";
+      btn.textContent = "copy";
+      btn.onclick = async () => {
+        try { await navigator.clipboard.writeText(code.innerText.trimEnd()); }
+        catch {}
+        btn.textContent = "✓ copied"; btn.classList.add("copied");
+        setTimeout(() => { btn.textContent = "copy"; btn.classList.remove("copied"); }, 2000);
+      };
+      pre.appendChild(btn);
+    });
+  </script>
+</body>
+</html>

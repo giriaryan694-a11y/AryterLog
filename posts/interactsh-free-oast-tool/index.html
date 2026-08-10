@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactsh: Free Alternative to Burp Collaborator for OAST Testing — AryterLog</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="../../manifest.json">
+  <meta name="theme-color" content="#080b10">
+  <link rel="icon" href="../../icons/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="../../icons/apple-touch-icon.png">
+  <meta name="description" content="Learn how Interactsh works as a free out-of-band application security testing (OAST) tool. Understand its usage for blind SSRF, XXE, and command injection, along with client vs server setup and why it&#039;s enough for bug bounty, pentesting, CTFs, and learning.">
+  <link rel="canonical" href="https://giriaryan694-a11y.github.io/AryterLog/posts/interactsh-free-oast-tool/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Interactsh: Free Alternative to Burp Collaborator for OAST Testing">
+  <meta property="og:description" content="Learn how Interactsh works as a free out-of-band application security testing (OAST) tool. Understand its usage for blind SSRF, XXE, and command injection, along with client vs server setup and why it&#039;s enough for bug bounty, pentesting, CTFs, and learning.">
+  <meta property="og:url" content="https://giriaryan694-a11y.github.io/AryterLog/posts/interactsh-free-oast-tool/">
+  <meta property="og:site_name" content="AryterLog">
+  <meta property="article:published_time" content="2026-04-20T00:00:00.000Z">
+  <meta property="article:tag" content="web-security">
+  <meta property="article:tag" content="pentesting">
+  <meta property="article:tag" content="tooling">
+  <meta property="article:tag" content="bug-bounty">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Interactsh: Free Alternative to Burp Collaborator for OAST Testing">
+  <meta name="twitter:description" content="Learn how Interactsh works as a free out-of-band application security testing (OAST) tool. Understand its usage for blind SSRF, XXE, and command injection, along with client vs server setup and why it&#039;s enough for bug bounty, pentesting, CTFs, and learning.">
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Interactsh: Free Alternative to Burp Collaborator for OAST Testing","description":"Learn how Interactsh works as a free out-of-band application security testing (OAST) tool. Understand its usage for blind SSRF, XXE, and command injection, along with client vs server setup and why it's enough for bug bounty, pentesting, CTFs, and learning.","datePublished":"2026-04-20T00:00:00.000Z","author":{"@type":"Person","name":"Aryan Giri"},"publisher":{"@type":"Organization","name":"AryterLog"},"mainEntityOfPage":"https://giriaryan694-a11y.github.io/AryterLog/posts/interactsh-free-oast-tool/","keywords":"web-security, pentesting, tooling, bug-bounty"}</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:#080b10; --surface:#0d1117; --surface2:#111820; --surface3:#161d27;
+      --text:#d0dbe8; --text2:#7a8a9a; --accent:#00ff88; --accent2:#0ea5e9;
+      --danger:#ff4560; --border:#1e2a38; --border2:#2a3848; --code-bg:#0a0f16;
+      --glow:rgba(0,255,136,0.08); --glow2:rgba(0,255,136,0.18);
+    }
+    .light {
+      --bg:#f5f7fa; --surface:#ffffff; --surface2:#f0f4f8; --surface3:#e8eef5;
+      --text:#111827; --text2:#6b7280; --accent:#059669; --accent2:#0284c7;
+      --danger:#dc2626; --border:#e2e8f0; --border2:#cbd5e1; --code-bg:#f1f5f9;
+      --glow:rgba(5,150,105,0.07); --glow2:rgba(5,150,105,0.14);
+    }
+    .eye-saver {
+      --bg:#12100a; --surface:#1a1608; --surface2:#211c0c; --surface3:#282210;
+      --text:#e8d8b0; --text2:#9a8860; --accent:#f5c542; --accent2:#e08030;
+      --danger:#e05050; --border:#302810; --border2:#3d3418; --code-bg:#0f0d06;
+      --glow:rgba(245,197,66,0.08); --glow2:rgba(245,197,66,0.18);
+    }
+
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body {
+      font-family:'Fira Code',monospace;
+      background:var(--bg); color:var(--text);
+      min-height:100vh; overflow-x:hidden;
+      transition:background 0.4s,color 0.4s;
+    }
+    body::before {
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+      background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
+      background-size:44px 44px; opacity:0.25;
+    }
+
+    header {
+      position:sticky; top:0; z-index:200;
+      background:rgba(8,11,16,0.86); backdrop-filter:blur(16px);
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 22px; height:56px; gap:12px;
+    }
+    .light header{background:rgba(245,247,250,0.9);}
+    .eye-saver header{background:rgba(18,16,10,0.9);}
+    header::after {
+      content:''; position:absolute; bottom:-1px; left:8%; right:8%; height:1px;
+      background:linear-gradient(90deg,transparent,var(--accent),transparent); opacity:0.35;
+    }
+    .header-left{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+
+    .logo {
+      font-family:'Bebas Neue',sans-serif; font-size:24px; font-weight:400;
+      letter-spacing:3px; color:var(--text); text-decoration:none; white-space:nowrap;
+      flex-shrink:0; line-height:1; transition:color 0.2s;
+    }
+    .logo .lo-a{color:var(--accent);}
+    .logo:hover .lo-a{text-shadow:0 0 14px var(--accent);}
+
+    .back-link {
+      display:inline-flex; align-items:center; gap:6px;
+      background:transparent; border:1px solid var(--border2); color:var(--text2);
+      padding:6px 12px; border-radius:6px; cursor:pointer; transition:all 0.2s;
+      font-family:'Fira Code',monospace; font-size:11px; text-decoration:none;
+    }
+    .back-link:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    #theme-btn {
+      background:transparent; border:1px solid var(--border2);
+      padding:5px 11px; cursor:pointer; color:var(--text2); border-radius:6px;
+      transition:all 0.2s; font-family:'Fira Code',monospace; font-size:11px;
+      display:inline-flex; align-items:center; gap:6px; white-space:nowrap;
+    }
+    #theme-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    @keyframes popSpin{0%{transform:scale(0.4) rotate(-60deg);opacity:0;}70%{transform:scale(1.15) rotate(5deg);}100%{transform:scale(1) rotate(0deg);opacity:1;}}
+    .emoji{display:inline-block;}
+
+    main{max-width:760px;margin:0 auto;padding:34px 20px 60px;position:relative;z-index:1;}
+
+    .back-btn {
+      display:inline-flex;align-items:center;gap:7px;margin-bottom:20px;
+      background:var(--surface);border:1px solid var(--border2);color:var(--text2);
+      padding:7px 13px;border-radius:6px;font-family:'Fira Code',monospace;font-size:11px;
+      cursor:pointer;transition:all 0.2s;text-decoration:none;
+    }
+    .back-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    .post-content {
+      background:var(--surface);border:1px solid var(--border);border-radius:12px;
+      padding:34px 30px;position:relative;overflow:hidden;
+    }
+    .post-content::before {
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      border-radius:12px 12px 0 0;
+    }
+    .post-content *{max-width:100%;}
+
+    h1 {
+      font-family:'Space Grotesk',sans-serif;font-size:clamp(19px,4vw,26px);
+      font-weight:700;color:var(--text);margin-bottom:8px;line-height:1.25;word-break:break-word;
+    }
+    .post-header-meta{
+      font-family:'Fira Code',monospace;font-size:11px;color:var(--text2);
+      padding-bottom:18px;margin-bottom:22px;border-bottom:1px solid var(--border);
+      display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+    }
+    .card-cat-chip {
+      display:inline-flex;align-items:center;padding:1px 7px;border-radius:3px;
+      border:1px solid var(--border2);background:var(--surface2);color:var(--text2);
+      font-size:9px;font-family:'Fira Code',monospace;font-weight:500;letter-spacing:0.4px;
+    }
+    h2,h3{font-family:'Space Grotesk',sans-serif;font-weight:600;color:var(--text);margin:26px 0 10px;word-break:break-word;}
+    h2{font-size:19px;} h3{font-size:15px;color:var(--accent);}
+    p{font-size:14px;line-height:1.8;margin-bottom:14px;color:var(--text);}
+    ul,ol{padding-left:20px;margin-bottom:14px;font-size:14px;line-height:1.8;}
+    li{margin-bottom:4px;}
+
+    a{color:var(--accent);word-break:break-all;overflow-wrap:break-word;transition:opacity 0.2s;}
+    a:hover{opacity:0.75;}
+    .post-content a{text-decoration:underline;text-underline-offset:3px;}
+
+    code {
+      background:var(--code-bg);border:1px solid var(--border);padding:2px 6px;
+      border-radius:4px;font-family:'Fira Code',monospace;font-size:0.85em;
+      color:var(--accent);word-break:break-all;overflow-wrap:break-word;
+    }
+    pre {
+      background:var(--code-bg);border:1px solid var(--border);padding:18px;border-radius:8px;
+      max-width:100%; overflow:hidden;
+      position:relative;margin-bottom:14px;
+    }
+    pre::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      opacity:0.5;border-radius:8px 8px 0 0;
+    }
+    pre code{
+      background:transparent;border:none;padding:0 60px 0 0;word-break:normal;
+      overflow-wrap:normal;white-space:pre;display:block;
+      overflow-x:auto;-webkit-overflow-scrolling:touch;
+      font-size:13px;line-height:1.65;color:var(--text);
+    }
+    blockquote{
+      border-left:2px solid var(--accent);margin:14px 0;padding:10px 16px;
+      background:var(--glow);border-radius:0 6px 6px 0;font-style:italic;color:var(--text2);
+    }
+    table{width:100%;border-collapse:collapse;display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;font-size:13px;margin-bottom:14px;}
+    th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;white-space:nowrap;}
+    th{background:var(--surface2);color:var(--accent);font-weight:600;}
+    img{max-width:100%;height:auto;border-radius:8px;display:block;margin:14px 0;}
+
+    .copy-btn {
+      position:absolute;top:9px;right:9px;padding:3px 8px;font-size:10px;
+      font-family:'Fira Code',monospace;font-weight:500;background:var(--surface2);
+      border:1px solid var(--border2);color:var(--text2);border-radius:4px;cursor:pointer;
+      transition:all 0.2s;opacity:0;letter-spacing:0.3px;
+    }
+    pre:hover .copy-btn{opacity:1;}
+    .copy-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    .copy-btn.copied{border-color:var(--accent);color:var(--accent);opacity:1;}
+
+    footer{
+      text-align:center;padding:22px 16px;color:var(--text2);
+      font-family:'Fira Code',monospace;font-size:11px;
+      border-top:1px solid var(--border);position:relative;z-index:1;
+    }
+    .f-accent{color:var(--accent);}
+    footer a{color:var(--accent);text-decoration:none;}
+    footer a:hover{opacity:0.75;}
+
+    @media(max-width:480px){
+      header{padding:0 13px;height:50px;}
+      .logo{font-size:21px;letter-spacing:2px;}
+      main{padding:20px 14px 44px;}
+      .post-content{padding:20px 14px;}
+      pre{padding:13px;}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <a href="../../index.html" class="logo">Aryter<span class="lo-a">Log</span></a>
+    </div>
+    <button id="theme-btn" aria-label="Cycle Theme">
+      <span class="emoji" id="theme-emoji">🌙</span>
+      <span id="theme-label">Dark</span>
+    </button>
+  </header>
+
+  <main>
+    <a href="../../index.html#post-interactsh-free-oast-tool" class="back-btn">← Back to Blog</a>
+    <article class="post-content">
+      <h1>Interactsh: Free Alternative to Burp Collaborator for OAST Testing</h1>
+      <div class="post-header-meta">
+        <span>📅 Published April 20, 2026</span>
+        <span>·</span><span class="card-cat-chip">web-security</span><span class="card-cat-chip">pentesting</span><span class="card-cat-chip">tooling</span><span class="card-cat-chip">bug-bounty</span>
+      </div>
+      <p><strong>Written by Aryan Giri</strong></p>
+<p>Interactsh is an out-of-band application security testing (OAST) tool from ProjectDiscovery that helps you detect vulnerabilities that do not show up directly in the normal HTTP response. It is especially useful for finding blind SSRF, blind XXE, blind command injection, and other callback-based issues.</p>
+<p>For many bug bounty hunters, pentesters, CTF players, and learners, the <strong>Interactsh client</strong> is enough to get started. It gives you a public callback domain without needing your own VPS, port forwarding, or public static IP.</p>
+<h2>Why people use it</h2>
+<p>Burp Collaborator is a well-known OAST feature in Burp Suite Professional. Interactsh offers a practical free alternative for many common workflows. It lets you generate unique callback domains and observe DNS/HTTP interactions when a target server makes an outbound request.</p>
+<p>That makes it useful in situations where the application does not reflect the issue in the response. Instead of waiting for visible proof, you confirm the target reached out to your OAST payload.</p>
+<h2>How it works</h2>
+<p>The flow is simple:</p>
+<ol>
+<li>You run the Interactsh client.</li>
+<li>It gives you a unique payload domain.</li>
+<li>You place that domain into a target input, such as a URL parameter, header, XML field, or file processing path.</li>
+<li>If the server makes an outbound request, Interactsh logs the interaction.</li>
+<li>You verify the callback and confirm the issue.</li>
+</ol>
+<p>A typical result may include:</p>
+<ul>
+<li>DNS interaction</li>
+<li>HTTP interaction</li>
+<li>Source IP of the target or its resolver</li>
+<li>Time of the callback</li>
+</ul>
+<p>This is the same idea behind Burp Collaborator, but available in a way that is easy to start with and free for many use cases.</p>
+<h2>When the client is enough</h2>
+<p>For normal bug bounty, pentesting, CTFs, and learning, the <strong>Interactsh client</strong> is usually enough.</p>
+<p>It already gives you:</p>
+<ul>
+<li>Public reachability</li>
+<li>DNS and HTTP callback monitoring</li>
+<li>No VPS requirement</li>
+<li>No port forwarding</li>
+<li>No public static IP needed</li>
+</ul>
+<p>So if your goal is to learn OAST testing or verify blind issues during authorized testing, the client alone is a strong starting point.</p>
+<h2>Example use cases</h2>
+<h3>Blind SSRF</h3>
+<p>You inject your Interactsh domain into a URL-fetch feature:</p>
+<pre><code class="language-text">http://d7is7u5a9dbh4lfkprb0n16wwbmnobqnn.oast.fun
+</code></pre>
+<p>If the target server resolves and requests it, you will see DNS and possibly HTTP interactions in the client.</p>
+<h3>Blind XXE</h3>
+<p>An XML parser may resolve an external entity and call back to your Interactsh domain. If you see a DNS interaction, you know the parser reached out.</p>
+<h3>Command execution detection</h3>
+<p>Some command injection payloads can be tested by forcing the target to make an outbound request to your unique domain. If the callback appears, that is strong evidence of execution.</p>
+<h2>What the output means</h2>
+<p>A sample client session may show:</p>
+<pre><code class="language-text">[INF] Current interactsh version 1.3.1 (latest)
+[INF] Listing 1 payload for OOB Testing
+[INF] d7is7u5a9dbh4lfkprb0n16wwbmnobqnn.oast.fun
+[d7is7u5a9dbh4lfkprb0n16wwbmnobqnn] Received DNS interaction (A)
+[d7is7u5a9dbh4lfkprb0n16wwbmnobqnn] Received DNS interaction (AAAA)
+[d7is7u5a9dbh4lfkprb0n16wwbmnobqnn] Received HTTP interaction
+</code></pre>
+<p>This tells you:</p>
+<ul>
+<li>The domain was resolved successfully.</li>
+<li>The target made an outbound request.</li>
+<li>The callback reached the public Interactsh infrastructure.</li>
+</ul>
+<h2>Client vs server</h2>
+<h3>Interactsh client</h3>
+<p>The client is what most people use day to day. It connects to ProjectDiscovery’s public infrastructure and gives you a callback domain immediately.</p>
+<p>Use the client when you want:</p>
+<ul>
+<li>Fast setup</li>
+<li>Free OAST testing</li>
+<li>Learning and practice</li>
+<li>Bug bounty hunting</li>
+<li>CTF work</li>
+</ul>
+<h3>Interactsh server</h3>
+<p>The server is the self-hosted backend. It is useful if you need full control over your own infrastructure, custom domains, or privacy-sensitive workflows.</p>
+<p>Use the server when you need:</p>
+<ul>
+<li>Private infrastructure</li>
+<li>Organization-controlled logging</li>
+<li>Long-term persistence</li>
+<li>A custom domain</li>
+<li>A setup that does not depend on public OAST infrastructure</li>
+</ul>
+<h2>Privacy and private engagements</h2>
+<p>If you are working in a private company, regulated environment, or a situation where you do not want a third-party service involved, self-hosting Interactsh can make sense.</p>
+<p>That usually means you will need:</p>
+<ul>
+<li>A VPS or public server</li>
+<li>A domain name</li>
+<li>DNS configuration</li>
+<li>The Interactsh server binary</li>
+</ul>
+<p>In that mode, the client points to your own server instead of the public service.</p>
+<h2>Installation on Linux</h2>
+<p>Below are simple install examples for common Linux architectures.</p>
+<h3>x86_64 / amd64</h3>
+<pre><code class="language-bash">wget https://github.com/projectdiscovery/interactsh/releases/download/v1.3.1/interactsh-client_1.3.1_linux_amd64.zip
+unzip interactsh-client_1.3.1_linux_amd64.zip
+chmod +x interactsh-client
+./interactsh-client
+</code></pre>
+<p>For the server:</p>
+<pre><code class="language-bash">wget https://github.com/projectdiscovery/interactsh/releases/download/v1.3.1/interactsh-server_1.3.1_linux_amd64.zip
+unzip interactsh-server_1.3.1_linux_amd64.zip
+chmod +x interactsh-server
+./interactsh-server -h
+</code></pre>
+<h3>ARM64 / aarch64</h3>
+<pre><code class="language-bash">wget https://github.com/projectdiscovery/interactsh/releases/download/v1.3.1/interactsh-client_1.3.1_linux_arm64.zip
+unzip interactsh-client_1.3.1_linux_arm64.zip
+chmod +x interactsh-client
+./interactsh-client
+</code></pre>
+<p>For the server:</p>
+<pre><code class="language-bash">wget https://github.com/projectdiscovery/interactsh/releases/download/v1.3.1/interactsh-server_1.3.1_linux_arm64.zip
+unzip interactsh-server_1.3.1_linux_arm64.zip
+chmod +x interactsh-server
+./interactsh-server -h
+</code></pre>
+<h3>32-bit / i386</h3>
+<p>If you are on an older 32-bit Linux system and a matching release is available, use the i386 build from the release page, then unzip and run it the same way:</p>
+<pre><code class="language-bash">unzip interactsh-client_*.zip
+chmod +x interactsh-client
+./interactsh-client
+</code></pre>
+<h2>How to use the client</h2>
+<p>Start the client:</p>
+<pre><code class="language-bash">./interactsh-client
+</code></pre>
+<p>It will print a unique domain such as:</p>
+<pre><code class="language-text">d7is7u5a9dbh4lfkprb0n16wwbmnobqnn.oast.fun
+</code></pre>
+<p>Then place that domain into the target input you are testing. If the target calls out, the client will display the interaction.</p>
+<h2>How to use the server</h2>
+<p>The server is for self-hosting. In practice, it is used when you already have your own DNS and public server setup.</p>
+<p>A typical self-hosted workflow looks like this:</p>
+<ol>
+<li>Set up a domain you control.</li>
+<li>Point DNS to your server.</li>
+<li>Run the Interactsh server.</li>
+<li>Configure the client to use your server.</li>
+<li>Collect and review callbacks privately.</li>
+</ol>
+<p>The exact flags can vary by version, so it is best to check the built-in help first:</p>
+<pre><code class="language-bash">./interactsh-server -h
+</code></pre>
+<h2>Good places to test</h2>
+<p>Interactsh is useful in features that may cause outbound requests, such as:</p>
+<ul>
+<li>Webhooks</li>
+<li>URL fetchers</li>
+<li>PDF generators</li>
+<li>Import-from-URL features</li>
+<li>XML parsers</li>
+<li>Image or file metadata processing</li>
+<li>Email parsing</li>
+<li>Remote template rendering</li>
+</ul>
+<h2>Why it matters</h2>
+<p>A lot of real vulnerabilities are blind. That means the application does not show an obvious error or output, but it still performs the dangerous action in the background. Interactsh helps you prove those hidden interactions.</p>
+<p>That is why it is so popular in:</p>
+<ul>
+<li>Bug bounty programs</li>
+<li>Authorized pentesting</li>
+<li>CTF challenges</li>
+<li>Security learning labs</li>
+</ul>
+<h2>Bottom line</h2>
+<p>If you want a free and practical way to detect callback-based vulnerabilities, Interactsh is one of the best tools to learn first. For most normal bug bounty, pentest, CTF, and learning workflows, the <strong>client is enough</strong>. If you need privacy or full control, the <strong>server</strong> gives you your own self-hosted OAST setup.</p>
+<hr>
+<h2>Reusable prompt</h2>
+<p><strong>Click here for more information</strong>: <a href="https://chatgpt.com/?q=Explain+Interactsh+as+a+free+alternative+to+Burp+Collaborator.+Cover+what+it+is%2C+how+it+works%2C+where+it+is+useful+with+examples%2C+when+the+client+is+enough%2C+when+the+server+is+needed%2C+and+include+install+commands+for+amd64+and+arm64+Linux.">Explain Interactsh as a free alternative to Burp Collaborator</a></p>
+<p><strong>Click here for more information</strong>: <a href="https://chatgpt.com/?q=Explain+Interactsh+for+bug+bounty%2C+CTF%2C+and+learning+with+examples+and+setup+commands.">Explain Interactsh for bug bounty, CTF, and learning</a></p>
+
+    </article>
+  </main>
+
+  <footer>
+    <span class="f-accent">$</span> echo "Made by <span class="f-accent">Aryan Giri</span>" &nbsp;·&nbsp; <a href="https://github.com/giriaryan694-a11y" target="_blank" rel="noopener noreferrer">GitHub</a>
+  </footer>
+
+  <script>
+    /* Theme — synced with main site via same cookie */
+    const themes=["dark","light","eye-saver"];
+    const themeData={"dark":{emoji:"🌙",label:"Dark"},"light":{emoji:"☀️",label:"Light"},"eye-saver":{emoji:"☕",label:"Reading"}};
+    function setCookie(n,v,d){const e=new Date();e.setTime(e.getTime()+d*86400000);document.cookie=`${n}=${v};expires=${e.toUTCString()};path=/`;}
+    function getCookie(n){const m=document.cookie.match(new RegExp('(^| )'+n+'=([^;]+)'));return m?m[2]:null;}
+    let currentTheme=getCookie("site_theme")||"dark";
+    const themeBtn=document.getElementById("theme-btn");
+    const themeEmoji=document.getElementById("theme-emoji");
+    function applyTheme(theme,animate=false){
+      document.body.className=theme==="dark"?"":theme;
+      themeEmoji.textContent=themeData[theme].emoji;
+      document.getElementById("theme-label").textContent=themeData[theme].label;
+      setCookie("site_theme",theme,365);
+      if(animate){themeEmoji.style.animation="none";themeEmoji.offsetHeight;themeEmoji.style.animation="popSpin 0.4s cubic-bezier(0.175,0.885,0.32,1.275) forwards";}
+    }
+    applyTheme(currentTheme);
+    themeBtn.addEventListener("click",()=>{currentTheme=themes[(themes.indexOf(currentTheme)+1)%themes.length];applyTheme(currentTheme,true);});
+
+    /* Links → new tab + copy buttons on code blocks */
+    document.querySelectorAll(".post-content a").forEach(l => {
+      l.setAttribute("target", "_blank");
+      l.setAttribute("rel", "noopener noreferrer");
+    });
+    document.querySelectorAll("pre").forEach(pre => {
+      const code = pre.querySelector("code");
+      if (!code) return;
+      const btn = document.createElement("button");
+      btn.className = "copy-btn";
+      btn.textContent = "copy";
+      btn.onclick = async () => {
+        try { await navigator.clipboard.writeText(code.innerText.trimEnd()); }
+        catch {}
+        btn.textContent = "✓ copied"; btn.classList.add("copied");
+        setTimeout(() => { btn.textContent = "copy"; btn.classList.remove("copied"); }, 2000);
+      };
+      pre.appendChild(btn);
+    });
+  </script>
+</body>
+</html>

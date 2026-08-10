@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Official AI Security Guides for Pentesting and Secure Design — AryterLog</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="../../manifest.json">
+  <meta name="theme-color" content="#080b10">
+  <link rel="icon" href="../../icons/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="../../icons/apple-touch-icon.png">
+  <meta name="description" content="A curated list of official frameworks like OWASP, MITRE ATLAS, NIST, ENISA, and CSA for AI pentesting, red teaming, and secure system design.">
+  <link rel="canonical" href="https://giriaryan694-a11y.github.io/AryterLog/posts/official-ai-security-guides/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Official AI Security Guides for Pentesting and Secure Design">
+  <meta property="og:description" content="A curated list of official frameworks like OWASP, MITRE ATLAS, NIST, ENISA, and CSA for AI pentesting, red teaming, and secure system design.">
+  <meta property="og:url" content="https://giriaryan694-a11y.github.io/AryterLog/posts/official-ai-security-guides/">
+  <meta property="og:site_name" content="AryterLog">
+  <meta property="article:published_time" content="2026-04-21T00:00:00.000Z">
+  <meta property="article:tag" content="ai-security">
+  <meta property="article:tag" content="frameworks">
+  <meta property="article:tag" content="reference">
+  <meta property="article:tag" content="red-team">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Official AI Security Guides for Pentesting and Secure Design">
+  <meta name="twitter:description" content="A curated list of official frameworks like OWASP, MITRE ATLAS, NIST, ENISA, and CSA for AI pentesting, red teaming, and secure system design.">
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Official AI Security Guides for Pentesting and Secure Design","description":"A curated list of official frameworks like OWASP, MITRE ATLAS, NIST, ENISA, and CSA for AI pentesting, red teaming, and secure system design.","datePublished":"2026-04-21T00:00:00.000Z","author":{"@type":"Person","name":"Aryan Giri"},"publisher":{"@type":"Organization","name":"AryterLog"},"mainEntityOfPage":"https://giriaryan694-a11y.github.io/AryterLog/posts/official-ai-security-guides/","keywords":"ai-security, frameworks, reference, red-team"}</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:#080b10; --surface:#0d1117; --surface2:#111820; --surface3:#161d27;
+      --text:#d0dbe8; --text2:#7a8a9a; --accent:#00ff88; --accent2:#0ea5e9;
+      --danger:#ff4560; --border:#1e2a38; --border2:#2a3848; --code-bg:#0a0f16;
+      --glow:rgba(0,255,136,0.08); --glow2:rgba(0,255,136,0.18);
+    }
+    .light {
+      --bg:#f5f7fa; --surface:#ffffff; --surface2:#f0f4f8; --surface3:#e8eef5;
+      --text:#111827; --text2:#6b7280; --accent:#059669; --accent2:#0284c7;
+      --danger:#dc2626; --border:#e2e8f0; --border2:#cbd5e1; --code-bg:#f1f5f9;
+      --glow:rgba(5,150,105,0.07); --glow2:rgba(5,150,105,0.14);
+    }
+    .eye-saver {
+      --bg:#12100a; --surface:#1a1608; --surface2:#211c0c; --surface3:#282210;
+      --text:#e8d8b0; --text2:#9a8860; --accent:#f5c542; --accent2:#e08030;
+      --danger:#e05050; --border:#302810; --border2:#3d3418; --code-bg:#0f0d06;
+      --glow:rgba(245,197,66,0.08); --glow2:rgba(245,197,66,0.18);
+    }
+
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body {
+      font-family:'Fira Code',monospace;
+      background:var(--bg); color:var(--text);
+      min-height:100vh; overflow-x:hidden;
+      transition:background 0.4s,color 0.4s;
+    }
+    body::before {
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+      background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
+      background-size:44px 44px; opacity:0.25;
+    }
+
+    header {
+      position:sticky; top:0; z-index:200;
+      background:rgba(8,11,16,0.86); backdrop-filter:blur(16px);
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 22px; height:56px; gap:12px;
+    }
+    .light header{background:rgba(245,247,250,0.9);}
+    .eye-saver header{background:rgba(18,16,10,0.9);}
+    header::after {
+      content:''; position:absolute; bottom:-1px; left:8%; right:8%; height:1px;
+      background:linear-gradient(90deg,transparent,var(--accent),transparent); opacity:0.35;
+    }
+    .header-left{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+
+    .logo {
+      font-family:'Bebas Neue',sans-serif; font-size:24px; font-weight:400;
+      letter-spacing:3px; color:var(--text); text-decoration:none; white-space:nowrap;
+      flex-shrink:0; line-height:1; transition:color 0.2s;
+    }
+    .logo .lo-a{color:var(--accent);}
+    .logo:hover .lo-a{text-shadow:0 0 14px var(--accent);}
+
+    .back-link {
+      display:inline-flex; align-items:center; gap:6px;
+      background:transparent; border:1px solid var(--border2); color:var(--text2);
+      padding:6px 12px; border-radius:6px; cursor:pointer; transition:all 0.2s;
+      font-family:'Fira Code',monospace; font-size:11px; text-decoration:none;
+    }
+    .back-link:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    #theme-btn {
+      background:transparent; border:1px solid var(--border2);
+      padding:5px 11px; cursor:pointer; color:var(--text2); border-radius:6px;
+      transition:all 0.2s; font-family:'Fira Code',monospace; font-size:11px;
+      display:inline-flex; align-items:center; gap:6px; white-space:nowrap;
+    }
+    #theme-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    @keyframes popSpin{0%{transform:scale(0.4) rotate(-60deg);opacity:0;}70%{transform:scale(1.15) rotate(5deg);}100%{transform:scale(1) rotate(0deg);opacity:1;}}
+    .emoji{display:inline-block;}
+
+    main{max-width:760px;margin:0 auto;padding:34px 20px 60px;position:relative;z-index:1;}
+
+    .back-btn {
+      display:inline-flex;align-items:center;gap:7px;margin-bottom:20px;
+      background:var(--surface);border:1px solid var(--border2);color:var(--text2);
+      padding:7px 13px;border-radius:6px;font-family:'Fira Code',monospace;font-size:11px;
+      cursor:pointer;transition:all 0.2s;text-decoration:none;
+    }
+    .back-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    .post-content {
+      background:var(--surface);border:1px solid var(--border);border-radius:12px;
+      padding:34px 30px;position:relative;overflow:hidden;
+    }
+    .post-content::before {
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      border-radius:12px 12px 0 0;
+    }
+    .post-content *{max-width:100%;}
+
+    h1 {
+      font-family:'Space Grotesk',sans-serif;font-size:clamp(19px,4vw,26px);
+      font-weight:700;color:var(--text);margin-bottom:8px;line-height:1.25;word-break:break-word;
+    }
+    .post-header-meta{
+      font-family:'Fira Code',monospace;font-size:11px;color:var(--text2);
+      padding-bottom:18px;margin-bottom:22px;border-bottom:1px solid var(--border);
+      display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+    }
+    .card-cat-chip {
+      display:inline-flex;align-items:center;padding:1px 7px;border-radius:3px;
+      border:1px solid var(--border2);background:var(--surface2);color:var(--text2);
+      font-size:9px;font-family:'Fira Code',monospace;font-weight:500;letter-spacing:0.4px;
+    }
+    h2,h3{font-family:'Space Grotesk',sans-serif;font-weight:600;color:var(--text);margin:26px 0 10px;word-break:break-word;}
+    h2{font-size:19px;} h3{font-size:15px;color:var(--accent);}
+    p{font-size:14px;line-height:1.8;margin-bottom:14px;color:var(--text);}
+    ul,ol{padding-left:20px;margin-bottom:14px;font-size:14px;line-height:1.8;}
+    li{margin-bottom:4px;}
+
+    a{color:var(--accent);word-break:break-all;overflow-wrap:break-word;transition:opacity 0.2s;}
+    a:hover{opacity:0.75;}
+    .post-content a{text-decoration:underline;text-underline-offset:3px;}
+
+    code {
+      background:var(--code-bg);border:1px solid var(--border);padding:2px 6px;
+      border-radius:4px;font-family:'Fira Code',monospace;font-size:0.85em;
+      color:var(--accent);word-break:break-all;overflow-wrap:break-word;
+    }
+    pre {
+      background:var(--code-bg);border:1px solid var(--border);padding:18px;border-radius:8px;
+      max-width:100%; overflow:hidden;
+      position:relative;margin-bottom:14px;
+    }
+    pre::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      opacity:0.5;border-radius:8px 8px 0 0;
+    }
+    pre code{
+      background:transparent;border:none;padding:0 60px 0 0;word-break:normal;
+      overflow-wrap:normal;white-space:pre;display:block;
+      overflow-x:auto;-webkit-overflow-scrolling:touch;
+      font-size:13px;line-height:1.65;color:var(--text);
+    }
+    blockquote{
+      border-left:2px solid var(--accent);margin:14px 0;padding:10px 16px;
+      background:var(--glow);border-radius:0 6px 6px 0;font-style:italic;color:var(--text2);
+    }
+    table{width:100%;border-collapse:collapse;display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;font-size:13px;margin-bottom:14px;}
+    th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;white-space:nowrap;}
+    th{background:var(--surface2);color:var(--accent);font-weight:600;}
+    img{max-width:100%;height:auto;border-radius:8px;display:block;margin:14px 0;}
+
+    .copy-btn {
+      position:absolute;top:9px;right:9px;padding:3px 8px;font-size:10px;
+      font-family:'Fira Code',monospace;font-weight:500;background:var(--surface2);
+      border:1px solid var(--border2);color:var(--text2);border-radius:4px;cursor:pointer;
+      transition:all 0.2s;opacity:0;letter-spacing:0.3px;
+    }
+    pre:hover .copy-btn{opacity:1;}
+    .copy-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    .copy-btn.copied{border-color:var(--accent);color:var(--accent);opacity:1;}
+
+    footer{
+      text-align:center;padding:22px 16px;color:var(--text2);
+      font-family:'Fira Code',monospace;font-size:11px;
+      border-top:1px solid var(--border);position:relative;z-index:1;
+    }
+    .f-accent{color:var(--accent);}
+    footer a{color:var(--accent);text-decoration:none;}
+    footer a:hover{opacity:0.75;}
+
+    @media(max-width:480px){
+      header{padding:0 13px;height:50px;}
+      .logo{font-size:21px;letter-spacing:2px;}
+      main{padding:20px 14px 44px;}
+      .post-content{padding:20px 14px;}
+      pre{padding:13px;}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <a href="../../index.html" class="logo">Aryter<span class="lo-a">Log</span></a>
+    </div>
+    <button id="theme-btn" aria-label="Cycle Theme">
+      <span class="emoji" id="theme-emoji">🌙</span>
+      <span id="theme-label">Dark</span>
+    </button>
+  </header>
+
+  <main>
+    <a href="../../index.html#post-official-ai-security-guides" class="back-btn">← Back to Blog</a>
+    <article class="post-content">
+      <h1>Official AI Security Guides for Pentesting and Secure Design</h1>
+      <div class="post-header-meta">
+        <span>📅 Published April 21, 2026</span>
+        <span>·</span><span class="card-cat-chip">ai-security</span><span class="card-cat-chip">frameworks</span><span class="card-cat-chip">reference</span><span class="card-cat-chip">red-team</span>
+      </div>
+      <p><strong>Written by Aryan Giri</strong></p>
+<p>AI systems are no longer just chatbots. They now include retrieval pipelines, tools, memory, agents, plugins, model gateways, and cloud integrations. That means the security review is bigger than classic web pentesting. You need guidance for prompt injection, data leakage, model abuse, supply-chain risk, unsafe tool use, and weak operational controls.</p>
+<p>This article collects the most useful official references for testing and securing AI systems. Each one covers a different layer of the stack, so together they form a solid baseline for red teaming, secure design, and risk management.</p>
+<h2>1) OWASP GenAI Red Teaming Guide</h2>
+<p><strong>URL:</strong> <a href="https://genai.owasp.org/resource/genai-red-teaming-guide/">https://genai.owasp.org/resource/genai-red-teaming-guide/</a></p>
+<p>This guide is built for people who want to test GenAI systems like an attacker would. It helps you think about abuse paths across the model, the application, the infrastructure, and the runtime environment. It is useful when you need a practical testing mindset instead of only policy-level advice.</p>
+<p><strong>What it does for AI security:</strong></p>
+<ul>
+<li>Helps identify prompt injection and jailbreak paths</li>
+<li>Supports testing for data leakage and unsafe output behavior</li>
+<li>Gives structure to red-team exercises for GenAI apps</li>
+<li>Helps security teams move from theory to hands-on validation</li>
+</ul>
+<h2>2) OWASP AI Testing Guide</h2>
+<p><strong>URL:</strong> <a href="https://owasp.org/www-project-ai-testing-guide/">https://owasp.org/www-project-ai-testing-guide/</a></p>
+<p>This is OWASP’s testing-focused guide for AI systems. It is meant to help assess whether an AI system is behaving safely, reliably, and securely under realistic conditions. It is especially useful when you want a repeatable testing workflow.</p>
+<p><strong>What it does for AI security:</strong></p>
+<ul>
+<li>Gives a structured way to test AI behavior and implementation</li>
+<li>Helps map test cases to trust, safety, and security goals</li>
+<li>Useful for pre-deployment validation and regression testing</li>
+<li>Helps teams standardize AI security checks</li>
+</ul>
+<h2>3) OWASP Top 10 for Large Language Model Applications (2025)</h2>
+<p><strong>URL:</strong> <a href="https://genai.owasp.org/resource/owasp-top-10-for-llm-applications-2025/">https://genai.owasp.org/resource/owasp-top-10-for-llm-applications-2025/</a></p>
+<p>This is one of the clearest checklists for LLM application risk. It captures the main categories people run into when deploying LLM apps in the real world. If you are testing a chatbot, agent, or RAG app, this is one of the first documents to read.</p>
+<p><strong>What it does for AI security:</strong></p>
+<ul>
+<li>Highlights the most common LLM app vulnerabilities</li>
+<li>Helps prioritize the highest-risk attack classes</li>
+<li>Useful for scoping assessments and building test plans</li>
+<li>Works well as a pentest checklist for AI apps</li>
+</ul>
+<h2>4) OWASP AI Agent Security Cheat Sheet</h2>
+<p><strong>URL:</strong> <a href="https://cheatsheetseries.owasp.org/cheatsheets/AI_Agent_Security_Cheat_Sheet.html">https://cheatsheetseries.owasp.org/cheatsheets/AI_Agent_Security_Cheat_Sheet.html</a></p>
+<p>Agentic AI is different from a normal chatbot because it can plan, call tools, remember context, and take actions. That creates a much bigger attack surface. This cheat sheet focuses on the security of those agent behaviors.</p>
+<p><strong>What it does for AI security:</strong></p>
+<ul>
+<li>Helps secure tool use and action execution</li>
+<li>Covers memory, state, and agent behavior risks</li>
+<li>Useful for systems that can browse, email, write files, or trigger workflows</li>
+<li>Helps reduce the risk of autonomous misuse</li>
+</ul>
+<h2>5) OWASP Agentic AI Threats and Mitigations</h2>
+<p><strong>URL:</strong> <a href="https://genai.owasp.org/resource/agentic-ai-threats-and-mitigations/">https://genai.owasp.org/resource/agentic-ai-threats-and-mitigations/</a></p>
+<p>This document looks at the threat side of agentic AI in more detail. It is useful when you need to understand what can go wrong when an AI system has access to tools, APIs, plugins, or external services.</p>
+<p><strong>What it does for AI security:</strong></p>
+<ul>
+<li>Describes attack paths unique to agentic systems</li>
+<li>Helps model abuse of planning, tool calls, and memory</li>
+<li>Supports threat modeling for complex AI workflows</li>
+<li>Good for identifying control gaps before deployment</li>
+</ul>
+<h2>6) MITRE ATLAS</h2>
+<p><strong>URL:</strong> <a href="https://atlas.mitre.org/">https://atlas.mitre.org/</a></p>
+<p>MITRE ATLAS is the AI equivalent of a threat technique knowledge base. It maps adversarial behaviors against AI systems into a structured knowledge base. It is one of the best references for understanding how AI gets attacked in practice.</p>
+<p><strong>What it does for AI security:</strong></p>
+<ul>
+<li>Provides a taxonomy of adversarial AI tactics and techniques</li>
+<li>Helps teams build threat models using common attacker patterns</li>
+<li>Useful for red-team planning and detection engineering</li>
+<li>Strong reference for mapping controls to attack techniques</li>
+</ul>
+<h2>7) OWASP AI Security &amp; Privacy Guide</h2>
+<p><strong>URL:</strong> <a href="https://owasp.org/www-project-ai-security-and-privacy-guide/">https://owasp.org/www-project-ai-security-and-privacy-guide/</a></p>
+<p>This guide goes broader than testing alone. It covers how to design, build, deploy, and govern AI systems while keeping security and privacy in mind. It is helpful for engineering teams that want secure defaults from the start.</p>
+<p><strong>What it does for AI security:</strong></p>
+<ul>
+<li>Supports secure architecture decisions</li>
+<li>Covers privacy, data handling, and lifecycle risks</li>
+<li>Helps teams build controls into the design phase</li>
+<li>Useful for policy, engineering, and review workflows</li>
+</ul>
+<h2>8) NIST AI Risk Management Framework (AI RMF 1.0)</h2>
+<p><strong>URL:</strong> <a href="https://www.nist.gov/itl/ai-risk-management-framework">https://www.nist.gov/itl/ai-risk-management-framework</a></p>
+<p>NIST AI RMF is the main official framework for managing AI risk. It is not a pentest guide, but it is one of the best references for building a mature AI security program. It helps organizations understand, measure, govern, and manage AI risk across the lifecycle.</p>
+<p><strong>What it does for AI security:</strong></p>
+<ul>
+<li>Gives a lifecycle view of AI risk</li>
+<li>Helps align technical controls with governance</li>
+<li>Useful for security programs, not just individual assessments</li>
+<li>Strong foundation for policy and risk management</li>
+</ul>
+<h2>9) NIST AI RMF Generative AI Profile (NIST AI 600-1)</h2>
+<p><strong>URL:</strong> <a href="https://www.nist.gov/itl/ai-risk-management-framework">https://www.nist.gov/itl/ai-risk-management-framework</a></p>
+<p>This profile extends the NIST AI RMF with generative AI in mind. It is especially relevant when your system uses large language models, agents, or other generative components.</p>
+<p><strong>What it does for AI security:</strong></p>
+<ul>
+<li>Adds GenAI-specific risk thinking</li>
+<li>Helps map controls to realistic GenAI deployments</li>
+<li>Useful for organizations adopting LLM apps at scale</li>
+<li>Strong fit for governance and assurance work</li>
+</ul>
+<h2>10) NIST AI RMF Playbook</h2>
+<p><strong>URL:</strong> <a href="https://www.nist.gov/itl/ai-risk-management-framework/nist-ai-rmf-playbook">https://www.nist.gov/itl/ai-risk-management-framework/nist-ai-rmf-playbook</a></p>
+<p>The playbook is the practical companion to the AI RMF. It turns high-level ideas into action-oriented guidance. For teams building AI security programs, this is the bridge from framework to implementation.</p>
+<p><strong>What it does for AI security:</strong></p>
+<ul>
+<li>Helps translate framework goals into tasks</li>
+<li>Useful for program planning and control mapping</li>
+<li>Supports operationalizing AI governance</li>
+<li>Good for security teams building repeatable processes</li>
+</ul>
+<h2>11) NIST Secure Software Development Practices for Generative AI and Dual-Use Foundation Models</h2>
+<p><strong>URL:</strong> <a href="https://www.nist.gov/publications/secure-software-development-practices-generative-ai-and-dual-use-foundation-models-ssdf">https://www.nist.gov/publications/secure-software-development-practices-generative-ai-and-dual-use-foundation-models-ssdf</a></p>
+<p>This document connects secure development thinking with GenAI and foundation models. It is useful when you need to secure the software lifecycle around AI, not just the model itself.</p>
+<p><strong>What it does for AI security:</strong></p>
+<ul>
+<li>Connects secure development practices to AI systems</li>
+<li>Helps address software supply-chain and build pipeline risk</li>
+<li>Useful for engineering and DevSecOps teams</li>
+<li>Good reference for secure implementation standards</li>
+</ul>
+<h2>12) UK NCSC: Guidelines for Secure AI System Development</h2>
+<p><strong>URL:</strong> <a href="https://www.ncsc.gov.uk/collection/guidelines-secure-ai-system-development">https://www.ncsc.gov.uk/collection/guidelines-secure-ai-system-development</a></p>
+<p>This is one of the clearest official secure-design references for AI. It focuses on how to develop AI systems securely from the beginning, covering the main stages from design through deployment and operation.</p>
+<p><strong>What it does for AI security:</strong></p>
+<ul>
+<li>Helps teams design secure AI systems from the start</li>
+<li>Gives practical advice across the development lifecycle</li>
+<li>Useful for engineering teams and architects</li>
+<li>Strong source for secure-by-design AI work</li>
+</ul>
+<h2>13) ENISA: Cybersecurity of AI and Standardisation</h2>
+<p><strong>URL:</strong> <a href="https://www.enisa.europa.eu/publications/cybersecurity-of-ai-and-standardisation">https://www.enisa.europa.eu/publications/cybersecurity-of-ai-and-standardisation</a></p>
+<p>ENISA’s work is useful when you want to understand the standards and security gaps around AI. It is more strategic than hands-on pentesting guidance, but it helps connect AI security to policy and standards.</p>
+<p><strong>What it does for AI security:</strong></p>
+<ul>
+<li>Shows where AI security standards are heading</li>
+<li>Helps teams understand maturity and standardization gaps</li>
+<li>Useful for compliance and procurement discussions</li>
+<li>Good for broader governance context</li>
+</ul>
+<h2>14) ENISA: Securing Machine Learning Algorithms</h2>
+<p><strong>URL:</strong> <a href="https://www.enisa.europa.eu/publications/securing-machine-learning-algorithms">https://www.enisa.europa.eu/publications/securing-machine-learning-algorithms</a></p>
+<p>This report focuses on machine learning security threats rather than just LLM apps. It is useful when the system includes classical ML, training pipelines, or data-driven decision systems.</p>
+<p><strong>What it does for AI security:</strong></p>
+<ul>
+<li>Covers ML-specific threats like poisoning and adversarial inputs</li>
+<li>Useful for data pipeline and model training security</li>
+<li>Helps teams understand traditional ML attack surfaces</li>
+<li>Strong reference for ML-heavy environments</li>
+</ul>
+<h2>15) CSA AI Controls Matrix (AICM)</h2>
+<p><strong>URL:</strong> <a href="https://cloudsecurityalliance.org/artifacts/ai-controls-matrix">https://cloudsecurityalliance.org/artifacts/ai-controls-matrix</a></p>
+<p>The CSA AI Controls Matrix is a control framework for AI systems. It is helpful when you need to map security, privacy, and governance requirements into a structured control set.</p>
+<p><strong>What it does for AI security:</strong></p>
+<ul>
+<li>Provides a control-oriented view of AI security</li>
+<li>Helpful for audits, procurement, and assurance</li>
+<li>Can be mapped to other standards and frameworks</li>
+<li>Useful for enterprise AI governance programs</li>
+</ul>
+<h2>16) CSA AI Core Security Responsibilities</h2>
+<p><strong>URL:</strong> <a href="https://cloudsecurityalliance.org/artifacts/ai-organizational-responsibilities-core-security-responsibilities">https://cloudsecurityalliance.org/artifacts/ai-organizational-responsibilities-core-security-responsibilities</a></p>
+<p>This guide focuses on who is responsible for what in AI security. It is useful when teams are trying to avoid gaps between model owners, app owners, cloud teams, and security teams.</p>
+<p><strong>What it does for AI security:</strong></p>
+<ul>
+<li>Clarifies accountability across AI operations</li>
+<li>Helps organize controls by responsibility</li>
+<li>Useful for governance and operational security</li>
+<li>Good for reducing “everyone thought someone else handled it” risk</li>
+</ul>
+<h2>17) CSA STAR for AI</h2>
+<p><strong>URL:</strong> <a href="https://cloudsecurityalliance.org/star/ai">https://cloudsecurityalliance.org/star/ai</a></p>
+<p>CSA STAR for AI is aimed at assurance and trust. It is useful when organizations want a higher-level way to show that AI systems are being governed responsibly.</p>
+<p><strong>What it does for AI security:</strong></p>
+<ul>
+<li>Supports assurance and trust claims</li>
+<li>Useful for vendor review and procurement</li>
+<li>Helps organizations communicate AI risk posture</li>
+<li>Good for compliance-oriented programs</li>
+</ul>
+<h2>Best way to use these together</h2>
+<p>If you are building a real workflow, use them in layers:</p>
+<p>Start with <strong>MITRE ATLAS</strong> and <strong>OWASP Top 10 for LLM Applications</strong> to understand attacker behavior and common risks. Then use the <strong>OWASP GenAI Red Teaming Guide</strong> and <strong>OWASP AI Testing Guide</strong> to build your test plan. For secure architecture, lean on <strong>OWASP AI Security &amp; Privacy Guide</strong>, <strong>UK NCSC secure AI development guidance</strong>, and <strong>NIST AI RMF</strong>. For control mapping and governance, use <strong>CSA AICM</strong> and the NIST/ENISA references.</p>
+<h2>Bottom line</h2>
+<p>For AI pentesting, the strongest starting trio is:</p>
+<ul>
+<li><strong>OWASP GenAI Red Teaming Guide</strong></li>
+<li><strong>MITRE ATLAS</strong></li>
+<li><strong>OWASP Top 10 for LLM Applications</strong></li>
+</ul>
+<p>For secure design, the strongest starting trio is:</p>
+<ul>
+<li><strong>NIST AI RMF</strong></li>
+<li><strong>UK NCSC Secure AI System Development</strong></li>
+<li><strong>OWASP AI Security &amp; Privacy Guide</strong></li>
+</ul>
+<p>Together, these give you both the attacker&#39;s view and the defender&#39;s blueprint.</p>
+
+    </article>
+  </main>
+
+  <footer>
+    <span class="f-accent">$</span> echo "Made by <span class="f-accent">Aryan Giri</span>" &nbsp;·&nbsp; <a href="https://github.com/giriaryan694-a11y" target="_blank" rel="noopener noreferrer">GitHub</a>
+  </footer>
+
+  <script>
+    /* Theme — synced with main site via same cookie */
+    const themes=["dark","light","eye-saver"];
+    const themeData={"dark":{emoji:"🌙",label:"Dark"},"light":{emoji:"☀️",label:"Light"},"eye-saver":{emoji:"☕",label:"Reading"}};
+    function setCookie(n,v,d){const e=new Date();e.setTime(e.getTime()+d*86400000);document.cookie=`${n}=${v};expires=${e.toUTCString()};path=/`;}
+    function getCookie(n){const m=document.cookie.match(new RegExp('(^| )'+n+'=([^;]+)'));return m?m[2]:null;}
+    let currentTheme=getCookie("site_theme")||"dark";
+    const themeBtn=document.getElementById("theme-btn");
+    const themeEmoji=document.getElementById("theme-emoji");
+    function applyTheme(theme,animate=false){
+      document.body.className=theme==="dark"?"":theme;
+      themeEmoji.textContent=themeData[theme].emoji;
+      document.getElementById("theme-label").textContent=themeData[theme].label;
+      setCookie("site_theme",theme,365);
+      if(animate){themeEmoji.style.animation="none";themeEmoji.offsetHeight;themeEmoji.style.animation="popSpin 0.4s cubic-bezier(0.175,0.885,0.32,1.275) forwards";}
+    }
+    applyTheme(currentTheme);
+    themeBtn.addEventListener("click",()=>{currentTheme=themes[(themes.indexOf(currentTheme)+1)%themes.length];applyTheme(currentTheme,true);});
+
+    /* Links → new tab + copy buttons on code blocks */
+    document.querySelectorAll(".post-content a").forEach(l => {
+      l.setAttribute("target", "_blank");
+      l.setAttribute("rel", "noopener noreferrer");
+    });
+    document.querySelectorAll("pre").forEach(pre => {
+      const code = pre.querySelector("code");
+      if (!code) return;
+      const btn = document.createElement("button");
+      btn.className = "copy-btn";
+      btn.textContent = "copy";
+      btn.onclick = async () => {
+        try { await navigator.clipboard.writeText(code.innerText.trimEnd()); }
+        catch {}
+        btn.textContent = "✓ copied"; btn.classList.add("copied");
+        setTimeout(() => { btn.textContent = "copy"; btn.classList.remove("copied"); }, 2000);
+      };
+      pre.appendChild(btn);
+    });
+  </script>
+</body>
+</html>

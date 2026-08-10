@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChatGPT Canvas + GitHub Repo: My Favourite Workflow for Cybersecurity Notes — AryterLog</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="../../manifest.json">
+  <meta name="theme-color" content="#080b10">
+  <link rel="icon" href="../../icons/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="../../icons/apple-touch-icon.png">
+  <meta name="description" content="A practical workflow using ChatGPT Canvas and GitHub repositories for fast markdown-based cybersecurity note-taking, revision, research organization, and technical learning.">
+  <link rel="canonical" href="https://giriaryan694-a11y.github.io/AryterLog/posts/chatgpt-canvas-github-notes-workflow/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="ChatGPT Canvas + GitHub Repo: My Favourite Workflow for Cybersecurity Notes">
+  <meta property="og:description" content="A practical workflow using ChatGPT Canvas and GitHub repositories for fast markdown-based cybersecurity note-taking, revision, research organization, and technical learning.">
+  <meta property="og:url" content="https://giriaryan694-a11y.github.io/AryterLog/posts/chatgpt-canvas-github-notes-workflow/">
+  <meta property="og:site_name" content="AryterLog">
+  <meta property="article:published_time" content="2026-05-10T00:00:00.000Z">
+  <meta property="article:tag" content="ai-tools">
+  <meta property="article:tag" content="education">
+  <meta property="article:tag" content="productivity">
+  <meta property="article:tag" content="personal">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="ChatGPT Canvas + GitHub Repo: My Favourite Workflow for Cybersecurity Notes">
+  <meta name="twitter:description" content="A practical workflow using ChatGPT Canvas and GitHub repositories for fast markdown-based cybersecurity note-taking, revision, research organization, and technical learning.">
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"ChatGPT Canvas + GitHub Repo: My Favourite Workflow for Cybersecurity Notes","description":"A practical workflow using ChatGPT Canvas and GitHub repositories for fast markdown-based cybersecurity note-taking, revision, research organization, and technical learning.","datePublished":"2026-05-10T00:00:00.000Z","author":{"@type":"Person","name":"Aryan Giri"},"publisher":{"@type":"Organization","name":"AryterLog"},"mainEntityOfPage":"https://giriaryan694-a11y.github.io/AryterLog/posts/chatgpt-canvas-github-notes-workflow/","keywords":"ai-tools, education, productivity, personal"}</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:#080b10; --surface:#0d1117; --surface2:#111820; --surface3:#161d27;
+      --text:#d0dbe8; --text2:#7a8a9a; --accent:#00ff88; --accent2:#0ea5e9;
+      --danger:#ff4560; --border:#1e2a38; --border2:#2a3848; --code-bg:#0a0f16;
+      --glow:rgba(0,255,136,0.08); --glow2:rgba(0,255,136,0.18);
+    }
+    .light {
+      --bg:#f5f7fa; --surface:#ffffff; --surface2:#f0f4f8; --surface3:#e8eef5;
+      --text:#111827; --text2:#6b7280; --accent:#059669; --accent2:#0284c7;
+      --danger:#dc2626; --border:#e2e8f0; --border2:#cbd5e1; --code-bg:#f1f5f9;
+      --glow:rgba(5,150,105,0.07); --glow2:rgba(5,150,105,0.14);
+    }
+    .eye-saver {
+      --bg:#12100a; --surface:#1a1608; --surface2:#211c0c; --surface3:#282210;
+      --text:#e8d8b0; --text2:#9a8860; --accent:#f5c542; --accent2:#e08030;
+      --danger:#e05050; --border:#302810; --border2:#3d3418; --code-bg:#0f0d06;
+      --glow:rgba(245,197,66,0.08); --glow2:rgba(245,197,66,0.18);
+    }
+
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body {
+      font-family:'Fira Code',monospace;
+      background:var(--bg); color:var(--text);
+      min-height:100vh; overflow-x:hidden;
+      transition:background 0.4s,color 0.4s;
+    }
+    body::before {
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+      background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
+      background-size:44px 44px; opacity:0.25;
+    }
+
+    header {
+      position:sticky; top:0; z-index:200;
+      background:rgba(8,11,16,0.86); backdrop-filter:blur(16px);
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 22px; height:56px; gap:12px;
+    }
+    .light header{background:rgba(245,247,250,0.9);}
+    .eye-saver header{background:rgba(18,16,10,0.9);}
+    header::after {
+      content:''; position:absolute; bottom:-1px; left:8%; right:8%; height:1px;
+      background:linear-gradient(90deg,transparent,var(--accent),transparent); opacity:0.35;
+    }
+    .header-left{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+
+    .logo {
+      font-family:'Bebas Neue',sans-serif; font-size:24px; font-weight:400;
+      letter-spacing:3px; color:var(--text); text-decoration:none; white-space:nowrap;
+      flex-shrink:0; line-height:1; transition:color 0.2s;
+    }
+    .logo .lo-a{color:var(--accent);}
+    .logo:hover .lo-a{text-shadow:0 0 14px var(--accent);}
+
+    .back-link {
+      display:inline-flex; align-items:center; gap:6px;
+      background:transparent; border:1px solid var(--border2); color:var(--text2);
+      padding:6px 12px; border-radius:6px; cursor:pointer; transition:all 0.2s;
+      font-family:'Fira Code',monospace; font-size:11px; text-decoration:none;
+    }
+    .back-link:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    #theme-btn {
+      background:transparent; border:1px solid var(--border2);
+      padding:5px 11px; cursor:pointer; color:var(--text2); border-radius:6px;
+      transition:all 0.2s; font-family:'Fira Code',monospace; font-size:11px;
+      display:inline-flex; align-items:center; gap:6px; white-space:nowrap;
+    }
+    #theme-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    @keyframes popSpin{0%{transform:scale(0.4) rotate(-60deg);opacity:0;}70%{transform:scale(1.15) rotate(5deg);}100%{transform:scale(1) rotate(0deg);opacity:1;}}
+    .emoji{display:inline-block;}
+
+    main{max-width:760px;margin:0 auto;padding:34px 20px 60px;position:relative;z-index:1;}
+
+    .back-btn {
+      display:inline-flex;align-items:center;gap:7px;margin-bottom:20px;
+      background:var(--surface);border:1px solid var(--border2);color:var(--text2);
+      padding:7px 13px;border-radius:6px;font-family:'Fira Code',monospace;font-size:11px;
+      cursor:pointer;transition:all 0.2s;text-decoration:none;
+    }
+    .back-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    .post-content {
+      background:var(--surface);border:1px solid var(--border);border-radius:12px;
+      padding:34px 30px;position:relative;overflow:hidden;
+    }
+    .post-content::before {
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      border-radius:12px 12px 0 0;
+    }
+    .post-content *{max-width:100%;}
+
+    h1 {
+      font-family:'Space Grotesk',sans-serif;font-size:clamp(19px,4vw,26px);
+      font-weight:700;color:var(--text);margin-bottom:8px;line-height:1.25;word-break:break-word;
+    }
+    .post-header-meta{
+      font-family:'Fira Code',monospace;font-size:11px;color:var(--text2);
+      padding-bottom:18px;margin-bottom:22px;border-bottom:1px solid var(--border);
+      display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+    }
+    .card-cat-chip {
+      display:inline-flex;align-items:center;padding:1px 7px;border-radius:3px;
+      border:1px solid var(--border2);background:var(--surface2);color:var(--text2);
+      font-size:9px;font-family:'Fira Code',monospace;font-weight:500;letter-spacing:0.4px;
+    }
+    h2,h3{font-family:'Space Grotesk',sans-serif;font-weight:600;color:var(--text);margin:26px 0 10px;word-break:break-word;}
+    h2{font-size:19px;} h3{font-size:15px;color:var(--accent);}
+    p{font-size:14px;line-height:1.8;margin-bottom:14px;color:var(--text);}
+    ul,ol{padding-left:20px;margin-bottom:14px;font-size:14px;line-height:1.8;}
+    li{margin-bottom:4px;}
+
+    a{color:var(--accent);word-break:break-all;overflow-wrap:break-word;transition:opacity 0.2s;}
+    a:hover{opacity:0.75;}
+    .post-content a{text-decoration:underline;text-underline-offset:3px;}
+
+    code {
+      background:var(--code-bg);border:1px solid var(--border);padding:2px 6px;
+      border-radius:4px;font-family:'Fira Code',monospace;font-size:0.85em;
+      color:var(--accent);word-break:break-all;overflow-wrap:break-word;
+    }
+    pre {
+      background:var(--code-bg);border:1px solid var(--border);padding:18px;border-radius:8px;
+      max-width:100%; overflow:hidden;
+      position:relative;margin-bottom:14px;
+    }
+    pre::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      opacity:0.5;border-radius:8px 8px 0 0;
+    }
+    pre code{
+      background:transparent;border:none;padding:0 60px 0 0;word-break:normal;
+      overflow-wrap:normal;white-space:pre;display:block;
+      overflow-x:auto;-webkit-overflow-scrolling:touch;
+      font-size:13px;line-height:1.65;color:var(--text);
+    }
+    blockquote{
+      border-left:2px solid var(--accent);margin:14px 0;padding:10px 16px;
+      background:var(--glow);border-radius:0 6px 6px 0;font-style:italic;color:var(--text2);
+    }
+    table{width:100%;border-collapse:collapse;display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;font-size:13px;margin-bottom:14px;}
+    th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;white-space:nowrap;}
+    th{background:var(--surface2);color:var(--accent);font-weight:600;}
+    img{max-width:100%;height:auto;border-radius:8px;display:block;margin:14px 0;}
+
+    .copy-btn {
+      position:absolute;top:9px;right:9px;padding:3px 8px;font-size:10px;
+      font-family:'Fira Code',monospace;font-weight:500;background:var(--surface2);
+      border:1px solid var(--border2);color:var(--text2);border-radius:4px;cursor:pointer;
+      transition:all 0.2s;opacity:0;letter-spacing:0.3px;
+    }
+    pre:hover .copy-btn{opacity:1;}
+    .copy-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    .copy-btn.copied{border-color:var(--accent);color:var(--accent);opacity:1;}
+
+    footer{
+      text-align:center;padding:22px 16px;color:var(--text2);
+      font-family:'Fira Code',monospace;font-size:11px;
+      border-top:1px solid var(--border);position:relative;z-index:1;
+    }
+    .f-accent{color:var(--accent);}
+    footer a{color:var(--accent);text-decoration:none;}
+    footer a:hover{opacity:0.75;}
+
+    @media(max-width:480px){
+      header{padding:0 13px;height:50px;}
+      .logo{font-size:21px;letter-spacing:2px;}
+      main{padding:20px 14px 44px;}
+      .post-content{padding:20px 14px;}
+      pre{padding:13px;}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <a href="../../index.html" class="logo">Aryter<span class="lo-a">Log</span></a>
+    </div>
+    <button id="theme-btn" aria-label="Cycle Theme">
+      <span class="emoji" id="theme-emoji">🌙</span>
+      <span id="theme-label">Dark</span>
+    </button>
+  </header>
+
+  <main>
+    <a href="../../index.html#post-chatgpt-canvas-github-notes-workflow" class="back-btn">← Back to Blog</a>
+    <article class="post-content">
+      <h1>ChatGPT Canvas + GitHub Repo: My Favourite Workflow for Cybersecurity Notes</h1>
+      <div class="post-header-meta">
+        <span>📅 Published 2026-05-10</span>
+        <span>·</span><span class="card-cat-chip">ai-tools</span><span class="card-cat-chip">education</span><span class="card-cat-chip">productivity</span><span class="card-cat-chip">personal</span>
+      </div>
+      <p><em>Written by Aryan Giri</em></p>
+<h2>Introduction</h2>
+<p>One of my favourite features in ChatGPT is Canvas. I use it mostly for writing blogs, cybersecurity notes, research dumps, command references, and learning material. Over time, it became one of the most useful tools in my workflow because it saves a huge amount of time during studying and revision.</p>
+<p>Normally, after completing a lab from platforms like TryHackMe, Hack The Box, or after watching long cybersecurity tutorials, you need to save important things for future revision:</p>
+<ul>
+<li>Commands</li>
+<li>Payloads</li>
+<li>Enumeration steps</li>
+<li>Practical tricks</li>
+<li>Concept explanations</li>
+<li>Mistakes and fixes</li>
+<li>Exploitation flow</li>
+<li>Cheat sheets</li>
+<li>Tool usage notes</li>
+</ul>
+<p>Writing all of this manually in traditional note apps takes time and breaks learning momentum.</p>
+<p>Instead of spending energy formatting notes manually, I use ChatGPT Canvas with a GitHub repository.</p>
+<p>This combination became one of my favourite learning systems.</p>
+<hr>
+<h1>Why I Prefer ChatGPT Canvas</h1>
+<p>Canvas is extremely useful because it can quickly transform raw learning material into structured markdown notes.</p>
+<p>You can paste:</p>
+<ul>
+<li>TryHackMe room content</li>
+<li>Video transcripts</li>
+<li>Research blogs</li>
+<li>Tool documentation</li>
+<li>Commands</li>
+<li>Random rough notes</li>
+<li>Screenshots converted into text</li>
+</ul>
+<p>Then ChatGPT can organize everything into:</p>
+<ul>
+<li>Bullet points</li>
+<li>Sections</li>
+<li>Commands blocks</li>
+<li>Tables</li>
+<li>Explanations</li>
+<li>Practical examples</li>
+<li>Conceptual understanding</li>
+<li>Step-by-step workflows</li>
+</ul>
+<p>This saves a massive amount of time during study sessions.</p>
+<hr>
+<h1>My Favourite Usage</h1>
+<p>My main usage of ChatGPT Canvas is note creation after practical learning.</p>
+<p>Example workflow:</p>
+<ol>
+<li>Complete a TryHackMe room</li>
+<li>Copy important content or transcript</li>
+<li>Paste it into Canvas</li>
+<li>Ask ChatGPT to create clean markdown notes</li>
+<li>Save the markdown file inside a GitHub repository</li>
+</ol>
+<p>Now the notes become:</p>
+<ul>
+<li>Searchable</li>
+<li>Organized</li>
+<li>Easy to revise later</li>
+<li>Easy to share</li>
+<li>Easy to update</li>
+<li>Easy to version control</li>
+</ul>
+<p>This workflow is much faster compared to manually formatting everything inside traditional note apps.</p>
+<hr>
+<h1>Why I Use GitHub Repositories for Notes</h1>
+<p>Instead of storing notes only in normal note-taking apps, I prefer using GitHub repositories.</p>
+<p>If you want privacy, you can simply create a private repository.</p>
+<p>GitHub repositories are extremely good for organizing:</p>
+<ul>
+<li>Cybersecurity notes</li>
+<li>Scripts</li>
+<li>Payload collections</li>
+<li>Automation tools</li>
+<li>Research</li>
+<li>Writeups</li>
+<li>Cheat sheets</li>
+<li>Config files</li>
+</ul>
+<p>Using folders makes categorization very clean.</p>
+<p>Example structure:</p>
+<pre><code class="language-txt">notes/
+├── web-security/
+├── reverse-engineering/
+├── malware-analysis/
+├── osint/
+├── red-team/
+├── cloud-security/
+└── ai-security/
+</code></pre>
+<p>This structure scales very well when your learning material becomes huge.</p>
+<hr>
+<h1>Markdown Makes Everything Better</h1>
+<p>One of the biggest advantages is that ChatGPT Canvas already uses markdown formatting.</p>
+<p>Markdown is perfect for technical notes.</p>
+<h2>Advantages of Markdown Files</h2>
+<h3>No Manual Formatting Headaches</h3>
+<p>You do not need to manually change:</p>
+<ul>
+<li>Font sizes</li>
+<li>Heading styles</li>
+<li>Text formatting</li>
+<li>Bullet formatting</li>
+<li>Code styling</li>
+</ul>
+<p>You simply tell ChatGPT what structure you want.</p>
+<hr>
+<h3>Commands Stay Clean</h3>
+<p>Markdown keeps commands separated properly.</p>
+<p>Example:</p>
+<pre><code class="language-bash">nmap -sV -sC 10.10.10.10
+</code></pre>
+<p>In many traditional note apps, commands and normal sentences sometimes get mixed together and become difficult to read.</p>
+<p>Markdown solves this problem.</p>
+<hr>
+<h3>Easy Copy-Paste Workflow</h3>
+<p>Commands are easy to copy directly into the terminal.</p>
+<p>This becomes very useful during:</p>
+<ul>
+<li>Labs</li>
+<li>CTFs</li>
+<li>Assessments</li>
+<li>Revisions</li>
+<li>Real testing environments</li>
+</ul>
+<hr>
+<h3>Diagrams Are Easier to Understand</h3>
+<p>Markdown-based diagrams and structured formatting improve readability.</p>
+<p>Simple workflows become much easier to visualize.</p>
+<p>Example:</p>
+<pre><code class="language-txt">Recon → Enumeration → Exploitation → Privilege Escalation → Persistence
+</code></pre>
+<hr>
+<h3>Better Separation Between Concepts</h3>
+<p>Markdown creates clear separation between:</p>
+<ul>
+<li>Commands</li>
+<li>Notes</li>
+<li>Warnings</li>
+<li>Payloads</li>
+<li>Explanations</li>
+<li>Steps</li>
+</ul>
+<p>This improves revision speed massively.</p>
+<hr>
+<h1>The Best Prompt Tip</h1>
+<p>One useful trick is adding instructions like this while generating notes:</p>
+<pre><code class="language-txt">Add practical + conceptual knowledge + simple English with examples.
+</code></pre>
+<p>This improves the quality of generated notes significantly.</p>
+<p>ChatGPT starts adding:</p>
+<ul>
+<li>Extra explanations</li>
+<li>Real-world context</li>
+<li>Beginner-friendly descriptions</li>
+<li>Practical understanding</li>
+<li>Additional knowledge beyond raw notes</li>
+</ul>
+<p>This makes studying more effective.</p>
+<hr>
+<h1>Example Use Cases</h1>
+<h2>After Completing a TryHackMe Room</h2>
+<p>You can generate:</p>
+<ul>
+<li>Attack flow notes</li>
+<li>Command references</li>
+<li>Tool explanations</li>
+<li>Enumeration methodology</li>
+<li>Exploitation summaries</li>
+<li>Important payloads</li>
+</ul>
+<hr>
+<h2>After Watching a Cybersecurity Tutorial</h2>
+<p>Paste the transcript and convert it into:</p>
+<ul>
+<li>Structured study notes</li>
+<li>Key learning points</li>
+<li>Cheat sheets</li>
+<li>Tool references</li>
+<li>Practical examples</li>
+</ul>
+<hr>
+<h2>During Research</h2>
+<p>You can use Canvas to organize:</p>
+<ul>
+<li>CVE research</li>
+<li>Payload analysis</li>
+<li>Attack chains</li>
+<li>Threat actor notes</li>
+<li>AI security research</li>
+<li>Red team workflows</li>
+</ul>
+<hr>
+<h1>Why This Workflow Is Powerful</h1>
+<p>The real power is not only speed.</p>
+<p>The real power is reducing friction during learning.</p>
+<p>Instead of wasting time organizing notes manually, you spend more time:</p>
+<ul>
+<li>Learning</li>
+<li>Practicing</li>
+<li>Researching</li>
+<li>Building projects</li>
+<li>Understanding concepts</li>
+</ul>
+<p>The workflow becomes:</p>
+<pre><code class="language-txt">Learn → Paste → Generate → Save → Revise
+</code></pre>
+<p>Simple and efficient.</p>
+<hr>
+<h1>Final Thoughts</h1>
+<p>For technical learners, especially in cybersecurity, ChatGPT Canvas combined with GitHub repositories creates a very powerful knowledge management system.</p>
+<p>Canvas helps transform rough information into structured markdown notes quickly, while GitHub provides long-term organization, scalability, privacy, and version control.</p>
+<p>This workflow helped me build cleaner notes, revise faster, and spend more time learning instead of formatting.</p>
+<p>For me, ChatGPT Canvas + GitHub Repo is one of the best combinations for modern cybersecurity note-taking and technical knowledge management.</p>
+
+    </article>
+  </main>
+
+  <footer>
+    <span class="f-accent">$</span> echo "Made by <span class="f-accent">Aryan Giri</span>" &nbsp;·&nbsp; <a href="https://github.com/giriaryan694-a11y" target="_blank" rel="noopener noreferrer">GitHub</a>
+  </footer>
+
+  <script>
+    /* Theme — synced with main site via same cookie */
+    const themes=["dark","light","eye-saver"];
+    const themeData={"dark":{emoji:"🌙",label:"Dark"},"light":{emoji:"☀️",label:"Light"},"eye-saver":{emoji:"☕",label:"Reading"}};
+    function setCookie(n,v,d){const e=new Date();e.setTime(e.getTime()+d*86400000);document.cookie=`${n}=${v};expires=${e.toUTCString()};path=/`;}
+    function getCookie(n){const m=document.cookie.match(new RegExp('(^| )'+n+'=([^;]+)'));return m?m[2]:null;}
+    let currentTheme=getCookie("site_theme")||"dark";
+    const themeBtn=document.getElementById("theme-btn");
+    const themeEmoji=document.getElementById("theme-emoji");
+    function applyTheme(theme,animate=false){
+      document.body.className=theme==="dark"?"":theme;
+      themeEmoji.textContent=themeData[theme].emoji;
+      document.getElementById("theme-label").textContent=themeData[theme].label;
+      setCookie("site_theme",theme,365);
+      if(animate){themeEmoji.style.animation="none";themeEmoji.offsetHeight;themeEmoji.style.animation="popSpin 0.4s cubic-bezier(0.175,0.885,0.32,1.275) forwards";}
+    }
+    applyTheme(currentTheme);
+    themeBtn.addEventListener("click",()=>{currentTheme=themes[(themes.indexOf(currentTheme)+1)%themes.length];applyTheme(currentTheme,true);});
+
+    /* Links → new tab + copy buttons on code blocks */
+    document.querySelectorAll(".post-content a").forEach(l => {
+      l.setAttribute("target", "_blank");
+      l.setAttribute("rel", "noopener noreferrer");
+    });
+    document.querySelectorAll("pre").forEach(pre => {
+      const code = pre.querySelector("code");
+      if (!code) return;
+      const btn = document.createElement("button");
+      btn.className = "copy-btn";
+      btn.textContent = "copy";
+      btn.onclick = async () => {
+        try { await navigator.clipboard.writeText(code.innerText.trimEnd()); }
+        catch {}
+        btn.textContent = "✓ copied"; btn.classList.add("copied");
+        setTimeout(() => { btn.textContent = "copy"; btn.classList.remove("copied"); }, 2000);
+      };
+      pre.appendChild(btn);
+    });
+  </script>
+</body>
+</html>

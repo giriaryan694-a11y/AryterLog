@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TryHackMe UnIndexed — RAG Retrieval Boundary Failure — AryterLog</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="../../manifest.json">
+  <meta name="theme-color" content="#080b10">
+  <link rel="icon" href="../../icons/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="../../icons/apple-touch-icon.png">
+  <meta name="description" content="An analysis of the TryHackMe UnIndexed room focusing on RAG retrieval boundary collapse, semantic overreach, infrastructure leakage, and progressive disclosure attacks against enterprise AI assistants.">
+  <link rel="canonical" href="https://giriaryan694-a11y.github.io/AryterLog/posts/tryhackme-unindexed-rag-retrieval-boundary-failure/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="TryHackMe UnIndexed — RAG Retrieval Boundary Failure">
+  <meta property="og:description" content="An analysis of the TryHackMe UnIndexed room focusing on RAG retrieval boundary collapse, semantic overreach, infrastructure leakage, and progressive disclosure attacks against enterprise AI assistants.">
+  <meta property="og:url" content="https://giriaryan694-a11y.github.io/AryterLog/posts/tryhackme-unindexed-rag-retrieval-boundary-failure/">
+  <meta property="og:site_name" content="AryterLog">
+  <meta property="article:published_time" content="2026-05-23T00:00:00.000Z">
+  <meta property="article:tag" content="ai-security">
+  <meta property="article:tag" content="llm-security">
+  <meta property="article:tag" content="offensive-security">
+  <meta property="article:tag" content="threat-research">
+  <meta property="article:tag" content="attack-techniques">
+  <meta property="article:tag" content="ctf">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="TryHackMe UnIndexed — RAG Retrieval Boundary Failure">
+  <meta name="twitter:description" content="An analysis of the TryHackMe UnIndexed room focusing on RAG retrieval boundary collapse, semantic overreach, infrastructure leakage, and progressive disclosure attacks against enterprise AI assistants.">
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"TryHackMe UnIndexed — RAG Retrieval Boundary Failure","description":"An analysis of the TryHackMe UnIndexed room focusing on RAG retrieval boundary collapse, semantic overreach, infrastructure leakage, and progressive disclosure attacks against enterprise AI assistants.","datePublished":"2026-05-23T00:00:00.000Z","author":{"@type":"Person","name":"Aryan Giri"},"publisher":{"@type":"Organization","name":"AryterLog"},"mainEntityOfPage":"https://giriaryan694-a11y.github.io/AryterLog/posts/tryhackme-unindexed-rag-retrieval-boundary-failure/","keywords":"ai-security, llm-security, offensive-security, threat-research, attack-techniques, ctf"}</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:#080b10; --surface:#0d1117; --surface2:#111820; --surface3:#161d27;
+      --text:#d0dbe8; --text2:#7a8a9a; --accent:#00ff88; --accent2:#0ea5e9;
+      --danger:#ff4560; --border:#1e2a38; --border2:#2a3848; --code-bg:#0a0f16;
+      --glow:rgba(0,255,136,0.08); --glow2:rgba(0,255,136,0.18);
+    }
+    .light {
+      --bg:#f5f7fa; --surface:#ffffff; --surface2:#f0f4f8; --surface3:#e8eef5;
+      --text:#111827; --text2:#6b7280; --accent:#059669; --accent2:#0284c7;
+      --danger:#dc2626; --border:#e2e8f0; --border2:#cbd5e1; --code-bg:#f1f5f9;
+      --glow:rgba(5,150,105,0.07); --glow2:rgba(5,150,105,0.14);
+    }
+    .eye-saver {
+      --bg:#12100a; --surface:#1a1608; --surface2:#211c0c; --surface3:#282210;
+      --text:#e8d8b0; --text2:#9a8860; --accent:#f5c542; --accent2:#e08030;
+      --danger:#e05050; --border:#302810; --border2:#3d3418; --code-bg:#0f0d06;
+      --glow:rgba(245,197,66,0.08); --glow2:rgba(245,197,66,0.18);
+    }
+
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body {
+      font-family:'Fira Code',monospace;
+      background:var(--bg); color:var(--text);
+      min-height:100vh; overflow-x:hidden;
+      transition:background 0.4s,color 0.4s;
+    }
+    body::before {
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+      background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
+      background-size:44px 44px; opacity:0.25;
+    }
+
+    header {
+      position:sticky; top:0; z-index:200;
+      background:rgba(8,11,16,0.86); backdrop-filter:blur(16px);
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 22px; height:56px; gap:12px;
+    }
+    .light header{background:rgba(245,247,250,0.9);}
+    .eye-saver header{background:rgba(18,16,10,0.9);}
+    header::after {
+      content:''; position:absolute; bottom:-1px; left:8%; right:8%; height:1px;
+      background:linear-gradient(90deg,transparent,var(--accent),transparent); opacity:0.35;
+    }
+    .header-left{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+
+    .logo {
+      font-family:'Bebas Neue',sans-serif; font-size:24px; font-weight:400;
+      letter-spacing:3px; color:var(--text); text-decoration:none; white-space:nowrap;
+      flex-shrink:0; line-height:1; transition:color 0.2s;
+    }
+    .logo .lo-a{color:var(--accent);}
+    .logo:hover .lo-a{text-shadow:0 0 14px var(--accent);}
+
+    .back-link {
+      display:inline-flex; align-items:center; gap:6px;
+      background:transparent; border:1px solid var(--border2); color:var(--text2);
+      padding:6px 12px; border-radius:6px; cursor:pointer; transition:all 0.2s;
+      font-family:'Fira Code',monospace; font-size:11px; text-decoration:none;
+    }
+    .back-link:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    #theme-btn {
+      background:transparent; border:1px solid var(--border2);
+      padding:5px 11px; cursor:pointer; color:var(--text2); border-radius:6px;
+      transition:all 0.2s; font-family:'Fira Code',monospace; font-size:11px;
+      display:inline-flex; align-items:center; gap:6px; white-space:nowrap;
+    }
+    #theme-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    @keyframes popSpin{0%{transform:scale(0.4) rotate(-60deg);opacity:0;}70%{transform:scale(1.15) rotate(5deg);}100%{transform:scale(1) rotate(0deg);opacity:1;}}
+    .emoji{display:inline-block;}
+
+    main{max-width:760px;margin:0 auto;padding:34px 20px 60px;position:relative;z-index:1;}
+
+    .back-btn {
+      display:inline-flex;align-items:center;gap:7px;margin-bottom:20px;
+      background:var(--surface);border:1px solid var(--border2);color:var(--text2);
+      padding:7px 13px;border-radius:6px;font-family:'Fira Code',monospace;font-size:11px;
+      cursor:pointer;transition:all 0.2s;text-decoration:none;
+    }
+    .back-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    .post-content {
+      background:var(--surface);border:1px solid var(--border);border-radius:12px;
+      padding:34px 30px;position:relative;overflow:hidden;
+    }
+    .post-content::before {
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      border-radius:12px 12px 0 0;
+    }
+    .post-content *{max-width:100%;}
+
+    h1 {
+      font-family:'Space Grotesk',sans-serif;font-size:clamp(19px,4vw,26px);
+      font-weight:700;color:var(--text);margin-bottom:8px;line-height:1.25;word-break:break-word;
+    }
+    .post-header-meta{
+      font-family:'Fira Code',monospace;font-size:11px;color:var(--text2);
+      padding-bottom:18px;margin-bottom:22px;border-bottom:1px solid var(--border);
+      display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+    }
+    .card-cat-chip {
+      display:inline-flex;align-items:center;padding:1px 7px;border-radius:3px;
+      border:1px solid var(--border2);background:var(--surface2);color:var(--text2);
+      font-size:9px;font-family:'Fira Code',monospace;font-weight:500;letter-spacing:0.4px;
+    }
+    h2,h3{font-family:'Space Grotesk',sans-serif;font-weight:600;color:var(--text);margin:26px 0 10px;word-break:break-word;}
+    h2{font-size:19px;} h3{font-size:15px;color:var(--accent);}
+    p{font-size:14px;line-height:1.8;margin-bottom:14px;color:var(--text);}
+    ul,ol{padding-left:20px;margin-bottom:14px;font-size:14px;line-height:1.8;}
+    li{margin-bottom:4px;}
+
+    a{color:var(--accent);word-break:break-all;overflow-wrap:break-word;transition:opacity 0.2s;}
+    a:hover{opacity:0.75;}
+    .post-content a{text-decoration:underline;text-underline-offset:3px;}
+
+    code {
+      background:var(--code-bg);border:1px solid var(--border);padding:2px 6px;
+      border-radius:4px;font-family:'Fira Code',monospace;font-size:0.85em;
+      color:var(--accent);word-break:break-all;overflow-wrap:break-word;
+    }
+    pre {
+      background:var(--code-bg);border:1px solid var(--border);padding:18px;border-radius:8px;
+      max-width:100%; overflow:hidden;
+      position:relative;margin-bottom:14px;
+    }
+    pre::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      opacity:0.5;border-radius:8px 8px 0 0;
+    }
+    pre code{
+      background:transparent;border:none;padding:0 60px 0 0;word-break:normal;
+      overflow-wrap:normal;white-space:pre;display:block;
+      overflow-x:auto;-webkit-overflow-scrolling:touch;
+      font-size:13px;line-height:1.65;color:var(--text);
+    }
+    blockquote{
+      border-left:2px solid var(--accent);margin:14px 0;padding:10px 16px;
+      background:var(--glow);border-radius:0 6px 6px 0;font-style:italic;color:var(--text2);
+    }
+    table{width:100%;border-collapse:collapse;display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;font-size:13px;margin-bottom:14px;}
+    th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;white-space:nowrap;}
+    th{background:var(--surface2);color:var(--accent);font-weight:600;}
+    img{max-width:100%;height:auto;border-radius:8px;display:block;margin:14px 0;}
+
+    .copy-btn {
+      position:absolute;top:9px;right:9px;padding:3px 8px;font-size:10px;
+      font-family:'Fira Code',monospace;font-weight:500;background:var(--surface2);
+      border:1px solid var(--border2);color:var(--text2);border-radius:4px;cursor:pointer;
+      transition:all 0.2s;opacity:0;letter-spacing:0.3px;
+    }
+    pre:hover .copy-btn{opacity:1;}
+    .copy-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    .copy-btn.copied{border-color:var(--accent);color:var(--accent);opacity:1;}
+
+    footer{
+      text-align:center;padding:22px 16px;color:var(--text2);
+      font-family:'Fira Code',monospace;font-size:11px;
+      border-top:1px solid var(--border);position:relative;z-index:1;
+    }
+    .f-accent{color:var(--accent);}
+    footer a{color:var(--accent);text-decoration:none;}
+    footer a:hover{opacity:0.75;}
+
+    @media(max-width:480px){
+      header{padding:0 13px;height:50px;}
+      .logo{font-size:21px;letter-spacing:2px;}
+      main{padding:20px 14px 44px;}
+      .post-content{padding:20px 14px;}
+      pre{padding:13px;}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <a href="../../index.html" class="logo">Aryter<span class="lo-a">Log</span></a>
+    </div>
+    <button id="theme-btn" aria-label="Cycle Theme">
+      <span class="emoji" id="theme-emoji">🌙</span>
+      <span id="theme-label">Dark</span>
+    </button>
+  </header>
+
+  <main>
+    <a href="../../index.html#post-tryhackme-unindexed-rag-retrieval-boundary-failure" class="back-btn">← Back to Blog</a>
+    <article class="post-content">
+      <h1>TryHackMe UnIndexed — RAG Retrieval Boundary Failure</h1>
+      <div class="post-header-meta">
+        <span>📅 Published 2026-05-23</span>
+        <span>·</span><span class="card-cat-chip">ai-security</span><span class="card-cat-chip">llm-security</span><span class="card-cat-chip">offensive-security</span><span class="card-cat-chip">threat-research</span><span class="card-cat-chip">attack-techniques</span><span class="card-cat-chip">ctf</span>
+      </div>
+      <p>Written By Aryan Giri</p>
+<p>The TryHackMe room &quot;UnIndexed&quot; demonstrates one of the most important security failures in modern Retrieval-Augmented Generation (RAG) systems:</p>
+<p>The model does not need to be jailbroken.<br>The attacker does not need admin privileges.<br>The attacker does not exploit the model itself.</p>
+<p>The retrieval pipeline fails first.</p>
+<p>A normal employee-level user interacts with an internal AI assistant called Atlas. The organization claims the assistant only exposes public employee information such as onboarding guides, expense policies, and on-call schedules.</p>
+<p>In reality, Atlas has access to far more data than intended.</p>
+<p>The room is fundamentally about retrieval boundary collapse.</p>
+<h2>Initial Surface Mapping</h2>
+<p>The first step is not exploitation.</p>
+<p>It is capability discovery.</p>
+<p>The attacker begins by uploading a document and asking Atlas to summarize it:</p>
+<pre><code class="language-text">summerise 1773829736357-document-ingestion-cloudwright.txt
+</code></pre>
+<p>Atlas responds with standard employee documentation:</p>
+<ul>
+<li>Onboarding workflow</li>
+<li>Expense policy</li>
+<li>Engineering on-call schedules</li>
+</ul>
+<p>At this stage, the assistant appears legitimate.</p>
+<p>This mirrors how many real-world enterprise RAG deployments behave. Public-facing queries initially return safe and expected information, creating trust in the system.</p>
+<p>The important observation is not the content itself.</p>
+<p>It is the existence of document ingestion and retrieval.</p>
+<p>Once retrieval exists, the next question becomes:</p>
+<p>What else was embedded into the vector store?</p>
+<h2>Retrieval Expansion Through Conversational Probing</h2>
+<p>The attacker gradually increases query scope instead of immediately requesting secrets.</p>
+<p>This is critical.</p>
+<p>Aggressive prompts often trigger filtering logic.<br>Normal conversational exploration usually does not.</p>
+<p>The attacker begins asking broad summarization questions:</p>
+<pre><code class="language-text">summarise what info u have access too
+</code></pre>
+<p>Atlas reveals additional internal knowledge domains:</p>
+<ul>
+<li>Internal projects</li>
+<li>Board-approved funds</li>
+<li>Infrastructure operations</li>
+<li>Credential rotation schedules</li>
+<li>Monitoring stack configurations</li>
+</ul>
+<p>At this point, the security failure becomes obvious.</p>
+<p>The assistant is not isolated to employee-safe documentation.</p>
+<p>The retrieval system can access:</p>
+<ul>
+<li>Internal infrastructure details</li>
+<li>Operational procedures</li>
+<li>Board-level information</li>
+<li>Potentially sensitive configuration data</li>
+</ul>
+<p>The retrieval boundary has already failed.</p>
+<h2>Semantic Retrieval Has No Native Authorization</h2>
+<p>This room demonstrates a core problem in RAG architecture.</p>
+<p>Vector databases retrieve documents based on semantic similarity, not access permissions.</p>
+<p>If sensitive documents are embedded into the same searchable retrieval space as public documents, similarity search can surface them during normal conversation.</p>
+<p>The model itself is not deciding authorization.</p>
+<p>The retriever already decided what context enters the prompt.</p>
+<p>Once the sensitive context reaches the model:</p>
+<p>The leak already happened.</p>
+<p>The LLM simply generates a response using whatever documents were retrieved.</p>
+<h2>Progressive Information Disclosure</h2>
+<p>The attacker continues requesting:</p>
+<pre><code class="language-text">more
+more something new
+more different and new
+more newer
+</code></pre>
+<p>This technique matters.</p>
+<p>The attacker is exploiting conversational continuity.</p>
+<p>Instead of directly requesting secrets, the attacker nudges the assistant to continue expanding retrieval scope.</p>
+<p>Atlas eventually discloses:</p>
+<ul>
+<li>Project Atlas internal alpha details</li>
+<li>Budget approvals</li>
+<li>Acquisition legal review information</li>
+<li>Staging service account names</li>
+<li>Credential rotation schedules</li>
+<li>Legacy monitoring stack details</li>
+<li>Internal wiki paths</li>
+</ul>
+<p>Example disclosure:</p>
+<pre><code class="language-text">The legacy monitoring system relies on a hardcoded API key,
+which is documented at /ops/legacy-monitoring-config
+</code></pre>
+<p>This is a classic retrieval exposure issue.</p>
+<p>The assistant is effectively acting as an indexed internal reconnaissance interface.</p>
+<h2>Sensitive Infrastructure Leakage</h2>
+<p>One of the most dangerous disclosures involves infrastructure operations:</p>
+<pre><code class="language-text">Production database credentials are rotated every 72 hours using Vault,
+while staging uses a shared service account with a 90-day rotation schedule.
+</code></pre>
+<p>This type of information is highly valuable during post-exploitation.</p>
+<p>Even without direct credentials, attackers gain:</p>
+<ul>
+<li>Infrastructure architecture awareness</li>
+<li>Identity management details</li>
+<li>Rotation timing intelligence</li>
+<li>Service account naming patterns</li>
+<li>Potential attack timing opportunities</li>
+</ul>
+<p>This is operational intelligence leakage.</p>
+<p>Many organizations incorrectly classify this as “non-sensitive.”</p>
+<p>In reality, modern offensive operations rely heavily on contextual infrastructure intelligence.</p>
+<h2>Board-Level Data Exposure</h2>
+<p>Atlas later reveals board-approved business decisions:</p>
+<pre><code class="language-text">- Acquisition of Vantage AI for $18.5M
+- Emergency Security Fund (SEC-2026-EMRG)
+</code></pre>
+<p>The attacker continues narrowing focus toward the emergency security fund.</p>
+<p>Eventually Atlas exposes:</p>
+<pre><code class="language-text">Internal Reference Identifier:
+THM{r3tri3v4l_h4s_n0_b0und4r13s}
+</code></pre>
+<p>Flag:</p>
+<pre><code class="language-text">THM{r3tri3v4l_h4s_n0_b0und4r13s}
+</code></pre>
+<p>The important lesson is not the flag.</p>
+<p>The important lesson is why it was reachable.</p>
+<h2>Why The Attack Worked</h2>
+<p>The compromise did not require:</p>
+<ul>
+<li>Prompt injection</li>
+<li>Jailbreaking</li>
+<li>Authentication bypass</li>
+<li>Exploiting the model</li>
+<li>Remote code execution</li>
+<li>API abuse</li>
+</ul>
+<p>The attacker simply asked questions.</p>
+<p>The failure occurred because:</p>
+<ol>
+<li>Sensitive documents were embedded into the retrievable corpus.</li>
+<li>Retrieval lacked authorization enforcement.</li>
+<li>The assistant trusted retrieved context automatically.</li>
+<li>Conversational exploration allowed progressive disclosure.</li>
+<li>The organization assumed semantic search implied safe isolation.</li>
+</ol>
+<p>This is a pipeline security failure.</p>
+<p>Not a model failure.</p>
+<h2>The Real Security Problem</h2>
+<p>Most organizations focus on prompt safety.</p>
+<p>The actual danger is retrieval safety.</p>
+<p>Modern RAG systems often connect:</p>
+<ul>
+<li>Internal wikis</li>
+<li>Slack exports</li>
+<li>Confluence pages</li>
+<li>Ticket systems</li>
+<li>Google Drive</li>
+<li>SharePoint</li>
+<li>Infrastructure documentation</li>
+<li>Incident reports</li>
+<li>Executive notes</li>
+</ul>
+<p>If ingestion pipelines lack strict authorization segmentation, the vector store becomes a semantic data lake where unrelated information can accidentally surface together.</p>
+<p>Similarity search does not understand:</p>
+<ul>
+<li>Clearance levels</li>
+<li>Business sensitivity</li>
+<li>Need-to-know access</li>
+<li>Department isolation</li>
+<li>Tenant boundaries</li>
+</ul>
+<p>Without explicit enforcement layers, the retrieval engine becomes an unintentional insider threat amplifier.</p>
+<h2>Attack Methodology Used In The Room</h2>
+<p>The room indirectly teaches a realistic offensive methodology for testing enterprise AI assistants.</p>
+<h3>1. Capability Enumeration</h3>
+<p>Identify:</p>
+<ul>
+<li>What data sources exist</li>
+<li>What domains the assistant understands</li>
+<li>Whether retrieval is active</li>
+<li>Whether conversational memory exists</li>
+</ul>
+<h3>2. Scope Expansion</h3>
+<p>Gradually widen query context:</p>
+<pre><code class="language-text">more
+something new
+summarise everything
+</code></pre>
+<p>This encourages the assistant to retrieve adjacent documents.</p>
+<h3>3. Topic Pivoting</h3>
+<p>When new sensitive entities appear:</p>
+<ul>
+<li>Projects</li>
+<li>Funds</li>
+<li>Infrastructure</li>
+<li>Operations</li>
+<li>Acquisitions</li>
+</ul>
+<p>Pivot deeper into those domains.</p>
+<h3>4. Recursive Disclosure</h3>
+<p>Ask for:</p>
+<ul>
+<li>More detail</li>
+<li>New information</li>
+<li>Internal references</li>
+<li>Related operational context</li>
+</ul>
+<p>RAG systems frequently over-share once conversational retrieval chains begin expanding.</p>
+<h2>Real-World Parallel</h2>
+<p>This room reflects real enterprise AI risks.</p>
+<p>Common failures include:</p>
+<ul>
+<li>HR assistants leaking engineering data</li>
+<li>Internal copilots exposing secrets from unrelated departments</li>
+<li>AI search systems surfacing credentials from documentation</li>
+<li>Executive meeting notes appearing in semantic retrieval</li>
+<li>Multi-tenant vector databases leaking cross-user data</li>
+</ul>
+<p>The dangerous part is that these leaks often occur through completely normal conversation.</p>
+<p>No exploit payload is required.</p>
+<h2>Security Lessons</h2>
+<p>The room demonstrates several critical RAG security principles.</p>
+<h3>Ingestion Is A Security Boundary</h3>
+<p>If sensitive documents enter embeddings:</p>
+<p>They become retrievable.</p>
+<p>Security failures often begin during ingestion, not inference.</p>
+<h3>Retrieval Requires Authorization</h3>
+<p>Semantic similarity alone is not security.</p>
+<p>Every retrieval operation must enforce:</p>
+<ul>
+<li>Identity-aware filtering</li>
+<li>Namespace isolation</li>
+<li>Access control checks</li>
+<li>Document-level permissions</li>
+<li>Tenant separation</li>
+</ul>
+<h3>Context Equals Exposure</h3>
+<p>Anything retrieved into the prompt is effectively disclosed.</p>
+<p>The model cannot safely distinguish:</p>
+<ul>
+<li>Public context</li>
+<li>Confidential context</li>
+<li>Regulated data</li>
+<li>Internal-only documents</li>
+</ul>
+<p>unless the pipeline enforces it first.</p>
+<h3>Conversational AI Expands Attack Surface</h3>
+<p>Persistent conversation enables progressive disclosure attacks.</p>
+<p>Each response becomes reconnaissance for the next query.</p>
+<h2>Final Thoughts</h2>
+<p>TryHackMe UnIndexed is not really about prompt engineering.</p>
+<p>It is about understanding that modern AI systems inherit every security problem of their retrieval pipelines.</p>
+<p>RAG systems are not just chatbots.</p>
+<p>They are searchable interfaces to organizational memory.</p>
+<p>If ingestion, retrieval, segmentation, and authorization are weak, the assistant becomes an internal reconnaissance engine capable of exposing infrastructure details, operational intelligence, executive decisions, and confidential records through ordinary conversation.</p>
+<p>The room’s flag summarizes the entire issue perfectly:</p>
+<pre><code class="language-text">THM{r3******_h**_n*_*******}
+</code></pre>
+
+    </article>
+  </main>
+
+  <footer>
+    <span class="f-accent">$</span> echo "Made by <span class="f-accent">Aryan Giri</span>" &nbsp;·&nbsp; <a href="https://github.com/giriaryan694-a11y" target="_blank" rel="noopener noreferrer">GitHub</a>
+  </footer>
+
+  <script>
+    /* Theme — synced with main site via same cookie */
+    const themes=["dark","light","eye-saver"];
+    const themeData={"dark":{emoji:"🌙",label:"Dark"},"light":{emoji:"☀️",label:"Light"},"eye-saver":{emoji:"☕",label:"Reading"}};
+    function setCookie(n,v,d){const e=new Date();e.setTime(e.getTime()+d*86400000);document.cookie=`${n}=${v};expires=${e.toUTCString()};path=/`;}
+    function getCookie(n){const m=document.cookie.match(new RegExp('(^| )'+n+'=([^;]+)'));return m?m[2]:null;}
+    let currentTheme=getCookie("site_theme")||"dark";
+    const themeBtn=document.getElementById("theme-btn");
+    const themeEmoji=document.getElementById("theme-emoji");
+    function applyTheme(theme,animate=false){
+      document.body.className=theme==="dark"?"":theme;
+      themeEmoji.textContent=themeData[theme].emoji;
+      document.getElementById("theme-label").textContent=themeData[theme].label;
+      setCookie("site_theme",theme,365);
+      if(animate){themeEmoji.style.animation="none";themeEmoji.offsetHeight;themeEmoji.style.animation="popSpin 0.4s cubic-bezier(0.175,0.885,0.32,1.275) forwards";}
+    }
+    applyTheme(currentTheme);
+    themeBtn.addEventListener("click",()=>{currentTheme=themes[(themes.indexOf(currentTheme)+1)%themes.length];applyTheme(currentTheme,true);});
+
+    /* Links → new tab + copy buttons on code blocks */
+    document.querySelectorAll(".post-content a").forEach(l => {
+      l.setAttribute("target", "_blank");
+      l.setAttribute("rel", "noopener noreferrer");
+    });
+    document.querySelectorAll("pre").forEach(pre => {
+      const code = pre.querySelector("code");
+      if (!code) return;
+      const btn = document.createElement("button");
+      btn.className = "copy-btn";
+      btn.textContent = "copy";
+      btn.onclick = async () => {
+        try { await navigator.clipboard.writeText(code.innerText.trimEnd()); }
+        catch {}
+        btn.textContent = "✓ copied"; btn.classList.add("copied");
+        setTimeout(() => { btn.textContent = "copy"; btn.classList.remove("copied"); }, 2000);
+      };
+      pre.appendChild(btn);
+    });
+  </script>
+</body>
+</html>

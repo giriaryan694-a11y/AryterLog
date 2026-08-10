@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TryHackMe Hacker Holidays 2026 — Packed Light Writeup — AryterLog</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="../../manifest.json">
+  <meta name="theme-color" content="#080b10">
+  <link rel="icon" href="../../icons/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="../../icons/apple-touch-icon.png">
+  <meta name="description" content="Walkthrough of the Packed Light room covering HTTP traffic analysis, covert data exfiltration through cookies, XOR/Base64 decoding, CyberChef analysis, and tshark automation.">
+  <link rel="canonical" href="https://giriaryan694-a11y.github.io/AryterLog/posts/tryhackme-hacker-holidays-2026-packed-light/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="TryHackMe Hacker Holidays 2026 — Packed Light Writeup">
+  <meta property="og:description" content="Walkthrough of the Packed Light room covering HTTP traffic analysis, covert data exfiltration through cookies, XOR/Base64 decoding, CyberChef analysis, and tshark automation.">
+  <meta property="og:url" content="https://giriaryan694-a11y.github.io/AryterLog/posts/tryhackme-hacker-holidays-2026-packed-light/">
+  <meta property="og:site_name" content="AryterLog">
+  <meta property="article:published_time" content="2026-08-10T01:53:36.073Z">
+  <meta property="article:tag" content="ctf">
+  <meta property="article:tag" content="forensics">
+  <meta property="article:tag" content="network-security">
+  <meta property="article:tag" content="tooling">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="TryHackMe Hacker Holidays 2026 — Packed Light Writeup">
+  <meta name="twitter:description" content="Walkthrough of the Packed Light room covering HTTP traffic analysis, covert data exfiltration through cookies, XOR/Base64 decoding, CyberChef analysis, and tshark automation.">
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"TryHackMe Hacker Holidays 2026 — Packed Light Writeup","description":"Walkthrough of the Packed Light room covering HTTP traffic analysis, covert data exfiltration through cookies, XOR/Base64 decoding, CyberChef analysis, and tshark automation.","datePublished":"2026-08-10T01:53:36.073Z","author":{"@type":"Person","name":"Aryan Giri"},"publisher":{"@type":"Organization","name":"AryterLog"},"mainEntityOfPage":"https://giriaryan694-a11y.github.io/AryterLog/posts/tryhackme-hacker-holidays-2026-packed-light/","keywords":"ctf, forensics, network-security, tooling"}</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:#080b10; --surface:#0d1117; --surface2:#111820; --surface3:#161d27;
+      --text:#d0dbe8; --text2:#7a8a9a; --accent:#00ff88; --accent2:#0ea5e9;
+      --danger:#ff4560; --border:#1e2a38; --border2:#2a3848; --code-bg:#0a0f16;
+      --glow:rgba(0,255,136,0.08); --glow2:rgba(0,255,136,0.18);
+    }
+    .light {
+      --bg:#f5f7fa; --surface:#ffffff; --surface2:#f0f4f8; --surface3:#e8eef5;
+      --text:#111827; --text2:#6b7280; --accent:#059669; --accent2:#0284c7;
+      --danger:#dc2626; --border:#e2e8f0; --border2:#cbd5e1; --code-bg:#f1f5f9;
+      --glow:rgba(5,150,105,0.07); --glow2:rgba(5,150,105,0.14);
+    }
+    .eye-saver {
+      --bg:#12100a; --surface:#1a1608; --surface2:#211c0c; --surface3:#282210;
+      --text:#e8d8b0; --text2:#9a8860; --accent:#f5c542; --accent2:#e08030;
+      --danger:#e05050; --border:#302810; --border2:#3d3418; --code-bg:#0f0d06;
+      --glow:rgba(245,197,66,0.08); --glow2:rgba(245,197,66,0.18);
+    }
+
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body {
+      font-family:'Fira Code',monospace;
+      background:var(--bg); color:var(--text);
+      min-height:100vh; overflow-x:hidden;
+      transition:background 0.4s,color 0.4s;
+    }
+    body::before {
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+      background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
+      background-size:44px 44px; opacity:0.25;
+    }
+
+    header {
+      position:sticky; top:0; z-index:200;
+      background:rgba(8,11,16,0.86); backdrop-filter:blur(16px);
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 22px; height:56px; gap:12px;
+    }
+    .light header{background:rgba(245,247,250,0.9);}
+    .eye-saver header{background:rgba(18,16,10,0.9);}
+    header::after {
+      content:''; position:absolute; bottom:-1px; left:8%; right:8%; height:1px;
+      background:linear-gradient(90deg,transparent,var(--accent),transparent); opacity:0.35;
+    }
+    .header-left{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+
+    .logo {
+      font-family:'Bebas Neue',sans-serif; font-size:24px; font-weight:400;
+      letter-spacing:3px; color:var(--text); text-decoration:none; white-space:nowrap;
+      flex-shrink:0; line-height:1; transition:color 0.2s;
+    }
+    .logo .lo-a{color:var(--accent);}
+    .logo:hover .lo-a{text-shadow:0 0 14px var(--accent);}
+
+    .back-link {
+      display:inline-flex; align-items:center; gap:6px;
+      background:transparent; border:1px solid var(--border2); color:var(--text2);
+      padding:6px 12px; border-radius:6px; cursor:pointer; transition:all 0.2s;
+      font-family:'Fira Code',monospace; font-size:11px; text-decoration:none;
+    }
+    .back-link:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    #theme-btn {
+      background:transparent; border:1px solid var(--border2);
+      padding:5px 11px; cursor:pointer; color:var(--text2); border-radius:6px;
+      transition:all 0.2s; font-family:'Fira Code',monospace; font-size:11px;
+      display:inline-flex; align-items:center; gap:6px; white-space:nowrap;
+    }
+    #theme-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    @keyframes popSpin{0%{transform:scale(0.4) rotate(-60deg);opacity:0;}70%{transform:scale(1.15) rotate(5deg);}100%{transform:scale(1) rotate(0deg);opacity:1;}}
+    .emoji{display:inline-block;}
+
+    main{max-width:760px;margin:0 auto;padding:34px 20px 60px;position:relative;z-index:1;}
+
+    .back-btn {
+      display:inline-flex;align-items:center;gap:7px;margin-bottom:20px;
+      background:var(--surface);border:1px solid var(--border2);color:var(--text2);
+      padding:7px 13px;border-radius:6px;font-family:'Fira Code',monospace;font-size:11px;
+      cursor:pointer;transition:all 0.2s;text-decoration:none;
+    }
+    .back-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    .post-content {
+      background:var(--surface);border:1px solid var(--border);border-radius:12px;
+      padding:34px 30px;position:relative;overflow:hidden;
+    }
+    .post-content::before {
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      border-radius:12px 12px 0 0;
+    }
+    .post-content *{max-width:100%;}
+
+    h1 {
+      font-family:'Space Grotesk',sans-serif;font-size:clamp(19px,4vw,26px);
+      font-weight:700;color:var(--text);margin-bottom:8px;line-height:1.25;word-break:break-word;
+    }
+    .post-header-meta{
+      font-family:'Fira Code',monospace;font-size:11px;color:var(--text2);
+      padding-bottom:18px;margin-bottom:22px;border-bottom:1px solid var(--border);
+      display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+    }
+    .card-cat-chip {
+      display:inline-flex;align-items:center;padding:1px 7px;border-radius:3px;
+      border:1px solid var(--border2);background:var(--surface2);color:var(--text2);
+      font-size:9px;font-family:'Fira Code',monospace;font-weight:500;letter-spacing:0.4px;
+    }
+    h2,h3{font-family:'Space Grotesk',sans-serif;font-weight:600;color:var(--text);margin:26px 0 10px;word-break:break-word;}
+    h2{font-size:19px;} h3{font-size:15px;color:var(--accent);}
+    p{font-size:14px;line-height:1.8;margin-bottom:14px;color:var(--text);}
+    ul,ol{padding-left:20px;margin-bottom:14px;font-size:14px;line-height:1.8;}
+    li{margin-bottom:4px;}
+
+    a{color:var(--accent);word-break:break-all;overflow-wrap:break-word;transition:opacity 0.2s;}
+    a:hover{opacity:0.75;}
+    .post-content a{text-decoration:underline;text-underline-offset:3px;}
+
+    code {
+      background:var(--code-bg);border:1px solid var(--border);padding:2px 6px;
+      border-radius:4px;font-family:'Fira Code',monospace;font-size:0.85em;
+      color:var(--accent);word-break:break-all;overflow-wrap:break-word;
+    }
+    pre {
+      background:var(--code-bg);border:1px solid var(--border);padding:18px;border-radius:8px;
+      max-width:100%; overflow:hidden;
+      position:relative;margin-bottom:14px;
+    }
+    pre::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      opacity:0.5;border-radius:8px 8px 0 0;
+    }
+    pre code{
+      background:transparent;border:none;padding:0 60px 0 0;word-break:normal;
+      overflow-wrap:normal;white-space:pre;display:block;
+      overflow-x:auto;-webkit-overflow-scrolling:touch;
+      font-size:13px;line-height:1.65;color:var(--text);
+    }
+    blockquote{
+      border-left:2px solid var(--accent);margin:14px 0;padding:10px 16px;
+      background:var(--glow);border-radius:0 6px 6px 0;font-style:italic;color:var(--text2);
+    }
+    table{width:100%;border-collapse:collapse;display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;font-size:13px;margin-bottom:14px;}
+    th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;white-space:nowrap;}
+    th{background:var(--surface2);color:var(--accent);font-weight:600;}
+    img{max-width:100%;height:auto;border-radius:8px;display:block;margin:14px 0;}
+
+    .copy-btn {
+      position:absolute;top:9px;right:9px;padding:3px 8px;font-size:10px;
+      font-family:'Fira Code',monospace;font-weight:500;background:var(--surface2);
+      border:1px solid var(--border2);color:var(--text2);border-radius:4px;cursor:pointer;
+      transition:all 0.2s;opacity:0;letter-spacing:0.3px;
+    }
+    pre:hover .copy-btn{opacity:1;}
+    .copy-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    .copy-btn.copied{border-color:var(--accent);color:var(--accent);opacity:1;}
+
+    footer{
+      text-align:center;padding:22px 16px;color:var(--text2);
+      font-family:'Fira Code',monospace;font-size:11px;
+      border-top:1px solid var(--border);position:relative;z-index:1;
+    }
+    .f-accent{color:var(--accent);}
+    footer a{color:var(--accent);text-decoration:none;}
+    footer a:hover{opacity:0.75;}
+
+    @media(max-width:480px){
+      header{padding:0 13px;height:50px;}
+      .logo{font-size:21px;letter-spacing:2px;}
+      main{padding:20px 14px 44px;}
+      .post-content{padding:20px 14px;}
+      pre{padding:13px;}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <a href="../../index.html" class="logo">Aryter<span class="lo-a">Log</span></a>
+    </div>
+    <button id="theme-btn" aria-label="Cycle Theme">
+      <span class="emoji" id="theme-emoji">🌙</span>
+      <span id="theme-label">Dark</span>
+    </button>
+  </header>
+
+  <main>
+    <a href="../../index.html#post-tryhackme-hacker-holidays-2026-packed-light" class="back-btn">← Back to Blog</a>
+    <article class="post-content">
+      <h1>TryHackMe Hacker Holidays 2026 — Packed Light Writeup</h1>
+      <div class="post-header-meta">
+        <span>📅 Published 31-07-2026</span>
+        <span>·</span><span class="card-cat-chip">ctf</span><span class="card-cat-chip">forensics</span><span class="card-cat-chip">network-security</span><span class="card-cat-chip">tooling</span>
+      </div>
+      <p>Written By Aryan Giri</p>
+<p><strong>Room:</strong> Packed Light<br><strong>Category:</strong> Forensics<br><strong>Difficulty:</strong> Easy<br><strong>Room URL:</strong> <a href="https://tryhackme.com/room/hh-packedlight-02e5330c">https://tryhackme.com/room/hh-packedlight-02e5330c</a></p>
+<h2>Scenario</h2>
+<p>The hotel network appears normal at first glance, but something unusual is happening.</p>
+<p>A host repeatedly communicates with a service running on <strong>TCP port 8080</strong> every second. The traffic is small, consistent, and looks harmless until inspected more closely. Our objective is to identify the covert communication channel, recover the hidden data, decode it, and obtain the flag.</p>
+<hr>
+<h1>Download the Challenge Files</h1>
+<p>Download the ZIP archive provided by the room and extract it.</p>
+<pre><code class="language-bash">unzip PackedLight.zip
+</code></pre>
+<p>Inside the archive you&#39;ll find the packet capture (<code>traffic.pcapng</code>).</p>
+<p>Open it in Wireshark.</p>
+<img width="1919" height="1026" alt="Screenshot 2026-07-31 100158" src="https://github.com/user-attachments/assets/beedb614-6244-4aa3-8860-a2ee2ff1ed8e" />
+
+<hr>
+<h1>Inspecting the Traffic</h1>
+<p>Before diving into individual packets, it is worth observing the overall traffic pattern.</p>
+<p>The capture shows repeated HTTP requests to a service running on <strong>TCP port 8080</strong>. More importantly, these requests occur at nearly one-second intervals, which is characteristic of <strong>automated beaconing</strong> rather than normal user browsing. This regular communication makes the host an excellent candidate for further investigation.</p>
+<p>Although filtering with:</p>
+<pre><code class="language-text">tcp.port == 8080
+</code></pre>
+<p>works, using the HTTP dissector makes the analysis much cleaner:</p>
+<pre><code class="language-text">http
+</code></pre>
+<p>Almost immediately an interesting request appears:</p>
+<pre><code>GET /temp/updates.py
+</code></pre>
+<img width="1919" height="1025" alt="Screenshot 2026-07-31 074411" src="https://github.com/user-attachments/assets/7cb1704f-e3e7-46ba-aa26-d2b60da92560" />
+
+<hr>
+<h1>Recovering the Python Script</h1>
+<p>Right-click the request and select:</p>
+<pre><code>Follow
+    → HTTP Stream
+</code></pre>
+<img width="1919" height="1008" alt="Screenshot 2026-07-31 074524" src="https://github.com/user-attachments/assets/9daa07fa-9609-40b8-853b-26e383555290" />
+
+<p>Following the HTTP stream reconstructs the complete client/server conversation, allowing us to inspect files transferred over the connection without manually reassembling packets.</p>
+<p>This reveals the Python script being downloaded by the client.</p>
+<img width="811" height="575" alt="Screenshot 2026-07-31 074905" src="https://github.com/user-attachments/assets/16b71aa2-cb41-43b4-95d7-5ea57168e0d4" />
+
+<p>Reading the script reveals the covert communication mechanism.</p>
+<p>The downloaded Python script prepares the data before placing it into the HTTP cookie by:</p>
+<ol>
+<li>XORing the plaintext</li>
+<li>Encoding the XOR output using Base64</li>
+<li>Storing the result inside the <code>hotel_sess_state</code> cookie</li>
+</ol>
+<p>The important takeaway is that the cookie values are <strong>not random</strong>—they are encoded pieces of the exfiltrated message.</p>
+<hr>
+<h1>Finding the Hidden Data</h1>
+<p>Now filter the HTTP requests containing the suspicious cookie.</p>
+<pre><code class="language-text">http.cookie contains &quot;hotel_sess_state&quot;
+</code></pre>
+<p>Each HTTP request now contains a value similar to:</p>
+<pre><code>hotel_sess_state=HA==
+</code></pre>
+<img width="403" height="304" alt="Screenshot 2026-07-31 075017" src="https://github.com/user-attachments/assets/f7a9e7dc-a2be-417c-b226-6f1a6376ff13" />
+<img width="980" height="890" alt="Screenshot 2026-07-31 080741" src="https://github.com/user-attachments/assets/7726bd2d-3aa3-42ad-a9d2-e6da233c18ab" />
+
+<p>Instead of carrying a normal session identifier, the cookie changes with every request and contains short Base64-looking values such as <code>HA==</code>. This unusual behaviour suggests the cookie is being used as a covert storage channel rather than legitimate session management.</p>
+<p>Each cookie contains a tiny fragment of the hidden message.</p>
+<hr>
+<h1>Decoding the Cookie</h1>
+<p>To understand the encoding, open CyberChef:</p>
+<p><a href="https://gchq.github.io/CyberChef">https://gchq.github.io/CyberChef</a></p>
+<p>Create the following recipe:</p>
+<pre><code>From Base64
+
+XOR
+</code></pre>
+<p>The Python script first XORs each byte before Base64 encoding it, so the decoding process simply reverses those operations:</p>
+<ol>
+<li>Decode from Base64</li>
+<li>XOR with the recovered key (<code>H</code>)</li>
+</ol>
+<p>During analysis of the recovered Python script, the XOR key was identified as a string beginning with <strong>H</strong>. Only the first character (<code>H</code>, ASCII <code>0x48</code>) is applied to the one-byte payload stored in each cookie, so using <strong>H</strong> as the CyberChef XOR key successfully reproduces the original plaintext.</p>
+<p>For the first cookie:</p>
+<pre><code>HA==
+</code></pre>
+<p>CyberChef outputs:</p>
+<pre><code>T
+</code></pre>
+<img width="1914" height="886" alt="Screenshot 2026-07-31 091941" src="https://github.com/user-attachments/assets/d535ff9c-9af6-49bc-97be-1cb1230eb03d" />
+
+<p>This confirms that every cookie stores a single encoded character.</p>
+<hr>
+<h1>Recovering the Entire Message</h1>
+<p>Copying every cookie manually would be slow and error-prone.</p>
+<p>Instead, use <strong>tshark</strong>, Wireshark&#39;s command-line version.</p>
+<pre><code class="language-bash">tshark -r traffic.pcapng -Y &#39;http.cookie contains &quot;hotel_sess_state=&quot;&#39; -T fields -e http.cookie | sed -n &#39;s/.*hotel_sess_state=\([^;[:space:]]*\).*/\1/p&#39; | tr -d &#39;[:space:]&#39;
+</code></pre>
+<p>This command:</p>
+<ul>
+<li>Filters packets containing the <code>hotel_sess_state</code> cookie.</li>
+<li>Extracts only the Cookie header.</li>
+<li>Removes everything except the cookie value.</li>
+<li>Concatenates every Base64-encoded one-byte chunk into a single continuous sequence.</li>
+</ul>
+<p>Example output:</p>
+<pre><code>HA==AA==BQ==Mw==Hg==...
+</code></pre>
+<img width="1849" height="278" alt="Screenshot 2026-07-31 092007" src="https://github.com/user-attachments/assets/af1e9e36-4a7a-4962-a5f5-c987b9c76662" />
+
+<hr>
+<h1>Decode the Complete Payload</h1>
+<p>Copy the output from the tshark command into CyberChef.</p>
+<p>Use the same recipe:</p>
+<pre><code>From Base64
+
+XOR (UTF-8 Key: H)
+</code></pre>
+<p>CyberChef decodes each Base64-encoded byte, XORs it with the recovered key (<code>H</code> / <code>0x48</code>), and reconstructs the original plaintext, revealing the room flag.</p>
+<img width="1543" height="733" alt="Screenshot 2026-07-31 092029" src="https://github.com/user-attachments/assets/74f9eb71-a72d-40c9-ad97-9df0338036c2" />
+
+<hr>
+<h1>What This Room Teaches</h1>
+<p>Packed Light demonstrates a simple but effective covert data exfiltration technique.</p>
+<p>Rather than sending the secret directly, the downloaded Python script:</p>
+<ul>
+<li>XOR-encodes the data</li>
+<li>Base64-encodes the result</li>
+<li>Stores each encoded byte inside an HTTP cookie</li>
+<li>Exfiltrates the data one small chunk at a time through regular HTTP requests</li>
+</ul>
+<p>Although each request appears completely legitimate in isolation, examining the application-layer data reveals the hidden communication channel.</p>
+<p>This room is an excellent introduction to:</p>
+<ul>
+<li>PCAP analysis with Wireshark</li>
+<li>Identifying automated beaconing</li>
+<li>HTTP stream inspection</li>
+<li>Recognizing covert communication channels</li>
+<li>Extracting hidden data from HTTP cookies</li>
+<li>Reversing simple encoding schemes with CyberChef</li>
+<li>Automating forensic analysis using tshark</li>
+</ul>
+<p>While the exfiltration mechanism is technically simple, it demonstrates a common covert channel technique: hiding data inside otherwise legitimate application-layer traffic. Because each request appears normal on its own, identifying the beaconing pattern and inspecting HTTP headers become essential skills during network forensic investigations.</p>
+
+    </article>
+  </main>
+
+  <footer>
+    <span class="f-accent">$</span> echo "Made by <span class="f-accent">Aryan Giri</span>" &nbsp;·&nbsp; <a href="https://github.com/giriaryan694-a11y" target="_blank" rel="noopener noreferrer">GitHub</a>
+  </footer>
+
+  <script>
+    /* Theme — synced with main site via same cookie */
+    const themes=["dark","light","eye-saver"];
+    const themeData={"dark":{emoji:"🌙",label:"Dark"},"light":{emoji:"☀️",label:"Light"},"eye-saver":{emoji:"☕",label:"Reading"}};
+    function setCookie(n,v,d){const e=new Date();e.setTime(e.getTime()+d*86400000);document.cookie=`${n}=${v};expires=${e.toUTCString()};path=/`;}
+    function getCookie(n){const m=document.cookie.match(new RegExp('(^| )'+n+'=([^;]+)'));return m?m[2]:null;}
+    let currentTheme=getCookie("site_theme")||"dark";
+    const themeBtn=document.getElementById("theme-btn");
+    const themeEmoji=document.getElementById("theme-emoji");
+    function applyTheme(theme,animate=false){
+      document.body.className=theme==="dark"?"":theme;
+      themeEmoji.textContent=themeData[theme].emoji;
+      document.getElementById("theme-label").textContent=themeData[theme].label;
+      setCookie("site_theme",theme,365);
+      if(animate){themeEmoji.style.animation="none";themeEmoji.offsetHeight;themeEmoji.style.animation="popSpin 0.4s cubic-bezier(0.175,0.885,0.32,1.275) forwards";}
+    }
+    applyTheme(currentTheme);
+    themeBtn.addEventListener("click",()=>{currentTheme=themes[(themes.indexOf(currentTheme)+1)%themes.length];applyTheme(currentTheme,true);});
+
+    /* Links → new tab + copy buttons on code blocks */
+    document.querySelectorAll(".post-content a").forEach(l => {
+      l.setAttribute("target", "_blank");
+      l.setAttribute("rel", "noopener noreferrer");
+    });
+    document.querySelectorAll("pre").forEach(pre => {
+      const code = pre.querySelector("code");
+      if (!code) return;
+      const btn = document.createElement("button");
+      btn.className = "copy-btn";
+      btn.textContent = "copy";
+      btn.onclick = async () => {
+        try { await navigator.clipboard.writeText(code.innerText.trimEnd()); }
+        catch {}
+        btn.textContent = "✓ copied"; btn.classList.add("copied");
+        setTimeout(() => { btn.textContent = "copy"; btn.classList.remove("copied"); }, 2000);
+      };
+      pre.appendChild(btn);
+    });
+  </script>
+</body>
+</html>

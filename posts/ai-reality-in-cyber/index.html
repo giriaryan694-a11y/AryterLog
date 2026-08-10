@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI in Cybersecurity — Reality Check — AryterLog</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="../../manifest.json">
+  <meta name="theme-color" content="#080b10">
+  <link rel="icon" href="../../icons/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="../../icons/apple-touch-icon.png">
+  <meta name="description" content="AI augments human pentesters, not replace them — accountability, creativity, and logical thinking still need a human behind the keyboard.">
+  <link rel="canonical" href="https://giriaryan694-a11y.github.io/AryterLog/posts/ai-reality-in-cyber/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="AI in Cybersecurity — Reality Check">
+  <meta property="og:description" content="AI augments human pentesters, not replace them — accountability, creativity, and logical thinking still need a human behind the keyboard.">
+  <meta property="og:url" content="https://giriaryan694-a11y.github.io/AryterLog/posts/ai-reality-in-cyber/">
+  <meta property="og:site_name" content="AryterLog">
+  <meta property="article:published_time" content="2026-03-26T00:00:00.000Z">
+  <meta property="article:tag" content="ai-security">
+  <meta property="article:tag" content="offensive-security">
+  <meta property="article:tag" content="career">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="AI in Cybersecurity — Reality Check">
+  <meta name="twitter:description" content="AI augments human pentesters, not replace them — accountability, creativity, and logical thinking still need a human behind the keyboard.">
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"AI in Cybersecurity — Reality Check","description":"AI augments human pentesters, not replace them — accountability, creativity, and logical thinking still need a human behind the keyboard.","datePublished":"2026-03-26T00:00:00.000Z","author":{"@type":"Person","name":"Aryan Giri"},"publisher":{"@type":"Organization","name":"AryterLog"},"mainEntityOfPage":"https://giriaryan694-a11y.github.io/AryterLog/posts/ai-reality-in-cyber/","keywords":"ai-security, offensive-security, career"}</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:#080b10; --surface:#0d1117; --surface2:#111820; --surface3:#161d27;
+      --text:#d0dbe8; --text2:#7a8a9a; --accent:#00ff88; --accent2:#0ea5e9;
+      --danger:#ff4560; --border:#1e2a38; --border2:#2a3848; --code-bg:#0a0f16;
+      --glow:rgba(0,255,136,0.08); --glow2:rgba(0,255,136,0.18);
+    }
+    .light {
+      --bg:#f5f7fa; --surface:#ffffff; --surface2:#f0f4f8; --surface3:#e8eef5;
+      --text:#111827; --text2:#6b7280; --accent:#059669; --accent2:#0284c7;
+      --danger:#dc2626; --border:#e2e8f0; --border2:#cbd5e1; --code-bg:#f1f5f9;
+      --glow:rgba(5,150,105,0.07); --glow2:rgba(5,150,105,0.14);
+    }
+    .eye-saver {
+      --bg:#12100a; --surface:#1a1608; --surface2:#211c0c; --surface3:#282210;
+      --text:#e8d8b0; --text2:#9a8860; --accent:#f5c542; --accent2:#e08030;
+      --danger:#e05050; --border:#302810; --border2:#3d3418; --code-bg:#0f0d06;
+      --glow:rgba(245,197,66,0.08); --glow2:rgba(245,197,66,0.18);
+    }
+
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body {
+      font-family:'Fira Code',monospace;
+      background:var(--bg); color:var(--text);
+      min-height:100vh; overflow-x:hidden;
+      transition:background 0.4s,color 0.4s;
+    }
+    body::before {
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+      background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
+      background-size:44px 44px; opacity:0.25;
+    }
+
+    header {
+      position:sticky; top:0; z-index:200;
+      background:rgba(8,11,16,0.86); backdrop-filter:blur(16px);
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 22px; height:56px; gap:12px;
+    }
+    .light header{background:rgba(245,247,250,0.9);}
+    .eye-saver header{background:rgba(18,16,10,0.9);}
+    header::after {
+      content:''; position:absolute; bottom:-1px; left:8%; right:8%; height:1px;
+      background:linear-gradient(90deg,transparent,var(--accent),transparent); opacity:0.35;
+    }
+    .header-left{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+
+    .logo {
+      font-family:'Bebas Neue',sans-serif; font-size:24px; font-weight:400;
+      letter-spacing:3px; color:var(--text); text-decoration:none; white-space:nowrap;
+      flex-shrink:0; line-height:1; transition:color 0.2s;
+    }
+    .logo .lo-a{color:var(--accent);}
+    .logo:hover .lo-a{text-shadow:0 0 14px var(--accent);}
+
+    .back-link {
+      display:inline-flex; align-items:center; gap:6px;
+      background:transparent; border:1px solid var(--border2); color:var(--text2);
+      padding:6px 12px; border-radius:6px; cursor:pointer; transition:all 0.2s;
+      font-family:'Fira Code',monospace; font-size:11px; text-decoration:none;
+    }
+    .back-link:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    #theme-btn {
+      background:transparent; border:1px solid var(--border2);
+      padding:5px 11px; cursor:pointer; color:var(--text2); border-radius:6px;
+      transition:all 0.2s; font-family:'Fira Code',monospace; font-size:11px;
+      display:inline-flex; align-items:center; gap:6px; white-space:nowrap;
+    }
+    #theme-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    @keyframes popSpin{0%{transform:scale(0.4) rotate(-60deg);opacity:0;}70%{transform:scale(1.15) rotate(5deg);}100%{transform:scale(1) rotate(0deg);opacity:1;}}
+    .emoji{display:inline-block;}
+
+    main{max-width:760px;margin:0 auto;padding:34px 20px 60px;position:relative;z-index:1;}
+
+    .back-btn {
+      display:inline-flex;align-items:center;gap:7px;margin-bottom:20px;
+      background:var(--surface);border:1px solid var(--border2);color:var(--text2);
+      padding:7px 13px;border-radius:6px;font-family:'Fira Code',monospace;font-size:11px;
+      cursor:pointer;transition:all 0.2s;text-decoration:none;
+    }
+    .back-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    .post-content {
+      background:var(--surface);border:1px solid var(--border);border-radius:12px;
+      padding:34px 30px;position:relative;overflow:hidden;
+    }
+    .post-content::before {
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      border-radius:12px 12px 0 0;
+    }
+    .post-content *{max-width:100%;}
+
+    h1 {
+      font-family:'Space Grotesk',sans-serif;font-size:clamp(19px,4vw,26px);
+      font-weight:700;color:var(--text);margin-bottom:8px;line-height:1.25;word-break:break-word;
+    }
+    .post-header-meta{
+      font-family:'Fira Code',monospace;font-size:11px;color:var(--text2);
+      padding-bottom:18px;margin-bottom:22px;border-bottom:1px solid var(--border);
+      display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+    }
+    .card-cat-chip {
+      display:inline-flex;align-items:center;padding:1px 7px;border-radius:3px;
+      border:1px solid var(--border2);background:var(--surface2);color:var(--text2);
+      font-size:9px;font-family:'Fira Code',monospace;font-weight:500;letter-spacing:0.4px;
+    }
+    h2,h3{font-family:'Space Grotesk',sans-serif;font-weight:600;color:var(--text);margin:26px 0 10px;word-break:break-word;}
+    h2{font-size:19px;} h3{font-size:15px;color:var(--accent);}
+    p{font-size:14px;line-height:1.8;margin-bottom:14px;color:var(--text);}
+    ul,ol{padding-left:20px;margin-bottom:14px;font-size:14px;line-height:1.8;}
+    li{margin-bottom:4px;}
+
+    a{color:var(--accent);word-break:break-all;overflow-wrap:break-word;transition:opacity 0.2s;}
+    a:hover{opacity:0.75;}
+    .post-content a{text-decoration:underline;text-underline-offset:3px;}
+
+    code {
+      background:var(--code-bg);border:1px solid var(--border);padding:2px 6px;
+      border-radius:4px;font-family:'Fira Code',monospace;font-size:0.85em;
+      color:var(--accent);word-break:break-all;overflow-wrap:break-word;
+    }
+    pre {
+      background:var(--code-bg);border:1px solid var(--border);padding:18px;border-radius:8px;
+      max-width:100%; overflow:hidden;
+      position:relative;margin-bottom:14px;
+    }
+    pre::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      opacity:0.5;border-radius:8px 8px 0 0;
+    }
+    pre code{
+      background:transparent;border:none;padding:0 60px 0 0;word-break:normal;
+      overflow-wrap:normal;white-space:pre;display:block;
+      overflow-x:auto;-webkit-overflow-scrolling:touch;
+      font-size:13px;line-height:1.65;color:var(--text);
+    }
+    blockquote{
+      border-left:2px solid var(--accent);margin:14px 0;padding:10px 16px;
+      background:var(--glow);border-radius:0 6px 6px 0;font-style:italic;color:var(--text2);
+    }
+    table{width:100%;border-collapse:collapse;display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;font-size:13px;margin-bottom:14px;}
+    th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;white-space:nowrap;}
+    th{background:var(--surface2);color:var(--accent);font-weight:600;}
+    img{max-width:100%;height:auto;border-radius:8px;display:block;margin:14px 0;}
+
+    .copy-btn {
+      position:absolute;top:9px;right:9px;padding:3px 8px;font-size:10px;
+      font-family:'Fira Code',monospace;font-weight:500;background:var(--surface2);
+      border:1px solid var(--border2);color:var(--text2);border-radius:4px;cursor:pointer;
+      transition:all 0.2s;opacity:0;letter-spacing:0.3px;
+    }
+    pre:hover .copy-btn{opacity:1;}
+    .copy-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    .copy-btn.copied{border-color:var(--accent);color:var(--accent);opacity:1;}
+
+    footer{
+      text-align:center;padding:22px 16px;color:var(--text2);
+      font-family:'Fira Code',monospace;font-size:11px;
+      border-top:1px solid var(--border);position:relative;z-index:1;
+    }
+    .f-accent{color:var(--accent);}
+    footer a{color:var(--accent);text-decoration:none;}
+    footer a:hover{opacity:0.75;}
+
+    @media(max-width:480px){
+      header{padding:0 13px;height:50px;}
+      .logo{font-size:21px;letter-spacing:2px;}
+      main{padding:20px 14px 44px;}
+      .post-content{padding:20px 14px;}
+      pre{padding:13px;}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <a href="../../index.html" class="logo">Aryter<span class="lo-a">Log</span></a>
+    </div>
+    <button id="theme-btn" aria-label="Cycle Theme">
+      <span class="emoji" id="theme-emoji">🌙</span>
+      <span id="theme-label">Dark</span>
+    </button>
+  </header>
+
+  <main>
+    <a href="../../index.html#post-ai-reality-in-cyber" class="back-btn">← Back to Blog</a>
+    <article class="post-content">
+      <h1>AI in Cybersecurity — Reality Check</h1>
+      <div class="post-header-meta">
+        <span>📅 Published March 26, 2026</span>
+        <span>·</span><span class="card-cat-chip">ai-security</span><span class="card-cat-chip">offensive-security</span><span class="card-cat-chip">career</span>
+      </div>
+      <blockquote>
+<p><strong>A community-driven documentary article challenging the narrative that AI will replace human penetration testers.</strong></p>
+</blockquote>
+<hr>
+<h2>Table of Contents</h2>
+<ul>
+<li><a href="#overview">Overview</a></li>
+<li><a href="#the-augmentation-reality">The Augmentation Reality</a></li>
+<li><a href="#the-accountability-gap">The Accountability Gap</a></li>
+<li><a href="#the-air-gap-problem">The Air-Gap Problem</a></li>
+<li><a href="#ai-limitations-in-practice">AI Limitations in Practice</a></li>
+<li><a href="#new-jobs-created-by-ai">New Jobs Created by AI</a></li>
+<li><a href="#the-agi-requirement">The AGI Requirement</a></li>
+<li><a href="#the-developer-parallel">The Developer Parallel</a></li>
+<li><a href="#resources">Resources</a></li>
+</ul>
+<hr>
+<h2>Overview</h2>
+<p>Companies like <strong>No Scope AI</strong> (associated with a TryHackMe founder) and <strong>XBow AI</strong> have made bold claims about autonomous AI systems replacing human penetration testers. Headlines suggest AI will render skilled security professionals obsolete.</p>
+<p><strong>This repository documents why that narrative is wrong — backed by technical reasoning, real-world observations, and community experience.</strong></p>
+<p>The reality is not replacement. It is <strong>augmentation</strong>.</p>
+<blockquote>
+<p>Just as Claude and similar AI tools made developers faster and more productive rather than unemployed, AI is making pentesters more capable — not redundant.</p>
+</blockquote>
+<hr>
+<h2>The Augmentation Reality</h2>
+<p>AI tools are genuinely useful in penetration testing for:</p>
+<ul>
+<li>Automated reconnaissance and asset discovery</li>
+<li>CVE correlation and known vulnerability matching</li>
+<li>Drafting pentest reports from findings</li>
+<li>Assisting with CTF challenges and pattern-based problems</li>
+<li>Code review and static analysis at scale</li>
+</ul>
+<p>However, finding a vulnerability is only a fraction of the job. The rest requires:</p>
+<ul>
+<li>Understanding business context and risk impact</li>
+<li>Creative vulnerability chaining in novel environments</li>
+<li>Adapting when nothing goes according to plan</li>
+<li>Social engineering and physical assessments</li>
+<li>Communicating findings to non-technical stakeholders</li>
+<li>Signing off on reports with professional and legal accountability</li>
+</ul>
+<p><strong>AI can assist with the first category. It cannot replace the second.</strong></p>
+<hr>
+<h2>The Accountability Gap</h2>
+<p>This is arguably the strongest argument against AI replacing human pentesters.</p>
+<p>When a penetration test concludes, someone must sign the report. That signature carries:</p>
+<ul>
+<li><strong>Legal weight</strong> — the assessor is professionally liable for the findings</li>
+<li><strong>Regulatory compliance</strong> — certifications like OSCP, CEH, and CREST are tied to individuals</li>
+<li><strong>Client trust</strong> — organizations are engaging a human expert, not a black box</li>
+<li><strong>Breach liability</strong> — if a critical vulnerability is missed and the client is compromised, a human must be accountable</li>
+</ul>
+<p><strong>An AI cannot be sued. An AI cannot hold a professional certification. An AI cannot be held responsible in court.</strong></p>
+<p>Additionally:</p>
+<ul>
+<li>AI can hallucinate findings — reporting vulnerabilities that do not exist</li>
+<li>AI can be manipulated through adversarial inputs and prompt injection</li>
+<li>Even validating what an AI found during a pentest requires the same technical depth as doing it yourself</li>
+</ul>
+<p>The human skill floor does not drop with AI assistance. It simply gets applied differently.</p>
+<hr>
+<h2>The Air-Gap Problem</h2>
+<p>The environments where AI-assisted pentesting would be most valuable are precisely the environments where current AI deployment models are <strong>completely unsuitable</strong>.</p>
+<h3>What gets generated during a sensitive pentest:</h3>
+<ul>
+<li>Network topology and architecture of classified systems</li>
+<li>Vulnerability findings on critical infrastructure</li>
+<li>Internal IP schemas, credentials, and authentication mechanisms</li>
+<li>Custom protocol documentation for military or government systems</li>
+</ul>
+<p>Sending any of this to a commercial cloud provider — even encrypted in transit — violates:</p>
+<ul>
+<li><strong>ITAR</strong> (International Traffic in Arms Regulations)</li>
+<li><strong>FedRAMP</strong> compliance requirements</li>
+<li><strong>Classified network handling regulations</strong></li>
+<li>Most defense and government contract terms</li>
+</ul>
+<h3>The Local AI Hardware Reality</h3>
+<p>Running capable AI models locally requires:</p>
+<table>
+<thead>
+<tr>
+<th>Setup</th>
+<th>Estimated Cost</th>
+<th>Performance</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>RTX 4090 single GPU</td>
+<td>~$2,000+</td>
+<td>Adequate for smaller models (7B-13B)</td>
+</tr>
+<tr>
+<td>Dual high-end GPU rig</td>
+<td>~$5,000–$8,000</td>
+<td>Handles mid-range models (30B-70B)</td>
+</tr>
+<tr>
+<td>Enterprise on-premise AI</td>
+<td>$15,000–$100,000+</td>
+<td>Production-grade but inaccessible to most</td>
+</tr>
+</tbody></table>
+<p>Most individual pentesters and small security firms cannot afford this infrastructure.</p>
+<h3>The Resulting Divide</h3>
+<p>This creates a widening capability gap:</p>
+<ul>
+<li>Well-funded nation-state actors and large defense contractors <strong>can</strong> build capable local AI infrastructure</li>
+<li>Independent researchers and smaller firms either accept cloud data exposure risks or go without</li>
+</ul>
+<p><strong>This widens inequality in the security industry rather than democratizing it.</strong></p>
+<p>Human pentesters who can operate effectively in air-gapped, classified environments — with nothing but their own knowledge — become <strong>more</strong> valuable, not less.</p>
+<hr>
+<h2>AI Limitations in Practice</h2>
+<h3>CTF Observations</h3>
+<p>CTF (Capture The Flag) challenges are purpose-built environments with intended solutions. Even in these controlled scenarios, AI consistently fails on:</p>
+<ul>
+<li>Multi-step logical chains requiring creative interpretation at each step</li>
+<li>Challenges combining obscure technical knowledge in unusual ways</li>
+<li>Anything requiring genuine intuition about the challenge author&#39;s intent</li>
+<li>Novel exploitation techniques not represented in training data</li>
+</ul>
+<p><strong>If AI struggles in designed, intentional environments — imagine it in a real enterprise network with legacy systems, undocumented architecture, and custom applications.</strong></p>
+<h3>XBow AI — A Case Study</h3>
+<p>XBow AI claimed to have built an autonomous hacker that &quot;won&#39;t sleep, eat, or rest.&quot; In practice:</p>
+<ul>
+<li>It performs well against known vulnerability classes</li>
+<li>It struggles significantly with logical and business-context vulnerabilities</li>
+<li>Human pentesters using XBow as a tool are more effective than XBow alone</li>
+<li>It did not replace a single skilled pentester — it made some tasks faster</li>
+</ul>
+<h3>No Scope AI — Realistic Assessment</h3>
+<p>The &quot;autonomous pentester&quot; framing generates press and investor interest. But autonomous in a controlled, scoped, well-documented environment is fundamentally different from replacing someone who walks into an unknown network and must figure out what is even there.</p>
+<hr>
+<h2>New Jobs Created by AI</h2>
+<p>Rather than eliminating jobs, AI has generated entirely new roles in the security field:</p>
+<ul>
+<li><strong>AI Security Researcher</strong> — finding vulnerabilities in LLMs and AI systems themselves</li>
+<li><strong>AI Red Teamer</strong> — adversarial testing including prompt injection, jailbreaking, and model manipulation</li>
+<li><strong>AI Output Validator</strong> — auditing AI-generated findings in security pipelines for accuracy</li>
+<li><strong>LLM Penetration Tester</strong> — specialized assessments of AI-integrated applications</li>
+<li><strong>AI Governance Auditor</strong> — compliance and risk assessment for AI deployments in regulated industries</li>
+</ul>
+<p>The security attack surface has grown, not shrunk. More AI in production means more AI to secure.</p>
+<hr>
+<h2>The AGI Requirement</h2>
+<p>What exists today — including the most advanced commercial AI — is sophisticated pattern matching on large datasets. It is not autonomous reasoning.</p>
+<p>To build an AI that genuinely replaces a human pentester, you would need:</p>
+<ul>
+<li><strong>True contextual understanding</strong> — not pattern matching but actual comprehension of novel situations</li>
+<li><strong>Adaptive creativity</strong> — generating genuinely new attack approaches, not recombining known ones</li>
+<li><strong>Judgment under ambiguity</strong> — making good decisions with incomplete information</li>
+<li><strong>Ethical and professional accountability</strong> — taking responsibility for outcomes</li>
+<li><strong>Real-world embodiment</strong> — handling physical security assessments, social engineering in person</li>
+</ul>
+<p>This is the domain of <strong>Artificial General Intelligence (AGI)</strong>, which remains an unsolved research problem. Most serious AI researchers place AGI development timelines at many years to decades away — and even then, accountability remains a fundamental unsolved question.</p>
+<hr>
+<h2>The Developer Parallel</h2>
+<p>The most direct real-world evidence against the replacement narrative:</p>
+<blockquote>
+<p>After Claude and similar AI tools were released, rumors spread that AI would replace all software engineers and developers. The opposite happened.</p>
+</blockquote>
+<ul>
+<li>Claude Pro subscriptions were purchased <strong>most heavily by developers and software engineers</strong></li>
+<li>Developer productivity increased significantly</li>
+<li>Many developers reported being the &quot;happiest they have ever been&quot; in their careers</li>
+<li>AI made their work faster and more creative — not obsolete</li>
+<li>The demand for skilled developers did not decrease</li>
+</ul>
+<p><strong>The same pattern is playing out in penetration testing.</strong></p>
+<p>Pentesters who embrace AI tools become more capable, handle more engagements, and deliver better reports. Those who ignore AI adaptation fall behind — not to AI, but to other pentesters using AI.</p>
+<hr>
+<h2>Resources</h2>
+<h3>Local AI Setup for Sensitive Environments</h3>
+<ul>
+<li><a href="https://ollama.ai">Ollama — Local LLM deployment</a></li>
+<li><a href="https://lmstudio.ai">LM Studio — Desktop local AI</a></li>
+<li><a href="https://mistral.ai">Mistral 7B — Capable lightweight model</a></li>
+<li><a href="https://llama.meta.com">Llama — Meta&#39;s open models</a></li>
+</ul>
+<h3>AI-Assisted Pentesting Tools (Responsible Use)</h3>
+<ul>
+<li><a href="https://github.com/projectdiscovery/nuclei">Nuclei — Template-based scanning</a></li>
+<li><a href="https://github.com/GreyDGL/PentestGPT">PentestGPT — AI-guided pentesting</a></li>
+</ul>
+<h3>Regulatory and Compliance References</h3>
+<ul>
+<li>ITAR Compliance Guidelines</li>
+<li>FedRAMP Authorization Documentation</li>
+<li>NIST AI Risk Management Framework</li>
+</ul>
+<hr>
+<hr>
+<p><em>Made by Aryan Giri — A documentation of ground truth from the security community.</em></p>
+
+    </article>
+  </main>
+
+  <footer>
+    <span class="f-accent">$</span> echo "Made by <span class="f-accent">Aryan Giri</span>" &nbsp;·&nbsp; <a href="https://github.com/giriaryan694-a11y" target="_blank" rel="noopener noreferrer">GitHub</a>
+  </footer>
+
+  <script>
+    /* Theme — synced with main site via same cookie */
+    const themes=["dark","light","eye-saver"];
+    const themeData={"dark":{emoji:"🌙",label:"Dark"},"light":{emoji:"☀️",label:"Light"},"eye-saver":{emoji:"☕",label:"Reading"}};
+    function setCookie(n,v,d){const e=new Date();e.setTime(e.getTime()+d*86400000);document.cookie=`${n}=${v};expires=${e.toUTCString()};path=/`;}
+    function getCookie(n){const m=document.cookie.match(new RegExp('(^| )'+n+'=([^;]+)'));return m?m[2]:null;}
+    let currentTheme=getCookie("site_theme")||"dark";
+    const themeBtn=document.getElementById("theme-btn");
+    const themeEmoji=document.getElementById("theme-emoji");
+    function applyTheme(theme,animate=false){
+      document.body.className=theme==="dark"?"":theme;
+      themeEmoji.textContent=themeData[theme].emoji;
+      document.getElementById("theme-label").textContent=themeData[theme].label;
+      setCookie("site_theme",theme,365);
+      if(animate){themeEmoji.style.animation="none";themeEmoji.offsetHeight;themeEmoji.style.animation="popSpin 0.4s cubic-bezier(0.175,0.885,0.32,1.275) forwards";}
+    }
+    applyTheme(currentTheme);
+    themeBtn.addEventListener("click",()=>{currentTheme=themes[(themes.indexOf(currentTheme)+1)%themes.length];applyTheme(currentTheme,true);});
+
+    /* Links → new tab + copy buttons on code blocks */
+    document.querySelectorAll(".post-content a").forEach(l => {
+      l.setAttribute("target", "_blank");
+      l.setAttribute("rel", "noopener noreferrer");
+    });
+    document.querySelectorAll("pre").forEach(pre => {
+      const code = pre.querySelector("code");
+      if (!code) return;
+      const btn = document.createElement("button");
+      btn.className = "copy-btn";
+      btn.textContent = "copy";
+      btn.onclick = async () => {
+        try { await navigator.clipboard.writeText(code.innerText.trimEnd()); }
+        catch {}
+        btn.textContent = "✓ copied"; btn.classList.add("copied");
+        setTimeout(() => { btn.textContent = "copy"; btn.classList.remove("copied"); }, 2000);
+      };
+      pre.appendChild(btn);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cybersecurity Learning Scams &amp; Misinformation — AryterLog</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="../../manifest.json">
+  <meta name="theme-color" content="#080b10">
+  <link rel="icon" href="../../icons/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="../../icons/apple-touch-icon.png">
+  <meta name="description" content="How beginners in India get pulled into scams, misleading training, fake credibility, and unsafe communities—and how to separate real learning from noise.">
+  <link rel="canonical" href="https://giriaryan694-a11y.github.io/AryterLog/posts/clsam/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Cybersecurity Learning Scams &amp; Misinformation">
+  <meta property="og:description" content="How beginners in India get pulled into scams, misleading training, fake credibility, and unsafe communities—and how to separate real learning from noise.">
+  <meta property="og:url" content="https://giriaryan694-a11y.github.io/AryterLog/posts/clsam/">
+  <meta property="og:site_name" content="AryterLog">
+  <meta property="article:published_time" content="2026-03-27T00:00:00.000Z">
+  <meta property="article:tag" content="education">
+  <meta property="article:tag" content="awareness">
+  <meta property="article:tag" content="personal">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Cybersecurity Learning Scams &amp; Misinformation">
+  <meta name="twitter:description" content="How beginners in India get pulled into scams, misleading training, fake credibility, and unsafe communities—and how to separate real learning from noise.">
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Cybersecurity Learning Scams & Misinformation","description":"How beginners in India get pulled into scams, misleading training, fake credibility, and unsafe communities—and how to separate real learning from noise.","datePublished":"2026-03-27T00:00:00.000Z","author":{"@type":"Person","name":"Aryan Giri"},"publisher":{"@type":"Organization","name":"AryterLog"},"mainEntityOfPage":"https://giriaryan694-a11y.github.io/AryterLog/posts/clsam/","keywords":"education, awareness, personal"}</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:#080b10; --surface:#0d1117; --surface2:#111820; --surface3:#161d27;
+      --text:#d0dbe8; --text2:#7a8a9a; --accent:#00ff88; --accent2:#0ea5e9;
+      --danger:#ff4560; --border:#1e2a38; --border2:#2a3848; --code-bg:#0a0f16;
+      --glow:rgba(0,255,136,0.08); --glow2:rgba(0,255,136,0.18);
+    }
+    .light {
+      --bg:#f5f7fa; --surface:#ffffff; --surface2:#f0f4f8; --surface3:#e8eef5;
+      --text:#111827; --text2:#6b7280; --accent:#059669; --accent2:#0284c7;
+      --danger:#dc2626; --border:#e2e8f0; --border2:#cbd5e1; --code-bg:#f1f5f9;
+      --glow:rgba(5,150,105,0.07); --glow2:rgba(5,150,105,0.14);
+    }
+    .eye-saver {
+      --bg:#12100a; --surface:#1a1608; --surface2:#211c0c; --surface3:#282210;
+      --text:#e8d8b0; --text2:#9a8860; --accent:#f5c542; --accent2:#e08030;
+      --danger:#e05050; --border:#302810; --border2:#3d3418; --code-bg:#0f0d06;
+      --glow:rgba(245,197,66,0.08); --glow2:rgba(245,197,66,0.18);
+    }
+
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body {
+      font-family:'Fira Code',monospace;
+      background:var(--bg); color:var(--text);
+      min-height:100vh; overflow-x:hidden;
+      transition:background 0.4s,color 0.4s;
+    }
+    body::before {
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+      background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
+      background-size:44px 44px; opacity:0.25;
+    }
+
+    header {
+      position:sticky; top:0; z-index:200;
+      background:rgba(8,11,16,0.86); backdrop-filter:blur(16px);
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 22px; height:56px; gap:12px;
+    }
+    .light header{background:rgba(245,247,250,0.9);}
+    .eye-saver header{background:rgba(18,16,10,0.9);}
+    header::after {
+      content:''; position:absolute; bottom:-1px; left:8%; right:8%; height:1px;
+      background:linear-gradient(90deg,transparent,var(--accent),transparent); opacity:0.35;
+    }
+    .header-left{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+
+    .logo {
+      font-family:'Bebas Neue',sans-serif; font-size:24px; font-weight:400;
+      letter-spacing:3px; color:var(--text); text-decoration:none; white-space:nowrap;
+      flex-shrink:0; line-height:1; transition:color 0.2s;
+    }
+    .logo .lo-a{color:var(--accent);}
+    .logo:hover .lo-a{text-shadow:0 0 14px var(--accent);}
+
+    .back-link {
+      display:inline-flex; align-items:center; gap:6px;
+      background:transparent; border:1px solid var(--border2); color:var(--text2);
+      padding:6px 12px; border-radius:6px; cursor:pointer; transition:all 0.2s;
+      font-family:'Fira Code',monospace; font-size:11px; text-decoration:none;
+    }
+    .back-link:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    #theme-btn {
+      background:transparent; border:1px solid var(--border2);
+      padding:5px 11px; cursor:pointer; color:var(--text2); border-radius:6px;
+      transition:all 0.2s; font-family:'Fira Code',monospace; font-size:11px;
+      display:inline-flex; align-items:center; gap:6px; white-space:nowrap;
+    }
+    #theme-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    @keyframes popSpin{0%{transform:scale(0.4) rotate(-60deg);opacity:0;}70%{transform:scale(1.15) rotate(5deg);}100%{transform:scale(1) rotate(0deg);opacity:1;}}
+    .emoji{display:inline-block;}
+
+    main{max-width:760px;margin:0 auto;padding:34px 20px 60px;position:relative;z-index:1;}
+
+    .back-btn {
+      display:inline-flex;align-items:center;gap:7px;margin-bottom:20px;
+      background:var(--surface);border:1px solid var(--border2);color:var(--text2);
+      padding:7px 13px;border-radius:6px;font-family:'Fira Code',monospace;font-size:11px;
+      cursor:pointer;transition:all 0.2s;text-decoration:none;
+    }
+    .back-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    .post-content {
+      background:var(--surface);border:1px solid var(--border);border-radius:12px;
+      padding:34px 30px;position:relative;overflow:hidden;
+    }
+    .post-content::before {
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      border-radius:12px 12px 0 0;
+    }
+    .post-content *{max-width:100%;}
+
+    h1 {
+      font-family:'Space Grotesk',sans-serif;font-size:clamp(19px,4vw,26px);
+      font-weight:700;color:var(--text);margin-bottom:8px;line-height:1.25;word-break:break-word;
+    }
+    .post-header-meta{
+      font-family:'Fira Code',monospace;font-size:11px;color:var(--text2);
+      padding-bottom:18px;margin-bottom:22px;border-bottom:1px solid var(--border);
+      display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+    }
+    .card-cat-chip {
+      display:inline-flex;align-items:center;padding:1px 7px;border-radius:3px;
+      border:1px solid var(--border2);background:var(--surface2);color:var(--text2);
+      font-size:9px;font-family:'Fira Code',monospace;font-weight:500;letter-spacing:0.4px;
+    }
+    h2,h3{font-family:'Space Grotesk',sans-serif;font-weight:600;color:var(--text);margin:26px 0 10px;word-break:break-word;}
+    h2{font-size:19px;} h3{font-size:15px;color:var(--accent);}
+    p{font-size:14px;line-height:1.8;margin-bottom:14px;color:var(--text);}
+    ul,ol{padding-left:20px;margin-bottom:14px;font-size:14px;line-height:1.8;}
+    li{margin-bottom:4px;}
+
+    a{color:var(--accent);word-break:break-all;overflow-wrap:break-word;transition:opacity 0.2s;}
+    a:hover{opacity:0.75;}
+    .post-content a{text-decoration:underline;text-underline-offset:3px;}
+
+    code {
+      background:var(--code-bg);border:1px solid var(--border);padding:2px 6px;
+      border-radius:4px;font-family:'Fira Code',monospace;font-size:0.85em;
+      color:var(--accent);word-break:break-all;overflow-wrap:break-word;
+    }
+    pre {
+      background:var(--code-bg);border:1px solid var(--border);padding:18px;border-radius:8px;
+      max-width:100%; overflow:hidden;
+      position:relative;margin-bottom:14px;
+    }
+    pre::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      opacity:0.5;border-radius:8px 8px 0 0;
+    }
+    pre code{
+      background:transparent;border:none;padding:0 60px 0 0;word-break:normal;
+      overflow-wrap:normal;white-space:pre;display:block;
+      overflow-x:auto;-webkit-overflow-scrolling:touch;
+      font-size:13px;line-height:1.65;color:var(--text);
+    }
+    blockquote{
+      border-left:2px solid var(--accent);margin:14px 0;padding:10px 16px;
+      background:var(--glow);border-radius:0 6px 6px 0;font-style:italic;color:var(--text2);
+    }
+    table{width:100%;border-collapse:collapse;display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;font-size:13px;margin-bottom:14px;}
+    th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;white-space:nowrap;}
+    th{background:var(--surface2);color:var(--accent);font-weight:600;}
+    img{max-width:100%;height:auto;border-radius:8px;display:block;margin:14px 0;}
+
+    .copy-btn {
+      position:absolute;top:9px;right:9px;padding:3px 8px;font-size:10px;
+      font-family:'Fira Code',monospace;font-weight:500;background:var(--surface2);
+      border:1px solid var(--border2);color:var(--text2);border-radius:4px;cursor:pointer;
+      transition:all 0.2s;opacity:0;letter-spacing:0.3px;
+    }
+    pre:hover .copy-btn{opacity:1;}
+    .copy-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    .copy-btn.copied{border-color:var(--accent);color:var(--accent);opacity:1;}
+
+    footer{
+      text-align:center;padding:22px 16px;color:var(--text2);
+      font-family:'Fira Code',monospace;font-size:11px;
+      border-top:1px solid var(--border);position:relative;z-index:1;
+    }
+    .f-accent{color:var(--accent);}
+    footer a{color:var(--accent);text-decoration:none;}
+    footer a:hover{opacity:0.75;}
+
+    @media(max-width:480px){
+      header{padding:0 13px;height:50px;}
+      .logo{font-size:21px;letter-spacing:2px;}
+      main{padding:20px 14px 44px;}
+      .post-content{padding:20px 14px;}
+      pre{padding:13px;}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <a href="../../index.html" class="logo">Aryter<span class="lo-a">Log</span></a>
+    </div>
+    <button id="theme-btn" aria-label="Cycle Theme">
+      <span class="emoji" id="theme-emoji">🌙</span>
+      <span id="theme-label">Dark</span>
+    </button>
+  </header>
+
+  <main>
+    <a href="../../index.html#post-clsam" class="back-btn">← Back to Blog</a>
+    <article class="post-content">
+      <h1>Cybersecurity Learning Scams &amp; Misinformation</h1>
+      <div class="post-header-meta">
+        <span>📅 Published March 27, 2026</span>
+        <span>·</span><span class="card-cat-chip">education</span><span class="card-cat-chip">awareness</span><span class="card-cat-chip">personal</span>
+      </div>
+      <h1>Cybersecurity Learning Scams &amp; Misinformation</h1>
+<h2>How Beginners Get Misled in the Real World</h2>
+<p><strong>Written by Aryan Giri</strong></p>
+<hr>
+<h2>Logline</h2>
+<p>Cybersecurity learning is full of hype, fear, fake authority, and manipulation. This documentary follows the path of how beginners in India get pulled into scams, misleading training, fake credibility, and unsafe communities—and how to separate real learning from noise.</p>
+<hr>
+<h2>Disclaimer</h2>
+<p>This documentary is <strong>primarily focused on India</strong>, because the examples and observations come from the Indian cybersecurity learning ecosystem. The same tactics appear in many other places too, but the framing here is intentionally local.</p>
+<p>Even if you are not from India, this document can still help because the core patterns are universal: fake authority, social engineering, manipulated reviews, unsafe tools, and fear-based marketing all work the same way across countries.</p>
+<hr>
+<h2>1. The First Trap: Fast-Track Hype</h2>
+<p>A beginner enters cybersecurity with curiosity. Then the internet starts shouting:</p>
+<ul>
+<li>“Become a hacker in 7 days”</li>
+<li>“Earn money fast with bug bounty”</li>
+<li>“No coding needed”</li>
+<li>“Full hacking mastery in one course”</li>
+</ul>
+<p>This is where many learners lose the plot.</p>
+<p>Real cybersecurity is not a shortcut. It is a discipline built on networking, Linux, programming, web fundamentals, operating systems, and patience.</p>
+<p>A person who only learns tools without understanding the system is not becoming stronger—they are becoming dependent.</p>
+<hr>
+<h2>2. The So-Called Training Institute</h2>
+<p>In India, many so-called cybersecurity training centers present themselves as elite learning hubs. Some of them use branding, certificates, flashy claims, and fake success stories to create legitimacy.</p>
+<p>They may claim:</p>
+<ul>
+<li>“We trained a 12-year-old who hacked NASA”</li>
+<li>“Our students are industry ready in weeks”</li>
+<li>“Direct path to top companies”</li>
+<li>“Government-recognized hacking program”</li>
+</ul>
+<p>When people look deeper, the same certificate, same name, same ID, and same signature may appear across multiple social media posts. That is not proof of excellence. That is a sign of recycled marketing.</p>
+<hr>
+<h2>3. Cracked Tools Sold as Education</h2>
+<p>A major red flag is the distribution of cracked or unsafe tools under the label of education.</p>
+<h3>What some of these institutes give:</h3>
+<ul>
+<li>Cracked Burp Suite Pro</li>
+<li>Telegram-sourced RATs</li>
+<li>USB drives loaded with unknown binaries</li>
+<li>“Hacking kits” with no verification</li>
+</ul>
+<h3>Why this is dangerous:</h3>
+<ul>
+<li>Trojanized software can hide malware</li>
+<li>Keyloggers can capture credentials</li>
+<li>Backdoors can expose the student’s system</li>
+<li>Illegal tools normalize unsafe behavior</li>
+</ul>
+<p>This is not cybersecurity education. This is risk disguised as learning.</p>
+<p>A real training environment uses legal labs, controlled systems, and safe tooling—not weaponized downloads handed out like study material.</p>
+<hr>
+<h2>4. The Sales Call Machine</h2>
+<p>Once a person shows interest, the pressure often begins.</p>
+<ul>
+<li>Repeated calls from different numbers</li>
+<li>Different people saying the same script</li>
+<li>Urgency, fear, and false scarcity</li>
+<li>“Seats are filling fast”</li>
+<li>“You will regret missing this”</li>
+</ul>
+<p>This is not guidance. It is persuasion engineering.</p>
+<p>The goal is not to teach first. The goal is to enroll first.</p>
+<hr>
+<h2>5. University Manipulation</h2>
+<p>Some universities and private institutions use the same playbook with a more respectable mask.</p>
+<h3>Common claims:</h3>
+<ul>
+<li>“Without our degree you are nothing”</li>
+<li>“Direct job in Google/Microsoft”</li>
+<li>“Our placement will transform your life”</li>
+</ul>
+<p>This narrative is designed to create dependency.</p>
+<p>A real degree can help, but no university can guarantee success by brand alone. Companies hire for skills, projects, internships, communication, and problem-solving—not just marketing slogans.</p>
+<p>A strong student understands the difference between a useful degree and a sales pitch.</p>
+<hr>
+<h2>6. Fake Reviews and Bot Reputation</h2>
+<p>Many institutions do not stop at claims. They also try to shape what people see online.</p>
+<h3>The pattern:</h3>
+<ul>
+<li>Repeated praise across many accounts</li>
+<li>The same sentence posted by different profiles</li>
+<li>Generic reviews with no real detail</li>
+<li>Bursts of positive feedback in a short time</li>
+</ul>
+<p>This is reputation engineering.</p>
+<p>It is not separate from university or training manipulation. It supports it.</p>
+<p>The flow is simple:</p>
+<p><strong>Marketing claim → student curiosity → online search → fake reviews → trust reinforcement</strong></p>
+<p>A real institution usually has mixed feedback. Perfect reviews everywhere are often a warning sign, not a victory sign.</p>
+<hr>
+<h2>7. Indian Misinformation from Authorities &amp; Public Figures</h2>
+<p>In India’s rapidly growing cybersecurity landscape, awareness programs, seminars, and public talks are becoming more common. In many of these spaces, <strong>authorities such as IPS officers, police personnel, and members of cyber crime investigation units</strong> step forward to educate the public.</p>
+<p>However, in some cases, <strong>these same authorities themselves may unintentionally spread misinformation</strong> due to outdated knowledge, oversimplification, or lack of deep technical validation.</p>
+<p>This does not always come from bad intent. Often it comes from trying to explain complex topics in a simple and dramatic way. But dramatic does not always mean accurate.</p>
+<h3>Repeated public claims:</h3>
+<ul>
+<li>“A phone can be hacked instantly by plugging in a USB”</li>
+<li>“Hackers can break your Android lock using a chip”</li>
+<li>“Any unknown cable or QR code can fully compromise your device”</li>
+</ul>
+<h3>Ground reality:</h3>
+<p>Modern smartphones are much harder to compromise in these simplistic ways.</p>
+<ul>
+<li>USB access usually requires user permission or unlock state</li>
+<li>Modern Android and iOS reduce data access when locked</li>
+<li>Brute forcing lock screens is heavily rate-limited</li>
+<li>Encryption and device security make casual attacks impractical</li>
+</ul>
+<p>The danger here is not just the inaccurate claim. The danger is what it teaches people to fear—and what it distracts them from.</p>
+<p>Real threats often look less dramatic:</p>
+<ul>
+<li>phishing</li>
+<li>malicious apps</li>
+<li>social engineering</li>
+<li>credential reuse</li>
+<li>account takeover</li>
+</ul>
+<p>That is where many real losses happen.</p>
+<hr>
+<h2>8. The Influencer Discord Funnel</h2>
+<p>A newer trick comes from social media personalities.</p>
+<p>They say things like:</p>
+<ul>
+<li>“I know a beast hacker Discord channel”</li>
+<li>“There are elite blackhat and whitehat hackers there”</li>
+<li>“They are so friendly and supportive”</li>
+<li>“Comment a keyword and I’ll DM you the invite”</li>
+</ul>
+<p>This sounds exclusive, but often it is just an engagement funnel.</p>
+<p>The comment boosts visibility. The invite creates controlled traffic. The server may then be used for promotion, hype, or upselling.</p>
+<p>Not every Discord server is bad. Some are truly useful, structured, and supportive. But random invite-based hype channels should always be verified first.</p>
+<p>Trusted communities usually feel different:</p>
+<ul>
+<li>they answer technical questions carefully</li>
+<li>they avoid illegal shortcuts</li>
+<li>they encourage learning rather than flexing</li>
+<li>they do not sell mystery access as a status symbol</li>
+</ul>
+<p>The real test is not how “elite” a server sounds. The real test is whether the advice is technically sound and ethically clean.</p>
+<hr>
+<h2>9. The Dark Forum Illusion</h2>
+<p>Many teenagers imagine cybersecurity like a movie:</p>
+<ul>
+<li>hidden forums</li>
+<li>shady Telegram groups</li>
+<li>anonymous elites</li>
+<li>fame on the dark web</li>
+</ul>
+<p>That image is dangerous.</p>
+<p>It pushes beginners toward environments where social engineering is common and trust is expensive.</p>
+<h3>Typical pattern:</h3>
+<ol>
+<li>A stranger claims to be a great hacker</li>
+<li>They show basic tools or common tricks</li>
+<li>They build trust over time</li>
+<li>They ask for something small</li>
+<li>The request slowly becomes illegal or unsafe</li>
+</ol>
+<p>Sometimes the emotional version is even more manipulative.</p>
+<p>A person may come with a dramatic story and ask for help against someone else. The story may sound personal, emotional, or urgent. But the request still leads toward illegal access or misuse.</p>
+<p>The correct response is not to join the plot. The correct response is to refuse, redirect toward legal options, and walk away.</p>
+<p>A beginner does not need a shady forum to learn cybersecurity. They need structure, discipline, and verified sources.</p>
+<hr>
+<h2>10. Hacker vs Scammer</h2>
+<p>In India, a common misunderstanding is that hackers and scammers are the same thing. They are not.</p>
+<h3>Computer hacker:</h3>
+<ul>
+<li>understands operating systems</li>
+<li>knows programming and security concepts</li>
+<li>studies vulnerabilities and systems deeply</li>
+<li>may work in research, defense, pentesting, or bug bounty</li>
+</ul>
+<h3>Scammer:</h3>
+<ul>
+<li>uses deception and manipulation</li>
+<li>may have little technical depth</li>
+<li>targets people who are less informed</li>
+<li>often relies on psychology more than engineering</li>
+</ul>
+<p>A scammer can be clever, but that does not make them a hacker.<br>A hacker can be ethical or unethical, but that still does not make them a scammer.</p>
+<p>That difference matters.</p>
+<p>It matters because if society confuses the two, then real cybersecurity learners get treated like criminals, while real criminals hide behind confusion.</p>
+<hr>
+<h2>11. Why This Confusion Hurts Beginners</h2>
+<p>A beginner wants to learn, but the internet gives them the wrong map.</p>
+<p>They see:</p>
+<ul>
+<li>movie hackers</li>
+<li>fake gurus</li>
+<li>hype institutes</li>
+<li>misleading officials</li>
+<li>flashy influencers</li>
+<li>shady groups</li>
+</ul>
+<p>That combination can push them toward bad choices.</p>
+<p>The danger is not just being fooled once.<br>The danger is building your whole understanding on bad examples.</p>
+<p>That is how people waste money, trust unsafe tools, and lose confidence before they ever learn the fundamentals.</p>
+<hr>
+<h2>Conclusion</h2>
+<p>Cybersecurity is full of noise.</p>
+<p>Some of it comes from marketing.<br>Some comes from fear.<br>Some comes from ego.<br>Some comes from misinformation.</p>
+<p>But the truth stays simple:</p>
+<blockquote>
+<p>Real security comes from understanding, not assumption.</p>
+</blockquote>
+<p>The best learners are not the ones who believe every dramatic claim.<br>They are the ones who verify, compare, question, and keep learning until the picture becomes clear.</p>
+<p>This documentary is about protecting beginners from the illusion economy around cybersecurity.</p>
+<p>Stay sharp. Stay skeptical. Stay ethical.</p>
+
+    </article>
+  </main>
+
+  <footer>
+    <span class="f-accent">$</span> echo "Made by <span class="f-accent">Aryan Giri</span>" &nbsp;·&nbsp; <a href="https://github.com/giriaryan694-a11y" target="_blank" rel="noopener noreferrer">GitHub</a>
+  </footer>
+
+  <script>
+    /* Theme — synced with main site via same cookie */
+    const themes=["dark","light","eye-saver"];
+    const themeData={"dark":{emoji:"🌙",label:"Dark"},"light":{emoji:"☀️",label:"Light"},"eye-saver":{emoji:"☕",label:"Reading"}};
+    function setCookie(n,v,d){const e=new Date();e.setTime(e.getTime()+d*86400000);document.cookie=`${n}=${v};expires=${e.toUTCString()};path=/`;}
+    function getCookie(n){const m=document.cookie.match(new RegExp('(^| )'+n+'=([^;]+)'));return m?m[2]:null;}
+    let currentTheme=getCookie("site_theme")||"dark";
+    const themeBtn=document.getElementById("theme-btn");
+    const themeEmoji=document.getElementById("theme-emoji");
+    function applyTheme(theme,animate=false){
+      document.body.className=theme==="dark"?"":theme;
+      themeEmoji.textContent=themeData[theme].emoji;
+      document.getElementById("theme-label").textContent=themeData[theme].label;
+      setCookie("site_theme",theme,365);
+      if(animate){themeEmoji.style.animation="none";themeEmoji.offsetHeight;themeEmoji.style.animation="popSpin 0.4s cubic-bezier(0.175,0.885,0.32,1.275) forwards";}
+    }
+    applyTheme(currentTheme);
+    themeBtn.addEventListener("click",()=>{currentTheme=themes[(themes.indexOf(currentTheme)+1)%themes.length];applyTheme(currentTheme,true);});
+
+    /* Links → new tab + copy buttons on code blocks */
+    document.querySelectorAll(".post-content a").forEach(l => {
+      l.setAttribute("target", "_blank");
+      l.setAttribute("rel", "noopener noreferrer");
+    });
+    document.querySelectorAll("pre").forEach(pre => {
+      const code = pre.querySelector("code");
+      if (!code) return;
+      const btn = document.createElement("button");
+      btn.className = "copy-btn";
+      btn.textContent = "copy";
+      btn.onclick = async () => {
+        try { await navigator.clipboard.writeText(code.innerText.trimEnd()); }
+        catch {}
+        btn.textContent = "✓ copied"; btn.classList.add("copied");
+        setTimeout(() => { btn.textContent = "copy"; btn.classList.remove("copied"); }, 2000);
+      };
+      pre.appendChild(btn);
+    });
+  </script>
+</body>
+</html>

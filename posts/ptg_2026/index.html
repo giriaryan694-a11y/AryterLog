@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Ultimate Guide to Phishing Techniques (2026 Edition) — AryterLog</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="../../manifest.json">
+  <meta name="theme-color" content="#080b10">
+  <link rel="icon" href="../../icons/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="../../icons/apple-touch-icon.png">
+  <meta name="description" content="A complete breakdown of modern phishing techniques, covering link-based, attachment-based, browser attacks, and AI-driven scams—with real-world examples to understand how attackers deceive users.">
+  <link rel="canonical" href="https://giriaryan694-a11y.github.io/AryterLog/posts/ptg_2026/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="The Ultimate Guide to Phishing Techniques (2026 Edition)">
+  <meta property="og:description" content="A complete breakdown of modern phishing techniques, covering link-based, attachment-based, browser attacks, and AI-driven scams—with real-world examples to understand how attackers deceive users.">
+  <meta property="og:url" content="https://giriaryan694-a11y.github.io/AryterLog/posts/ptg_2026/">
+  <meta property="og:site_name" content="AryterLog">
+  <meta property="article:published_time" content="2026-03-29T00:00:00.000Z">
+  <meta property="article:tag" content="phishing">
+  <meta property="article:tag" content="social-engineering">
+  <meta property="article:tag" content="threat-analysis">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="The Ultimate Guide to Phishing Techniques (2026 Edition)">
+  <meta name="twitter:description" content="A complete breakdown of modern phishing techniques, covering link-based, attachment-based, browser attacks, and AI-driven scams—with real-world examples to understand how attackers deceive users.">
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"The Ultimate Guide to Phishing Techniques (2026 Edition)","description":"A complete breakdown of modern phishing techniques, covering link-based, attachment-based, browser attacks, and AI-driven scams—with real-world examples to understand how attackers deceive users.","datePublished":"2026-03-29T00:00:00.000Z","author":{"@type":"Person","name":"Aryan Giri"},"publisher":{"@type":"Organization","name":"AryterLog"},"mainEntityOfPage":"https://giriaryan694-a11y.github.io/AryterLog/posts/ptg_2026/","keywords":"phishing, social-engineering, threat-analysis"}</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:#080b10; --surface:#0d1117; --surface2:#111820; --surface3:#161d27;
+      --text:#d0dbe8; --text2:#7a8a9a; --accent:#00ff88; --accent2:#0ea5e9;
+      --danger:#ff4560; --border:#1e2a38; --border2:#2a3848; --code-bg:#0a0f16;
+      --glow:rgba(0,255,136,0.08); --glow2:rgba(0,255,136,0.18);
+    }
+    .light {
+      --bg:#f5f7fa; --surface:#ffffff; --surface2:#f0f4f8; --surface3:#e8eef5;
+      --text:#111827; --text2:#6b7280; --accent:#059669; --accent2:#0284c7;
+      --danger:#dc2626; --border:#e2e8f0; --border2:#cbd5e1; --code-bg:#f1f5f9;
+      --glow:rgba(5,150,105,0.07); --glow2:rgba(5,150,105,0.14);
+    }
+    .eye-saver {
+      --bg:#12100a; --surface:#1a1608; --surface2:#211c0c; --surface3:#282210;
+      --text:#e8d8b0; --text2:#9a8860; --accent:#f5c542; --accent2:#e08030;
+      --danger:#e05050; --border:#302810; --border2:#3d3418; --code-bg:#0f0d06;
+      --glow:rgba(245,197,66,0.08); --glow2:rgba(245,197,66,0.18);
+    }
+
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body {
+      font-family:'Fira Code',monospace;
+      background:var(--bg); color:var(--text);
+      min-height:100vh; overflow-x:hidden;
+      transition:background 0.4s,color 0.4s;
+    }
+    body::before {
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+      background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
+      background-size:44px 44px; opacity:0.25;
+    }
+
+    header {
+      position:sticky; top:0; z-index:200;
+      background:rgba(8,11,16,0.86); backdrop-filter:blur(16px);
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 22px; height:56px; gap:12px;
+    }
+    .light header{background:rgba(245,247,250,0.9);}
+    .eye-saver header{background:rgba(18,16,10,0.9);}
+    header::after {
+      content:''; position:absolute; bottom:-1px; left:8%; right:8%; height:1px;
+      background:linear-gradient(90deg,transparent,var(--accent),transparent); opacity:0.35;
+    }
+    .header-left{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+
+    .logo {
+      font-family:'Bebas Neue',sans-serif; font-size:24px; font-weight:400;
+      letter-spacing:3px; color:var(--text); text-decoration:none; white-space:nowrap;
+      flex-shrink:0; line-height:1; transition:color 0.2s;
+    }
+    .logo .lo-a{color:var(--accent);}
+    .logo:hover .lo-a{text-shadow:0 0 14px var(--accent);}
+
+    .back-link {
+      display:inline-flex; align-items:center; gap:6px;
+      background:transparent; border:1px solid var(--border2); color:var(--text2);
+      padding:6px 12px; border-radius:6px; cursor:pointer; transition:all 0.2s;
+      font-family:'Fira Code',monospace; font-size:11px; text-decoration:none;
+    }
+    .back-link:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    #theme-btn {
+      background:transparent; border:1px solid var(--border2);
+      padding:5px 11px; cursor:pointer; color:var(--text2); border-radius:6px;
+      transition:all 0.2s; font-family:'Fira Code',monospace; font-size:11px;
+      display:inline-flex; align-items:center; gap:6px; white-space:nowrap;
+    }
+    #theme-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    @keyframes popSpin{0%{transform:scale(0.4) rotate(-60deg);opacity:0;}70%{transform:scale(1.15) rotate(5deg);}100%{transform:scale(1) rotate(0deg);opacity:1;}}
+    .emoji{display:inline-block;}
+
+    main{max-width:760px;margin:0 auto;padding:34px 20px 60px;position:relative;z-index:1;}
+
+    .back-btn {
+      display:inline-flex;align-items:center;gap:7px;margin-bottom:20px;
+      background:var(--surface);border:1px solid var(--border2);color:var(--text2);
+      padding:7px 13px;border-radius:6px;font-family:'Fira Code',monospace;font-size:11px;
+      cursor:pointer;transition:all 0.2s;text-decoration:none;
+    }
+    .back-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    .post-content {
+      background:var(--surface);border:1px solid var(--border);border-radius:12px;
+      padding:34px 30px;position:relative;overflow:hidden;
+    }
+    .post-content::before {
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      border-radius:12px 12px 0 0;
+    }
+    .post-content *{max-width:100%;}
+
+    h1 {
+      font-family:'Space Grotesk',sans-serif;font-size:clamp(19px,4vw,26px);
+      font-weight:700;color:var(--text);margin-bottom:8px;line-height:1.25;word-break:break-word;
+    }
+    .post-header-meta{
+      font-family:'Fira Code',monospace;font-size:11px;color:var(--text2);
+      padding-bottom:18px;margin-bottom:22px;border-bottom:1px solid var(--border);
+      display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+    }
+    .card-cat-chip {
+      display:inline-flex;align-items:center;padding:1px 7px;border-radius:3px;
+      border:1px solid var(--border2);background:var(--surface2);color:var(--text2);
+      font-size:9px;font-family:'Fira Code',monospace;font-weight:500;letter-spacing:0.4px;
+    }
+    h2,h3{font-family:'Space Grotesk',sans-serif;font-weight:600;color:var(--text);margin:26px 0 10px;word-break:break-word;}
+    h2{font-size:19px;} h3{font-size:15px;color:var(--accent);}
+    p{font-size:14px;line-height:1.8;margin-bottom:14px;color:var(--text);}
+    ul,ol{padding-left:20px;margin-bottom:14px;font-size:14px;line-height:1.8;}
+    li{margin-bottom:4px;}
+
+    a{color:var(--accent);word-break:break-all;overflow-wrap:break-word;transition:opacity 0.2s;}
+    a:hover{opacity:0.75;}
+    .post-content a{text-decoration:underline;text-underline-offset:3px;}
+
+    code {
+      background:var(--code-bg);border:1px solid var(--border);padding:2px 6px;
+      border-radius:4px;font-family:'Fira Code',monospace;font-size:0.85em;
+      color:var(--accent);word-break:break-all;overflow-wrap:break-word;
+    }
+    pre {
+      background:var(--code-bg);border:1px solid var(--border);padding:18px;border-radius:8px;
+      max-width:100%; overflow:hidden;
+      position:relative;margin-bottom:14px;
+    }
+    pre::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      opacity:0.5;border-radius:8px 8px 0 0;
+    }
+    pre code{
+      background:transparent;border:none;padding:0 60px 0 0;word-break:normal;
+      overflow-wrap:normal;white-space:pre;display:block;
+      overflow-x:auto;-webkit-overflow-scrolling:touch;
+      font-size:13px;line-height:1.65;color:var(--text);
+    }
+    blockquote{
+      border-left:2px solid var(--accent);margin:14px 0;padding:10px 16px;
+      background:var(--glow);border-radius:0 6px 6px 0;font-style:italic;color:var(--text2);
+    }
+    table{width:100%;border-collapse:collapse;display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;font-size:13px;margin-bottom:14px;}
+    th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;white-space:nowrap;}
+    th{background:var(--surface2);color:var(--accent);font-weight:600;}
+    img{max-width:100%;height:auto;border-radius:8px;display:block;margin:14px 0;}
+
+    .copy-btn {
+      position:absolute;top:9px;right:9px;padding:3px 8px;font-size:10px;
+      font-family:'Fira Code',monospace;font-weight:500;background:var(--surface2);
+      border:1px solid var(--border2);color:var(--text2);border-radius:4px;cursor:pointer;
+      transition:all 0.2s;opacity:0;letter-spacing:0.3px;
+    }
+    pre:hover .copy-btn{opacity:1;}
+    .copy-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    .copy-btn.copied{border-color:var(--accent);color:var(--accent);opacity:1;}
+
+    footer{
+      text-align:center;padding:22px 16px;color:var(--text2);
+      font-family:'Fira Code',monospace;font-size:11px;
+      border-top:1px solid var(--border);position:relative;z-index:1;
+    }
+    .f-accent{color:var(--accent);}
+    footer a{color:var(--accent);text-decoration:none;}
+    footer a:hover{opacity:0.75;}
+
+    @media(max-width:480px){
+      header{padding:0 13px;height:50px;}
+      .logo{font-size:21px;letter-spacing:2px;}
+      main{padding:20px 14px 44px;}
+      .post-content{padding:20px 14px;}
+      pre{padding:13px;}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <a href="../../index.html" class="logo">Aryter<span class="lo-a">Log</span></a>
+    </div>
+    <button id="theme-btn" aria-label="Cycle Theme">
+      <span class="emoji" id="theme-emoji">🌙</span>
+      <span id="theme-label">Dark</span>
+    </button>
+  </header>
+
+  <main>
+    <a href="../../index.html#post-ptg_2026" class="back-btn">← Back to Blog</a>
+    <article class="post-content">
+      <h1>The Ultimate Guide to Phishing Techniques (2026 Edition)</h1>
+      <div class="post-header-meta">
+        <span>📅 Published March 29, 2026</span>
+        <span>·</span><span class="card-cat-chip">phishing</span><span class="card-cat-chip">social-engineering</span><span class="card-cat-chip">threat-analysis</span>
+      </div>
+      <p><strong>Written by Aryan Giri</strong></p>
+<hr>
+<h2>🧠 Introduction</h2>
+<p>Phishing is a trick used to make someone trust the wrong person, website, file, or message. The goal is usually to get information, make the person click something unsafe, or get them to approve a login or action they did not mean to approve.</p>
+<p>In simple words: phishing is <strong>fake trust used for real harm</strong>.</p>
+<hr>
+<h1>⚔️ 1) Link-Based Phishing</h1>
+<h2>🔗 Basic Phishing</h2>
+<p>This is the most common kind of phishing. The victim gets a message with a link that looks normal, but it leads to a fake website.</p>
+<p><strong>Example:</strong><br>An email says your account needs verification, and the link opens a page that looks like a real login page.</p>
+<h2>🎯 Spear Phishing</h2>
+<p>This is phishing aimed at one specific person or one specific company. The message is made to feel personal, so it looks more believable.</p>
+<p><strong>Example:</strong><br>An attacker mentions a real project name or coworker to make the message seem genuine.</p>
+<h2>👔 Whaling</h2>
+<p>This is spear phishing aimed at important people like CEOs, managers, or finance staff.</p>
+<p><strong>Example:</strong><br>A fake legal or payment request is sent to a company executive.</p>
+<h2>📱 Smishing</h2>
+<p>Smishing means phishing through SMS or text messages. The word comes from <strong>SMS + phishing</strong>.</p>
+<p><strong>Example:</strong><br>A text says, “Your parcel is delayed. Click here to update delivery.”</p>
+<h2>📞 Vishing</h2>
+<p>Vishing means phishing through voice calls. The attacker calls and pretends to be a trusted person or company.</p>
+<p><strong>Example:</strong><br>A caller pretends to be from a bank and asks for an OTP or password.</p>
+<hr>
+<h1>⚔️ 2) Attachment-Based Phishing</h1>
+<h2>📄 HTML Attachments</h2>
+<p>An HTML attachment is a file that opens in a browser and can show a fake website page without needing a real online site.</p>
+<p><strong>Example:</strong><br>A file named <code>invoice.html</code> opens a fake sign-in page when clicked.</p>
+<h2>🖼️ SVG Phishing</h2>
+<p>SVG is a type of image file, but it is not just a simple picture. It can contain code or links, so it can behave like an active web document.</p>
+<p><strong>Example:</strong><br>A file named <code>report.svg</code> looks like an image, but opening it sends the user to a fake page.</p>
+<h2>📕 PDF Phishing</h2>
+<p>A PDF can include links, buttons, or fake instructions that lead to a phishing site.</p>
+<p><strong>Example:</strong><br>A PDF says “Click here to view the secure document,” but the link goes to a fake login page.</p>
+<h2>🧠 OneNote Phishing</h2>
+<p>OneNote is a note-taking file format. Attackers can hide a malicious link or file behind what looks like a harmless note or button.</p>
+<p><strong>Example:</strong><br>A note shows a big button that says “Open file,” but the click leads somewhere unsafe.</p>
+<h2>📦 ISO / IMG Phishing</h2>
+<p>ISO and IMG are disk image files. They can contain multiple files inside them, which makes them useful for hiding dangerous content inside a package that looks ordinary.</p>
+<p><strong>Example:</strong><br>A file named <code>documents.iso</code> contains something that looks like a document but is actually unsafe.</p>
+<h2>🧾 Office Document Phishing</h2>
+<p>These are phishing attempts using Word, Excel, or similar files. They may ask the user to enable content, enable editing, or open a link.</p>
+<p><strong>Example:</strong><br>A Word file says “Enable editing to see the full report.”</p>
+<hr>
+<h1>⚔️ 3) Browser-Based Phishing</h1>
+<h2>💣 HTML Smuggling</h2>
+<p>HTML smuggling uses a web page and JavaScript to build a file in the victim’s browser. The file is created on the user side instead of being sent directly.</p>
+<p><strong>Example:</strong><br>A page slowly builds a ZIP file in the browser and downloads it.</p>
+<h2>🔄 Open Redirect Abuse</h2>
+<p>An open redirect is when a trusted site sends the user to another site. Attackers abuse this to make a phishing link look safer.</p>
+<p><strong>Example:</strong><br>A link starts on a real company domain and then forwards to a fake login page.</p>
+<h2>🧩 Tabnabbing</h2>
+<p>Tabnabbing means a browser tab is changed while the user is away, so when they return it looks like a new login prompt.</p>
+<p><strong>Example:</strong><br>A tab that once looked harmless suddenly shows a fake sign-in page.</p>
+<h2>🧠 Browser-in-the-Browser (BitB)</h2>
+<p>This is a fake login window drawn inside a webpage so it looks like a real browser pop-up.</p>
+<p><strong>Example:</strong><br>A page displays a fake Google login box that looks convincing at first glance.</p>
+<h2>🍪 Session Hijacking</h2>
+<p>Instead of stealing the password alone, the attacker tries to steal the session after login. A session is what keeps a user signed in.</p>
+<p><strong>Example:</strong><br>The attacker uses a stolen session cookie to enter the account.</p>
+<hr>
+<h1>⚔️ 4) Infrastructure and Delivery Tricks</h1>
+<h2>🌐 Domain Spoofing</h2>
+<p>Attackers register names that look almost like the real website name.</p>
+<p><strong>Example:</strong><br>A fake domain uses a swapped letter or a very similar-looking character.</p>
+<h2>🔐 HTTPS Abuse</h2>
+<p>A site can still be dangerous even if it shows the secure lock icon. HTTPS only means the connection is encrypted, not that the site is trustworthy.</p>
+<p><strong>Example:</strong><br>A phishing page uses HTTPS so it looks more legitimate.</p>
+<h2>☁️ Trusted Platform Abuse</h2>
+<p>Attackers host phishing content on services people already trust.</p>
+<p><strong>Example:</strong><br>A fake login page is placed on a known cloud hosting platform.</p>
+<h2>📡 CDN Abuse</h2>
+<p>A content delivery network can make content load faster and appear more normal. Attackers may use this to hide where something really came from.</p>
+<p><strong>Example:</strong><br>A malicious page is delivered through a common hosted content path.</p>
+<hr>
+<h1>⚔️ 5) Visual and UX-Based Attacks</h1>
+<h2>🎭 Fake UI Overlays</h2>
+<p>A fake button or screen is placed on top of a real-looking page to guide the user into clicking the wrong thing.</p>
+<p><strong>Example:</strong><br>A download button appears normal but actually sends the user to a phishing page.</p>
+<h2>🧾 Fake Document Viewers</h2>
+<p>The page pretends to be a file preview screen and asks for a login before showing the document.</p>
+<p><strong>Example:</strong><br>A site says “Preview unavailable, please sign in.”</p>
+<h2>🧠 CAPTCHA Phishing</h2>
+<p>A fake CAPTCHA is used to make the page feel more real or to slow the user down before the next step.</p>
+<p><strong>Example:</strong><br>A “Verify you are human” step leads to a fake sign-in page.</p>
+<h2>🔲 QR Phishing</h2>
+<p>A QR code contains a link to a phishing page.</p>
+<p><strong>Example:</strong><br>A scanned QR code opens a fake login screen on a phone.</p>
+<hr>
+<h1>⚔️ 6) Multi-Stage Phishing</h1>
+<h2>🔗 Chained Attacks</h2>
+<p>A chain attack uses more than one phishing method in a row.</p>
+<p><strong>Example:</strong><br>An SVG file opens a redirect page, which then leads to a fake login site.</p>
+<h2>⏳ Delayed Payloads</h2>
+<p>The harmful part does not happen instantly. It waits for time or for a user action.</p>
+<p><strong>Example:</strong><br>A page looks normal for a few seconds before redirecting.</p>
+<h2>🔍 Sandbox Evasion</h2>
+<p>Some phishing pages try to detect whether they are being watched by security tools instead of a real person.</p>
+<p><strong>Example:</strong><br>The page only shows the fake login after a real click.</p>
+<hr>
+<h1>⚔️ 7) Credential Harvesting</h1>
+<h2>🔑 Fake Login Pages</h2>
+<p>This is the most familiar form of phishing. The user is shown a fake sign-in page and asked to enter credentials.</p>
+<p><strong>Example:</strong><br>A fake Outlook login page asks for email and password.</p>
+<h2>🎟️ OAuth Phishing</h2>
+<p>OAuth is a login permission system used by many apps. Attackers abuse it by asking the user to grant access to a fake app.</p>
+<p><strong>Example:</strong><br>A fake app asks for account permission instead of asking for a password.</p>
+<h2>🍪 Session Theft</h2>
+<p>A session token is like a temporary pass that keeps a user logged in. If stolen, it can be reused.</p>
+<p><strong>Example:</strong><br>An attacker uses a stolen session to access the account without logging in again.</p>
+<h2>🔐 MFA Fatigue</h2>
+<p>MFA means multi-factor authentication. MFA fatigue means the attacker keeps sending approval prompts until the victim accepts one by mistake.</p>
+<p><strong>Example:</strong><br>The victim gets repeated login notifications and taps “Approve” just to stop them.</p>
+<hr>
+<h1>⚔️ 8) Mobile Phishing</h1>
+<h2>📱 App-Based Phishing</h2>
+<p>A fake app looks like a real banking, shopping, or service app.</p>
+<p><strong>Example:</strong><br>A fake banking app asks for card details and a PIN.</p>
+<h2>🔗 Deep Link Abuse</h2>
+<p>A deep link opens a specific place inside an app or mobile browser. Attackers can use this to send the victim into a fake flow.</p>
+<p><strong>Example:</strong><br>A message opens a payment screen that looks real but is fake.</p>
+<h2>📷 QR to Mobile</h2>
+<p>This is when a desktop message pushes the victim to scan a QR code, moving the attack to the phone.</p>
+<p><strong>Example:</strong><br>An email shows a QR code that leads to a phishing page on mobile.</p>
+<hr>
+<h1>⚔️ 9) AI Phishing (2026)</h1>
+<h2>🤖 AI Emails</h2>
+<p>AI can write messages that sound more natural, personal, and convincing.</p>
+<p><strong>Example:</strong><br>A phishing email mentions a recent event and uses polite, realistic wording.</p>
+<h2>🎙️ Voice Cloning</h2>
+<p>Voice cloning uses synthetic audio to imitate a real person’s voice.</p>
+<p><strong>Example:</strong><br>A fake boss call asks for urgent action and sounds familiar.</p>
+<h2>🎥 Deepfake Video</h2>
+<p>A deepfake video makes a fake person appear on a call or recording.</p>
+<p><strong>Example:</strong><br>A fraudster uses a fake executive video to build trust.</p>
+<hr>
+<h1>⚔️ 10) Stealth Techniques</h1>
+<h2>🧠 Living-off-the-Land</h2>
+<p>This means using tools already present on the system instead of obvious malware.</p>
+<p><strong>Example:</strong><br>A built-in command tool is used after the victim clicks the phishing file.</p>
+<h2>🌫️ Fileless Attacks</h2>
+<p>Fileless means the malicious code does not stay as a normal file on disk.</p>
+<p><strong>Example:</strong><br>The harmful logic runs only in memory.</p>
+<h2>🔍 Hidden Elements</h2>
+<p>The attacker hides small parts of the page or script so the user does not notice them.</p>
+<p><strong>Example:</strong><br>A hidden frame is placed inside a page to capture interaction.</p>
+<hr>
+<h1>🧠 Core Pattern Behind Phishing</h1>
+<p>Most phishing methods use the same core ideas:</p>
+<ul>
+<li>🤝 Trust in a brand, file, or sender</li>
+<li>⚡ Urgency and pressure</li>
+<li>🧍 Human habit and fast clicking</li>
+<li>🛠️ Weak points in detection tools</li>
+<li>📱 Differences between desktop and mobile safety</li>
+</ul>
+<hr>
+<h1>🛡️ Defensive Perspective</h1>
+<h2>🔍 Detection</h2>
+<ul>
+<li>Email filters</li>
+<li>Sandbox analysis</li>
+<li>Link checks</li>
+<li>Behavior monitoring</li>
+</ul>
+<h2>🧱 Prevention</h2>
+<ul>
+<li>Block risky file types where possible</li>
+<li>Use strong authentication</li>
+<li>Apply security policies consistently</li>
+</ul>
+<h2>🧠 Awareness</h2>
+<ul>
+<li>Check the sender</li>
+<li>Check the link</li>
+<li>Check the file type</li>
+<li>Pause before clicking</li>
+</ul>
+<hr>
+<h1>⚖️ Ethical Perspective</h1>
+<p>Phishing knowledge can help defenders recognize attacks and build better security. The same ideas can also be abused by criminals. The difference is always <strong>permission, intent, and context</strong>.</p>
+<hr>
+<h1>🧾 Conclusion</h1>
+<p>Phishing is not one technique. It is a whole family of tricks built around deception, trust, and human behavior. The more familiar and normal something looks, the more important it is to verify it carefully.</p>
+
+    </article>
+  </main>
+
+  <footer>
+    <span class="f-accent">$</span> echo "Made by <span class="f-accent">Aryan Giri</span>" &nbsp;·&nbsp; <a href="https://github.com/giriaryan694-a11y" target="_blank" rel="noopener noreferrer">GitHub</a>
+  </footer>
+
+  <script>
+    /* Theme — synced with main site via same cookie */
+    const themes=["dark","light","eye-saver"];
+    const themeData={"dark":{emoji:"🌙",label:"Dark"},"light":{emoji:"☀️",label:"Light"},"eye-saver":{emoji:"☕",label:"Reading"}};
+    function setCookie(n,v,d){const e=new Date();e.setTime(e.getTime()+d*86400000);document.cookie=`${n}=${v};expires=${e.toUTCString()};path=/`;}
+    function getCookie(n){const m=document.cookie.match(new RegExp('(^| )'+n+'=([^;]+)'));return m?m[2]:null;}
+    let currentTheme=getCookie("site_theme")||"dark";
+    const themeBtn=document.getElementById("theme-btn");
+    const themeEmoji=document.getElementById("theme-emoji");
+    function applyTheme(theme,animate=false){
+      document.body.className=theme==="dark"?"":theme;
+      themeEmoji.textContent=themeData[theme].emoji;
+      document.getElementById("theme-label").textContent=themeData[theme].label;
+      setCookie("site_theme",theme,365);
+      if(animate){themeEmoji.style.animation="none";themeEmoji.offsetHeight;themeEmoji.style.animation="popSpin 0.4s cubic-bezier(0.175,0.885,0.32,1.275) forwards";}
+    }
+    applyTheme(currentTheme);
+    themeBtn.addEventListener("click",()=>{currentTheme=themes[(themes.indexOf(currentTheme)+1)%themes.length];applyTheme(currentTheme,true);});
+
+    /* Links → new tab + copy buttons on code blocks */
+    document.querySelectorAll(".post-content a").forEach(l => {
+      l.setAttribute("target", "_blank");
+      l.setAttribute("rel", "noopener noreferrer");
+    });
+    document.querySelectorAll("pre").forEach(pre => {
+      const code = pre.querySelector("code");
+      if (!code) return;
+      const btn = document.createElement("button");
+      btn.className = "copy-btn";
+      btn.textContent = "copy";
+      btn.onclick = async () => {
+        try { await navigator.clipboard.writeText(code.innerText.trimEnd()); }
+        catch {}
+        btn.textContent = "✓ copied"; btn.classList.add("copied");
+        setTimeout(() => { btn.textContent = "copy"; btn.classList.remove("copied"); }, 2000);
+      };
+      pre.appendChild(btn);
+    });
+  </script>
+</body>
+</html>

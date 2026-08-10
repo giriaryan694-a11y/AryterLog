@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Active Directory Attacks Made Simple — AryterLog</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="../../manifest.json">
+  <meta name="theme-color" content="#080b10">
+  <link rel="icon" href="../../icons/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="../../icons/apple-touch-icon.png">
+  <meta name="description" content="A beginner-friendly breakdown of Active Directory concepts, Kerberos, LDAP, LLMNR poisoning, Kerberoasting, credential attacks, enumeration, and common AD attack chains with practical examples and lab-based understanding.">
+  <link rel="canonical" href="https://giriaryan694-a11y.github.io/AryterLog/posts/active-directory-attacks-made-simple/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Active Directory Attacks Made Simple">
+  <meta property="og:description" content="A beginner-friendly breakdown of Active Directory concepts, Kerberos, LDAP, LLMNR poisoning, Kerberoasting, credential attacks, enumeration, and common AD attack chains with practical examples and lab-based understanding.">
+  <meta property="og:url" content="https://giriaryan694-a11y.github.io/AryterLog/posts/active-directory-attacks-made-simple/">
+  <meta property="og:site_name" content="AryterLog">
+  <meta property="article:published_time" content="2026-05-18T00:00:00.000Z">
+  <meta property="article:tag" content="active-directory">
+  <meta property="article:tag" content="windows">
+  <meta property="article:tag" content="pentesting">
+  <meta property="article:tag" content="attack-techniques">
+  <meta property="article:tag" content="network-security">
+  <meta property="article:tag" content="offensive-security">
+  <meta property="article:tag" content="red-team">
+  <meta property="article:tag" content="lab-setup">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Active Directory Attacks Made Simple">
+  <meta name="twitter:description" content="A beginner-friendly breakdown of Active Directory concepts, Kerberos, LDAP, LLMNR poisoning, Kerberoasting, credential attacks, enumeration, and common AD attack chains with practical examples and lab-based understanding.">
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Active Directory Attacks Made Simple","description":"A beginner-friendly breakdown of Active Directory concepts, Kerberos, LDAP, LLMNR poisoning, Kerberoasting, credential attacks, enumeration, and common AD attack chains with practical examples and lab-based understanding.","datePublished":"2026-05-18T00:00:00.000Z","author":{"@type":"Person","name":"Aryan Giri"},"publisher":{"@type":"Organization","name":"AryterLog"},"mainEntityOfPage":"https://giriaryan694-a11y.github.io/AryterLog/posts/active-directory-attacks-made-simple/","keywords":"active-directory, windows, pentesting, attack-techniques, network-security, offensive-security, red-team, lab-setup"}</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:#080b10; --surface:#0d1117; --surface2:#111820; --surface3:#161d27;
+      --text:#d0dbe8; --text2:#7a8a9a; --accent:#00ff88; --accent2:#0ea5e9;
+      --danger:#ff4560; --border:#1e2a38; --border2:#2a3848; --code-bg:#0a0f16;
+      --glow:rgba(0,255,136,0.08); --glow2:rgba(0,255,136,0.18);
+    }
+    .light {
+      --bg:#f5f7fa; --surface:#ffffff; --surface2:#f0f4f8; --surface3:#e8eef5;
+      --text:#111827; --text2:#6b7280; --accent:#059669; --accent2:#0284c7;
+      --danger:#dc2626; --border:#e2e8f0; --border2:#cbd5e1; --code-bg:#f1f5f9;
+      --glow:rgba(5,150,105,0.07); --glow2:rgba(5,150,105,0.14);
+    }
+    .eye-saver {
+      --bg:#12100a; --surface:#1a1608; --surface2:#211c0c; --surface3:#282210;
+      --text:#e8d8b0; --text2:#9a8860; --accent:#f5c542; --accent2:#e08030;
+      --danger:#e05050; --border:#302810; --border2:#3d3418; --code-bg:#0f0d06;
+      --glow:rgba(245,197,66,0.08); --glow2:rgba(245,197,66,0.18);
+    }
+
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body {
+      font-family:'Fira Code',monospace;
+      background:var(--bg); color:var(--text);
+      min-height:100vh; overflow-x:hidden;
+      transition:background 0.4s,color 0.4s;
+    }
+    body::before {
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+      background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
+      background-size:44px 44px; opacity:0.25;
+    }
+
+    header {
+      position:sticky; top:0; z-index:200;
+      background:rgba(8,11,16,0.86); backdrop-filter:blur(16px);
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 22px; height:56px; gap:12px;
+    }
+    .light header{background:rgba(245,247,250,0.9);}
+    .eye-saver header{background:rgba(18,16,10,0.9);}
+    header::after {
+      content:''; position:absolute; bottom:-1px; left:8%; right:8%; height:1px;
+      background:linear-gradient(90deg,transparent,var(--accent),transparent); opacity:0.35;
+    }
+    .header-left{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+
+    .logo {
+      font-family:'Bebas Neue',sans-serif; font-size:24px; font-weight:400;
+      letter-spacing:3px; color:var(--text); text-decoration:none; white-space:nowrap;
+      flex-shrink:0; line-height:1; transition:color 0.2s;
+    }
+    .logo .lo-a{color:var(--accent);}
+    .logo:hover .lo-a{text-shadow:0 0 14px var(--accent);}
+
+    .back-link {
+      display:inline-flex; align-items:center; gap:6px;
+      background:transparent; border:1px solid var(--border2); color:var(--text2);
+      padding:6px 12px; border-radius:6px; cursor:pointer; transition:all 0.2s;
+      font-family:'Fira Code',monospace; font-size:11px; text-decoration:none;
+    }
+    .back-link:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    #theme-btn {
+      background:transparent; border:1px solid var(--border2);
+      padding:5px 11px; cursor:pointer; color:var(--text2); border-radius:6px;
+      transition:all 0.2s; font-family:'Fira Code',monospace; font-size:11px;
+      display:inline-flex; align-items:center; gap:6px; white-space:nowrap;
+    }
+    #theme-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    @keyframes popSpin{0%{transform:scale(0.4) rotate(-60deg);opacity:0;}70%{transform:scale(1.15) rotate(5deg);}100%{transform:scale(1) rotate(0deg);opacity:1;}}
+    .emoji{display:inline-block;}
+
+    main{max-width:760px;margin:0 auto;padding:34px 20px 60px;position:relative;z-index:1;}
+
+    .back-btn {
+      display:inline-flex;align-items:center;gap:7px;margin-bottom:20px;
+      background:var(--surface);border:1px solid var(--border2);color:var(--text2);
+      padding:7px 13px;border-radius:6px;font-family:'Fira Code',monospace;font-size:11px;
+      cursor:pointer;transition:all 0.2s;text-decoration:none;
+    }
+    .back-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    .post-content {
+      background:var(--surface);border:1px solid var(--border);border-radius:12px;
+      padding:34px 30px;position:relative;overflow:hidden;
+    }
+    .post-content::before {
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      border-radius:12px 12px 0 0;
+    }
+    .post-content *{max-width:100%;}
+
+    h1 {
+      font-family:'Space Grotesk',sans-serif;font-size:clamp(19px,4vw,26px);
+      font-weight:700;color:var(--text);margin-bottom:8px;line-height:1.25;word-break:break-word;
+    }
+    .post-header-meta{
+      font-family:'Fira Code',monospace;font-size:11px;color:var(--text2);
+      padding-bottom:18px;margin-bottom:22px;border-bottom:1px solid var(--border);
+      display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+    }
+    .card-cat-chip {
+      display:inline-flex;align-items:center;padding:1px 7px;border-radius:3px;
+      border:1px solid var(--border2);background:var(--surface2);color:var(--text2);
+      font-size:9px;font-family:'Fira Code',monospace;font-weight:500;letter-spacing:0.4px;
+    }
+    h2,h3{font-family:'Space Grotesk',sans-serif;font-weight:600;color:var(--text);margin:26px 0 10px;word-break:break-word;}
+    h2{font-size:19px;} h3{font-size:15px;color:var(--accent);}
+    p{font-size:14px;line-height:1.8;margin-bottom:14px;color:var(--text);}
+    ul,ol{padding-left:20px;margin-bottom:14px;font-size:14px;line-height:1.8;}
+    li{margin-bottom:4px;}
+
+    a{color:var(--accent);word-break:break-all;overflow-wrap:break-word;transition:opacity 0.2s;}
+    a:hover{opacity:0.75;}
+    .post-content a{text-decoration:underline;text-underline-offset:3px;}
+
+    code {
+      background:var(--code-bg);border:1px solid var(--border);padding:2px 6px;
+      border-radius:4px;font-family:'Fira Code',monospace;font-size:0.85em;
+      color:var(--accent);word-break:break-all;overflow-wrap:break-word;
+    }
+    pre {
+      background:var(--code-bg);border:1px solid var(--border);padding:18px;border-radius:8px;
+      max-width:100%; overflow:hidden;
+      position:relative;margin-bottom:14px;
+    }
+    pre::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      opacity:0.5;border-radius:8px 8px 0 0;
+    }
+    pre code{
+      background:transparent;border:none;padding:0 60px 0 0;word-break:normal;
+      overflow-wrap:normal;white-space:pre;display:block;
+      overflow-x:auto;-webkit-overflow-scrolling:touch;
+      font-size:13px;line-height:1.65;color:var(--text);
+    }
+    blockquote{
+      border-left:2px solid var(--accent);margin:14px 0;padding:10px 16px;
+      background:var(--glow);border-radius:0 6px 6px 0;font-style:italic;color:var(--text2);
+    }
+    table{width:100%;border-collapse:collapse;display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;font-size:13px;margin-bottom:14px;}
+    th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;white-space:nowrap;}
+    th{background:var(--surface2);color:var(--accent);font-weight:600;}
+    img{max-width:100%;height:auto;border-radius:8px;display:block;margin:14px 0;}
+
+    .copy-btn {
+      position:absolute;top:9px;right:9px;padding:3px 8px;font-size:10px;
+      font-family:'Fira Code',monospace;font-weight:500;background:var(--surface2);
+      border:1px solid var(--border2);color:var(--text2);border-radius:4px;cursor:pointer;
+      transition:all 0.2s;opacity:0;letter-spacing:0.3px;
+    }
+    pre:hover .copy-btn{opacity:1;}
+    .copy-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    .copy-btn.copied{border-color:var(--accent);color:var(--accent);opacity:1;}
+
+    footer{
+      text-align:center;padding:22px 16px;color:var(--text2);
+      font-family:'Fira Code',monospace;font-size:11px;
+      border-top:1px solid var(--border);position:relative;z-index:1;
+    }
+    .f-accent{color:var(--accent);}
+    footer a{color:var(--accent);text-decoration:none;}
+    footer a:hover{opacity:0.75;}
+
+    @media(max-width:480px){
+      header{padding:0 13px;height:50px;}
+      .logo{font-size:21px;letter-spacing:2px;}
+      main{padding:20px 14px 44px;}
+      .post-content{padding:20px 14px;}
+      pre{padding:13px;}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <a href="../../index.html" class="logo">Aryter<span class="lo-a">Log</span></a>
+    </div>
+    <button id="theme-btn" aria-label="Cycle Theme">
+      <span class="emoji" id="theme-emoji">🌙</span>
+      <span id="theme-label">Dark</span>
+    </button>
+  </header>
+
+  <main>
+    <a href="../../index.html#post-active-directory-attacks-made-simple" class="back-btn">← Back to Blog</a>
+    <article class="post-content">
+      <h1>Active Directory Attacks Made Simple</h1>
+      <div class="post-header-meta">
+        <span>📅 Published 2026-05-18</span>
+        <span>·</span><span class="card-cat-chip">active-directory</span><span class="card-cat-chip">windows</span><span class="card-cat-chip">pentesting</span><span class="card-cat-chip">attack-techniques</span><span class="card-cat-chip">network-security</span><span class="card-cat-chip">offensive-security</span><span class="card-cat-chip">red-team</span><span class="card-cat-chip">lab-setup</span>
+      </div>
+      <p><strong>Written by Aryan Giri</strong></p>
+<h2>Overview</h2>
+<p>Active Directory (AD) is the central system many Windows networks use to manage users, computers, permissions, and policies. Think of it like the control room of a company network. Instead of setting passwords, accounts, and access rules on every single computer one by one, AD lets an admin manage everything from one place.</p>
+<p>That convenience is also why AD is so important in security. If an attacker gets a foothold inside an AD environment, they often have many paths to move deeper, find more users, and eventually reach high-value accounts.</p>
+<h2>Why Active Directory matters</h2>
+<p>AD is everywhere in internal networks. It stores things like:</p>
+<ul>
+<li>user accounts</li>
+<li>computer objects</li>
+<li>groups and permissions</li>
+<li>group policy settings</li>
+<li>file shares</li>
+<li>domain trust relationships</li>
+</ul>
+<p>For defenders, AD is the backbone of daily administration. For attackers, it is often the main road to privilege escalation and lateral movement.</p>
+<p>If AD is weak, the whole domain can become weak.</p>
+<h2>The main idea in simple words</h2>
+<p>A normal Windows network without AD would be painful to manage. Every user password change, policy update, software push, or account reset would need to be done on each machine manually.</p>
+<p>With AD, one change can spread across the domain.</p>
+<p>That is why AD is powerful.<br>And that is why AD is a favorite target.</p>
+<h2>The key protocols you see around AD</h2>
+<h3>LDAP</h3>
+<p>LDAP is used to query and modify directory data.</p>
+<p>In practice, it helps with searching for users, computers, groups, and other objects. If an attacker can query LDAP, they may learn a lot about the domain structure.</p>
+<p><strong>Example:</strong><br>A pentester finds LDAP access and pulls a list of users, groups, and descriptions. Sometimes descriptions accidentally contain useful hints like temporary passwords or account roles.</p>
+<h3>Kerberos</h3>
+<p>Kerberos is the default authentication system for modern Windows domains.</p>
+<p>Instead of sending credentials every time, it uses tickets. Once a user proves who they are, they receive a ticket that can be used to access services.</p>
+<p><strong>Example:</strong><br>A service account has a weak or reused password. An attacker requests a ticket-related response and tries to crack the service account offline.</p>
+<h3>DNS</h3>
+<p>DNS translates names into IP addresses.</p>
+<p>AD depends on DNS heavily because domain controllers, clients, and services need to find each other.</p>
+<p><strong>Example:</strong><br>If a client cannot resolve the domain controller name, it may fail to join the domain or find services.</p>
+<h3>LLMNR / NBT-NS</h3>
+<p>These are fallback name-resolution protocols used when DNS fails.</p>
+<p>Attackers love them because they can poison the response and trick systems into sending authentication attempts to the attacker machine.</p>
+<p><strong>Example:</strong><br>A user tries to access a share that does not exist. The network asks, “Who knows this name?” The attacker answers first and captures a hash.</p>
+<h2>Common AD attack themes</h2>
+<h3>1. Enumeration</h3>
+<p>Enumeration means learning what is in the domain.</p>
+<p>This can include:</p>
+<ul>
+<li>usernames</li>
+<li>hostnames</li>
+<li>groups</li>
+<li>shares</li>
+<li>trust relationships</li>
+<li>service accounts</li>
+<li>password hints in descriptions</li>
+</ul>
+<p>Enumeration is often the first real step after landing on a network.</p>
+<p><strong>Example:</strong><br>A tool that dumps LDAP data reveals users, computers, and group memberships. From that, the attacker learns who exists and how the domain is organized.</p>
+<h3>2. Credential capture</h3>
+<p>If the attacker can trick a machine into authenticating to them, they may capture a hash.</p>
+<p>A hash is not the same as the plaintext password, but it can still be useful.</p>
+<p><strong>Example:</strong><br>Responder-style poisoning can make a victim send an NTLM hash to the attacker instead of to the real server.</p>
+<h3>3. Password cracking</h3>
+<p>Sometimes the captured hash is weak enough to crack offline.</p>
+<p>That means the attacker does not need to keep talking to the live network. They can test password guesses locally until they recover the password.</p>
+<p><strong>Example:</strong><br>A weak password like a common word plus a small variation may fall quickly, especially if it appears in a wordlist.</p>
+<h3>4. Kerberoasting</h3>
+<p>Kerberoasting targets service accounts that have SPNs attached to them.</p>
+<p>The attacker requests service tickets and then tries to crack them offline.</p>
+<p><strong>Example:</strong><br>A service account password is weak, so the ticket material can be cracked and the account can be abused for broader access.</p>
+<h3>5. Pass-the-Hash</h3>
+<p>Pass-the-Hash means using an NTLM hash directly instead of a plaintext password.</p>
+<p>This works when the environment accepts NTLM-based authentication and the attacker already has a valid hash.</p>
+<p><strong>Example:</strong><br>An attacker gets a local admin hash from one machine and uses it to access another system where the same credential is accepted.</p>
+<h3>6. Share abuse</h3>
+<p>File shares often leak useful data.</p>
+<p>Sometimes shares contain:</p>
+<ul>
+<li>scripts</li>
+<li>config files</li>
+<li>backup files</li>
+<li>notes</li>
+<li>passwords</li>
+</ul>
+<p><strong>Example:</strong><br>A share called <code>TryHackMe</code> or <code>Shared</code> contains a text file with a temporary password or a secret note left by an admin.</p>
+<h2>A simple lab story</h2>
+<p>A good AD lab usually has:</p>
+<ul>
+<li>one domain controller</li>
+<li>one Windows workstation</li>
+<li>one attacker box</li>
+<li>a few users with different privilege levels</li>
+</ul>
+<p>A common learning path looks like this:</p>
+<ol>
+<li>Discover the domain.</li>
+<li>Enumerate users and shares.</li>
+<li>Capture or find a credential.</li>
+<li>Reuse or crack that credential.</li>
+<li>Check for Kerberos-related weakness.</li>
+<li>Find misconfigured shares or local admin access.</li>
+<li>Escalate until domain control is possible.</li>
+</ol>
+<p>That is the basic flow many real-world internal tests follow too.</p>
+<h2>Practical examples that help it make sense</h2>
+<h3>Example 1: Weak share permissions</h3>
+<p>A user account can read a file share it should not have access to. That share contains a text file with a service password.</p>
+<p><strong>Lesson:</strong> never store passwords in shared folders.</p>
+<h3>Example 2: Service account with weak password</h3>
+<p>A service account has an SPN and a weak password. An attacker requests Kerberos ticket material and cracks it offline.</p>
+<p><strong>Lesson:</strong> service accounts need strong passwords and proper management.</p>
+<h3>Example 3: NTLM hash capture</h3>
+<p>A workstation tries to resolve a fake network name. The attacker answers first and captures the authentication hash.</p>
+<p><strong>Lesson:</strong> disable or reduce risky name-resolution behavior where possible.</p>
+<h3>Example 4: Local admin reuse</h3>
+<p>The same local administrator password is reused across multiple machines.</p>
+<p><strong>Lesson:</strong> one leaked local admin credential can open many doors.</p>
+<h2>What to remember as a learner</h2>
+<p>AD is not just “Windows stuff.” It is the identity layer of many enterprise networks.</p>
+<p>If you understand these ideas, you start thinking like this:</p>
+<ul>
+<li>How does the client find the domain controller?</li>
+<li>Which accounts have special privileges?</li>
+<li>Which services expose Kerberos tickets?</li>
+<li>Where are passwords reused?</li>
+<li>Which shares or configs leak secrets?</li>
+<li>Which machines trust the same admin credential?</li>
+</ul>
+<p>That mindset is more important than memorizing one tool.</p>
+<h2>Why attackers love AD</h2>
+<p>Attackers like AD because it can turn a small foothold into large access.</p>
+<p>One weak password, one bad share, one exposed service account, or one reused hash can become the start of a much bigger chain.</p>
+<p>That is why AD attacks are usually about chaining small mistakes.</p>
+<h2>Final takeaway</h2>
+<p>Active Directory is the heart of many Windows environments.</p>
+<p>If you learn how it works, you can understand:</p>
+<ul>
+<li>how users authenticate</li>
+<li>how permissions spread</li>
+<li>how attackers enumerate and move</li>
+<li>how small mistakes turn into domain compromise</li>
+</ul>
+<p>For beginners, the best way to learn AD is with a safe lab and lots of repetition. Start with discovery, then credentials, then escalation, then misconfigurations.</p>
+<p>That is the real path from “I see a Windows domain” to “I understand how the whole network fits together.”</p>
+
+    </article>
+  </main>
+
+  <footer>
+    <span class="f-accent">$</span> echo "Made by <span class="f-accent">Aryan Giri</span>" &nbsp;·&nbsp; <a href="https://github.com/giriaryan694-a11y" target="_blank" rel="noopener noreferrer">GitHub</a>
+  </footer>
+
+  <script>
+    /* Theme — synced with main site via same cookie */
+    const themes=["dark","light","eye-saver"];
+    const themeData={"dark":{emoji:"🌙",label:"Dark"},"light":{emoji:"☀️",label:"Light"},"eye-saver":{emoji:"☕",label:"Reading"}};
+    function setCookie(n,v,d){const e=new Date();e.setTime(e.getTime()+d*86400000);document.cookie=`${n}=${v};expires=${e.toUTCString()};path=/`;}
+    function getCookie(n){const m=document.cookie.match(new RegExp('(^| )'+n+'=([^;]+)'));return m?m[2]:null;}
+    let currentTheme=getCookie("site_theme")||"dark";
+    const themeBtn=document.getElementById("theme-btn");
+    const themeEmoji=document.getElementById("theme-emoji");
+    function applyTheme(theme,animate=false){
+      document.body.className=theme==="dark"?"":theme;
+      themeEmoji.textContent=themeData[theme].emoji;
+      document.getElementById("theme-label").textContent=themeData[theme].label;
+      setCookie("site_theme",theme,365);
+      if(animate){themeEmoji.style.animation="none";themeEmoji.offsetHeight;themeEmoji.style.animation="popSpin 0.4s cubic-bezier(0.175,0.885,0.32,1.275) forwards";}
+    }
+    applyTheme(currentTheme);
+    themeBtn.addEventListener("click",()=>{currentTheme=themes[(themes.indexOf(currentTheme)+1)%themes.length];applyTheme(currentTheme,true);});
+
+    /* Links → new tab + copy buttons on code blocks */
+    document.querySelectorAll(".post-content a").forEach(l => {
+      l.setAttribute("target", "_blank");
+      l.setAttribute("rel", "noopener noreferrer");
+    });
+    document.querySelectorAll("pre").forEach(pre => {
+      const code = pre.querySelector("code");
+      if (!code) return;
+      const btn = document.createElement("button");
+      btn.className = "copy-btn";
+      btn.textContent = "copy";
+      btn.onclick = async () => {
+        try { await navigator.clipboard.writeText(code.innerText.trimEnd()); }
+        catch {}
+        btn.textContent = "✓ copied"; btn.classList.add("copied");
+        setTimeout(() => { btn.textContent = "copy"; btn.classList.remove("copied"); }, 2000);
+      };
+      pre.appendChild(btn);
+    });
+  </script>
+</body>
+</html>

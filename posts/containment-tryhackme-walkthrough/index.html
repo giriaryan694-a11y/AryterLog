@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ContAInment TryHackMe Walkthrough — AryterLog</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="../../manifest.json">
+  <meta name="theme-color" content="#080b10">
+  <link rel="icon" href="../../icons/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="../../icons/apple-touch-icon.png">
+  <meta name="description" content="A full incident response walkthrough of the ContAInment TryHackMe room, covering phishing analysis, PCAP reconstruction, archive decryption, and automated flag extraction using an AI assistant.">
+  <link rel="canonical" href="https://giriaryan694-a11y.github.io/AryterLog/posts/containment-tryhackme-walkthrough/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="ContAInment TryHackMe Walkthrough">
+  <meta property="og:description" content="A full incident response walkthrough of the ContAInment TryHackMe room, covering phishing analysis, PCAP reconstruction, archive decryption, and automated flag extraction using an AI assistant.">
+  <meta property="og:url" content="https://giriaryan694-a11y.github.io/AryterLog/posts/containment-tryhackme-walkthrough/">
+  <meta property="og:site_name" content="AryterLog">
+  <meta property="article:published_time" content="2026-04-18T00:00:00.000Z">
+  <meta property="article:tag" content="ctf">
+  <meta property="article:tag" content="forensics">
+  <meta property="article:tag" content="incident-response">
+  <meta property="article:tag" content="ai-security">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="ContAInment TryHackMe Walkthrough">
+  <meta name="twitter:description" content="A full incident response walkthrough of the ContAInment TryHackMe room, covering phishing analysis, PCAP reconstruction, archive decryption, and automated flag extraction using an AI assistant.">
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"ContAInment TryHackMe Walkthrough","description":"A full incident response walkthrough of the ContAInment TryHackMe room, covering phishing analysis, PCAP reconstruction, archive decryption, and automated flag extraction using an AI assistant.","datePublished":"2026-04-18T00:00:00.000Z","author":{"@type":"Person","name":"Aryan Giri"},"publisher":{"@type":"Organization","name":"AryterLog"},"mainEntityOfPage":"https://giriaryan694-a11y.github.io/AryterLog/posts/containment-tryhackme-walkthrough/","keywords":"ctf, forensics, incident-response, ai-security"}</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:#080b10; --surface:#0d1117; --surface2:#111820; --surface3:#161d27;
+      --text:#d0dbe8; --text2:#7a8a9a; --accent:#00ff88; --accent2:#0ea5e9;
+      --danger:#ff4560; --border:#1e2a38; --border2:#2a3848; --code-bg:#0a0f16;
+      --glow:rgba(0,255,136,0.08); --glow2:rgba(0,255,136,0.18);
+    }
+    .light {
+      --bg:#f5f7fa; --surface:#ffffff; --surface2:#f0f4f8; --surface3:#e8eef5;
+      --text:#111827; --text2:#6b7280; --accent:#059669; --accent2:#0284c7;
+      --danger:#dc2626; --border:#e2e8f0; --border2:#cbd5e1; --code-bg:#f1f5f9;
+      --glow:rgba(5,150,105,0.07); --glow2:rgba(5,150,105,0.14);
+    }
+    .eye-saver {
+      --bg:#12100a; --surface:#1a1608; --surface2:#211c0c; --surface3:#282210;
+      --text:#e8d8b0; --text2:#9a8860; --accent:#f5c542; --accent2:#e08030;
+      --danger:#e05050; --border:#302810; --border2:#3d3418; --code-bg:#0f0d06;
+      --glow:rgba(245,197,66,0.08); --glow2:rgba(245,197,66,0.18);
+    }
+
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body {
+      font-family:'Fira Code',monospace;
+      background:var(--bg); color:var(--text);
+      min-height:100vh; overflow-x:hidden;
+      transition:background 0.4s,color 0.4s;
+    }
+    body::before {
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+      background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
+      background-size:44px 44px; opacity:0.25;
+    }
+
+    header {
+      position:sticky; top:0; z-index:200;
+      background:rgba(8,11,16,0.86); backdrop-filter:blur(16px);
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 22px; height:56px; gap:12px;
+    }
+    .light header{background:rgba(245,247,250,0.9);}
+    .eye-saver header{background:rgba(18,16,10,0.9);}
+    header::after {
+      content:''; position:absolute; bottom:-1px; left:8%; right:8%; height:1px;
+      background:linear-gradient(90deg,transparent,var(--accent),transparent); opacity:0.35;
+    }
+    .header-left{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+
+    .logo {
+      font-family:'Bebas Neue',sans-serif; font-size:24px; font-weight:400;
+      letter-spacing:3px; color:var(--text); text-decoration:none; white-space:nowrap;
+      flex-shrink:0; line-height:1; transition:color 0.2s;
+    }
+    .logo .lo-a{color:var(--accent);}
+    .logo:hover .lo-a{text-shadow:0 0 14px var(--accent);}
+
+    .back-link {
+      display:inline-flex; align-items:center; gap:6px;
+      background:transparent; border:1px solid var(--border2); color:var(--text2);
+      padding:6px 12px; border-radius:6px; cursor:pointer; transition:all 0.2s;
+      font-family:'Fira Code',monospace; font-size:11px; text-decoration:none;
+    }
+    .back-link:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    #theme-btn {
+      background:transparent; border:1px solid var(--border2);
+      padding:5px 11px; cursor:pointer; color:var(--text2); border-radius:6px;
+      transition:all 0.2s; font-family:'Fira Code',monospace; font-size:11px;
+      display:inline-flex; align-items:center; gap:6px; white-space:nowrap;
+    }
+    #theme-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    @keyframes popSpin{0%{transform:scale(0.4) rotate(-60deg);opacity:0;}70%{transform:scale(1.15) rotate(5deg);}100%{transform:scale(1) rotate(0deg);opacity:1;}}
+    .emoji{display:inline-block;}
+
+    main{max-width:760px;margin:0 auto;padding:34px 20px 60px;position:relative;z-index:1;}
+
+    .back-btn {
+      display:inline-flex;align-items:center;gap:7px;margin-bottom:20px;
+      background:var(--surface);border:1px solid var(--border2);color:var(--text2);
+      padding:7px 13px;border-radius:6px;font-family:'Fira Code',monospace;font-size:11px;
+      cursor:pointer;transition:all 0.2s;text-decoration:none;
+    }
+    .back-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    .post-content {
+      background:var(--surface);border:1px solid var(--border);border-radius:12px;
+      padding:34px 30px;position:relative;overflow:hidden;
+    }
+    .post-content::before {
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      border-radius:12px 12px 0 0;
+    }
+    .post-content *{max-width:100%;}
+
+    h1 {
+      font-family:'Space Grotesk',sans-serif;font-size:clamp(19px,4vw,26px);
+      font-weight:700;color:var(--text);margin-bottom:8px;line-height:1.25;word-break:break-word;
+    }
+    .post-header-meta{
+      font-family:'Fira Code',monospace;font-size:11px;color:var(--text2);
+      padding-bottom:18px;margin-bottom:22px;border-bottom:1px solid var(--border);
+      display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+    }
+    .card-cat-chip {
+      display:inline-flex;align-items:center;padding:1px 7px;border-radius:3px;
+      border:1px solid var(--border2);background:var(--surface2);color:var(--text2);
+      font-size:9px;font-family:'Fira Code',monospace;font-weight:500;letter-spacing:0.4px;
+    }
+    h2,h3{font-family:'Space Grotesk',sans-serif;font-weight:600;color:var(--text);margin:26px 0 10px;word-break:break-word;}
+    h2{font-size:19px;} h3{font-size:15px;color:var(--accent);}
+    p{font-size:14px;line-height:1.8;margin-bottom:14px;color:var(--text);}
+    ul,ol{padding-left:20px;margin-bottom:14px;font-size:14px;line-height:1.8;}
+    li{margin-bottom:4px;}
+
+    a{color:var(--accent);word-break:break-all;overflow-wrap:break-word;transition:opacity 0.2s;}
+    a:hover{opacity:0.75;}
+    .post-content a{text-decoration:underline;text-underline-offset:3px;}
+
+    code {
+      background:var(--code-bg);border:1px solid var(--border);padding:2px 6px;
+      border-radius:4px;font-family:'Fira Code',monospace;font-size:0.85em;
+      color:var(--accent);word-break:break-all;overflow-wrap:break-word;
+    }
+    pre {
+      background:var(--code-bg);border:1px solid var(--border);padding:18px;border-radius:8px;
+      max-width:100%; overflow:hidden;
+      position:relative;margin-bottom:14px;
+    }
+    pre::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      opacity:0.5;border-radius:8px 8px 0 0;
+    }
+    pre code{
+      background:transparent;border:none;padding:0 60px 0 0;word-break:normal;
+      overflow-wrap:normal;white-space:pre;display:block;
+      overflow-x:auto;-webkit-overflow-scrolling:touch;
+      font-size:13px;line-height:1.65;color:var(--text);
+    }
+    blockquote{
+      border-left:2px solid var(--accent);margin:14px 0;padding:10px 16px;
+      background:var(--glow);border-radius:0 6px 6px 0;font-style:italic;color:var(--text2);
+    }
+    table{width:100%;border-collapse:collapse;display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;font-size:13px;margin-bottom:14px;}
+    th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;white-space:nowrap;}
+    th{background:var(--surface2);color:var(--accent);font-weight:600;}
+    img{max-width:100%;height:auto;border-radius:8px;display:block;margin:14px 0;}
+
+    .copy-btn {
+      position:absolute;top:9px;right:9px;padding:3px 8px;font-size:10px;
+      font-family:'Fira Code',monospace;font-weight:500;background:var(--surface2);
+      border:1px solid var(--border2);color:var(--text2);border-radius:4px;cursor:pointer;
+      transition:all 0.2s;opacity:0;letter-spacing:0.3px;
+    }
+    pre:hover .copy-btn{opacity:1;}
+    .copy-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    .copy-btn.copied{border-color:var(--accent);color:var(--accent);opacity:1;}
+
+    footer{
+      text-align:center;padding:22px 16px;color:var(--text2);
+      font-family:'Fira Code',monospace;font-size:11px;
+      border-top:1px solid var(--border);position:relative;z-index:1;
+    }
+    .f-accent{color:var(--accent);}
+    footer a{color:var(--accent);text-decoration:none;}
+    footer a:hover{opacity:0.75;}
+
+    @media(max-width:480px){
+      header{padding:0 13px;height:50px;}
+      .logo{font-size:21px;letter-spacing:2px;}
+      main{padding:20px 14px 44px;}
+      .post-content{padding:20px 14px;}
+      pre{padding:13px;}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <a href="../../index.html" class="logo">Aryter<span class="lo-a">Log</span></a>
+    </div>
+    <button id="theme-btn" aria-label="Cycle Theme">
+      <span class="emoji" id="theme-emoji">🌙</span>
+      <span id="theme-label">Dark</span>
+    </button>
+  </header>
+
+  <main>
+    <a href="../../index.html#post-containment-tryhackme-walkthrough" class="back-btn">← Back to Blog</a>
+    <article class="post-content">
+      <h1>ContAInment TryHackMe Walkthrough</h1>
+      <div class="post-header-meta">
+        <span>📅 Published April 18, 2026</span>
+        <span>·</span><span class="card-cat-chip">ctf</span><span class="card-cat-chip">forensics</span><span class="card-cat-chip">incident-response</span><span class="card-cat-chip">ai-security</span>
+      </div>
+      <h2>TryHackMe: ContAInment — Full Walkthrough</h2>
+<h2>Introduction</h2>
+<p>In this TryHackMe room, we investigate a ransomware-style incident affecting the workstation of <strong>Oliver Deer</strong> at West Tech. The goal is to trace the attacker’s entry point, inspect their activity, recover the hidden data, and complete the containment process.</p>
+<p>The room combines endpoint investigation, email forensics, archive recovery, and a little automation with the local AI assistant.</p>
+<hr>
+<h2>Initial Setup</h2>
+<p>After connecting to the target machine through SSH, we first explored the usual user directories to understand the workstation layout.</p>
+<pre><code class="language-bash">ssh o.deer@10.66.157.154
+</code></pre>
+<p>We checked places like:</p>
+<ul>
+<li><code>Desktop</code></li>
+<li><code>Documents</code></li>
+<li><code>Mail</code></li>
+</ul>
+<p>A ransom note was present on the desktop, which confirmed that the system had been compromised.</p>
+<p><img src="https://giriaryan694-a11y.github.io/AryterLog/posts/assets/img/ContAInment/1.png" alt="Desktop ransom note"></p>
+<hr>
+<h2>Using the AI Assistant</h2>
+<p>This room provides an AI assistant running locally on the same system. It helps with analysis tasks such as:</p>
+<ul>
+<li>phishing detection</li>
+<li>PCAP reconstruction</li>
+<li>file inspection</li>
+<li>text extraction</li>
+</ul>
+<p>We accessed it here:</p>
+<pre><code class="language-text">http://10.66.157.154:7860/?__theme=light
+</code></pre>
+<p><img src="https://giriaryan694-a11y.github.io/AryterLog/posts/assets/img/ContAInment/2.png" alt="AI assistant interface"></p>
+<hr>
+<h2>Finding the Phishing Email</h2>
+<p>Inside the <code>Mail</code> directory, we found multiple <code>.eml</code> files. These were email communication logs, and they were clearly important for identifying the attacker’s initial access.</p>
+<p><img src="https://giriaryan694-a11y.github.io/AryterLog/posts/assets/img/ContAInment/3.png" alt="Mail directory with EML files"></p>
+<p>To quickly identify the suspicious email, we asked the AI assistant to search the folder for phishing content:</p>
+<pre><code class="language-text">Can you search the files in this directory /home/o.deer/Mail for phish
+</code></pre>
+<p>The AI identified the most likely malicious email as:</p>
+<blockquote>
+<p><strong>INVOICE - URGENT REVIEW REQUIRED</strong></p>
+</blockquote>
+<p><img src="https://giriaryan694-a11y.github.io/AryterLog/posts/assets/img/ContAInment/4.png" alt="AI identifies phishing email"></p>
+<p>We then matched that subject to the actual file in the Mail directory:</p>
+<pre><code class="language-text">2025-06-17_invoice_required_review.eml
+</code></pre>
+<p>Opening the file showed that the phish delivered a malicious script called <code>invoice_payload.scr</code>.</p>
+<p><img src="https://giriaryan694-a11y.github.io/AryterLog/posts/assets/img/ContAInment/5.png" alt="Phishing email content"></p>
+<p><img src="https://giriaryan694-a11y.github.io/AryterLog/posts/assets/img/ContAInment/6.png" alt="Malicious attachment reference"></p>
+<hr>
+<h2>Locating the Malicious Payload</h2>
+<p>Since downloaded files are usually stored in a download-related directory, we searched for the payload name across the filesystem:</p>
+<pre><code class="language-bash">find . -name invoice_payload.scr
+</code></pre>
+<p><img src="https://giriaryan694-a11y.github.io/AryterLog/posts/assets/img/ContAInment/7.png" alt="Finding the payload"></p>
+<p>This confirmed the malicious file’s location and helped us understand the attack chain.</p>
+<hr>
+<h2>PCAP Analysis and the Encryption Key Hint</h2>
+<p>A hint later revealed that the attacker had accidentally exfiltrated working notes, and the fragments were hidden in a PCAP file. Those fragments contained the key needed to recover encrypted files.</p>
+<p>We moved to the <code>Documents</code> directory and found a <code>pcap_dump</code> folder with dated subdirectories.</p>
+<p>Since the phishing email was dated <strong>2025-06-17</strong>, we examined that same date folder.</p>
+<p><img src="https://giriaryan694-a11y.github.io/AryterLog/posts/assets/img/ContAInment/8.png" alt="PCAP directory structure"></p>
+<p>Inside the directory, we saw multiple PCAP files. Most were small, but one stood out due to its larger size:</p>
+<ul>
+<li><code>session_4444_dump.pcap</code></li>
+</ul>
+<p><img src="https://giriaryan694-a11y.github.io/AryterLog/posts/assets/img/ContAInment/9.png" alt="PCAP files list"></p>
+<p>Instead of manually reconstructing the traffic, we used the AI tool’s PCAP helper:</p>
+<pre><code class="language-text">can you reassemble session_4444_dump.pcap at directory /home/o.deer/Documents/pcap_dumps/2025-06-17
+</code></pre>
+<p>The AI successfully reassembled the file and stored the result here:</p>
+<pre><code class="language-text">/home/o.deer/qwen-output/reassembled_data_dump.txt
+</code></pre>
+<p><img src="https://giriaryan694-a11y.github.io/AryterLog/posts/assets/img/ContAInment/10.png" alt="PCAP reassembly result"></p>
+<p>Reading the reconstructed output revealed a useful term:</p>
+<pre><code class="language-text">westtechvictim1
+</code></pre>
+<p><img src="https://giriaryan694-a11y.github.io/AryterLog/posts/assets/img/ContAInment/11.png" alt="Extracted PCAP notes"></p>
+<p>This looked like a likely password or decryption clue, so we tested it against the encrypted archive.</p>
+<hr>
+<h2>Unlocking the Archive</h2>
+<p>Back in the home directory, we attempted to unlock the encrypted ZIP using the recovered string:</p>
+<pre><code class="language-bash">unzip -P &quot;westtechvictim1&quot; westtech_*.zip
+</code></pre>
+<p><img src="https://giriaryan694-a11y.github.io/AryterLog/posts/assets/img/ContAInment/13.png" alt="Unlocking ZIP archive"></p>
+<p>This worked and gave access to the project directory.</p>
+<p>We then moved into the extracted workspace:</p>
+<pre><code class="language-bash">cd ~/home/o.deer/westtech_projects/
+</code></pre>
+<p><img src="https://giriaryan694-a11y.github.io/AryterLog/posts/assets/img/ContAInment/14.png" alt="Project directory"></p>
+<p>The directory contained several useful files:</p>
+<ul>
+<li><code>email_export_april2025.eml</code></li>
+<li><code>fusion_cell_mk3_blueprints.pdf</code></li>
+<li><code>internal_security_incident_233.json</code></li>
+<li><code>project_chimera_specs.txt</code></li>
+<li><code>prototype_plasma_launcher_test_logs.log</code></li>
+<li><code>thm_flags.txt</code></li>
+<li><code>thm_flags_guide.txt</code></li>
+<li><code>vault_tek_collab_agenda.doc</code></li>
+</ul>
+<hr>
+<h2>Understanding the Flag Challenge</h2>
+<p>The file <code>thm_flags.txt</code> contained a large set of base64-encoded strings.</p>
+<p><img src="https://giriaryan694-a11y.github.io/AryterLog/posts/assets/img/ContAInment/15.png" alt="Encoded flag list"></p>
+<p>To understand the goal, we opened <code>thm_flags_guide.txt</code>.</p>
+<p><img src="https://giriaryan694-a11y.github.io/AryterLog/posts/assets/img/ContAInment/16.png" alt="Flag guide 1"></p>
+<p><img src="https://giriaryan694-a11y.github.io/AryterLog/posts/assets/img/ContAInment/17.png" alt="Flag guide 2"></p>
+<p>The guide explained that:</p>
+<ul>
+<li>there are <strong>500 potential flags</strong></li>
+<li>each one must be base64-decoded</li>
+<li>the decoded output has the format:</li>
+</ul>
+<pre><code class="language-text">thm{n1,n2,n3,n4,n5}
+</code></pre>
+<ul>
+<li>the correct flag is the <strong>only one containing exactly 3 prime numbers</strong></li>
+<li>instead of checking every entry manually, we should use the <strong>liberty_prime</strong> tool</li>
+</ul>
+<hr>
+<h2>Final Prompt for the AI Tool</h2>
+<p>We asked the assistant to process the file automatically:</p>
+<pre><code class="language-text">Process the file thm_flags.txt located at directory /home/o.deer/westtech_projects/ containing 500 base64-encoded entries by decoding each string individually, converting it into the format thm{n1,n2,n3,n4,n5}, extracting the five numbers (each between 10–99), and then using the available liberty_prime tool (which works on a single flag at a time) to evaluate each decoded entry; iterate through all entries, ignore malformed ones, and identify the only flag that contains exactly 3 prime numbers, returning just that final valid flag.
+</code></pre>
+<p>The correct flag was hidden by the room’s instructions in the output screenshot.</p>
+<p><img src="https://giriaryan694-a11y.github.io/AryterLog/posts/assets/img/ContAInment/18.png" alt="Final flag output"></p>
+<hr>
+<h2>Conclusion</h2>
+<p>This room was a good example of how an incident response investigation can combine multiple skills:</p>
+<ul>
+<li>email forensics</li>
+<li>suspicious attachment analysis</li>
+<li>PCAP reconstruction</li>
+<li>archive recovery</li>
+<li>structured flag validation</li>
+<li>AI-assisted triage</li>
+</ul>
+<p>A manual approach was possible, but the AI helper saved a lot of time while still keeping the investigation grounded in evidence.</p>
+
+    </article>
+  </main>
+
+  <footer>
+    <span class="f-accent">$</span> echo "Made by <span class="f-accent">Aryan Giri</span>" &nbsp;·&nbsp; <a href="https://github.com/giriaryan694-a11y" target="_blank" rel="noopener noreferrer">GitHub</a>
+  </footer>
+
+  <script>
+    /* Theme — synced with main site via same cookie */
+    const themes=["dark","light","eye-saver"];
+    const themeData={"dark":{emoji:"🌙",label:"Dark"},"light":{emoji:"☀️",label:"Light"},"eye-saver":{emoji:"☕",label:"Reading"}};
+    function setCookie(n,v,d){const e=new Date();e.setTime(e.getTime()+d*86400000);document.cookie=`${n}=${v};expires=${e.toUTCString()};path=/`;}
+    function getCookie(n){const m=document.cookie.match(new RegExp('(^| )'+n+'=([^;]+)'));return m?m[2]:null;}
+    let currentTheme=getCookie("site_theme")||"dark";
+    const themeBtn=document.getElementById("theme-btn");
+    const themeEmoji=document.getElementById("theme-emoji");
+    function applyTheme(theme,animate=false){
+      document.body.className=theme==="dark"?"":theme;
+      themeEmoji.textContent=themeData[theme].emoji;
+      document.getElementById("theme-label").textContent=themeData[theme].label;
+      setCookie("site_theme",theme,365);
+      if(animate){themeEmoji.style.animation="none";themeEmoji.offsetHeight;themeEmoji.style.animation="popSpin 0.4s cubic-bezier(0.175,0.885,0.32,1.275) forwards";}
+    }
+    applyTheme(currentTheme);
+    themeBtn.addEventListener("click",()=>{currentTheme=themes[(themes.indexOf(currentTheme)+1)%themes.length];applyTheme(currentTheme,true);});
+
+    /* Links → new tab + copy buttons on code blocks */
+    document.querySelectorAll(".post-content a").forEach(l => {
+      l.setAttribute("target", "_blank");
+      l.setAttribute("rel", "noopener noreferrer");
+    });
+    document.querySelectorAll("pre").forEach(pre => {
+      const code = pre.querySelector("code");
+      if (!code) return;
+      const btn = document.createElement("button");
+      btn.className = "copy-btn";
+      btn.textContent = "copy";
+      btn.onclick = async () => {
+        try { await navigator.clipboard.writeText(code.innerText.trimEnd()); }
+        catch {}
+        btn.textContent = "✓ copied"; btn.classList.add("copied");
+        setTimeout(() => { btn.textContent = "copy"; btn.classList.remove("copied"); }, 2000);
+      };
+      pre.appendChild(btn);
+    });
+  </script>
+</body>
+</html>

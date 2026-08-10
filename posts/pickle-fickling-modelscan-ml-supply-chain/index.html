@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pickle Internals, Fickling &amp; ModelScan Usage for ML Artifact Security — AryterLog</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="../../manifest.json">
+  <meta name="theme-color" content="#080b10">
+  <link rel="icon" href="../../icons/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="../../icons/apple-touch-icon.png">
+  <meta name="description" content="Explains how Python pickle serialization can be abused for code execution in ML pipelines, and demonstrates how pickletools, Fickling, and ModelScan are used to analyze, decompile, and detect malicious model artifacts across pickle and HDF5-based formats.">
+  <link rel="canonical" href="https://giriaryan694-a11y.github.io/AryterLog/posts/pickle-fickling-modelscan-ml-supply-chain/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Pickle Internals, Fickling &amp; ModelScan Usage for ML Artifact Security">
+  <meta property="og:description" content="Explains how Python pickle serialization can be abused for code execution in ML pipelines, and demonstrates how pickletools, Fickling, and ModelScan are used to analyze, decompile, and detect malicious model artifacts across pickle and HDF5-based formats.">
+  <meta property="og:url" content="https://giriaryan694-a11y.github.io/AryterLog/posts/pickle-fickling-modelscan-ml-supply-chain/">
+  <meta property="og:site_name" content="AryterLog">
+  <meta property="article:published_time" content="2026-05-18T00:00:00.000Z">
+  <meta property="article:tag" content="ai-security">
+  <meta property="article:tag" content="vulnerability-research">
+  <meta property="article:tag" content="tooling">
+  <meta property="article:tag" content="malware-analysis">
+  <meta property="article:tag" content="red-team">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Pickle Internals, Fickling &amp; ModelScan Usage for ML Artifact Security">
+  <meta name="twitter:description" content="Explains how Python pickle serialization can be abused for code execution in ML pipelines, and demonstrates how pickletools, Fickling, and ModelScan are used to analyze, decompile, and detect malicious model artifacts across pickle and HDF5-based formats.">
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Pickle Internals, Fickling & ModelScan Usage for ML Artifact Security","description":"Explains how Python pickle serialization can be abused for code execution in ML pipelines, and demonstrates how pickletools, Fickling, and ModelScan are used to analyze, decompile, and detect malicious model artifacts across pickle and HDF5-based formats.","datePublished":"2026-05-18T00:00:00.000Z","author":{"@type":"Person","name":"Aryan Giri"},"publisher":{"@type":"Organization","name":"AryterLog"},"mainEntityOfPage":"https://giriaryan694-a11y.github.io/AryterLog/posts/pickle-fickling-modelscan-ml-supply-chain/","keywords":"ai-security, vulnerability-research, tooling, malware-analysis, red-team"}</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:#080b10; --surface:#0d1117; --surface2:#111820; --surface3:#161d27;
+      --text:#d0dbe8; --text2:#7a8a9a; --accent:#00ff88; --accent2:#0ea5e9;
+      --danger:#ff4560; --border:#1e2a38; --border2:#2a3848; --code-bg:#0a0f16;
+      --glow:rgba(0,255,136,0.08); --glow2:rgba(0,255,136,0.18);
+    }
+    .light {
+      --bg:#f5f7fa; --surface:#ffffff; --surface2:#f0f4f8; --surface3:#e8eef5;
+      --text:#111827; --text2:#6b7280; --accent:#059669; --accent2:#0284c7;
+      --danger:#dc2626; --border:#e2e8f0; --border2:#cbd5e1; --code-bg:#f1f5f9;
+      --glow:rgba(5,150,105,0.07); --glow2:rgba(5,150,105,0.14);
+    }
+    .eye-saver {
+      --bg:#12100a; --surface:#1a1608; --surface2:#211c0c; --surface3:#282210;
+      --text:#e8d8b0; --text2:#9a8860; --accent:#f5c542; --accent2:#e08030;
+      --danger:#e05050; --border:#302810; --border2:#3d3418; --code-bg:#0f0d06;
+      --glow:rgba(245,197,66,0.08); --glow2:rgba(245,197,66,0.18);
+    }
+
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body {
+      font-family:'Fira Code',monospace;
+      background:var(--bg); color:var(--text);
+      min-height:100vh; overflow-x:hidden;
+      transition:background 0.4s,color 0.4s;
+    }
+    body::before {
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+      background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
+      background-size:44px 44px; opacity:0.25;
+    }
+
+    header {
+      position:sticky; top:0; z-index:200;
+      background:rgba(8,11,16,0.86); backdrop-filter:blur(16px);
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 22px; height:56px; gap:12px;
+    }
+    .light header{background:rgba(245,247,250,0.9);}
+    .eye-saver header{background:rgba(18,16,10,0.9);}
+    header::after {
+      content:''; position:absolute; bottom:-1px; left:8%; right:8%; height:1px;
+      background:linear-gradient(90deg,transparent,var(--accent),transparent); opacity:0.35;
+    }
+    .header-left{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+
+    .logo {
+      font-family:'Bebas Neue',sans-serif; font-size:24px; font-weight:400;
+      letter-spacing:3px; color:var(--text); text-decoration:none; white-space:nowrap;
+      flex-shrink:0; line-height:1; transition:color 0.2s;
+    }
+    .logo .lo-a{color:var(--accent);}
+    .logo:hover .lo-a{text-shadow:0 0 14px var(--accent);}
+
+    .back-link {
+      display:inline-flex; align-items:center; gap:6px;
+      background:transparent; border:1px solid var(--border2); color:var(--text2);
+      padding:6px 12px; border-radius:6px; cursor:pointer; transition:all 0.2s;
+      font-family:'Fira Code',monospace; font-size:11px; text-decoration:none;
+    }
+    .back-link:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    #theme-btn {
+      background:transparent; border:1px solid var(--border2);
+      padding:5px 11px; cursor:pointer; color:var(--text2); border-radius:6px;
+      transition:all 0.2s; font-family:'Fira Code',monospace; font-size:11px;
+      display:inline-flex; align-items:center; gap:6px; white-space:nowrap;
+    }
+    #theme-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    @keyframes popSpin{0%{transform:scale(0.4) rotate(-60deg);opacity:0;}70%{transform:scale(1.15) rotate(5deg);}100%{transform:scale(1) rotate(0deg);opacity:1;}}
+    .emoji{display:inline-block;}
+
+    main{max-width:760px;margin:0 auto;padding:34px 20px 60px;position:relative;z-index:1;}
+
+    .back-btn {
+      display:inline-flex;align-items:center;gap:7px;margin-bottom:20px;
+      background:var(--surface);border:1px solid var(--border2);color:var(--text2);
+      padding:7px 13px;border-radius:6px;font-family:'Fira Code',monospace;font-size:11px;
+      cursor:pointer;transition:all 0.2s;text-decoration:none;
+    }
+    .back-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    .post-content {
+      background:var(--surface);border:1px solid var(--border);border-radius:12px;
+      padding:34px 30px;position:relative;overflow:hidden;
+    }
+    .post-content::before {
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      border-radius:12px 12px 0 0;
+    }
+    .post-content *{max-width:100%;}
+
+    h1 {
+      font-family:'Space Grotesk',sans-serif;font-size:clamp(19px,4vw,26px);
+      font-weight:700;color:var(--text);margin-bottom:8px;line-height:1.25;word-break:break-word;
+    }
+    .post-header-meta{
+      font-family:'Fira Code',monospace;font-size:11px;color:var(--text2);
+      padding-bottom:18px;margin-bottom:22px;border-bottom:1px solid var(--border);
+      display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+    }
+    .card-cat-chip {
+      display:inline-flex;align-items:center;padding:1px 7px;border-radius:3px;
+      border:1px solid var(--border2);background:var(--surface2);color:var(--text2);
+      font-size:9px;font-family:'Fira Code',monospace;font-weight:500;letter-spacing:0.4px;
+    }
+    h2,h3{font-family:'Space Grotesk',sans-serif;font-weight:600;color:var(--text);margin:26px 0 10px;word-break:break-word;}
+    h2{font-size:19px;} h3{font-size:15px;color:var(--accent);}
+    p{font-size:14px;line-height:1.8;margin-bottom:14px;color:var(--text);}
+    ul,ol{padding-left:20px;margin-bottom:14px;font-size:14px;line-height:1.8;}
+    li{margin-bottom:4px;}
+
+    a{color:var(--accent);word-break:break-all;overflow-wrap:break-word;transition:opacity 0.2s;}
+    a:hover{opacity:0.75;}
+    .post-content a{text-decoration:underline;text-underline-offset:3px;}
+
+    code {
+      background:var(--code-bg);border:1px solid var(--border);padding:2px 6px;
+      border-radius:4px;font-family:'Fira Code',monospace;font-size:0.85em;
+      color:var(--accent);word-break:break-all;overflow-wrap:break-word;
+    }
+    pre {
+      background:var(--code-bg);border:1px solid var(--border);padding:18px;border-radius:8px;
+      max-width:100%; overflow:hidden;
+      position:relative;margin-bottom:14px;
+    }
+    pre::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      opacity:0.5;border-radius:8px 8px 0 0;
+    }
+    pre code{
+      background:transparent;border:none;padding:0 60px 0 0;word-break:normal;
+      overflow-wrap:normal;white-space:pre;display:block;
+      overflow-x:auto;-webkit-overflow-scrolling:touch;
+      font-size:13px;line-height:1.65;color:var(--text);
+    }
+    blockquote{
+      border-left:2px solid var(--accent);margin:14px 0;padding:10px 16px;
+      background:var(--glow);border-radius:0 6px 6px 0;font-style:italic;color:var(--text2);
+    }
+    table{width:100%;border-collapse:collapse;display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;font-size:13px;margin-bottom:14px;}
+    th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;white-space:nowrap;}
+    th{background:var(--surface2);color:var(--accent);font-weight:600;}
+    img{max-width:100%;height:auto;border-radius:8px;display:block;margin:14px 0;}
+
+    .copy-btn {
+      position:absolute;top:9px;right:9px;padding:3px 8px;font-size:10px;
+      font-family:'Fira Code',monospace;font-weight:500;background:var(--surface2);
+      border:1px solid var(--border2);color:var(--text2);border-radius:4px;cursor:pointer;
+      transition:all 0.2s;opacity:0;letter-spacing:0.3px;
+    }
+    pre:hover .copy-btn{opacity:1;}
+    .copy-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    .copy-btn.copied{border-color:var(--accent);color:var(--accent);opacity:1;}
+
+    footer{
+      text-align:center;padding:22px 16px;color:var(--text2);
+      font-family:'Fira Code',monospace;font-size:11px;
+      border-top:1px solid var(--border);position:relative;z-index:1;
+    }
+    .f-accent{color:var(--accent);}
+    footer a{color:var(--accent);text-decoration:none;}
+    footer a:hover{opacity:0.75;}
+
+    @media(max-width:480px){
+      header{padding:0 13px;height:50px;}
+      .logo{font-size:21px;letter-spacing:2px;}
+      main{padding:20px 14px 44px;}
+      .post-content{padding:20px 14px;}
+      pre{padding:13px;}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <a href="../../index.html" class="logo">Aryter<span class="lo-a">Log</span></a>
+    </div>
+    <button id="theme-btn" aria-label="Cycle Theme">
+      <span class="emoji" id="theme-emoji">🌙</span>
+      <span id="theme-label">Dark</span>
+    </button>
+  </header>
+
+  <main>
+    <a href="../../index.html#post-pickle-fickling-modelscan-ml-supply-chain" class="back-btn">← Back to Blog</a>
+    <article class="post-content">
+      <h1>Pickle Internals, Fickling &amp; ModelScan Usage for ML Artifact Security</h1>
+      <div class="post-header-meta">
+        <span>📅 Published 2026-05-18</span>
+        <span>·</span><span class="card-cat-chip">ai-security</span><span class="card-cat-chip">vulnerability-research</span><span class="card-cat-chip">tooling</span><span class="card-cat-chip">malware-analysis</span><span class="card-cat-chip">red-team</span>
+      </div>
+      <p><strong>Written by Aryan Giri</strong></p>
+<hr>
+<h2>1. Introduction</h2>
+<p>Python serialization is convenient, but it becomes dangerous the moment untrusted model files enter the workflow. <code>pickle</code> can carry execution behavior during deserialization, which is why pickle-based ML artifacts are a classic supply-chain risk.</p>
+<p>This article covers:</p>
+<ul>
+<li><code>pickletools</code> for disassembling pickle bytecode</li>
+<li><code>Fickling</code> for decompiling and analyzing pickle files</li>
+<li><code>h5py</code> / HDF5 as a second model-file surface</li>
+<li><code>ModelScan</code> for scanning model artifacts before loading them</li>
+</ul>
+<hr>
+<h2>2. What Pickling Does</h2>
+<p>Pickling converts Python objects into a byte stream. Unpickling restores them later.</p>
+<pre><code class="language-python">import pickle
+
+obj = {&quot;user&quot;: &quot;aryan&quot;, &quot;role&quot;: &quot;analyst&quot;}
+blob = pickle.dumps(obj)
+restored = pickle.loads(blob)
+print(restored)
+</code></pre>
+<p>The risk is simple: loading a malicious pickle can trigger code execution during deserialization.</p>
+<hr>
+<h2>3. Why Pickle is Dangerous</h2>
+<p><code>pickle</code> is not just data storage. It can reference functions and reconstruct objects through execution-like behavior.</p>
+<p>Common abuse paths include:</p>
+<ul>
+<li><code>__reduce__</code> abuse</li>
+<li>malicious opcode chains</li>
+<li>hidden imports</li>
+<li>payloads embedded in model files</li>
+</ul>
+<pre><code class="language-python">import pickle
+import os
+
+class Evil:
+    def __reduce__(self):
+        return (os.system, (&quot;whoami&quot;,))
+
+payload = pickle.dumps(Evil())
+# Never load untrusted pickle data.
+</code></pre>
+<hr>
+<h2>4. pickletools: Disassemble the Bytecode</h2>
+<p><code>pickletools</code> is the first lens for inspecting a suspicious pickle file. It disassembles pickle bytecode without executing it.</p>
+<h3>CLI usage</h3>
+<pre><code class="language-bash">python -m pickletools model.pkl
+</code></pre>
+<h3>Useful examples</h3>
+<pre><code class="language-bash">python -m pickletools suspicious.pkl &gt; disassembly.txt
+python -m pickletools model.pkl | less
+</code></pre>
+<h3>Why it matters</h3>
+<p>It lets you inspect opcodes such as <code>GLOBAL</code>, <code>REDUCE</code>, and <code>BUILD</code> so you can understand how the object will be reconstructed.</p>
+<hr>
+<h2>5. Fickling: Decompiler and Static Analyzer</h2>
+<p><code>Fickling</code> goes deeper than raw opcode dumps. It is a decompiler, static analyzer, and bytecode rewriter for Python pickle serializations.</p>
+<h3>Install</h3>
+<pre><code class="language-bash">python -m pip install fickling
+</code></pre>
+<h3>CLI examples</h3>
+<pre><code class="language-bash">fickling --help
+fickling --trace model.pkl
+fickling --check-safety -p model.pkl
+</code></pre>
+<h3>What it is good for</h3>
+<ul>
+<li>tracing pickle execution safely</li>
+<li>checking whether a file looks malicious</li>
+<li>decompiling pickle logic into a more readable form</li>
+</ul>
+<h3>Programmatic check example</h3>
+<pre><code class="language-python">import fickling
+
+if not fickling.is_likely_safe(&quot;model.pkl&quot;):
+    print(&quot;Unsafe file&quot;)
+</code></pre>
+<hr>
+<h2>6. h5py and HDF5: The Other Model Format You Should Know</h2>
+<p>The common Python library for HDF5 is <code>h5py</code>. It is a Pythonic interface to the HDF5 binary data format.</p>
+<h3>Install</h3>
+<pre><code class="language-bash">python -m pip install h5py
+</code></pre>
+<h3>Tiny example</h3>
+<pre><code class="language-python">import h5py
+
+with h5py.File(&quot;model.h5&quot;, &quot;r&quot;) as f:
+    print(list(f.keys()))
+</code></pre>
+<p>HDF5 files are common in ML workflows, so they belong in any model-file review workflow.</p>
+<hr>
+<h2>7. ModelScan: Scan the Artifact Before Loading It</h2>
+<p><code>ModelScan</code> is built to scan model files for unsafe code patterns across multiple formats, including Pickle and H5.</p>
+<h3>Install</h3>
+<pre><code class="language-bash">python -m pip install modelscan
+</code></pre>
+<h3>Basic scan</h3>
+<pre><code class="language-bash">modelscan -p model.pkl
+</code></pre>
+<h3>More examples</h3>
+<pre><code class="language-bash">modelscan -p suspicious.pkl
+modelscan -p model.h5
+modelscan -h
+modelscan -v
+</code></pre>
+<h3>Create a settings file</h3>
+<pre><code class="language-bash">modelscan create-settings-file
+</code></pre>
+<h3>Why it matters</h3>
+<p>It gives you a fast static scan before a model ever reaches <code>pickle.load()</code>, <code>torch.load()</code>, or similar loaders.</p>
+<hr>
+<h2>8. A Practical Triage Flow</h2>
+<ol>
+<li>Identify the file type.</li>
+<li>Run <code>pickletools</code> if it is a pickle artifact.</li>
+<li>Run <code>Fickling</code> for deeper inspection.</li>
+<li>Run <code>ModelScan</code> across the file.</li>
+<li>Only then decide whether the artifact is safe to load in a sandbox.</li>
+</ol>
+<h3>Example triage session</h3>
+<pre><code class="language-bash">file model.pkl
+python -m pickletools model.pkl &gt; disassembly.txt
+fickling --check-safety -p model.pkl
+modelscan -p model.pkl
+</code></pre>
+<hr>
+<h2>9. Key Takeaways</h2>
+<ul>
+<li><code>pickletools</code> helps you inspect pickle bytecode safely.</li>
+<li><code>Fickling</code> adds decompilation, tracing, and safety checks.</li>
+<li><code>h5py</code> matters because HDF5 model files are also a real attack surface.</li>
+<li><code>ModelScan</code> gives you a fast static scan across model formats.</li>
+</ul>
+<hr>
+
+    </article>
+  </main>
+
+  <footer>
+    <span class="f-accent">$</span> echo "Made by <span class="f-accent">Aryan Giri</span>" &nbsp;·&nbsp; <a href="https://github.com/giriaryan694-a11y" target="_blank" rel="noopener noreferrer">GitHub</a>
+  </footer>
+
+  <script>
+    /* Theme — synced with main site via same cookie */
+    const themes=["dark","light","eye-saver"];
+    const themeData={"dark":{emoji:"🌙",label:"Dark"},"light":{emoji:"☀️",label:"Light"},"eye-saver":{emoji:"☕",label:"Reading"}};
+    function setCookie(n,v,d){const e=new Date();e.setTime(e.getTime()+d*86400000);document.cookie=`${n}=${v};expires=${e.toUTCString()};path=/`;}
+    function getCookie(n){const m=document.cookie.match(new RegExp('(^| )'+n+'=([^;]+)'));return m?m[2]:null;}
+    let currentTheme=getCookie("site_theme")||"dark";
+    const themeBtn=document.getElementById("theme-btn");
+    const themeEmoji=document.getElementById("theme-emoji");
+    function applyTheme(theme,animate=false){
+      document.body.className=theme==="dark"?"":theme;
+      themeEmoji.textContent=themeData[theme].emoji;
+      document.getElementById("theme-label").textContent=themeData[theme].label;
+      setCookie("site_theme",theme,365);
+      if(animate){themeEmoji.style.animation="none";themeEmoji.offsetHeight;themeEmoji.style.animation="popSpin 0.4s cubic-bezier(0.175,0.885,0.32,1.275) forwards";}
+    }
+    applyTheme(currentTheme);
+    themeBtn.addEventListener("click",()=>{currentTheme=themes[(themes.indexOf(currentTheme)+1)%themes.length];applyTheme(currentTheme,true);});
+
+    /* Links → new tab + copy buttons on code blocks */
+    document.querySelectorAll(".post-content a").forEach(l => {
+      l.setAttribute("target", "_blank");
+      l.setAttribute("rel", "noopener noreferrer");
+    });
+    document.querySelectorAll("pre").forEach(pre => {
+      const code = pre.querySelector("code");
+      if (!code) return;
+      const btn = document.createElement("button");
+      btn.className = "copy-btn";
+      btn.textContent = "copy";
+      btn.onclick = async () => {
+        try { await navigator.clipboard.writeText(code.innerText.trimEnd()); }
+        catch {}
+        btn.textContent = "✓ copied"; btn.classList.add("copied");
+        setTimeout(() => { btn.textContent = "copy"; btn.classList.remove("copied"); }, 2000);
+      };
+      pre.appendChild(btn);
+    });
+  </script>
+</body>
+</html>
