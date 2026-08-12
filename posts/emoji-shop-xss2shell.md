@@ -248,7 +248,8 @@ Once the malicious comment is stored, I return to the administrator session and 
 The JavaScript executes automatically while the administrator is viewing the stored comment.
 
 
-https://github.com/user-attachments/assets/118dba0a-c616-4575-9b3d-9c552fbad1df
+[▶️ Watch video](https://github.com/user-attachments/assets/118dba0a-c616-4575-9b3d-9c552fbad1df)
+
 
 
 The result is that the server creates:
@@ -275,8 +276,7 @@ The `id` command confirms that the newly created endpoint is executing commands 
 Additional commands can then be supplied through the `cmd` parameter.
 
 
-
-https://github.com/user-attachments/assets/b279b718-b644-4afb-a4de-7f715385d3b2
+[▶️ Watch video](https://github.com/user-attachments/assets/b279b718-b644-4afb-a4de-7f715385d3b2)
 
 
 
