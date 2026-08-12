@@ -1,5 +1,19 @@
 [
   {
+  "id": "emoji-shop-xss2shell",
+  "title": "Emoji_ShopXSS2SHELL — Stored XSS to RCE Home Lab",
+  "date": "12-08-2026",
+  "summary": "A hands-on home-lab writeup demonstrating how stored XSS can be chained with privileged administrative functionality and unsafe command execution to achieve server-side command execution.",
+  "category": [
+    "web-security",
+    "pentesting",
+    "attack-techniques",
+    "post-exploitation",
+    "lab-setup"
+  ],
+  "file": "posts/emoji-shop-xss2shell.md"
+  },
+  {
   "id": "infinity-pool",
   "title": "TryHackMe Hacker Holidays 2026: Infinity Pool",
   "date": "08-08-2026",
