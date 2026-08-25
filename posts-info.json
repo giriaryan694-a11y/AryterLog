@@ -1,5 +1,13 @@
 [
   {
+  "id": "ai-safety-as-programming-boundary",
+  "title": "If Prompting Becomes Programming, Does AI Safety Become the New Programming Boundary?",
+  "date": "25-08-2026",
+  "summary": "An analysis of how increasingly capable AI coding agents could change the relationship between programming, safety, and technological freedom, arguing for contextual safeguards that distinguish harmful real-world abuse from legitimate education, research, and controlled experimentation.",
+  "category": ["ai-security", "education", "offensive-security", "philosophy"],
+  "file": "posts/ai-safety-as-programming-boundary.md"
+  },
+  {
   "id": "emoji-shop-xss2shell",
   "title": "Emoji_ShopXSS2SHELL — Stored XSS to RCE Home Lab",
   "date": "12-08-2026",
