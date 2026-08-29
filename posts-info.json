@@ -1,5 +1,13 @@
 [
   {
+  "id": "client-side-security-vs-browser-security",
+  "title": "Client-Side Security vs Browser Security",
+  "date": "29-08-2026",
+  "summary": "A technical comparison of client-side security and browser security, covering their scope, overlap, security boundaries, and relevance to web penetration testing.",
+  "category": ["web-security", "vulnerability-research", "pentesting"],
+  "file": "posts/client-side-security-vs-browser-security.md"
+  },
+  {
   "id": "ai-safety-as-programming-boundary",
   "title": "If Prompting Becomes Programming, Does AI Safety Become the New Programming Boundary?",
   "date": "25-08-2026",
