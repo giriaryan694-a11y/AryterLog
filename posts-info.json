@@ -1,5 +1,13 @@
 [
   {
+  "id": "server-side-vs-middleware-http-security",
+  "title": "Server-Side Security vs Middleware / HTTP Services Security",
+  "date": "29-08-2026",
+  "summary": "A practical breakdown of server-side security versus middleware and HTTP-services security, including request smuggling, cache poisoning, Host-header attacks, SSRF, injection, authorization flaws, and cross-layer attack chains.",
+  "category": ["web-security", "attack-techniques", "pentesting"],
+  "file": "posts/server-side-vs-middleware-http-security.md"
+  },
+  {
   "id": "client-side-security-vs-browser-security",
   "title": "Client-Side Security vs Browser Security",
   "date": "29-08-2026",
