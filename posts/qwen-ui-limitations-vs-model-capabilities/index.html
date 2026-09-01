@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Qwen Tool-Use Exploration: UI Restrictions vs. Model Capabilities — AryterLog</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="../../manifest.json">
+  <meta name="theme-color" content="#080b10">
+  <link rel="icon" href="../../icons/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="../../icons/apple-touch-icon.png">
+  <meta name="description" content="An exploration of Qwen&#039;s tool-use capabilities using an intentionally exposed sandbox, temporary tunnels, command execution, application generation, and bidirectional file transfer. The experiment examines why UI-level restrictions do not necessarily represent the full capability boundary of a tool-using AI system.">
+  <link rel="canonical" href="https://giriaryan694-a11y.github.io/AryterLog/posts/qwen-ui-limitations-vs-model-capabilities/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Qwen Tool-Use Exploration: UI Restrictions vs. Model Capabilities">
+  <meta property="og:description" content="An exploration of Qwen&#039;s tool-use capabilities using an intentionally exposed sandbox, temporary tunnels, command execution, application generation, and bidirectional file transfer. The experiment examines why UI-level restrictions do not necessarily represent the full capability boundary of a tool-using AI system.">
+  <meta property="og:url" content="https://giriaryan694-a11y.github.io/AryterLog/posts/qwen-ui-limitations-vs-model-capabilities/">
+  <meta property="og:site_name" content="AryterLog">
+  <meta property="article:published_time" content="2026-01-09T00:00:00.000Z">
+  <meta property="article:tag" content="ai-security">
+  <meta property="article:tag" content="llm-security">
+  <meta property="article:tag" content="evaluation">
+  <meta property="article:tag" content="ai-tools">
+  <meta property="article:tag" content="tunneling">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Qwen Tool-Use Exploration: UI Restrictions vs. Model Capabilities">
+  <meta name="twitter:description" content="An exploration of Qwen&#039;s tool-use capabilities using an intentionally exposed sandbox, temporary tunnels, command execution, application generation, and bidirectional file transfer. The experiment examines why UI-level restrictions do not necessarily represent the full capability boundary of a tool-using AI system.">
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Qwen Tool-Use Exploration: UI Restrictions vs. Model Capabilities","description":"An exploration of Qwen's tool-use capabilities using an intentionally exposed sandbox, temporary tunnels, command execution, application generation, and bidirectional file transfer. The experiment examines why UI-level restrictions do not necessarily represent the full capability boundary of a tool-using AI system.","datePublished":"2026-01-09T00:00:00.000Z","author":{"@type":"Person","name":"Aryan Giri"},"publisher":{"@type":"Organization","name":"AryterLog"},"mainEntityOfPage":"https://giriaryan694-a11y.github.io/AryterLog/posts/qwen-ui-limitations-vs-model-capabilities/","keywords":"ai-security, llm-security, evaluation, ai-tools, tunneling"}</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:#080b10; --surface:#0d1117; --surface2:#111820; --surface3:#161d27;
+      --text:#d0dbe8; --text2:#7a8a9a; --accent:#00ff88; --accent2:#0ea5e9;
+      --danger:#ff4560; --border:#1e2a38; --border2:#2a3848; --code-bg:#0a0f16;
+      --glow:rgba(0,255,136,0.08); --glow2:rgba(0,255,136,0.18);
+    }
+    .light {
+      --bg:#f5f7fa; --surface:#ffffff; --surface2:#f0f4f8; --surface3:#e8eef5;
+      --text:#111827; --text2:#6b7280; --accent:#059669; --accent2:#0284c7;
+      --danger:#dc2626; --border:#e2e8f0; --border2:#cbd5e1; --code-bg:#f1f5f9;
+      --glow:rgba(5,150,105,0.07); --glow2:rgba(5,150,105,0.14);
+    }
+    .eye-saver {
+      --bg:#12100a; --surface:#1a1608; --surface2:#211c0c; --surface3:#282210;
+      --text:#e8d8b0; --text2:#9a8860; --accent:#f5c542; --accent2:#e08030;
+      --danger:#e05050; --border:#302810; --border2:#3d3418; --code-bg:#0f0d06;
+      --glow:rgba(245,197,66,0.08); --glow2:rgba(245,197,66,0.18);
+    }
+
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body {
+      font-family:'Fira Code',monospace;
+      background:var(--bg); color:var(--text);
+      min-height:100vh; overflow-x:hidden;
+      transition:background 0.4s,color 0.4s;
+    }
+    body::before {
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+      background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
+      background-size:44px 44px; opacity:0.25;
+    }
+
+    header {
+      position:sticky; top:0; z-index:200;
+      background:rgba(8,11,16,0.86); backdrop-filter:blur(16px);
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 22px; height:56px; gap:12px;
+    }
+    .light header{background:rgba(245,247,250,0.9);}
+    .eye-saver header{background:rgba(18,16,10,0.9);}
+    header::after {
+      content:''; position:absolute; bottom:-1px; left:8%; right:8%; height:1px;
+      background:linear-gradient(90deg,transparent,var(--accent),transparent); opacity:0.35;
+    }
+    .header-left{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+
+    .logo {
+      font-family:'Bebas Neue',sans-serif; font-size:24px; font-weight:400;
+      letter-spacing:3px; color:var(--text); text-decoration:none; white-space:nowrap;
+      flex-shrink:0; line-height:1; transition:color 0.2s;
+    }
+    .logo .lo-a{color:var(--accent);}
+    .logo:hover .lo-a{text-shadow:0 0 14px var(--accent);}
+
+    .back-link {
+      display:inline-flex; align-items:center; gap:6px;
+      background:transparent; border:1px solid var(--border2); color:var(--text2);
+      padding:6px 12px; border-radius:6px; cursor:pointer; transition:all 0.2s;
+      font-family:'Fira Code',monospace; font-size:11px; text-decoration:none;
+    }
+    .back-link:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    #theme-btn {
+      background:transparent; border:1px solid var(--border2);
+      padding:5px 11px; cursor:pointer; color:var(--text2); border-radius:6px;
+      transition:all 0.2s; font-family:'Fira Code',monospace; font-size:11px;
+      display:inline-flex; align-items:center; gap:6px; white-space:nowrap;
+    }
+    #theme-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    @keyframes popSpin{0%{transform:scale(0.4) rotate(-60deg);opacity:0;}70%{transform:scale(1.15) rotate(5deg);}100%{transform:scale(1) rotate(0deg);opacity:1;}}
+    .emoji{display:inline-block;}
+
+    main{max-width:760px;margin:0 auto;padding:34px 20px 60px;position:relative;z-index:1;}
+
+    .back-btn {
+      display:inline-flex;align-items:center;gap:7px;margin-bottom:20px;
+      background:var(--surface);border:1px solid var(--border2);color:var(--text2);
+      padding:7px 13px;border-radius:6px;font-family:'Fira Code',monospace;font-size:11px;
+      cursor:pointer;transition:all 0.2s;text-decoration:none;
+    }
+    .back-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    .post-content {
+      background:var(--surface);border:1px solid var(--border);border-radius:12px;
+      padding:34px 30px;position:relative;overflow:hidden;
+    }
+    .post-content::before {
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      border-radius:12px 12px 0 0;
+    }
+    .post-content *{max-width:100%;}
+
+    h1 {
+      font-family:'Space Grotesk',sans-serif;font-size:clamp(19px,4vw,26px);
+      font-weight:700;color:var(--text);margin-bottom:8px;line-height:1.25;word-break:break-word;
+    }
+    .post-header-meta{
+      font-family:'Fira Code',monospace;font-size:11px;color:var(--text2);
+      padding-bottom:18px;margin-bottom:22px;border-bottom:1px solid var(--border);
+      display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+    }
+    .card-cat-chip {
+      display:inline-flex;align-items:center;padding:1px 7px;border-radius:3px;
+      border:1px solid var(--border2);background:var(--surface2);color:var(--text2);
+      font-size:9px;font-family:'Fira Code',monospace;font-weight:500;letter-spacing:0.4px;
+    }
+    h2,h3{font-family:'Space Grotesk',sans-serif;font-weight:600;color:var(--text);margin:26px 0 10px;word-break:break-word;}
+    h2{font-size:19px;} h3{font-size:15px;color:var(--accent);}
+    p{font-size:14px;line-height:1.8;margin-bottom:14px;color:var(--text);}
+    ul,ol{padding-left:20px;margin-bottom:14px;font-size:14px;line-height:1.8;}
+    li{margin-bottom:4px;}
+
+    a{color:var(--accent);word-break:break-all;overflow-wrap:break-word;transition:opacity 0.2s;}
+    a:hover{opacity:0.75;}
+    .post-content a{text-decoration:underline;text-underline-offset:3px;}
+
+    code {
+      background:var(--code-bg);border:1px solid var(--border);padding:2px 6px;
+      border-radius:4px;font-family:'Fira Code',monospace;font-size:0.85em;
+      color:var(--accent);word-break:break-all;overflow-wrap:break-word;
+    }
+    pre {
+      background:var(--code-bg);border:1px solid var(--border);padding:18px;border-radius:8px;
+      max-width:100%; overflow:hidden;
+      position:relative;margin-bottom:14px;
+    }
+    pre::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      opacity:0.5;border-radius:8px 8px 0 0;
+    }
+    pre code{
+      background:transparent;border:none;padding:0 60px 0 0;word-break:normal;
+      overflow-wrap:normal;white-space:pre;display:block;
+      overflow-x:auto;-webkit-overflow-scrolling:touch;
+      font-size:13px;line-height:1.65;color:var(--text);
+    }
+    blockquote{
+      border-left:2px solid var(--accent);margin:14px 0;padding:10px 16px;
+      background:var(--glow);border-radius:0 6px 6px 0;font-style:italic;color:var(--text2);
+    }
+    table{width:100%;border-collapse:collapse;display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;font-size:13px;margin-bottom:14px;}
+    th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;white-space:nowrap;}
+    th{background:var(--surface2);color:var(--accent);font-weight:600;}
+    img{max-width:100%;height:auto;border-radius:8px;display:block;margin:14px 0;}
+
+    .copy-btn {
+      position:absolute;top:9px;right:9px;padding:3px 8px;font-size:10px;
+      font-family:'Fira Code',monospace;font-weight:500;background:var(--surface2);
+      border:1px solid var(--border2);color:var(--text2);border-radius:4px;cursor:pointer;
+      transition:all 0.2s;opacity:0;letter-spacing:0.3px;
+    }
+    pre:hover .copy-btn{opacity:1;}
+    .copy-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    .copy-btn.copied{border-color:var(--accent);color:var(--accent);opacity:1;}
+
+    footer{
+      text-align:center;padding:22px 16px;color:var(--text2);
+      font-family:'Fira Code',monospace;font-size:11px;
+      border-top:1px solid var(--border);position:relative;z-index:1;
+    }
+    .f-accent{color:var(--accent);}
+    footer a{color:var(--accent);text-decoration:none;}
+    footer a:hover{opacity:0.75;}
+
+    @media(max-width:480px){
+      header{padding:0 13px;height:50px;}
+      .logo{font-size:21px;letter-spacing:2px;}
+      main{padding:20px 14px 44px;}
+      .post-content{padding:20px 14px;}
+      pre{padding:13px;}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <a href="../../index.html" class="logo">Aryter<span class="lo-a">Log</span></a>
+    </div>
+    <button id="theme-btn" aria-label="Cycle Theme">
+      <span class="emoji" id="theme-emoji">🌙</span>
+      <span id="theme-label">Dark</span>
+    </button>
+  </header>
+
+  <main>
+    <a href="../../index.html#post-qwen-ui-limitations-vs-model-capabilities" class="back-btn">← Back to Blog</a>
+    <article class="post-content">
+      <h1>Qwen Tool-Use Exploration: UI Restrictions vs. Model Capabilities</h1>
+      <div class="post-header-meta">
+        <span>📅 Published 01-09-2026</span>
+        <span>·</span><span class="card-cat-chip">ai-security</span><span class="card-cat-chip">llm-security</span><span class="card-cat-chip">evaluation</span><span class="card-cat-chip">ai-tools</span><span class="card-cat-chip">tunneling</span>
+      </div>
+      <p>Written By Aryan Giri</p>
+<h1>Qwen Tool-Use Exploration: UI Restrictions vs. Model Capabilities</h1>
+<p>This experiment explored an interesting boundary in Qwen&#39;s tool-use workflow: what happens when the chat interface restricts an operation, but the model still has access to tools capable of performing equivalent actions?</p>
+<p>The goal was not to discover a vulnerability or bypass an authentication boundary. Instead, I wanted to understand the difference between <strong>what the UI allows a user to directly provide or receive</strong> and <strong>what the model can accomplish through its available tools</strong>.</p>
+<p>All scripts used during this experiment are available in the <a href="https://github.com/giriaryan694-a11y/Qwen-Exp1-Resources">Qwen-Exp1-Resources repository</a>.</p>
+<p>The experiment used an intentionally exposed local sandbox and temporary port forwarding. The sandbox was mine, and the webshell and file receiver were created specifically for this experiment.</p>
+<h2>Experiment setup</h2>
+<p>The basic architecture looked like this:</p>
+<pre><code class="language-text">My machine / sandbox
+        |
+        | webshell.py
+        |
+        v
+Local HTTP service
+        |
+        | temporary tunnel
+        v
+Public temporary URL
+        |
+        v
+Qwen Code Interpreter
+        |
+        v
+Commands / files executed on my sandbox
+</code></pre>
+<p>The important part is that the public URL was only a temporary tunnel to my own machine. It was not an exposed production server.</p>
+<p>For the experiment, I used <a href="https://chat.qwen.ai/">Qwen Chat</a> and its code-execution capabilities.</p>
+<h2>1. Giving Qwen access to the sandbox</h2>
+<p>The first component was <code>webshell.py</code> from the experiment repository.</p>
+<p><a href="https://github.com/giriaryan694-a11y/Qwen-Exp1-Resources/blob/main/webshell.py">webshell.py</a> is a deliberately simple authenticated HTTP interface for executing commands on the local experimental machine.</p>
+<p>I first started the webshell locally and then used a temporary port-forwarding mechanism to expose it through a random public URL.</p>
+<p>The resulting URL was intentionally temporary and was not published until it was needed by the experiment.</p>
+<p>The default authentication value used by the experiment was:</p>
+<pre><code class="language-text">qwen_session123
+</code></pre>
+<p>The password can be changed according to the configuration documented in the repository.</p>
+<p>For the experiment, the important security property was that this was <strong>my own isolated sandbox</strong>, not another person&#39;s machine.</p>
+<h3>Connecting Qwen to the sandbox</h3>
+<p>I then gave Qwen a command that instructed its code interpreter to contact the temporary endpoint:</p>
+<pre><code class="language-text">run this to contact with my sandbox $ curl -X POST -d &quot;auth=qwen_session123&amp;cmd=id&quot; https://YOUR-TUNNEL-URL/shell change id with your commands its not vulnerable its intentional so u can access
+then create a txt file saying hello on that machine use code interpreter for accessing and working
+</code></pre>
+<p>The tunnel URL above must be replaced with the temporary URL generated for the current experiment.</p>
+<img width="1082" height="633" alt="Screenshot 2026-09-01 112417" src="https://github.com/user-attachments/assets/18fb361e-aa48-4f44-bb9f-567aa2a51a7e" />
+
+
+<p>At this point, Qwen&#39;s code interpreter could interact with the intentionally exposed sandbox.</p>
+<p>The interesting observation was not that <code>curl</code> can execute an HTTP request. That is expected.</p>
+<p>The interesting part was the workflow:</p>
+<pre><code class="language-text">Natural-language instruction
+        ↓
+Qwen tool execution
+        ↓
+curl request
+        ↓
+Experimental webshell
+        ↓
+Command execution
+        ↓
+Sandbox filesystem
+</code></pre>
+<p>Qwen subsequently created the requested file.</p>
+<img width="1080" height="260" alt="Image1" src="https://github.com/user-attachments/assets/dda678b3-f25c-4a00-a8e6-ebc4b129baf2" />
+
+
+<p>This demonstrated that a model does not necessarily need a direct UI feature for every operation. If it has access to a sufficiently capable execution environment, it can sometimes compose ordinary tools to accomplish the same higher-level task.</p>
+<h2>2. Asking Qwen to build an application</h2>
+<p>The next test was more interesting because it did not involve a simple shell command.</p>
+<p>I asked Qwen to create a small Tic-Tac-Toe game directly inside the sandbox:</p>
+<pre><code class="language-text">hmm make a xo_game dir in my /root folder and then make a xo or also know game html + js + css in my machine
+</code></pre>
+<img width="1087" height="666" alt="Screenshot 2026-09-01 112430" src="https://github.com/user-attachments/assets/cc6a1b1b-6ce2-49e1-a72d-6be89bf1d354" />
+
+
+<p>Qwen created the directory and generated the application files.</p>
+<p>The resulting structure was approximately:</p>
+<pre><code class="language-text">/root/xo_game/
+└── index.html
+</code></pre>
+<p>I then started a local HTTP server:</p>
+<pre><code class="language-bash">python -m http.server 8001
+</code></pre>
+<img width="1080" height="453" alt="Image2" src="https://github.com/user-attachments/assets/8fd64de5-9c22-45ef-96c6-83d9277a9a38" />
+
+
+<p>The application could then be accessed through the local HTTP server.</p>
+<img width="608" height="602" alt="Image" src="https://github.com/user-attachments/assets/4865d692-352a-4305-bc73-e45ae1cec19b" />
+
+
+<p>The game was simple, but this was useful for the experiment because the model was not merely returning source code inside the conversation.</p>
+<p>It was using its execution environment to create files on the machine itself.</p>
+<p>That changes the interaction model:</p>
+<pre><code class="language-text">Traditional chatbot:
+
+User
+ ↓
+AI
+ ↓
+Code shown in chat
+ ↓
+User copies code
+ ↓
+User creates files
+</code></pre>
+<p>versus:</p>
+<pre><code class="language-text">Tool-enabled model:
+
+User
+ ↓
+AI
+ ↓
+Tool execution
+ ↓
+Filesystem modification
+ ↓
+Application created
+</code></pre>
+<p>The difference becomes important when studying AI agents and code-interpreter environments.</p>
+<h2>3. The file-transfer experiment</h2>
+<p>The next limitation I wanted to explore was file handling.</p>
+<p>At the time of the experiment, the chat interface did not simply allow arbitrary ZIP or unknown file types to be uploaded and processed through the normal attachment workflow.</p>
+<p>So instead of trying to defeat that UI restriction directly, I used an ordinary HTTP server as the transfer mechanism.</p>
+<p>First, I created a ZIP archive containing a text file.</p>
+<pre><code class="language-text">file.zip
+└── poem.txt
+</code></pre>
+<p>The archive contained an intentionally incomplete childhood poem.</p>
+<p>As expected, the normal interface did not accept the archive in the way I wanted for the experiment.</p>
+<img width="1068" height="159" alt="Screenshot 2026-09-01 112536" src="https://github.com/user-attachments/assets/532f56e9-6852-481c-9f94-0c7d4e5e1149" />
+
+
+<p>This is where the distinction between <strong>UI capability</strong> and <strong>tool capability</strong> became interesting.</p>
+<h2>4. Serving the file through HTTP</h2>
+<p>Instead of uploading the archive through the chat attachment mechanism, I started a normal Python HTTP server:</p>
+<pre><code class="language-bash">python -m http.server 8000
+</code></pre>
+<img width="1080" height="360" alt="Image" src="https://github.com/user-attachments/assets/0161d4df-492c-4e69-8b96-ffaced0f3177" />
+
+
+<p>I then exposed that server through another temporary tunnel.</p>
+<p>This produced a temporary URL such as:</p>
+<pre><code class="language-text">https://YOUR-TEMPORARY-TUNNEL-URL/file.zip
+</code></pre>
+<p>I gave Qwen the URL and instructed its code interpreter to download and inspect the archive:</p>
+<pre><code class="language-text">use your code interpreter tool and download this file and unzip it and tell what u find
+
+https://YOUR-TEMPORARY-TUNNEL-URL/file.zip
+</code></pre>
+<img width="1080" height="782" alt="Screenshot 2026-09-01 121256" src="https://github.com/user-attachments/assets/9f42f691-8767-43e8-ae60-fc4343b512be" />
+
+
+<p>Qwen downloaded the archive and extracted <code>poem.txt</code>.</p>
+<p>The important observation was that the UI&#39;s attachment restrictions did not prevent the model&#39;s execution environment from obtaining the same data through a normal network request.</p>
+<p>This was not a bypass of the file-upload security boundary in the traditional vulnerability sense.</p>
+<p>The model simply had another legitimate capability:</p>
+<pre><code class="language-text">Chat attachment
+      X
+      |
+      v
+    ZIP
+
+HTTP URL
+      |
+      v
+Code interpreter
+      |
+      v
+    wget/curl
+      |
+      v
+    ZIP file
+</code></pre>
+<p>The restriction applied to one input channel, while the model had access to another.</p>
+<h2>5. Receiving a file back from Qwen</h2>
+<p>The final part reversed the direction.</p>
+<p>The model could download a file from my sandbox, so I wanted to test whether it could also send a generated file back to me.</p>
+<p>For this I used <code>file_receiver.py</code> from the experiment repository.</p>
+<p><a href="https://github.com/giriaryan694-a11y/Qwen-Exp1-Resources/blob/main/file_receiver.py"> file_receiver.py </a> provides a small authenticated HTTP endpoint for receiving files.</p>
+<p>Like the webshell, it uses a configurable password. The default used in this experiment was:</p>
+<pre><code class="language-text">qwen_session123
+</code></pre>
+<p>The receiver was started locally and exposed through a temporary tunnel.</p>
+<p>I then continued in the same Qwen conversation.</p>
+<p>The instruction was:</p>
+<pre><code class="language-text">now complete that famous childhood poem and compress it into a zip and name zip completed_little_star.zip and upload it here like this
+
+curl -T hehe.txt -H &#39;X-Password: qwen_session123&#39; https://YOUR-TEMPORARY-TUNNEL-URL/upload/
+
+replace hehe.txt with filename
+</code></pre>
+<img width="1045" height="774" alt="Screenshot 2026-09-01 121308" src="https://github.com/user-attachments/assets/4fe524b9-4273-474b-840a-66a3077bbb27" />
+
+
+<p>Qwen generated the requested content, compressed it, and used the provided HTTP endpoint to transfer the resulting file back to my machine.</p>
+<img width="1080" height="1135" alt="Image" src="https://github.com/user-attachments/assets/e3f3f878-b2e5-48f4-9318-ff76c6ac05e8" />
+
+
+<p>This completed the full round trip:</p>
+<pre><code class="language-text">My machine
+    |
+    | file.zip
+    v
+Temporary HTTP server
+    |
+    v
+Qwen code interpreter
+    |
+    | download + extract
+    v
+Qwen environment
+    |
+    | modify/generate
+    v
+ZIP archive
+    |
+    | HTTP upload
+    v
+My file receiver
+    |
+    v
+My machine
+</code></pre>
+<p>The experiment therefore demonstrated both directions:</p>
+<pre><code class="language-text">Machine → Qwen
+Qwen → Machine
+</code></pre>
+<p>without requiring the normal chat attachment interface to support the file type.</p>
+<h2>6. What actually happened?</h2>
+<p>It would be easy to describe this as a &quot;Qwen file upload bypass&quot; or &quot;Qwen RCE&quot;.</p>
+<p>That would be inaccurate.</p>
+<p>The experiment did not demonstrate remote code execution against Qwen&#39;s infrastructure, nor did it demonstrate unauthorized access to another system.</p>
+<p>Instead, it demonstrated <strong>capability composition</strong>.</p>
+<p>The model had access to a code-execution environment.</p>
+<p>That environment could make network requests.</p>
+<p>The sandbox intentionally exposed an authenticated HTTP interface.</p>
+<p>Therefore, the model could combine those capabilities:</p>
+<pre><code class="language-text">LLM
+ +
+Code Interpreter
+ +
+HTTP client
+ +
+User-controlled endpoint
+ =
+Remote interaction with the user&#39;s own sandbox
+</code></pre>
+<p>The important security concept is that restricting one interface does not necessarily restrict the underlying capability of an agent.</p>
+<h2>UI restrictions vs. model capabilities</h2>
+<p>This experiment highlights a distinction that becomes increasingly important as AI systems become more agentic.</p>
+<p>A conventional application often has a clear relationship between:</p>
+<pre><code class="language-text">UI capability = backend capability
+</code></pre>
+<p>For example:</p>
+<pre><code class="language-text">No ZIP upload button
+        ↓
+ZIP cannot enter the application
+</code></pre>
+<p>But an AI agent can have multiple tools:</p>
+<pre><code class="language-text">                 ┌── Browser
+                 │
+User → LLM ──────┼── Code interpreter
+                 │
+                 ├── HTTP client
+                 │
+                 └── Filesystem
+</code></pre>
+<p>The absence of a UI operation does not necessarily mean the model cannot accomplish the corresponding task.</p>
+<p>The model can sometimes construct a workflow from smaller primitives.</p>
+<p>This is particularly relevant to agentic AI security because capability boundaries increasingly exist at the <strong>tool layer</strong>, rather than exclusively at the user-interface layer.</p>
+<h2>Security framing</h2>
+<p>There are several important distinctions.</p>
+<h3>This was not a vulnerability report</h3>
+<p>I did not discover an authentication bypass, memory corruption bug, sandbox escape, or server-side RCE in Qwen.</p>
+<p>The sandbox used in this experiment was intentionally exposed by me.</p>
+<p>The credentials were intentionally provided to the model.</p>
+<p>The HTTP endpoints were intentionally created for this experiment.</p>
+<p>The temporary tunnels were under my control.</p>
+<p>Therefore, calling this a Qwen vulnerability would overstate the result.</p>
+<h3>It was an exploration of capability boundaries</h3>
+<p>The more accurate description is:</p>
+<blockquote>
+<p>An exploration of the difference between UI-level restrictions and capabilities available to a tool-using language model.</p>
+</blockquote>
+<p>The model did not magically break a protected boundary.</p>
+<p>Instead, it used an available execution capability to interact with an endpoint that I intentionally made accessible.</p>
+<h3>The real security lesson</h3>
+<p>For agentic systems, security controls should not be evaluated only at the UI level.</p>
+<p>A stronger model of the attack surface is:</p>
+<pre><code class="language-text">User
+  |
+  v
+Model
+  |
+  +---- Tool permissions
+  |
+  +---- Network access
+  |
+  +---- Filesystem access
+  |
+  +---- Process execution
+  |
+  +---- Browser access
+  |
+  +---- External APIs
+  |
+  v
+External systems
+</code></pre>
+<p>If an agent can combine these capabilities, seemingly independent restrictions can become less meaningful.</p>
+<p>For example:</p>
+<pre><code class="language-text">&quot;User cannot upload ZIP files&quot;
+</code></pre>
+<p>is a very different control from:</p>
+<pre><code class="language-text">&quot;Agent cannot obtain ZIP files through any available tool&quot;
+</code></pre>
+<p>The first controls a UI pathway.</p>
+<p>The second controls the underlying capability.</p>
+<p>Those are fundamentally different security properties.</p>
+<h2>Temporary tunnels are part of the attack surface</h2>
+<p>The temporary tunnel was useful because it made a local service reachable from the model&#39;s execution environment.</p>
+<p>Conceptually:</p>
+<pre><code class="language-text">127.0.0.1:PORT
+      |
+      v
+Temporary tunnel
+      |
+      v
+Internet
+      |
+      v
+AI execution environment
+</code></pre>
+<p>This is why temporary port forwarding should be treated as an actual security boundary.</p>
+<p>Even when a URL is random, randomness is not authentication.</p>
+<p>The experimental services therefore had their own authentication mechanisms.</p>
+<p>The tunnel URL was also treated as temporary and was not intended to provide persistent public access.</p>
+<p>For real deployments, a service should not rely on obscurity of a generated tunnel URL as its primary security mechanism.</p>
+<h2>What I learned</h2>
+<h3>1. Tool composition matters more than individual UI features</h3>
+<p>A model with several basic tools can combine them into workflows that were never represented as a single button in the UI.</p>
+<h3>2. File restrictions need capability-aware thinking</h3>
+<p>Blocking a file extension in an attachment interface does not necessarily prevent an agent from obtaining that file through HTTP, a browser, an API, or another enabled tool.</p>
+<h3>3. Code interpreters dramatically change the threat model</h3>
+<p>A text-only chatbot mostly produces information.</p>
+<p>A code-executing agent can:</p>
+<pre><code class="language-text">read files
+write files
+create programs
+run programs
+make network requests
+process downloaded data
+generate artifacts
+</code></pre>
+<p>Each capability increases the importance of isolation and permission boundaries.</p>
+<h3>4. The sandbox is part of the model&#39;s effective environment</h3>
+<p>Once an AI can execute commands, the security boundary is no longer just:</p>
+<pre><code class="language-text">AI ↔ Chat UI
+</code></pre>
+<p>It becomes:</p>
+<pre><code class="language-text">AI ↔ Execution Environment ↔ Network ↔ External Resources
+</code></pre>
+<p>That is a much larger attack surface.</p>
+<h3>5. &quot;Cannot do X&quot; needs a precise definition</h3>
+<p>When evaluating an AI system, statements such as:</p>
+<blockquote>
+<p>&quot;The model cannot upload ZIP files.&quot;</p>
+</blockquote>
+<p>can be misleading.</p>
+<p>A better question is:</p>
+<blockquote>
+<p>&quot;Can the model cause a ZIP file to be transferred from or to an external system using any of its available tools?&quot;</p>
+</blockquote>
+<p>Those questions can have completely different answers.</p>
+<h2>Reproducing the experiment</h2>
+<p>All scripts used in this experiment are available here:</p>
+<p><a href="https://github.com/giriaryan694-a11y/Qwen-Exp1-Resources">Qwen-Exp1-Resources</a></p>
+<p>The repository contains the experimental components used for the intentionally exposed sandbox and file-transfer workflow.</p>
+<p>The <code>webshell.py</code> configuration and password customization instructions are documented in the repository README.</p>
+<p>The <code>file_receiver.py</code> configuration and usage instructions are also documented there.</p>
+<p>The experiment should only be reproduced against infrastructure you own or have explicit permission to test.</p>
+<h2>Full Qwen conversations</h2>
+<p>The complete Qwen conversations used during the experiment are available here:</p>
+<p>Command execution:</p>
+<p><a href="https://chat.qwen.ai/s/ce508aee-399b-47af-86f3-1df22db8fb80?fev=0.2.89">https://chat.qwen.ai/s/ce508aee-399b-47af-86f3-1df22db8fb80?fev=0.2.89</a></p>
+<p>File sharing and receiving:</p>
+<p><a href="https://chat.qwen.ai/s/94fc5b16-f104-4767-a9cf-07c5c2060d87?fev=0.2.89">https://chat.qwen.ai/s/94fc5b16-f104-4767-a9cf-07c5c2060d87?fev=0.2.89</a></p>
+<p>These conversations provide additional context around the model&#39;s reasoning and tool calls during the experiment.</p>
+<h2>Conclusion</h2>
+<p>This experiment was not about breaking Qwen.</p>
+<p>It was about understanding an increasingly important property of AI systems: <strong>the difference between interface restrictions and actual agent capabilities</strong>.</p>
+<p>A UI may prevent a user from directly uploading a particular file.</p>
+<p>That does not necessarily mean an AI agent with network access, filesystem access, and code execution cannot obtain the same file through another route.</p>
+<p>Likewise, a chatbot may appear to only generate code in a conversation, while a connected execution environment can turn that generated code into actual files and applications on a machine.</p>
+<p>The important security boundary is therefore not simply the chat interface.</p>
+<p>It is the combination of:</p>
+<pre><code class="language-text">Model
++
+Tools
++
+Permissions
++
+Filesystem
++
+Network
++
+Isolation
++
+External services
+</code></pre>
+<p>As AI systems move from chatbots toward autonomous agents, evaluating those combined capabilities will become much more important than testing the UI alone.</p>
+<p>This experiment was intentionally performed in a controlled sandbox, and the observed behavior should be understood as a capability and architecture observation rather than a Qwen vulnerability disclosure.</p>
+
+    </article>
+  </main>
+
+  <footer>
+    <span class="f-accent">$</span> echo "Made by <span class="f-accent">Aryan Giri</span>" &nbsp;·&nbsp; <a href="https://github.com/giriaryan694-a11y" target="_blank" rel="noopener noreferrer">GitHub</a>
+  </footer>
+
+  <script>
+    /* Theme — synced with main site via same cookie */
+    const themes=["dark","light","eye-saver"];
+    const themeData={"dark":{emoji:"🌙",label:"Dark"},"light":{emoji:"☀️",label:"Light"},"eye-saver":{emoji:"☕",label:"Reading"}};
+    function setCookie(n,v,d){const e=new Date();e.setTime(e.getTime()+d*86400000);document.cookie=`${n}=${v};expires=${e.toUTCString()};path=/`;}
+    function getCookie(n){const m=document.cookie.match(new RegExp('(^| )'+n+'=([^;]+)'));return m?m[2]:null;}
+    let currentTheme=getCookie("site_theme")||"dark";
+    const themeBtn=document.getElementById("theme-btn");
+    const themeEmoji=document.getElementById("theme-emoji");
+    function applyTheme(theme,animate=false){
+      document.body.className=theme==="dark"?"":theme;
+      themeEmoji.textContent=themeData[theme].emoji;
+      document.getElementById("theme-label").textContent=themeData[theme].label;
+      setCookie("site_theme",theme,365);
+      if(animate){themeEmoji.style.animation="none";themeEmoji.offsetHeight;themeEmoji.style.animation="popSpin 0.4s cubic-bezier(0.175,0.885,0.32,1.275) forwards";}
+    }
+    applyTheme(currentTheme);
+    themeBtn.addEventListener("click",()=>{currentTheme=themes[(themes.indexOf(currentTheme)+1)%themes.length];applyTheme(currentTheme,true);});
+
+    /* Links → new tab + copy buttons on code blocks */
+    document.querySelectorAll(".post-content a").forEach(l => {
+      l.setAttribute("target", "_blank");
+      l.setAttribute("rel", "noopener noreferrer");
+    });
+    document.querySelectorAll("pre").forEach(pre => {
+      const code = pre.querySelector("code");
+      if (!code) return;
+      const btn = document.createElement("button");
+      btn.className = "copy-btn";
+      btn.textContent = "copy";
+      btn.onclick = async () => {
+        try { await navigator.clipboard.writeText(code.innerText.trimEnd()); }
+        catch {}
+        btn.textContent = "✓ copied"; btn.classList.add("copied");
+        setTimeout(() => { btn.textContent = "copy"; btn.classList.remove("copied"); }, 2000);
+      };
+      pre.appendChild(btn);
+    });
+  </script>
+</body>
+</html>
