@@ -1,5 +1,19 @@
 [
   {
+  "id": "qwen-ui-limitations-vs-model-capabilities",
+  "title": "Qwen Tool-Use Exploration: UI Restrictions vs. Model Capabilities",
+  "date": "01-09-2026",
+  "summary": "An exploration of Qwen's tool-use capabilities using an intentionally exposed sandbox, temporary tunnels, command execution, application generation, and bidirectional file transfer. The experiment examines why UI-level restrictions do not necessarily represent the full capability boundary of a tool-using AI system.",
+  "category": [
+    "ai-security",
+    "llm-security",
+    "evaluation",
+    "ai-tools",
+    "tunneling"
+  ],
+  "file": "posts/qwen-ui-limitations-vs-model-capabilities.md"
+  },
+  {
   "id": "server-side-vs-middleware-http-security",
   "title": "Server-Side Security vs Middleware / HTTP Services Security",
   "date": "29-08-2026",
