@@ -1,5 +1,13 @@
 [
   {
+  "id": "tryhackme-lookup-writeup",
+  "title": "TryHackMe Lookup — From Username Enumeration to Root",
+  "date": "03-09-2026",
+  "summary": "A complete TryHackMe Lookup walkthrough covering Nmap enumeration, username enumeration, Hydra password attacks, elFinder command injection, SUID PATH hijacking through pwm, SSH access as think, and privilege escalation through sudo look.",
+  "category": ["ctf", "pentesting", "web-security", "post-exploitation", "privilege-escalation", "linux", "attack-techniques"],
+  "file": "posts/tryhackme-lookup-writeup.md"
+  },
+  {
   "id": "qwen-ui-limitations-vs-model-capabilities",
   "title": "Qwen Tool-Use Exploration: UI Restrictions vs. Model Capabilities",
   "date": "01-09-2026",
