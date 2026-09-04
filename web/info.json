@@ -5,17 +5,17 @@
       {
         "name": "Pentest Framework Cheat Sheet",
         "url": "https://giriaryan694-a11y.github.io/Pentest-Framework-Cheat-Sheet/",
-        "description": "Interactive reference guide for 9 penetration testing frameworks across 6 categories — PTES, NIST SP 800-115, ISSAF, OWASP WSTG, WASC TCv2, MITRE ATT&CK, OSSTMM, CSA CCM, [...]
+        "description": "Interactive reference guide for 9 penetration testing frameworks across 6 categories - PTES, NIST SP 800-115, ISSAF, OWASP WSTG, WASC TCv2, MITRE ATT&CK, OSSTMM, CSA CCM."
       },
       {
         "name": "DEF CON 27 SEV Notes",
         "url": "https://giriaryan694-a11y.github.io/DEF-CON-27-Social-Engineering-Village-Notes/",
-        "description": "Curated, structured collection of notes from DEF CON 27 Social Engineering Village talks on social engineering, psychology, OSINT, red teaming, human behavior, and defensiv[...]
+        "description": "Curated, structured collection of notes from DEF CON 27 Social Engineering Village talks on social engineering, psychology, OSINT, red teaming, human behavior, and defensive strategies."
       },
       {
         "name": "RedTeam Arsenal",
         "url": "https://giriaryan694-a11y.github.io/RedTeam-Arsenal/",
-        "description": "Your Ultimate Pentest & Red Team Cheatsheets Hub — curated resources, cheatsheets, and tools for security professionals, penetration testers, and red teamers."
+        "description": "Your Ultimate Pentest & Red Team Cheatsheets Hub - curated resources, cheatsheets, and tools for security professionals, penetration testers, and red teamers."
       },
       {
         "name": "SQLi Auth Bypass Cheatsheet",
@@ -35,12 +35,12 @@
       {
         "name": "EscapeArtist",
         "url": "https://giriaryan694-a11y.github.io/EscapeArtist/",
-        "description": "Interactive OS Command Injection Bypass Cheatsheet that dynamically generates syntactically valid command injection bypass payloads based on a target command and active cha[...]
+        "description": "Interactive OS command injection bypass cheatsheet that dynamically generates syntactically valid payloads based on a target command and active characters."
       },
       {
         "name": "AryNotes",
         "url": "https://giriaryan694-a11y.github.io/AryNotes/",
-        "description": "Local, offline engagement notebook for authorized penetration testing workflows and general note-keeping. A lightweight, browser-based note-taking application designed to s[...]
+        "description": "Local, offline engagement notebook for authorized penetration testing workflows and general note-keeping. Lightweight, browser-based note-taking app."
       }
     ]
   },
@@ -50,7 +50,7 @@
       {
         "name": "ary.osint",
         "url": "https://giriaryan694-a11y.github.io/ary.osint/",
-        "description": "Comprehensive, well-organized directory of Open Source Intelligence (OSINT) tools, resources, and research materials. Centralized launcher for security researchers and OSIN[...]
+        "description": "Comprehensive, well-organized directory of Open Source Intelligence (OSINT) tools, resources, and research materials. Centralized launcher for researchers."
       },
       {
         "name": "Ary Recon",
@@ -60,7 +60,7 @@
       {
         "name": "Awesome Search Engines for CyberSec",
         "url": "https://giriaryan694-a11y.github.io/Awesome-Search-Engines-For-CyberSec/",
-        "description": "Curated collection of powerful search engines used by cybersecurity professionals for OSINT, red teaming, threat intelligence, malware research, and cyber investigations."
+        "description": "Curated collection of powerful search engines used by cybersecurity professionals for OSINT, red teaming, threat intelligence, malware research, and investigations."
       }
     ]
   },
@@ -70,27 +70,27 @@
       {
         "name": "ARY.UNIVERSITY",
         "url": "https://giriaryan694-a11y.github.io/ARY.UNIVERSITY/",
-        "description": "Your gateway to free cybersecurity knowledge. Explore curated online courses, hands-on labs, AI tools, and learning paths for beginners to advanced learners."
+        "description": "Gateway to free cybersecurity knowledge: curated online courses, hands-on labs, AI tools, and learning paths for beginners to advanced learners."
       },
       {
         "name": "ip-subnet-calculator",
         "url": "https://giriaryan694-a11y.github.io/ip-subnet-calculator/",
-        "description": "A modern, interactive IPv4 subnet calculator built for learners and pentesters. This web app calculates network addresses, broadcast addresses, usable host range, block siz[...]
+        "description": "Interactive IPv4 subnet calculator built for learners and pentesters. Calculates network addresses, broadcast addresses, usable host range, and block size."
       },
       {
         "name": "Ip-Range-Calculator",
         "url": "https://giriaryan694-a11y.github.io/Ip-Range-Calculator/",
-        "description": "This webpage helps you understand and calculate IPv4 address ranges using simple math and clear explanations. It is designed for learners, pentesters, and networking beginn[...]
+        "description": "Helps you understand and calculate IPv4 address ranges using simple math and clear explanations for learners and pentesters."
       },
       {
         "name": "Interactive OSI Model Simulator",
         "url": "https://giriaryan694-a11y.github.io/Interactive-OSI-Model-Simulator/",
-        "description": "An interactive, emoji-based simulator of the OSI model designed to help users visualize how data travels from one computer to another. Covers OSI layers, encapsulation, de-[...]
+        "description": "Emoji-based simulator of the OSI model to help visualize how data travels across layers, covering encapsulation and decapsulation concepts."
       },
       {
         "name": "MD:// Viewer",
         "url": "https://giriaryan694-a11y.github.io/MD-Viewer/",
-        "description": "Fully offline, client-side Markdown and mini-repository viewer. Render Markdown, Mermaid diagrams, images, videos, and ZIP repositories entirely in your browser with search[...]
+        "description": "Fully offline, client-side Markdown and mini-repository viewer. Renders Markdown, Mermaid diagrams, images, videos, and ZIP repositories entirely in the browser."
       }
     ]
   },
@@ -100,22 +100,22 @@
       {
         "name": "MetaLyzer",
         "url": "https://giriaryan694-a11y.github.io/MetaLyzer/",
-        "description": "Client-side web app that extracts deep metadata (EXIF, XMP, IPTC, GPS) from images, videos, and documents entirely in the browser — no data ever uploaded."
+        "description": "Client-side web app that extracts deep metadata (EXIF, XMP, IPTC, GPS) from images, videos, and documents entirely in the browser - no data uploaded."
       },
       {
         "name": "ARYSIG",
         "url": "https://giriaryan694-a11y.github.io/ARYSIG/",
-        "description": "Browser-based tool for viewing and modifying file magic bytes (file signatures), built for cybersecurity research, CTF challenges, and forensics work."
+        "description": "Browser-based tool for viewing and modifying file magic bytes (file signatures), built for cybersecurity research, CTFs, and forensics."
       },
       {
         "name": "Cleanslate",
         "url": "https://giriaryan694-a11y.github.io/Cleanslate/",
-        "description": "A small, local-only tool for stripping hidden metadata from files before you share them. Everything runs in the browser — no upload, no server, no account."
+        "description": "Local-only tool for stripping hidden metadata from files before sharing. Everything runs in the browser - no upload, no server."
       },
       {
         "name": "HashSentinel",
         "url": "https://giriaryan694-a11y.github.io/HashSentinel/",
-        "description": "A client-side, installable file integrity checker. Drop a file, pick an algorithm, paste the hash you were given, and HashSentinel tells you if it's a match all computed locally in your browser sandbox. No upload, no backend, no tracking."
+        "description": "A client-side, installable file integrity checker. Drop a file, pick an algorithm, paste the hash you were given, and HashSentinel tells you if it's a match - all computed locally in your browser sandbox. No upload, no backend, no tracking."
       }
     ]
   },
@@ -125,17 +125,17 @@
       {
         "name": "PhantomPath",
         "url": "https://giriaryan694-a11y.github.io/PhantomPath/",
-        "description": "Client-side utility demonstrating URL obfuscation techniques. Understand how attackers mask malicious destinations for robust defense and user training."
+        "description": "Client-side utility demonstrating URL obfuscation techniques to understand how attackers mask destinations for defense and user training."
       },
       {
         "name": "MemoryPoison",
         "url": "https://giriaryan694-a11y.github.io/MemoryPoison/",
-        "description": "AI Recommendation Poisoning — a real-world attack technique where adversaries inject persistent instructions into AI assistant memory through crafted URLs."
+        "description": "AI recommendation poisoning - a real-world attack technique where adversaries inject persistent instructions into AI assistant memory through crafted URLs."
       },
       {
         "name": "popstate-hijack-demo",
         "url": "https://giriaryan694-a11y.github.io/popstate-hijack-demo/",
-        "description": "Client-side History API abuse, shown as a safe educational PoC."
+        "description": "Client-side History API abuse shown as a safe educational proof-of-concept."
       }
     ]
   },
@@ -145,12 +145,12 @@
       {
         "name": "ARYCRYPT",
         "url": "https://giriaryan694-a11y.github.io/ARYCRYPT/",
-        "description": "A sleek, hacker-themed file encryption web app that lets you encrypt any file into .ary format and decrypt it back with a password. Perfect for secure file sharing or just[...]
+        "description": "File encryption web app that lets you encrypt any file into .ary format and decrypt it back with a password."
       },
       {
         "name": "ZeroTrustText",
         "url": "https://giriaryan694-a11y.github.io/ZeroTrustText/",
-        "description": "Secure, Password-Based Text Encryption & Decryption."
+        "description": "Secure, password-based text encryption and decryption tool."
       }
     ]
   },
@@ -160,22 +160,22 @@
       {
         "name": "HunterVault",
         "url": "https://giriaryan694-a11y.github.io/HunterVault/",
-        "description": "Web-based repository of 200+ bug bounty and penetration testing tools. Organized reference for security researchers, ethical hackers, and bug bounty hunters."
+        "description": "Web-based repository of 200+ bug bounty and penetration testing tools. Organized reference for security researchers and bug bounty hunters."
       },
       {
         "name": "SQL Reverse Shell Generator",
         "url": "https://giriaryan694-a11y.github.io/SQL-REVERSE-SHELL-GENERATOR/",
-        "description": "Exclusively designed for authorized security testing, educational purposes, and controlled red teaming simulations."
+        "description": "Designed for authorized security testing, educational purposes, and controlled red teaming simulations."
       },
       {
         "name": "KeyCraft",
         "url": "https://giriaryan694-a11y.github.io/KeyCraft/",
-        "description": "A modern, sleek, and customizable password generator web application built with vanilla HTML, CSS, and JavaScript."
+        "description": "Modern, customizable password generator web application built with vanilla HTML, CSS, and JavaScript."
       },
       {
         "name": "ShellCamo",
         "url": "https://giriaryan694-a11y.github.io/ShellCamo/",
-        "description": "Advanced client-side command obfuscation generator for Bash, PowerShell, and cmd.exe. Produces heavily obfuscated payloads while keeping the original command hidden. Desig[...]
+        "description": "Advanced client-side command obfuscation generator for Bash, PowerShell, and cmd.exe. Produces heavily obfuscated payloads while preserving the original command intent."
       }
     ]
   },
@@ -185,27 +185,27 @@
       {
         "name": "SVG Attack Lab",
         "url": "https://giriaryan694-a11y.github.io/SVG-Attack-Lab/",
-        "description": "Fully client-side browser tool for demonstrating, injecting, and analyzing SVG-based attack vectors — for authorized security research, CTFs, and controlled lab environm[...]
+        "description": "Fully client-side browser tool for demonstrating, injecting, and analyzing SVG-based attack vectors for authorized research and CTFs."
       },
       {
         "name": "SMUGGLR",
         "url": "https://giriaryan694-a11y.github.io/SMUGGLR/",
-        "description": "Browser-based Unicode steganography and text obfuscation toolkit for invisible characters, homoglyphs, whitespace ciphers, and Unicode payload hiding — all client-side, [...]
+        "description": "Unicode steganography and text obfuscation toolkit for invisible characters, homoglyphs, whitespace ciphers, and Unicode payload hiding - all client-side."
       },
       {
         "name": "TrustNoChar",
         "url": "https://giriaryan694-a11y.github.io/TrustNoChar/",
-        "description": "Zero-dependency browser lab demonstrating how Unicode homoglyphs and typosquatting exploit human visual perception. Transforms text into deceptive lookalike variants in re[...]
+        "description": "Browser lab demonstrating how Unicode homoglyphs and typosquatting exploit human visual perception by transforming text into deceptive lookalike variants."
       },
       {
         "name": "Ref_XSS",
         "url": "https://giriaryan694-a11y.github.io/Ref_XSS/",
-        "description": "A Hands-On DOM Cross-Site Scripting (XSS) Learning Lab."
+        "description": "Hands-on DOM Cross-Site Scripting (XSS) learning lab."
       },
       {
         "name": "JSStressTester",
         "url": "https://giriaryan694-a11y.github.io/JSStressTester/",
-        "description": "JSStressTester is a lightweight, browser-based educational load/stress tester that simulates repeated HTTP requests (via image requests) to help you learn about request pa[...]
+        "description": "Lightweight, browser-based educational load/stress tester that simulates repeated HTTP requests to demonstrate request patterns."
       },
       {
         "name": "SE·EMU",
