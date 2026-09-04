@@ -111,6 +111,11 @@
         "name": "Cleanslate",
         "url": "https://giriaryan694-a11y.github.io/Cleanslate/",
         "description": "A small, local-only tool for stripping hidden metadata from files before you share them. Everything runs in the browser — no upload, no server, no account."
+      },
+      {
+        "name": "HashSentinel",
+        "url": "https://giriaryan694-a11y.github.io/HashSentinel/",
+        "description": "A client-side, installable file integrity checker. Drop a file, pick an algorithm, paste the hash you were given, and HashSentinel tells you if it's a match all computed locally in your browser sandbox. No upload, no backend, no tracking."
       }
     ]
   },
@@ -201,6 +206,11 @@
         "name": "JSStressTester",
         "url": "https://giriaryan694-a11y.github.io/JSStressTester/",
         "description": "JSStressTester is a lightweight, browser-based educational load/stress tester that simulates repeated HTTP requests (via image requests) to help you learn about request pa[...]
+      },
+      {
+        "name": "SE·EMU",
+        "url": "https://giriaryan694-a11y.github.io/SE-EMU/",
+        "description": "SE·EMU is a browser-based social engineering simulation designed to help cybersecurity learners understand and practice the human side of offensive security."
       }
     ]
   }
