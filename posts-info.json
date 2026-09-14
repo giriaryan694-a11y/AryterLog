@@ -1,5 +1,13 @@
 [
   {
+  "id": "smag-grotto-tryhackme-writeup",
+  "title": "Smag Grotto: TryHackMe Writeup",
+  "date": "14-09-2026",
+  "summary": "A complete Smag Grotto walkthrough covering web enumeration, PCAP credential discovery, command execution, cron-based SSH key abuse, and apt-get privilege escalation.",
+  "category": ["ctf", "pentesting", "web-security", "post-exploitation", "privilege-escalation", "linux"],
+  "file": "posts/smag-grotto-tryhackme-writeup.md"
+  },
+  {
   "id": "tryhackme-lookup-writeup",
   "title": "TryHackMe Lookup — From Username Enumeration to Root",
   "date": "03-09-2026",
