@@ -1,5 +1,19 @@
 [
   {
+  "id": "olympus-thm-writeup",
+  "title": "TryHackMe Olympus Writeup",
+  "date": "20_09_2026",
+  "summary": "A hands-on TryHackMe Olympus walkthrough covering Nmap reconnaissance, virtual-host discovery, SQL injection, credential cracking, chat application enumeration, PHP reverse-shell access, SUID abuse, SSH access, and privilege escalation to root.",
+  "category": [
+    "ctf",
+    "pentesting",
+    "web-security",
+    "post-exploitation",
+    "privilege-escalation"
+  ],
+  "file": "posts/olympus-thm-writeup.md"
+  },
+  {
   "id": "smag-grotto-tryhackme-writeup",
   "title": "Smag Grotto: TryHackMe Writeup",
   "date": "14-09-2026",
