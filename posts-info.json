@@ -1,5 +1,13 @@
 [
   {
+  "id": "bounty-hacker",
+  "title": "Bounty Hacker - TryHackMe Writeup",
+  "date": "29-09-2026",
+  "summary": "A practical TryHackMe walkthrough covering Nmap enumeration, anonymous FTP access, credential discovery, SSH password guessing, and Linux privilege escalation through an unrestricted sudo tar binary.",
+  "category": ["ctf", "pentesting", "privilege-escalation", "attack-techniques", "linux"],
+  "file": "posts/bounty-hacker.md"
+  },
+  {
   "id": "olympus-thm-writeup",
   "title": "TryHackMe Olympus Writeup",
   "date": "20_09_2026",
