@@ -176,6 +176,11 @@
         "name": "ShellCamo",
         "url": "https://giriaryan694-a11y.github.io/ShellCamo/",
         "description": "Advanced client-side command obfuscation generator for Bash, PowerShell, and cmd.exe. Produces heavily obfuscated payloads while preserving the original command intent."
+      },
+      {
+        "name": "GhostScripterPDF",
+        "url": "https://giriaryan694-a11y.github.io/GhostScripterPDF/",
+        "description": "Browser-native PDF payload compiler for controlled security research and CTFs. Uses client-side Web APIs and pdf-lib to manipulate PDF XRef tables and object dictionaries, embedding /JS JavaScript and /AA Additional Actions directly into the PDF structure. Processing stays in-memory in the browser with no backend."
       }
     ]
   },
