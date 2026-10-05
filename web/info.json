@@ -116,6 +116,11 @@
         "name": "HashSentinel",
         "url": "https://giriaryan694-a11y.github.io/HashSentinel/",
         "description": "A client-side, installable file integrity checker. Drop a file, pick an algorithm, paste the hash you were given, and HashSentinel tells you if it's a match - all computed locally in your browser sandbox. No upload, no backend, no tracking."
+      },
+      {
+        "name": "SecretBurrow",
+        "url": "https://giriaryan694-a11y.github.io/SecretBurrow/",
+        "description": "Client-side repository and firmware analyzer that runs locally in the browser to uncover exposed secrets, credentials, hashes, encodings, crypto material, and suspicious high-entropy data."
       }
     ]
   },
