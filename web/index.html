@@ -38,7 +38,9 @@
       --glow:rgba(245,197,66,0.08); --glow2:rgba(245,197,66,0.18);
     }
 
-    *,*::before,*::after {
+    *,
+    *::before,
+    *::after {
       box-sizing:border-box;
       margin:0;
       padding:0;
@@ -104,7 +106,12 @@
       left:8%;
       right:8%;
       height:1px;
-      background:linear-gradient(90deg,transparent,var(--accent),transparent);
+      background:linear-gradient(
+        90deg,
+        transparent,
+        var(--accent),
+        transparent
+      );
       opacity:0.35;
     }
 
@@ -264,8 +271,13 @@
     }
 
     @keyframes blink {
-      0%,100% { opacity:1 }
-      50% { opacity:0 }
+      0%,100% {
+        opacity:1;
+      }
+
+      50% {
+        opacity:0;
+      }
     }
 
     /* ── CONTROLS ── */
@@ -352,7 +364,9 @@
 
     .filter-box input:focus {
       border-color:var(--accent);
-      box-shadow:0 0 0 3px var(--glow),0 0 18px var(--glow);
+      box-shadow:
+        0 0 0 3px var(--glow),
+        0 0 18px var(--glow);
     }
 
     .filter-box input::placeholder {
@@ -360,7 +374,7 @@
       opacity:0.7;
     }
 
-    /* ── CATEGORY BAR ── */
+    /* ── CATEGORY NAVIGATION ── */
 
     .category-nav {
       max-width:1300px;
@@ -373,6 +387,7 @@
 
     .category-bar {
       display:flex;
+      align-items:center;
       gap:8px;
       padding:8px;
       background:var(--surface);
@@ -467,7 +482,7 @@
       background:var(--border);
     }
 
-    /* Grid view */
+    /* ── GRID VIEW ── */
 
     @keyframes cardIn {
       from {
@@ -483,7 +498,10 @@
 
     .grid-view {
       display:grid;
-      grid-template-columns:repeat(auto-fill,minmax(270px,1fr));
+      grid-template-columns:repeat(
+        auto-fill,
+        minmax(270px,1fr)
+      );
       gap:14px;
     }
 
@@ -492,7 +510,10 @@
       border:1px solid var(--border);
       border-radius:10px;
       padding:20px 22px;
-      transition:border-color 0.25s,box-shadow 0.25s,transform 0.2s;
+      transition:
+        border-color 0.25s,
+        box-shadow 0.25s,
+        transform 0.2s;
       text-decoration:none;
       color:inherit;
       display:block;
@@ -525,13 +546,16 @@
       background:var(--accent);
       border-radius:2px;
       transform:scaleY(0);
-      transition:transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
+      transition:
+        transform 0.25s
+        cubic-bezier(0.34,1.56,0.64,1);
       transform-origin:center;
     }
 
     .tool-card:hover {
       border-color:var(--border2);
-      box-shadow:0 4px 24px rgba(0,0,0,0.28);
+      box-shadow:
+        0 4px 24px rgba(0,0,0,0.28);
       transform:translateX(4px);
     }
 
@@ -573,7 +597,7 @@
       font-family:'Fira Code',monospace;
     }
 
-    /* Button view */
+    /* ── BUTTON VIEW ── */
 
     .button-view {
       display:flex;
@@ -640,7 +664,7 @@
       opacity:0.75;
     }
 
-    /* States */
+    /* ── STATES ── */
 
     .empty-state,
     .loading,
@@ -694,6 +718,15 @@
         padding:0 16px 20px;
       }
 
+      .category-bar {
+        border-radius:8px;
+      }
+
+      .category-btn {
+        font-size:10px;
+        padding:8px 12px;
+      }
+
       .main-content {
         padding:0 16px 40px;
       }
@@ -724,25 +757,25 @@
         display:none;
       }
 
-      .category-bar {
-        border-radius:8px;
-      }
-
-      .category-btn {
-        font-size:10px;
-        padding:8px 12px;
-      }
     }
   </style>
 </head>
 
 <body>
 
+  <!-- ─────────────────────────────
+       HEADER
+  ───────────────────────────── -->
+
   <header>
+
     <div class="header-left">
 
       <a href="../index.html" class="back-link">
-        ← <span class="back-label">Back to Blog</span>
+        ←
+        <span class="back-label">
+          Back to Blog
+        </span>
       </a>
 
       <h1 class="logo">
@@ -751,11 +784,26 @@
 
     </div>
 
-    <button id="theme-btn" aria-label="Cycle Theme">
-      <span class="emoji" id="theme-emoji">🌙</span>
-      <span id="theme-label">Dark</span>
+    <button
+      id="theme-btn"
+      aria-label="Cycle Theme"
+    >
+      <span
+        class="emoji"
+        id="theme-emoji"
+      >🌙</span>
+
+      <span id="theme-label">
+        Dark
+      </span>
     </button>
+
   </header>
+
+
+  <!-- ─────────────────────────────
+       HERO
+  ───────────────────────────── -->
 
   <div class="hero">
 
@@ -768,41 +816,105 @@
     </h2>
 
     <p class="hero-sub">
-      Curated tools, frameworks &amp; utilities I use for security research and pentesting
+      Curated tools, frameworks &amp; utilities I use
+      for security research and pentesting
       <span class="cursor"></span>
     </p>
 
   </div>
 
+
+  <!-- ─────────────────────────────
+       CONTROLS
+  ───────────────────────────── -->
+
   <div class="controls">
 
     <div class="view-toggle">
 
-      <button id="btn-grid" class="active" onclick="setView('grid')">
+      <button
+        id="btn-grid"
+        class="active"
+        type="button"
+        onclick="setView('grid')"
+      >
 
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-             stroke="currentColor" stroke-width="2">
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <rect
+            x="3"
+            y="3"
+            width="7"
+            height="7"
+          ></rect>
 
-          <rect x="3" y="3" width="7" height="7"></rect>
-          <rect x="14" y="3" width="7" height="7"></rect>
-          <rect x="3" y="14" width="7" height="7"></rect>
-          <rect x="14" y="14" width="7" height="7"></rect>
+          <rect
+            x="14"
+            y="3"
+            width="7"
+            height="7"
+          ></rect>
 
+          <rect
+            x="3"
+            y="14"
+            width="7"
+            height="7"
+          ></rect>
+
+          <rect
+            x="14"
+            y="14"
+            width="7"
+            height="7"
+          ></rect>
         </svg>
 
         Grid
 
       </button>
 
-      <button id="btn-button" onclick="setView('button')">
 
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-             stroke="currentColor" stroke-width="2">
+      <button
+        id="btn-button"
+        type="button"
+        onclick="setView('button')"
+      >
 
-          <line x1="3" y1="6" x2="21" y2="6"></line>
-          <line x1="3" y1="12" x2="21" y2="12"></line>
-          <line x1="3" y1="18" x2="21" y2="18"></line>
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <line
+            x1="3"
+            y1="6"
+            x2="21"
+            y2="6"
+          ></line>
 
+          <line
+            x1="3"
+            y1="12"
+            x2="21"
+            y2="12"
+          ></line>
+
+          <line
+            x1="3"
+            y1="18"
+            x2="21"
+            y2="18"
+          ></line>
         </svg>
 
         Button
@@ -811,14 +923,18 @@
 
     </div>
 
+
     <div class="filter-box">
 
-      <span class="search-prefix">&gt;_</span>
+      <span class="search-prefix">
+        &gt;_
+      </span>
 
       <input
         type="text"
         id="search-input"
         placeholder="search tools..."
+        autocomplete="off"
         oninput="filterTools()"
       >
 
@@ -826,24 +942,32 @@
 
   </div>
 
-  <!-- CATEGORY BAR -->
+
+  <!-- ─────────────────────────────
+       CATEGORY BAR
+       Generated from info.json
+  ───────────────────────────── -->
+
   <div class="category-nav">
 
-    <div class="category-bar" id="category-bar">
-
-      <button
-        class="category-btn active"
-        data-category="__all__"
-        onclick="selectCategory('__all__')"
-      >
-        All Categories
-      </button>
-
+    <div
+      class="category-bar"
+      id="category-bar"
+    >
+      <!-- Buttons generated by JavaScript -->
     </div>
 
   </div>
 
-  <div class="main-content" id="content">
+
+  <!-- ─────────────────────────────
+       MAIN CONTENT
+  ───────────────────────────── -->
+
+  <div
+    class="main-content"
+    id="content"
+  >
 
     <div class="loading">
       ⟳ Loading resources...
@@ -851,20 +975,31 @@
 
   </div>
 
+
+  <!-- ─────────────────────────────
+       FOOTER
+  ───────────────────────────── -->
+
   <footer>
 
     <span class="f-accent">$</span>
-    echo "Made by <span class="f-accent">Aryan Giri</span>"
+    echo "Made by
+    <span class="f-accent">
+      Aryan Giri
+    </span>"
+
     &nbsp;·&nbsp;
 
     <a
       href="https://github.com/giriaryan694-a11y"
       target="_blank"
+      rel="noopener noreferrer"
     >
       giriaryan694-a11y
     </a>
 
   </footer>
+
 
   <script>
 
@@ -879,6 +1014,7 @@
     ];
 
     const themeData = {
+
       "dark": {
         emoji:"🌙",
         label:"Dark"
@@ -893,9 +1029,11 @@
         emoji:"☕",
         label:"Reading"
       }
+
     };
 
-    function setCookie(name,value,days){
+
+    function setCookie(name,value,days) {
 
       const expires = new Date();
 
@@ -905,39 +1043,97 @@
       );
 
       document.cookie =
-        `${name}=${value};expires=${expires.toUTCString()};path=/`;
+        encodeURIComponent(name) +
+        "=" +
+        encodeURIComponent(value) +
+        ";expires=" +
+        expires.toUTCString() +
+        ";path=/";
 
     }
 
-    function getCookie(name){
 
-      const match = document.cookie.match(
-        new RegExp('(^| )' + name + '=([^;]+)')
-      );
+    function getCookie(name) {
 
-      return match ? match[2] : null;
+      const encodedName =
+        encodeURIComponent(name);
+
+      const cookies =
+        document.cookie.split(";");
+
+      for(const cookie of cookies) {
+
+        const trimmed =
+          cookie.trim();
+
+        if(
+          trimmed.startsWith(
+            encodedName + "="
+          )
+        ) {
+
+          return decodeURIComponent(
+            trimmed.substring(
+              encodedName.length + 1
+            )
+          );
+
+        }
+
+      }
+
+      return null;
 
     }
+
 
     let currentTheme =
       getCookie("site_theme") || "dark";
 
+
     const themeBtn =
-      document.getElementById("theme-btn");
+      document.getElementById(
+        "theme-btn"
+      );
+
 
     const themeEmoji =
-      document.getElementById("theme-emoji");
+      document.getElementById(
+        "theme-emoji"
+      );
 
-    function applyTheme(theme,animate=false){
+
+    function applyTheme(
+      theme,
+      animate = false
+    ) {
+
+      /*
+       * Prevent invalid saved theme
+       * values from breaking the page.
+       */
+
+      if(!themeData[theme]) {
+        theme = "dark";
+      }
+
+      currentTheme = theme;
 
       document.body.className =
-        theme === "dark" ? "" : theme;
+        theme === "dark"
+          ? ""
+          : theme;
+
 
       themeEmoji.textContent =
         themeData[theme].emoji;
 
-      document.getElementById("theme-label").textContent =
+
+      document.getElementById(
+        "theme-label"
+      ).textContent =
         themeData[theme].label;
+
 
       setCookie(
         "site_theme",
@@ -945,11 +1141,18 @@
         365
       );
 
-      if(animate){
 
-        themeEmoji.style.animation = "none";
+      if(animate) {
 
-        themeEmoji.offsetHeight;
+        themeEmoji.style.animation =
+          "none";
+
+        /*
+         * Force browser reflow so the
+         * animation restarts properly.
+         */
+
+        void themeEmoji.offsetHeight;
 
         themeEmoji.style.animation =
           "popSpin 0.4s cubic-bezier(0.175,0.885,0.32,1.275) forwards";
@@ -958,17 +1161,23 @@
 
     }
 
+
     applyTheme(currentTheme);
+
 
     themeBtn.addEventListener(
       "click",
       () => {
 
+        const currentIndex =
+          themes.indexOf(currentTheme);
+
+        const nextIndex =
+          (currentIndex + 1) %
+          themes.length;
+
         currentTheme =
-          themes[
-            (themes.indexOf(currentTheme) + 1) %
-            themes.length
-          ];
+          themes[nextIndex];
 
         applyTheme(
           currentTheme,
@@ -978,17 +1187,36 @@
       }
     );
 
+
     /* ─────────────────────────────
-       DATA / VIEW / CATEGORY
+       DATA / STATE
     ───────────────────────────── */
 
     let allData = [];
 
     let currentView = "grid";
 
+    /*
+     * "__all__" means show every category.
+     * Otherwise this contains the exact
+     * category name from info.json.
+     */
+
     let selectedCategory = "__all__";
 
-    function setView(view){
+
+    /* ─────────────────────────────
+       VIEW SWITCH
+    ───────────────────────────── */
+
+    function setView(view) {
+
+      if(
+        view !== "grid" &&
+        view !== "button"
+      ) {
+        return;
+      }
 
       currentView = view;
 
@@ -998,12 +1226,14 @@
         365
       );
 
+
       document
         .getElementById("btn-grid")
         .classList.toggle(
           "active",
           view === "grid"
         );
+
 
       document
         .getElementById("btn-button")
@@ -1012,40 +1242,68 @@
           view === "button"
         );
 
+
       render();
 
     }
 
+
     /* ─────────────────────────────
        CATEGORY BAR
-       Generated from info.json
+       Generated ONLY from info.json
     ───────────────────────────── */
 
-    function renderCategoryBar(){
+    function renderCategoryBar() {
 
       const bar =
-        document.getElementById("category-bar");
+        document.getElementById(
+          "category-bar"
+        );
+
+
+      /*
+       * Always begin with All Categories.
+       */
 
       let html = `
         <button
-          class="category-btn ${selectedCategory === "__all__" ? "active" : ""}"
+          class="category-btn"
+          type="button"
           data-category="__all__"
-          onclick="selectCategory('__all__')"
         >
           All Categories
         </button>
       `;
 
+
+      /*
+       * Generate every other button
+       * directly from info.json.
+       */
+
       allData.forEach(category => {
 
         const categoryName =
-          String(category.name || "");
+          String(
+            category.name || ""
+          ).trim();
+
+
+        /*
+         * Ignore malformed categories
+         * without names.
+         */
+
+        if(!categoryName) {
+          return;
+        }
+
 
         html += `
           <button
-            class="category-btn ${selectedCategory === categoryName ? "active" : ""}"
+            class="category-btn"
+            type="button"
             data-category="${escapeHtml(categoryName)}"
-            onclick="selectCategory(${JSON.stringify(categoryName)})"
           >
             ${escapeHtml(categoryName)}
           </button>
@@ -1053,68 +1311,218 @@
 
       });
 
+
       bar.innerHTML = html;
 
-    }
 
-    function selectCategory(category){
+      /*
+       * Set active button.
+       */
 
-      selectedCategory = category;
+      updateCategoryButtons();
 
-      setCookie(
-        "selectedCategory",
-        category,
-        365
-      );
 
-      document
+      /*
+       * IMPORTANT:
+       *
+       * Do NOT use inline onclick here.
+       *
+       * We attach event listeners after
+       * creating the buttons.
+       */
+
+      bar
         .querySelectorAll(".category-btn")
         .forEach(button => {
 
-          button.classList.toggle(
-            "active",
-            button.dataset.category === category
+          button.addEventListener(
+            "click",
+            () => {
+
+              selectCategory(
+                button.dataset.category
+              );
+
+            }
           );
 
         });
+
+    }
+
+
+    /* ─────────────────────────────
+       CATEGORY SELECTION
+    ───────────────────────────── */
+
+    function selectCategory(category) {
+
+      /*
+       * Make sure "__all__" remains valid.
+       */
+
+      if(
+        category !== "__all__" &&
+        !allData.some(
+          item =>
+            String(item.name || "").trim() === category
+        )
+      ) {
+
+        selectedCategory =
+          "__all__";
+
+      } else {
+
+        selectedCategory =
+          category;
+
+      }
+
+
+      /*
+       * Remember selected category.
+       */
+
+      setCookie(
+        "selectedCategory",
+        selectedCategory,
+        365
+      );
+
+
+      /*
+       * Update button highlighting.
+       */
+
+      updateCategoryButtons();
+
+
+      /*
+       * Re-render content.
+       */
 
       render();
 
     }
 
+
+    function updateCategoryButtons() {
+
+      document
+        .querySelectorAll(
+          ".category-btn"
+        )
+        .forEach(button => {
+
+          button.classList.toggle(
+            "active",
+            button.dataset.category ===
+            selectedCategory
+          );
+
+        });
+
+    }
+
+
     /* ─────────────────────────────
-       LOAD JSON
+       LOAD info.json
     ───────────────────────────── */
 
-    async function loadData(){
+    async function loadData() {
 
-      try{
+      try {
 
         const response =
-          await fetch("info.json");
-
-        if(!response.ok){
-          throw new Error(
-            "Failed to load info.json"
+          await fetch(
+            "info.json",
+            {
+              cache:"no-cache"
+            }
           );
+
+
+        if(!response.ok) {
+
+          throw new Error(
+            `Failed to load info.json (${response.status})`
+          );
+
         }
 
-        allData =
+
+        const json =
           await response.json();
 
-        if(!Array.isArray(allData)){
+
+        if(!Array.isArray(json)) {
+
           throw new Error(
             "info.json must contain an array of categories"
           );
+
         }
+
+
+        allData = json;
+
+
+        /*
+         * Validate saved category.
+         *
+         * This prevents an old/deleted category
+         * from causing an empty page.
+         */
+
+        if(
+          selectedCategory !== "__all__" &&
+          !allData.some(
+            category =>
+              String(
+                category.name || ""
+              ).trim() ===
+              selectedCategory
+          )
+        ) {
+
+          selectedCategory =
+            "__all__";
+
+          setCookie(
+            "selectedCategory",
+            "__all__",
+            365
+          );
+
+        }
+
+
+        /*
+         * Build category buttons.
+         */
 
         renderCategoryBar();
 
+
+        /*
+         * Build resources.
+         */
+
         render();
 
-      }catch(err){
 
-        document.getElementById("content").innerHTML = `
+      } catch(err) {
+
+        console.error(
+          "AryterLog:",
+          err
+        );
+
+
+        document.getElementById(
+          "content"
+        ).innerHTML = `
           <div class="error">
 
             <h3>
@@ -1122,11 +1530,19 @@
             </h3>
 
             <p>
-              ${escapeHtml(err.message)}
+              ${escapeHtml(
+                err.message
+              )}
             </p>
 
-            <p style="margin-top:8px;color:var(--text2);">
-              Make sure info.json is in the /web directory.
+            <p
+              style="
+                margin-top:8px;
+                color:var(--text2);
+              "
+            >
+              Make sure info.json is in
+              the /web directory.
             </p>
 
           </div>
@@ -1136,74 +1552,119 @@
 
     }
 
+
     /* ─────────────────────────────
        SEARCH
     ───────────────────────────── */
 
-    function filterTools(){
+    function filterTools() {
 
       render();
 
     }
 
-    function getFilteredData(){
+
+    /* ─────────────────────────────
+       FILTER DATA
+    ───────────────────────────── */
+
+    function getFilteredData() {
+
+      const input =
+        document.getElementById(
+          "search-input"
+        );
+
 
       const query =
-        document
-          .getElementById("search-input")
-          .value
+        input.value
           .toLowerCase()
           .trim();
 
+
       let data = allData;
 
-      /* Category filter */
 
-      if(selectedCategory !== "__all__"){
+      /*
+       * STEP 1:
+       * Filter by selected category.
+       */
 
-        data = data.filter(
-          category =>
-            category.name === selectedCategory
-        );
+      if(
+        selectedCategory !== "__all__"
+      ) {
+
+        data =
+          data.filter(
+            category =>
+              String(
+                category.name || ""
+              ).trim() ===
+              selectedCategory
+          );
 
       }
 
-      /* Search filter */
 
-      if(!query){
+      /*
+       * STEP 2:
+       * Filter tools by search query.
+       */
+
+      if(!query) {
 
         return data;
 
       }
 
+
       return data
 
-        .map(category => ({
+        .map(category => {
 
-          ...category,
+          const tools =
+            Array.isArray(
+              category.tools
+            )
+              ? category.tools.filter(
+                  tool => {
 
-          tools:
-            Array.isArray(category.tools)
-              ? category.tools.filter(tool =>
-                  String(tool.name || "")
-                    .toLowerCase()
-                    .includes(query)
+                    const name =
+                      String(
+                        tool.name || ""
+                      ).toLowerCase();
 
-                  ||
 
-                  String(tool.description || "")
-                    .toLowerCase()
-                    .includes(query)
+                    const description =
+                      String(
+                        tool.description || ""
+                      ).toLowerCase();
 
-                  ||
 
-                  String(tool.url || "")
-                    .toLowerCase()
-                    .includes(query)
+                    const url =
+                      String(
+                        tool.url || ""
+                      ).toLowerCase();
+
+
+                    return (
+                      name.includes(query) ||
+                      description.includes(query) ||
+                      url.includes(query)
+                    );
+
+                  }
                 )
-              : []
+              : [];
 
-        }))
+
+          return {
+            ...category,
+            tools
+          };
+
+        })
+
 
         .filter(
           category =>
@@ -1212,170 +1673,304 @@
 
     }
 
+
     /* ─────────────────────────────
-       RENDER
+       RENDER CONTENT
     ───────────────────────────── */
 
-    function render(){
+    function render() {
 
       const data =
         getFilteredData();
 
+
       const container =
-        document.getElementById("content");
+        document.getElementById(
+          "content"
+        );
 
-      if(data.length === 0){
 
-        container.innerHTML = `
-          <div class="empty-state">
+      /*
+       * Nothing found.
+       */
 
-            <h2>
-              No tools found
-            </h2>
+      if(data.length === 0) {
 
-            <p>
-              Try adjusting your search or category.
-            </p>
+        const hasSearch =
+          document
+            .getElementById(
+              "search-input"
+            )
+            .value
+            .trim()
+            .length > 0;
 
-          </div>
-        `;
+
+        if(
+          selectedCategory !== "__all__" &&
+          !hasSearch
+        ) {
+
+          container.innerHTML = `
+            <div class="empty-state">
+
+              <h2>
+                No tools in this category
+              </h2>
+
+              <p>
+                This category currently contains no resources.
+              </p>
+
+            </div>
+          `;
+
+        } else {
+
+          container.innerHTML = `
+            <div class="empty-state">
+
+              <h2>
+                No tools found
+              </h2>
+
+              <p>
+                Try adjusting your search or category.
+              </p>
+
+            </div>
+          `;
+
+        }
+
 
         return;
 
       }
 
+
       let html = "";
 
-      data.forEach(category => {
 
-        html += `
-          <div class="category-section">
+      data.forEach(
+        (category, categoryIndex) => {
 
-            <div class="category-title">
+          const categoryName =
+            String(
+              category.name || ""
+            );
 
-              <span class="icon"></span>
 
-              ${escapeHtml(category.name)}
+          html += `
+            <div
+              class="category-section"
+            >
 
-            </div>
-
-            <div class="${
-              currentView === "grid"
-                ? "grid-view"
-                : "button-view"
-            }">
-        `;
-
-        category.tools.forEach(tool => {
-
-          const toolName =
-            String(tool.name || "");
-
-          const toolUrl =
-            String(tool.url || "");
-
-          const toolDescription =
-            String(tool.description || "");
-
-          if(currentView === "grid"){
-
-            html += `
-              <a
-                href="${escapeHtml(toolUrl)}"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="tool-card"
+              <div
+                class="category-title"
               >
 
-                <h3>
-                  ${escapeHtml(toolName)}
-                </h3>
+                <span
+                  class="icon"
+                ></span>
 
-                <p>
-                  ${escapeHtml(toolDescription)}
-                </p>
+                ${escapeHtml(
+                  categoryName
+                )}
 
-                <div class="url-text">
-                  ${escapeHtml(toolUrl)}
-                </div>
+              </div>
 
-              </a>
-            `;
-
-          }else{
-
-            html += `
-              <a
-                href="${escapeHtml(toolUrl)}"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="tool-button"
+              <div
+                class="${
+                  currentView === "grid"
+                    ? "grid-view"
+                    : "button-view"
+                }"
               >
+          `;
 
-                <span class="btn-icon"></span>
 
-                ${escapeHtml(toolName)}
+          const tools =
+            Array.isArray(
+              category.tools
+            )
+              ? category.tools
+              : [];
 
-              </a>
-            `;
 
-          }
+          tools.forEach(
+            (
+              tool,
+              toolIndex
+            ) => {
 
-        });
+              const toolName =
+                String(
+                  tool.name || ""
+                );
 
-        html += `
+
+              const toolUrl =
+                String(
+                  tool.url || ""
+                );
+
+
+              const toolDescription =
+                String(
+                  tool.description || ""
+                );
+
+
+              if(
+                currentView === "grid"
+              ) {
+
+                html += `
+                  <a
+                    href="${escapeHtml(
+                      toolUrl
+                    )}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="tool-card"
+                    style="animation-delay:${Math.min(
+                      toolIndex * 35,
+                      300
+                    )}ms"
+                  >
+
+                    <h3>
+                      ${escapeHtml(
+                        toolName
+                      )}
+                    </h3>
+
+                    <p>
+                      ${escapeHtml(
+                        toolDescription
+                      )}
+                    </p>
+
+                    <div
+                      class="url-text"
+                    >
+                      ${escapeHtml(
+                        toolUrl
+                      )}
+                    </div>
+
+                  </a>
+                `;
+
+              } else {
+
+                html += `
+                  <a
+                    href="${escapeHtml(
+                      toolUrl
+                    )}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="tool-button"
+                  >
+
+                    <span
+                      class="btn-icon"
+                    ></span>
+
+                    ${escapeHtml(
+                      toolName
+                    )}
+
+                  </a>
+                `;
+
+              }
+
+            }
+          );
+
+
+          html += `
+              </div>
             </div>
-          </div>
-        `;
+          `;
 
-      });
+        }
+      );
 
-      container.innerHTML = html;
+
+      container.innerHTML =
+        html;
 
     }
+
 
     /* ─────────────────────────────
        HTML ESCAPE
     ───────────────────────────── */
 
-    function escapeHtml(text){
+    function escapeHtml(text) {
 
-      if(!text){
+      if(
+        text === null ||
+        text === undefined
+      ) {
+
         return "";
+
       }
 
-      const div =
-        document.createElement("div");
 
-      div.textContent = String(text);
+      const div =
+        document.createElement(
+          "div"
+        );
+
+
+      div.textContent =
+        String(text);
+
 
       return div.innerHTML;
 
     }
 
+
     /* ─────────────────────────────
-       RESTORE PREFERENCES
+       RESTORE SAVED VIEW
     ───────────────────────────── */
 
     const savedView =
-      getCookie("viewPreference");
+      getCookie(
+        "viewPreference"
+      );
+
 
     if(
       savedView === "grid" ||
       savedView === "button"
-    ){
+    ) {
 
-      currentView = savedView;
+      currentView =
+        savedView;
+
 
       document
-        .getElementById("btn-grid")
+        .getElementById(
+          "btn-grid"
+        )
         .classList.toggle(
           "active",
           savedView === "grid"
         );
 
+
       document
-        .getElementById("btn-button")
+        .getElementById(
+          "btn-button"
+        )
         .classList.toggle(
           "active",
           savedView === "button"
@@ -1383,15 +1978,27 @@
 
     }
 
-    const savedCategory =
-      getCookie("selectedCategory");
-
-    if(savedCategory){
-      selectedCategory = savedCategory;
-    }
 
     /* ─────────────────────────────
-       INIT
+       RESTORE SAVED CATEGORY
+    ───────────────────────────── */
+
+    const savedCategory =
+      getCookie(
+        "selectedCategory"
+      );
+
+
+    if(savedCategory) {
+
+      selectedCategory =
+        savedCategory;
+
+    }
+
+
+    /* ─────────────────────────────
+       INITIALIZE
     ───────────────────────────── */
 
     loadData();
