@@ -10,8 +10,10 @@
   <meta name="theme-color" content="#080b10">
   <link rel="icon" href="../icons/favicon-32.png" sizes="32x32" type="image/png">
   <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+
   <base target="_blank">
 
   <style>
@@ -21,12 +23,14 @@
       --danger:#ff4560; --border:#1e2a38; --border2:#2a3848; --code-bg:#0a0f16;
       --glow:rgba(0,255,136,0.08); --glow2:rgba(0,255,136,0.18);
     }
+
     .light {
       --bg:#f5f7fa; --surface:#ffffff; --surface2:#f0f4f8; --surface3:#e8eef5;
       --text:#111827; --text2:#6b7280; --accent:#059669; --accent2:#0284c7;
       --danger:#dc2626; --border:#e2e8f0; --border2:#cbd5e1; --code-bg:#f1f5f9;
       --glow:rgba(5,150,105,0.07); --glow2:rgba(5,150,105,0.14);
     }
+
     .eye-saver {
       --bg:#12100a; --surface:#1a1608; --surface2:#211c0c; --surface3:#282210;
       --text:#e8d8b0; --text2:#9a8860; --accent:#f5c542; --accent2:#e08030;
@@ -34,223 +38,719 @@
       --glow:rgba(245,197,66,0.08); --glow2:rgba(245,197,66,0.18);
     }
 
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-    html{scroll-behavior:smooth;}
+    *,*::before,*::after {
+      box-sizing:border-box;
+      margin:0;
+      padding:0;
+    }
+
+    html {
+      scroll-behavior:smooth;
+    }
 
     body {
       font-family:'Fira Code',monospace;
-      background:var(--bg); color:var(--text);
-      min-height:100vh; overflow-x:hidden;
+      background:var(--bg);
+      color:var(--text);
+      min-height:100vh;
+      overflow-x:hidden;
       transition:background 0.4s,color 0.4s;
-      display:flex; flex-direction:column;
+      display:flex;
+      flex-direction:column;
     }
 
     body::before {
-      content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
-      background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
-      background-size:44px 44px; opacity:0.25;
+      content:'';
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:0;
+      background-image:
+        linear-gradient(var(--border) 1px,transparent 1px),
+        linear-gradient(90deg,var(--border) 1px,transparent 1px);
+      background-size:44px 44px;
+      opacity:0.25;
     }
 
     /* ── HEADER ── */
+
     header {
-      position:sticky; top:0; z-index:200;
-      background:rgba(8,11,16,0.86); backdrop-filter:blur(16px);
+      position:sticky;
+      top:0;
+      z-index:200;
+      background:rgba(8,11,16,0.86);
+      backdrop-filter:blur(16px);
       border-bottom:1px solid var(--border);
-      display:flex; align-items:center; justify-content:space-between;
-      padding:0 22px; height:56px; gap:12px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:0 22px;
+      height:56px;
+      gap:12px;
     }
-    .light header{background:rgba(245,247,250,0.9);}
-    .eye-saver header{background:rgba(18,16,10,0.9);}
+
+    .light header {
+      background:rgba(245,247,250,0.9);
+    }
+
+    .eye-saver header {
+      background:rgba(18,16,10,0.9);
+    }
+
     header::after {
-      content:''; position:absolute; bottom:-1px; left:8%; right:8%; height:1px;
-      background:linear-gradient(90deg,transparent,var(--accent),transparent); opacity:0.35;
+      content:'';
+      position:absolute;
+      bottom:-1px;
+      left:8%;
+      right:8%;
+      height:1px;
+      background:linear-gradient(90deg,transparent,var(--accent),transparent);
+      opacity:0.35;
     }
-    .header-left{display:flex;align-items:center;gap:14px;flex-shrink:0;}
+
+    .header-left {
+      display:flex;
+      align-items:center;
+      gap:14px;
+      flex-shrink:0;
+    }
 
     .back-link {
-      display:inline-flex; align-items:center; gap:6px;
-      background:transparent; border:1px solid var(--border2); color:var(--text2);
-      padding:6px 12px; border-radius:6px; cursor:pointer; transition:all 0.2s;
-      font-family:'Fira Code',monospace; font-size:11px; text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      background:transparent;
+      border:1px solid var(--border2);
+      color:var(--text2);
+      padding:6px 12px;
+      border-radius:6px;
+      cursor:pointer;
+      transition:all 0.2s;
+      font-family:'Fira Code',monospace;
+      font-size:11px;
+      text-decoration:none;
     }
-    .back-link:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    .back-link:hover {
+      border-color:var(--accent);
+      color:var(--accent);
+      background:var(--glow);
+    }
 
     .logo {
-      font-family:'Bebas Neue',sans-serif; font-size:24px; font-weight:400;
-      letter-spacing:3px; color:var(--text); cursor:pointer; white-space:nowrap;
-      flex-shrink:0; line-height:1; transition:color 0.2s;
+      font-family:'Bebas Neue',sans-serif;
+      font-size:24px;
+      font-weight:400;
+      letter-spacing:3px;
+      color:var(--text);
+      cursor:pointer;
+      white-space:nowrap;
+      flex-shrink:0;
+      line-height:1;
+      transition:color 0.2s;
     }
-    .logo .lo-a{color:var(--accent);}
-    .logo:hover .lo-a{text-shadow:0 0 14px var(--accent);}
+
+    .logo .lo-a {
+      color:var(--accent);
+    }
+
+    .logo:hover .lo-a {
+      text-shadow:0 0 14px var(--accent);
+    }
 
     #theme-btn {
-      background:transparent; border:1px solid var(--border2);
-      padding:5px 11px; cursor:pointer; color:var(--text2); border-radius:6px;
-      transition:all 0.2s; font-family:'Fira Code',monospace; font-size:11px;
-      display:inline-flex; align-items:center; gap:6px; white-space:nowrap;
+      background:transparent;
+      border:1px solid var(--border2);
+      padding:5px 11px;
+      cursor:pointer;
+      color:var(--text2);
+      border-radius:6px;
+      transition:all 0.2s;
+      font-family:'Fira Code',monospace;
+      font-size:11px;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      white-space:nowrap;
     }
-    #theme-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
 
-    @keyframes popSpin{0%{transform:scale(0.4) rotate(-60deg);opacity:0;}70%{transform:scale(1.15) rotate(5deg);}100%{transform:scale(1) rotate(0deg);opacity:1;}}
-    .emoji{display:inline-block;}
+    #theme-btn:hover {
+      border-color:var(--accent);
+      color:var(--accent);
+      background:var(--glow);
+    }
+
+    @keyframes popSpin {
+      0% {
+        transform:scale(0.4) rotate(-60deg);
+        opacity:0;
+      }
+
+      70% {
+        transform:scale(1.15) rotate(5deg);
+      }
+
+      100% {
+        transform:scale(1) rotate(0deg);
+        opacity:1;
+      }
+    }
+
+    .emoji {
+      display:inline-block;
+    }
 
     /* ── HERO ── */
-    .hero{position:relative;z-index:1;padding:44px 22px 32px;max-width:1300px;margin:0 auto;width:100%;}
-    .hero-tag {
-      display:inline-flex; align-items:center; gap:8px;
-      font-family:'Fira Code',monospace; font-size:10px; letter-spacing:2px;
-      text-transform:uppercase; color:var(--accent); margin-bottom:14px;
+
+    .hero {
+      position:relative;
+      z-index:1;
+      padding:44px 22px 32px;
+      max-width:1300px;
+      margin:0 auto;
+      width:100%;
     }
-    .hero-tag::before{content:'';display:inline-block;width:18px;height:1px;background:var(--accent);}
+
+    .hero-tag {
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      font-family:'Fira Code',monospace;
+      font-size:10px;
+      letter-spacing:2px;
+      text-transform:uppercase;
+      color:var(--accent);
+      margin-bottom:14px;
+    }
+
+    .hero-tag::before {
+      content:'';
+      display:inline-block;
+      width:18px;
+      height:1px;
+      background:var(--accent);
+    }
+
     .hero h2 {
       font-family:'Space Grotesk',sans-serif;
-      font-size:clamp(26px,5vw,40px); font-weight:700; line-height:1.15;
-      color:var(--text); margin-bottom:12px;
+      font-size:clamp(26px,5vw,40px);
+      font-weight:700;
+      line-height:1.15;
+      color:var(--text);
+      margin-bottom:12px;
     }
-    .hero h2 em{font-style:normal;color:var(--accent);}
-    .hero-sub{font-family:'Fira Code',monospace;font-size:12px;color:var(--text2);line-height:1.7;max-width:520px;}
-    .cursor{display:inline-block;width:7px;height:13px;background:var(--accent);vertical-align:middle;margin-left:2px;animation:blink 1.1s step-end infinite;}
-    @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+    .hero h2 em {
+      font-style:normal;
+      color:var(--accent);
+    }
+
+    .hero-sub {
+      font-family:'Fira Code',monospace;
+      font-size:12px;
+      color:var(--text2);
+      line-height:1.7;
+      max-width:520px;
+    }
+
+    .cursor {
+      display:inline-block;
+      width:7px;
+      height:13px;
+      background:var(--accent);
+      vertical-align:middle;
+      margin-left:2px;
+      animation:blink 1.1s step-end infinite;
+    }
+
+    @keyframes blink {
+      0%,100% { opacity:1 }
+      50% { opacity:0 }
+    }
 
     /* ── CONTROLS ── */
+
     .controls {
-      display:flex; justify-content:space-between; align-items:center;
-      padding:0 22px 24px; max-width:1300px; margin:0 auto; width:100%;
-      flex-wrap:wrap; gap:14px; position:relative; z-index:1;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:0 22px 18px;
+      max-width:1300px;
+      margin:0 auto;
+      width:100%;
+      flex-wrap:wrap;
+      gap:14px;
+      position:relative;
+      z-index:1;
     }
 
     .view-toggle {
-      display:flex; gap:4px; background:var(--surface); padding:4px;
-      border-radius:8px; border:1px solid var(--border2);
+      display:flex;
+      gap:4px;
+      background:var(--surface);
+      padding:4px;
+      border-radius:8px;
+      border:1px solid var(--border2);
     }
-    .view-toggle button {
-      padding:7px 14px; border:none; background:transparent; color:var(--text2);
-      cursor:pointer; border-radius:5px; font-size:11px; font-family:'Fira Code',monospace;
-      font-weight:500; transition:all 0.2s; display:flex; align-items:center; gap:6px;
-    }
-    .view-toggle button.active{background:var(--glow2);color:var(--accent);box-shadow:0 0 8px var(--glow2);}
-    .view-toggle button:hover:not(.active){background:var(--surface2);color:var(--text);}
 
-    .filter-box{position:relative;}
-    .search-prefix{
-      position:absolute;left:14px;top:50%;transform:translateY(-50%);
-      color:var(--accent);font-family:'Fira Code',monospace;font-size:13px;
-      font-weight:500;pointer-events:none;user-select:none;
+    .view-toggle button {
+      padding:7px 14px;
+      border:none;
+      background:transparent;
+      color:var(--text2);
+      cursor:pointer;
+      border-radius:5px;
+      font-size:11px;
+      font-family:'Fira Code',monospace;
+      font-weight:500;
+      transition:all 0.2s;
+      display:flex;
+      align-items:center;
+      gap:6px;
     }
+
+    .view-toggle button.active {
+      background:var(--glow2);
+      color:var(--accent);
+      box-shadow:0 0 8px var(--glow2);
+    }
+
+    .view-toggle button:hover:not(.active) {
+      background:var(--surface2);
+      color:var(--text);
+    }
+
+    .filter-box {
+      position:relative;
+    }
+
+    .search-prefix {
+      position:absolute;
+      left:14px;
+      top:50%;
+      transform:translateY(-50%);
+      color:var(--accent);
+      font-family:'Fira Code',monospace;
+      font-size:13px;
+      font-weight:500;
+      pointer-events:none;
+      user-select:none;
+    }
+
     .filter-box input {
-      padding:9px 14px 9px 36px; border:1px solid var(--border2); background:var(--surface);
-      color:var(--text); border-radius:8px; font-size:12px; font-family:'Fira Code',monospace;
-      width:250px; outline:none; transition:border-color 0.25s,box-shadow 0.25s;
+      padding:9px 14px 9px 36px;
+      border:1px solid var(--border2);
+      background:var(--surface);
+      color:var(--text);
+      border-radius:8px;
+      font-size:12px;
+      font-family:'Fira Code',monospace;
+      width:250px;
+      outline:none;
+      transition:border-color 0.25s,box-shadow 0.25s;
     }
-    .filter-box input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--glow),0 0 18px var(--glow);}
-    .filter-box input::placeholder{color:var(--text2);opacity:0.7;}
+
+    .filter-box input:focus {
+      border-color:var(--accent);
+      box-shadow:0 0 0 3px var(--glow),0 0 18px var(--glow);
+    }
+
+    .filter-box input::placeholder {
+      color:var(--text2);
+      opacity:0.7;
+    }
+
+    /* ── CATEGORY BAR ── */
+
+    .category-nav {
+      max-width:1300px;
+      margin:0 auto;
+      width:100%;
+      padding:0 22px 24px;
+      position:relative;
+      z-index:1;
+    }
+
+    .category-bar {
+      display:flex;
+      gap:8px;
+      padding:8px;
+      background:var(--surface);
+      border:1px solid var(--border2);
+      border-radius:10px;
+      overflow-x:auto;
+      scrollbar-width:thin;
+      scrollbar-color:var(--border2) transparent;
+    }
+
+    .category-bar::-webkit-scrollbar {
+      height:5px;
+    }
+
+    .category-bar::-webkit-scrollbar-track {
+      background:transparent;
+    }
+
+    .category-bar::-webkit-scrollbar-thumb {
+      background:var(--border2);
+      border-radius:10px;
+    }
+
+    .category-btn {
+      flex:0 0 auto;
+      border:1px solid var(--border2);
+      background:transparent;
+      color:var(--text2);
+      padding:9px 14px;
+      border-radius:7px;
+      font-family:'Fira Code',monospace;
+      font-size:11px;
+      cursor:pointer;
+      transition:all 0.2s;
+      white-space:nowrap;
+    }
+
+    .category-btn:hover {
+      border-color:var(--accent);
+      color:var(--accent);
+      background:var(--glow);
+    }
+
+    .category-btn.active {
+      background:var(--glow2);
+      border-color:var(--accent);
+      color:var(--accent);
+      box-shadow:0 0 10px var(--glow2);
+    }
 
     /* ── MAIN CONTENT ── */
-    .main-content{flex:1;max-width:1300px;margin:0 auto;width:100%;padding:0 22px 50px;position:relative;z-index:1;}
 
-    .category-section{margin-bottom:36px;}
+    .main-content {
+      flex:1;
+      max-width:1300px;
+      margin:0 auto;
+      width:100%;
+      padding:0 22px 50px;
+      position:relative;
+      z-index:1;
+    }
+
+    .category-section {
+      margin-bottom:36px;
+    }
+
     .category-title {
-      display:flex; align-items:center; gap:10px;
-      font-family:'Fira Code',monospace; font-size:10px; letter-spacing:2.5px;
-      text-transform:uppercase; color:var(--text2); margin-bottom:16px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-family:'Fira Code',monospace;
+      font-size:10px;
+      letter-spacing:2.5px;
+      text-transform:uppercase;
+      color:var(--text2);
+      margin-bottom:16px;
     }
-    .category-title .icon{
-      width:6px;height:6px;border-radius:50%;background:var(--accent);
-      box-shadow:0 0 6px var(--accent); flex-shrink:0;
+
+    .category-title .icon {
+      width:6px;
+      height:6px;
+      border-radius:50%;
+      background:var(--accent);
+      box-shadow:0 0 6px var(--accent);
+      flex-shrink:0;
     }
-    .category-title::after{content:'';flex:1;height:1px;background:var(--border);}
+
+    .category-title::after {
+      content:'';
+      flex:1;
+      height:1px;
+      background:var(--border);
+    }
 
     /* Grid view */
-    @keyframes cardIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
 
-    .grid-view{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px;}
+    @keyframes cardIn {
+      from {
+        opacity:0;
+        transform:translateY(12px);
+      }
+
+      to {
+        opacity:1;
+        transform:translateY(0);
+      }
+    }
+
+    .grid-view {
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(270px,1fr));
+      gap:14px;
+    }
 
     .tool-card {
-      background:var(--surface); border:1px solid var(--border); border-radius:10px;
-      padding:20px 22px; transition:border-color 0.25s,box-shadow 0.25s,transform 0.2s;
-      text-decoration:none; color:inherit; display:block; position:relative;
-      overflow:hidden; animation:cardIn 0.35s ease both;
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:10px;
+      padding:20px 22px;
+      transition:border-color 0.25s,box-shadow 0.25s,transform 0.2s;
+      text-decoration:none;
+      color:inherit;
+      display:block;
+      position:relative;
+      overflow:hidden;
+      animation:cardIn 0.35s ease both;
     }
+
     .tool-card::before {
-      content:''; position:absolute; inset:0;
-      background:radial-gradient(ellipse at 0% 50%,var(--glow2) 0%,transparent 65%);
-      opacity:0; transition:opacity 0.3s; pointer-events:none;
+      content:'';
+      position:absolute;
+      inset:0;
+      background:radial-gradient(
+        ellipse at 0% 50%,
+        var(--glow2) 0%,
+        transparent 65%
+      );
+      opacity:0;
+      transition:opacity 0.3s;
+      pointer-events:none;
     }
+
     .tool-card::after {
-      content:''; position:absolute; left:0; top:14px; bottom:14px; width:2px;
-      background:var(--accent); border-radius:2px;
-      transform:scaleY(0); transition:transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
+      content:'';
+      position:absolute;
+      left:0;
+      top:14px;
+      bottom:14px;
+      width:2px;
+      background:var(--accent);
+      border-radius:2px;
+      transform:scaleY(0);
+      transition:transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
       transform-origin:center;
     }
-    .tool-card:hover{border-color:var(--border2);box-shadow:0 4px 24px rgba(0,0,0,0.28);transform:translateX(4px);}
-    .tool-card:hover::before{opacity:1;}
-    .tool-card:hover::after{transform:scaleY(1);}
+
+    .tool-card:hover {
+      border-color:var(--border2);
+      box-shadow:0 4px 24px rgba(0,0,0,0.28);
+      transform:translateX(4px);
+    }
+
+    .tool-card:hover::before {
+      opacity:1;
+    }
+
+    .tool-card:hover::after {
+      transform:scaleY(1);
+    }
 
     .tool-card h3 {
-      font-family:'Space Grotesk',sans-serif; font-size:15px; font-weight:600;
-      color:var(--text); margin-bottom:7px; line-height:1.35; transition:color 0.2s;
+      font-family:'Space Grotesk',sans-serif;
+      font-size:15px;
+      font-weight:600;
+      color:var(--text);
+      margin-bottom:7px;
+      line-height:1.35;
+      transition:color 0.2s;
     }
-    .tool-card:hover h3{color:var(--accent);}
-    .tool-card p{font-family:'Fira Code',monospace;font-size:12px;color:var(--text2);line-height:1.65;}
+
+    .tool-card:hover h3 {
+      color:var(--accent);
+    }
+
+    .tool-card p {
+      font-family:'Fira Code',monospace;
+      font-size:12px;
+      color:var(--text2);
+      line-height:1.65;
+    }
+
     .tool-card .url-text {
-      color:var(--accent2); font-size:10px; margin-top:12px; word-break:break-all;
-      opacity:0.65; font-family:'Fira Code',monospace;
+      color:var(--accent2);
+      font-size:10px;
+      margin-top:12px;
+      word-break:break-all;
+      opacity:0.65;
+      font-family:'Fira Code',monospace;
     }
 
     /* Button view */
-    .button-view{display:flex;flex-wrap:wrap;gap:10px;}
+
+    .button-view {
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+    }
+
     .tool-button {
-      display:inline-flex; align-items:center; gap:8px; padding:10px 18px;
-      background:var(--surface); border:1px solid var(--border2); border-radius:7px;
-      color:var(--text); text-decoration:none; font-size:12px; font-family:'Fira Code',monospace;
-      font-weight:500; transition:all 0.2s; cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 18px;
+      background:var(--surface);
+      border:1px solid var(--border2);
+      border-radius:7px;
+      color:var(--text);
+      text-decoration:none;
+      font-size:12px;
+      font-family:'Fira Code',monospace;
+      font-weight:500;
+      transition:all 0.2s;
+      cursor:pointer;
     }
+
     .tool-button:hover {
-      background:var(--glow); border-color:var(--accent); color:var(--accent);
-      transform:translateY(-2px); box-shadow:0 4px 14px var(--glow2);
+      background:var(--glow);
+      border-color:var(--accent);
+      color:var(--accent);
+      transform:translateY(-2px);
+      box-shadow:0 4px 14px var(--glow2);
     }
-    .tool-button .btn-icon{width:5px;height:5px;border-radius:50%;background:var(--accent);flex-shrink:0;}
+
+    .tool-button .btn-icon {
+      width:5px;
+      height:5px;
+      border-radius:50%;
+      background:var(--accent);
+      flex-shrink:0;
+    }
 
     /* ── FOOTER ── */
-    footer{
-      text-align:center;padding:22px 16px;color:var(--text2);
-      font-family:'Fira Code',monospace;font-size:11px;
-      border-top:1px solid var(--border);position:relative;z-index:1;
+
+    footer {
+      text-align:center;
+      padding:22px 16px;
+      color:var(--text2);
+      font-family:'Fira Code',monospace;
+      font-size:11px;
+      border-top:1px solid var(--border);
+      position:relative;
+      z-index:1;
     }
-    .f-accent{color:var(--accent);}
-    footer a{color:var(--accent);text-decoration:none;}
-    footer a:hover{opacity:0.75;}
+
+    .f-accent {
+      color:var(--accent);
+    }
+
+    footer a {
+      color:var(--accent);
+      text-decoration:none;
+    }
+
+    footer a:hover {
+      opacity:0.75;
+    }
 
     /* States */
-    .empty-state,.loading,.error{text-align:center;padding:60px 20px;font-family:'Fira Code',monospace;}
-    .empty-state h2{color:var(--text);margin-bottom:10px;font-family:'Space Grotesk',sans-serif;font-size:18px;}
-    .empty-state p,.loading{color:var(--text2);font-size:13px;}
-    .error{color:var(--danger);font-size:13px;}
-    .error p{margin-top:6px;}
-    .hidden{display:none!important;}
 
-    @media(max-width:768px){
-      .controls{flex-direction:column;align-items:stretch;padding:0 16px 20px;}
-      .filter-box input{width:100%;}
-      .main-content{padding:0 16px 40px;}
-      .hero{padding:28px 16px 20px;}
-      .hero h2{font-size:24px;}
-      .grid-view{grid-template-columns:1fr;}
-      header{padding:0 14px;height:52px;}
-      .logo{font-size:21px;letter-spacing:2px;}
-      .back-link span.back-label{display:none;}
+    .empty-state,
+    .loading,
+    .error {
+      text-align:center;
+      padding:60px 20px;
+      font-family:'Fira Code',monospace;
+    }
+
+    .empty-state h2 {
+      color:var(--text);
+      margin-bottom:10px;
+      font-family:'Space Grotesk',sans-serif;
+      font-size:18px;
+    }
+
+    .empty-state p,
+    .loading {
+      color:var(--text2);
+      font-size:13px;
+    }
+
+    .error {
+      color:var(--danger);
+      font-size:13px;
+    }
+
+    .error p {
+      margin-top:6px;
+    }
+
+    .hidden {
+      display:none!important;
+    }
+
+    /* ── MOBILE ── */
+
+    @media(max-width:768px) {
+
+      .controls {
+        flex-direction:column;
+        align-items:stretch;
+        padding:0 16px 16px;
+      }
+
+      .filter-box input {
+        width:100%;
+      }
+
+      .category-nav {
+        padding:0 16px 20px;
+      }
+
+      .main-content {
+        padding:0 16px 40px;
+      }
+
+      .hero {
+        padding:28px 16px 20px;
+      }
+
+      .hero h2 {
+        font-size:24px;
+      }
+
+      .grid-view {
+        grid-template-columns:1fr;
+      }
+
+      header {
+        padding:0 14px;
+        height:52px;
+      }
+
+      .logo {
+        font-size:21px;
+        letter-spacing:2px;
+      }
+
+      .back-link span.back-label {
+        display:none;
+      }
+
+      .category-bar {
+        border-radius:8px;
+      }
+
+      .category-btn {
+        font-size:10px;
+        padding:8px 12px;
+      }
     }
   </style>
 </head>
+
 <body>
 
   <header>
     <div class="header-left">
+
       <a href="../index.html" class="back-link">
         ← <span class="back-label">Back to Blog</span>
       </a>
-      <h1 class="logo">Aryter<span class="lo-a">Log</span></h1>
+
+      <h1 class="logo">
+        Aryter<span class="lo-a">Log</span>
+      </h1>
+
     </div>
+
     <button id="theme-btn" aria-label="Cycle Theme">
       <span class="emoji" id="theme-emoji">🌙</span>
       <span id="theme-label">Dark</span>
@@ -258,169 +758,645 @@
   </header>
 
   <div class="hero">
-    <div class="hero-tag">Resource Library</div>
-    <h2>My Web <em>Resources</em></h2>
-    <p class="hero-sub">Curated tools, frameworks &amp; utilities I use for security research and pentesting<span class="cursor"></span></p>
+
+    <div class="hero-tag">
+      Resource Library
+    </div>
+
+    <h2>
+      My Web <em>Resources</em>
+    </h2>
+
+    <p class="hero-sub">
+      Curated tools, frameworks &amp; utilities I use for security research and pentesting
+      <span class="cursor"></span>
+    </p>
+
   </div>
 
   <div class="controls">
+
     <div class="view-toggle">
+
       <button id="btn-grid" class="active" onclick="setView('grid')">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2">
+
           <rect x="3" y="3" width="7" height="7"></rect>
           <rect x="14" y="3" width="7" height="7"></rect>
           <rect x="3" y="14" width="7" height="7"></rect>
           <rect x="14" y="14" width="7" height="7"></rect>
+
         </svg>
+
         Grid
+
       </button>
+
       <button id="btn-button" onclick="setView('button')">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2">
+
           <line x1="3" y1="6" x2="21" y2="6"></line>
           <line x1="3" y1="12" x2="21" y2="12"></line>
           <line x1="3" y1="18" x2="21" y2="18"></line>
+
         </svg>
+
         Button
+
       </button>
+
     </div>
+
     <div class="filter-box">
+
       <span class="search-prefix">&gt;_</span>
-      <input type="text" id="search-input" placeholder="search tools..." oninput="filterTools()">
+
+      <input
+        type="text"
+        id="search-input"
+        placeholder="search tools..."
+        oninput="filterTools()"
+      >
+
     </div>
+
+  </div>
+
+  <!-- CATEGORY BAR -->
+  <div class="category-nav">
+
+    <div class="category-bar" id="category-bar">
+
+      <button
+        class="category-btn active"
+        data-category="__all__"
+        onclick="selectCategory('__all__')"
+      >
+        All Categories
+      </button>
+
+    </div>
+
   </div>
 
   <div class="main-content" id="content">
-    <div class="loading">⟳ Loading resources...</div>
+
+    <div class="loading">
+      ⟳ Loading resources...
+    </div>
+
   </div>
 
   <footer>
-    <span class="f-accent">$</span> echo "Made by <span class="f-accent">Aryan Giri</span>" &nbsp;·&nbsp; <a href="https://github.com/giriaryan694-a11y" target="_blank">giriaryan694-a11y</a>
+
+    <span class="f-accent">$</span>
+    echo "Made by <span class="f-accent">Aryan Giri</span>"
+    &nbsp;·&nbsp;
+
+    <a
+      href="https://github.com/giriaryan694-a11y"
+      target="_blank"
+    >
+      giriaryan694-a11y
+    </a>
+
   </footer>
 
   <script>
-    /* THEME — synced with main site via same cookie */
-    const themes=["dark","light","eye-saver"];
-    const themeData={"dark":{emoji:"🌙",label:"Dark"},"light":{emoji:"☀️",label:"Light"},"eye-saver":{emoji:"☕",label:"Reading"}};
-    function setCookie(n,v,d){const e=new Date();e.setTime(e.getTime()+d*86400000);document.cookie=`${n}=${v};expires=${e.toUTCString()};path=/`;}
-    function getCookie(n){const m=document.cookie.match(new RegExp('(^| )'+n+'=([^;]+)'));return m?m[2]:null;}
-    let currentTheme=getCookie("site_theme")||"dark";
-    const themeBtn=document.getElementById("theme-btn");
-    const themeEmoji=document.getElementById("theme-emoji");
-    function applyTheme(theme,animate=false){
-      document.body.className=theme==="dark"?"":theme;
-      themeEmoji.textContent=themeData[theme].emoji;
-      document.getElementById("theme-label").textContent=themeData[theme].label;
-      setCookie("site_theme",theme,365);
-      if(animate){themeEmoji.style.animation="none";themeEmoji.offsetHeight;themeEmoji.style.animation="popSpin 0.4s cubic-bezier(0.175,0.885,0.32,1.275) forwards";}
-    }
-    applyTheme(currentTheme);
-    themeBtn.addEventListener("click",()=>{currentTheme=themes[(themes.indexOf(currentTheme)+1)%themes.length];applyTheme(currentTheme,true);});
 
-    /* DATA & VIEW */
-    let allData=[];
-    let currentView='grid';
+    /* ─────────────────────────────
+       THEME
+    ───────────────────────────── */
+
+    const themes = [
+      "dark",
+      "light",
+      "eye-saver"
+    ];
+
+    const themeData = {
+      "dark": {
+        emoji:"🌙",
+        label:"Dark"
+      },
+
+      "light": {
+        emoji:"☀️",
+        label:"Light"
+      },
+
+      "eye-saver": {
+        emoji:"☕",
+        label:"Reading"
+      }
+    };
+
+    function setCookie(name,value,days){
+
+      const expires = new Date();
+
+      expires.setTime(
+        expires.getTime() +
+        days * 86400000
+      );
+
+      document.cookie =
+        `${name}=${value};expires=${expires.toUTCString()};path=/`;
+
+    }
+
+    function getCookie(name){
+
+      const match = document.cookie.match(
+        new RegExp('(^| )' + name + '=([^;]+)')
+      );
+
+      return match ? match[2] : null;
+
+    }
+
+    let currentTheme =
+      getCookie("site_theme") || "dark";
+
+    const themeBtn =
+      document.getElementById("theme-btn");
+
+    const themeEmoji =
+      document.getElementById("theme-emoji");
+
+    function applyTheme(theme,animate=false){
+
+      document.body.className =
+        theme === "dark" ? "" : theme;
+
+      themeEmoji.textContent =
+        themeData[theme].emoji;
+
+      document.getElementById("theme-label").textContent =
+        themeData[theme].label;
+
+      setCookie(
+        "site_theme",
+        theme,
+        365
+      );
+
+      if(animate){
+
+        themeEmoji.style.animation = "none";
+
+        themeEmoji.offsetHeight;
+
+        themeEmoji.style.animation =
+          "popSpin 0.4s cubic-bezier(0.175,0.885,0.32,1.275) forwards";
+
+      }
+
+    }
+
+    applyTheme(currentTheme);
+
+    themeBtn.addEventListener(
+      "click",
+      () => {
+
+        currentTheme =
+          themes[
+            (themes.indexOf(currentTheme) + 1) %
+            themes.length
+          ];
+
+        applyTheme(
+          currentTheme,
+          true
+        );
+
+      }
+    );
+
+    /* ─────────────────────────────
+       DATA / VIEW / CATEGORY
+    ───────────────────────────── */
+
+    let allData = [];
+
+    let currentView = "grid";
+
+    let selectedCategory = "__all__";
 
     function setView(view){
-      currentView=view;
-      setCookie('viewPreference',view,365);
-      document.getElementById('btn-grid').classList.toggle('active',view==='grid');
-      document.getElementById('btn-button').classList.toggle('active',view==='button');
+
+      currentView = view;
+
+      setCookie(
+        "viewPreference",
+        view,
+        365
+      );
+
+      document
+        .getElementById("btn-grid")
+        .classList.toggle(
+          "active",
+          view === "grid"
+        );
+
+      document
+        .getElementById("btn-button")
+        .classList.toggle(
+          "active",
+          view === "button"
+        );
+
       render();
+
     }
 
-    async function loadData(){
-      try{
-        const response=await fetch('info.json');
-        if(!response.ok)throw new Error('Failed to load info.json');
-        allData=await response.json();
-        render();
-      }catch(err){
-        document.getElementById('content').innerHTML=`
-          <div class="error">
-            <h3>⚠️ Error loading info.json</h3>
-            <p>${err.message}</p>
-            <p style="margin-top:8px;color:var(--text2);">Make sure info.json is in the /web directory.</p>
-          </div>`;
-      }
-    }
+    /* ─────────────────────────────
+       CATEGORY BAR
+       Generated from info.json
+    ───────────────────────────── */
 
-    function filterTools(){render();}
+    function renderCategoryBar(){
 
-    function getFilteredData(){
-      const query=document.getElementById('search-input').value.toLowerCase().trim();
-      if(!query)return allData;
-      return allData.map(cat=>({
-        ...cat,
-        tools:cat.tools.filter(tool=>
-          tool.name.toLowerCase().includes(query)||
-          (tool.description&&tool.description.toLowerCase().includes(query))||
-          tool.url.toLowerCase().includes(query)
-        )
-      })).filter(cat=>cat.tools.length>0);
-    }
+      const bar =
+        document.getElementById("category-bar");
 
-    function render(){
-      const data=getFilteredData();
-      const container=document.getElementById('content');
+      let html = `
+        <button
+          class="category-btn ${selectedCategory === "__all__" ? "active" : ""}"
+          data-category="__all__"
+          onclick="selectCategory('__all__')"
+        >
+          All Categories
+        </button>
+      `;
 
-      if(data.length===0){
-        container.innerHTML=`
-          <div class="empty-state">
-            <h2>No tools found</h2>
-            <p>Try adjusting your search or check info.json</p>
-          </div>`;
-        return;
-      }
+      allData.forEach(category => {
 
-      let html='';
-      data.forEach(category=>{
-        html+=`
-          <div class="category-section">
-            <div class="category-title">
-              <span class="icon"></span>
-              ${escapeHtml(category.name)}
-            </div>
-            <div class="${currentView==='grid'?'grid-view':'button-view'}">`;
+        const categoryName =
+          String(category.name || "");
 
-        category.tools.forEach(tool=>{
-          if(currentView==='grid'){
-            html+=`
-              <a href="${escapeHtml(tool.url)}" target="_blank" class="tool-card">
-                <h3>${escapeHtml(tool.name)}</h3>
-                <p>${escapeHtml(tool.description||'')}</p>
-                <div class="url-text">${escapeHtml(tool.url)}</div>
-              </a>`;
-          }else{
-            html+=`
-              <a href="${escapeHtml(tool.url)}" target="_blank" class="tool-button">
-                <span class="btn-icon"></span>
-                ${escapeHtml(tool.name)}
-              </a>`;
-          }
-        });
+        html += `
+          <button
+            class="category-btn ${selectedCategory === categoryName ? "active" : ""}"
+            data-category="${escapeHtml(categoryName)}"
+            onclick="selectCategory(${JSON.stringify(categoryName)})"
+          >
+            ${escapeHtml(categoryName)}
+          </button>
+        `;
 
-        html+=`</div></div>`;
       });
 
-      container.innerHTML=html;
+      bar.innerHTML = html;
+
     }
+
+    function selectCategory(category){
+
+      selectedCategory = category;
+
+      setCookie(
+        "selectedCategory",
+        category,
+        365
+      );
+
+      document
+        .querySelectorAll(".category-btn")
+        .forEach(button => {
+
+          button.classList.toggle(
+            "active",
+            button.dataset.category === category
+          );
+
+        });
+
+      render();
+
+    }
+
+    /* ─────────────────────────────
+       LOAD JSON
+    ───────────────────────────── */
+
+    async function loadData(){
+
+      try{
+
+        const response =
+          await fetch("info.json");
+
+        if(!response.ok){
+          throw new Error(
+            "Failed to load info.json"
+          );
+        }
+
+        allData =
+          await response.json();
+
+        if(!Array.isArray(allData)){
+          throw new Error(
+            "info.json must contain an array of categories"
+          );
+        }
+
+        renderCategoryBar();
+
+        render();
+
+      }catch(err){
+
+        document.getElementById("content").innerHTML = `
+          <div class="error">
+
+            <h3>
+              ⚠️ Error loading info.json
+            </h3>
+
+            <p>
+              ${escapeHtml(err.message)}
+            </p>
+
+            <p style="margin-top:8px;color:var(--text2);">
+              Make sure info.json is in the /web directory.
+            </p>
+
+          </div>
+        `;
+
+      }
+
+    }
+
+    /* ─────────────────────────────
+       SEARCH
+    ───────────────────────────── */
+
+    function filterTools(){
+
+      render();
+
+    }
+
+    function getFilteredData(){
+
+      const query =
+        document
+          .getElementById("search-input")
+          .value
+          .toLowerCase()
+          .trim();
+
+      let data = allData;
+
+      /* Category filter */
+
+      if(selectedCategory !== "__all__"){
+
+        data = data.filter(
+          category =>
+            category.name === selectedCategory
+        );
+
+      }
+
+      /* Search filter */
+
+      if(!query){
+
+        return data;
+
+      }
+
+      return data
+
+        .map(category => ({
+
+          ...category,
+
+          tools:
+            Array.isArray(category.tools)
+              ? category.tools.filter(tool =>
+                  String(tool.name || "")
+                    .toLowerCase()
+                    .includes(query)
+
+                  ||
+
+                  String(tool.description || "")
+                    .toLowerCase()
+                    .includes(query)
+
+                  ||
+
+                  String(tool.url || "")
+                    .toLowerCase()
+                    .includes(query)
+                )
+              : []
+
+        }))
+
+        .filter(
+          category =>
+            category.tools.length > 0
+        );
+
+    }
+
+    /* ─────────────────────────────
+       RENDER
+    ───────────────────────────── */
+
+    function render(){
+
+      const data =
+        getFilteredData();
+
+      const container =
+        document.getElementById("content");
+
+      if(data.length === 0){
+
+        container.innerHTML = `
+          <div class="empty-state">
+
+            <h2>
+              No tools found
+            </h2>
+
+            <p>
+              Try adjusting your search or category.
+            </p>
+
+          </div>
+        `;
+
+        return;
+
+      }
+
+      let html = "";
+
+      data.forEach(category => {
+
+        html += `
+          <div class="category-section">
+
+            <div class="category-title">
+
+              <span class="icon"></span>
+
+              ${escapeHtml(category.name)}
+
+            </div>
+
+            <div class="${
+              currentView === "grid"
+                ? "grid-view"
+                : "button-view"
+            }">
+        `;
+
+        category.tools.forEach(tool => {
+
+          const toolName =
+            String(tool.name || "");
+
+          const toolUrl =
+            String(tool.url || "");
+
+          const toolDescription =
+            String(tool.description || "");
+
+          if(currentView === "grid"){
+
+            html += `
+              <a
+                href="${escapeHtml(toolUrl)}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="tool-card"
+              >
+
+                <h3>
+                  ${escapeHtml(toolName)}
+                </h3>
+
+                <p>
+                  ${escapeHtml(toolDescription)}
+                </p>
+
+                <div class="url-text">
+                  ${escapeHtml(toolUrl)}
+                </div>
+
+              </a>
+            `;
+
+          }else{
+
+            html += `
+              <a
+                href="${escapeHtml(toolUrl)}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="tool-button"
+              >
+
+                <span class="btn-icon"></span>
+
+                ${escapeHtml(toolName)}
+
+              </a>
+            `;
+
+          }
+
+        });
+
+        html += `
+            </div>
+          </div>
+        `;
+
+      });
+
+      container.innerHTML = html;
+
+    }
+
+    /* ─────────────────────────────
+       HTML ESCAPE
+    ───────────────────────────── */
 
     function escapeHtml(text){
-      if(!text)return'';
-      const div=document.createElement('div');
-      div.textContent=text;
+
+      if(!text){
+        return "";
+      }
+
+      const div =
+        document.createElement("div");
+
+      div.textContent = String(text);
+
       return div.innerHTML;
+
     }
 
-    /* INIT */
-    const savedView=getCookie('viewPreference');
-    if(savedView&&(savedView==='grid'||savedView==='button')){
-      currentView=savedView;
-      document.getElementById('btn-grid').classList.toggle('active',savedView==='grid');
-      document.getElementById('btn-button').classList.toggle('active',savedView==='button');
+    /* ─────────────────────────────
+       RESTORE PREFERENCES
+    ───────────────────────────── */
+
+    const savedView =
+      getCookie("viewPreference");
+
+    if(
+      savedView === "grid" ||
+      savedView === "button"
+    ){
+
+      currentView = savedView;
+
+      document
+        .getElementById("btn-grid")
+        .classList.toggle(
+          "active",
+          savedView === "grid"
+        );
+
+      document
+        .getElementById("btn-button")
+        .classList.toggle(
+          "active",
+          savedView === "button"
+        );
+
     }
+
+    const savedCategory =
+      getCookie("selectedCategory");
+
+    if(savedCategory){
+      selectedCategory = savedCategory;
+    }
+
+    /* ─────────────────────────────
+       INIT
+    ───────────────────────────── */
 
     loadData();
+
   </script>
+
 </body>
 </html>
