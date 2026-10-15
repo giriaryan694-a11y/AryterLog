@@ -66,7 +66,7 @@
     .sidebar {
       position:fixed; top:0; left:0; bottom:0; width:285px;
       background:var(--surface); border-right:1px solid var(--border2);
-      z-index:600; display:flex; flex-direction:column;
+      z-index:600; display:flex; flex-direction:column; overflow-y:auto;
       transform:translateX(-100%); transition:transform 0.35s cubic-bezier(0.4,0,0.2,1);
     }
     .sidebar.open{transform:translateX(0);}
@@ -127,6 +127,34 @@
     .cat-chip:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
     .cat-chip.selected{border-color:var(--accent);background:var(--glow2);color:var(--accent);box-shadow:0 0 8px var(--glow2);}
     .cat-count{opacity:0.5;font-size:9px;}
+
+    /* Saved posts and collection navigation */
+    .sb-nav-btn {
+      width:100%; display:flex; align-items:center; justify-content:space-between;
+      gap:10px; padding:13px 16px; border:0; background:transparent;
+      color:var(--text); font-family:'Fira Code',monospace; font-size:11px;
+      text-align:left; cursor:pointer; transition:background 0.2s,color 0.2s;
+    }
+    .sb-nav-btn:hover { background:var(--glow); color:var(--accent); }
+    .sb-nav-count { color:var(--accent); font-size:10px; }
+    .collection-nav-list { display:flex; flex-direction:column; gap:5px; padding-top:8px; }
+    .collection-nav-row { display:flex; align-items:center; gap:5px; }
+    .collection-nav-btn {
+      flex:1; min-width:0; display:flex; align-items:center; gap:9px;
+      padding:9px 10px; border:1px solid var(--border); border-radius:5px;
+      background:var(--surface2); color:var(--text);
+      font-family:'Fira Code',monospace; font-size:11px; text-align:left; cursor:pointer;
+      transition:all 0.2s;
+    }
+    .collection-nav-btn:hover { border-color:var(--accent); color:var(--accent); background:var(--glow); }
+    .collection-nav-name { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .collection-nav-count { color:var(--text2); font-size:9px; }
+    .collection-delete-btn {
+      flex-shrink:0; width:28px; height:29px; border:1px solid var(--border);
+      border-radius:5px; background:transparent; color:var(--text2); cursor:pointer;
+    }
+    .collection-delete-btn:hover { border-color:var(--danger); color:var(--danger); background:rgba(255,69,96,0.07); }
+    .web-resources-btn { appearance:none; text-align:left; }
 
     .social-list{display:flex;flex-direction:column;gap:6px;padding-top:8px;}
     .social-link {
@@ -268,12 +296,62 @@
 
     .post-card {
       background:var(--surface); border:1px solid var(--border); border-radius:10px;
-      padding:20px 22px; margin-bottom:9px; cursor:pointer;
+      padding:0; margin-bottom:9px; cursor:default;
       position:relative; overflow:hidden;
       transition:border-color 0.25s,box-shadow 0.25s,transform 0.2s;
       animation:cardIn 0.35s ease both;
-      display:block; text-decoration:none; color:inherit;
+      display:block; color:inherit;
     }
+    .post-card-main {
+      display:block; position:relative; padding:20px 78px 20px 22px;
+      color:inherit; text-decoration:none;
+    }
+    .post-card-main:hover { opacity:1; }
+    .post-card-actions {
+      position:absolute; top:12px; right:12px; z-index:5;
+      display:flex; align-items:center; gap:5px;
+    }
+    .post-star-btn,.post-folder-btn,.detail-star-btn,.detail-folder-btn {
+      min-width:30px; height:30px; display:inline-flex; align-items:center;
+      justify-content:center; padding:3px 7px; border:1px solid var(--border2);
+      border-radius:6px; background:var(--surface2); color:var(--text2);
+      font-family:'Fira Code',monospace; font-size:17px; cursor:pointer;
+      transition:all 0.2s;
+    }
+    .post-star-btn:hover,.post-folder-btn:hover,.detail-star-btn:hover,.detail-folder-btn:hover {
+      border-color:var(--accent); color:var(--accent); background:var(--glow);
+    }
+    .post-star-btn.is-starred,.detail-star-btn.is-starred {
+      border-color:var(--accent); color:var(--accent); background:var(--glow2);
+    }
+    .collection-panel {
+      position:relative; z-index:4; padding:13px 18px;
+      border-top:1px solid var(--border); background:var(--surface2);
+    }
+    .collection-panel-title {
+      margin-bottom:10px; color:var(--accent); font-size:10px;
+      letter-spacing:1.5px; text-transform:uppercase;
+    }
+    .collection-options { display:flex; flex-wrap:wrap; gap:8px 14px; }
+    .collection-choice {
+      display:inline-flex; align-items:center; gap:6px;
+      color:var(--text); font-size:11px; cursor:pointer;
+    }
+    .collection-choice input { accent-color:var(--accent); cursor:pointer; }
+    .collection-empty { margin-bottom:10px; color:var(--text2); font-size:11px; line-height:1.6; }
+    .collection-create-form { display:flex; gap:7px; margin-top:12px; }
+    .collection-create-form input {
+      flex:1; min-width:0; padding:8px 9px; border:1px solid var(--border2);
+      border-radius:5px; outline:none; background:var(--surface); color:var(--text);
+      font-family:'Fira Code',monospace; font-size:11px;
+    }
+    .collection-create-form input:focus { border-color:var(--accent); }
+    .collection-create-form button {
+      padding:7px 10px; border:1px solid var(--accent); border-radius:5px;
+      background:var(--glow); color:var(--accent); font-family:'Fira Code',monospace;
+      font-size:10px; cursor:pointer;
+    }
+    .collection-create-form button:hover { background:var(--glow2); }
     .post-card:nth-child(1){animation-delay:0.03s;} .post-card:nth-child(2){animation-delay:0.07s;}
     .post-card:nth-child(3){animation-delay:0.11s;} .post-card:nth-child(4){animation-delay:0.15s;}
     .post-card:nth-child(5){animation-delay:0.19s;} .post-card:nth-child(6){animation-delay:0.23s;}
@@ -355,9 +433,20 @@
       font-family:'Space Grotesk',sans-serif;font-size:clamp(19px,4vw,26px);
       font-weight:700;color:var(--text);margin-bottom:8px;line-height:1.25;word-break:break-word;
     }
-    .post-header-meta{
+    .post-detail-heading {
+      display:flex; align-items:flex-start; justify-content:space-between; gap:16px;
+      padding-bottom:18px; margin-bottom:22px; border-bottom:1px solid var(--border);
+    }
+    .post-detail-titles { flex:1; min-width:0; }
+    .post-detail-titles h1 { margin-bottom:8px; }
+    .post-header-meta {
       font-family:'Fira Code',monospace;font-size:11px;color:var(--text2);
-      padding-bottom:18px;margin-bottom:22px;border-bottom:1px solid var(--border);
+    }
+    .post-detail-actions { display:flex; align-items:center; gap:6px; flex-shrink:0; }
+    @media(max-width:480px) {
+      .post-detail-heading { gap:10px; }
+      .post-detail-actions { gap:4px; }
+      .detail-star-btn,.detail-folder-btn { min-width:28px; height:28px; padding:3px 5px; }
     }
     .post-content h2,.post-content h3{font-family:'Space Grotesk',sans-serif;font-weight:600;color:var(--text);margin:26px 0 10px;word-break:break-word;}
     .post-content h2{font-size:19px;}
@@ -428,7 +517,8 @@
       .hero{padding:24px 14px 18px;}
       .hero h2{font-size:22px;}
       .container{padding:0 13px 44px;}
-      .post-card{padding:15px 16px;}
+      .post-card{padding:0;}
+      .post-card-main{padding:15px 76px 15px 16px;}
       .post-card-arrow{display:none;}
       .post-content{padding:20px 14px;}
       pre{padding:13px;}
@@ -455,6 +545,26 @@
       </div>
     </div>
 
+    <div class="sb-section">
+      <button id="saved-posts-nav" class="sb-nav-btn" type="button">
+        <span>★ Saved Posts</span>
+        <span id="saved-count" class="sb-nav-count">0</span>
+      </button>
+    </div>
+
+    <div class="sb-section" id="sec-collections">
+      <div class="sb-section-toggle" id="toggle-collections">
+        <span class="sb-label">Collections</span>
+        <span class="sb-arrow">▾</span>
+      </div>
+      <div class="sb-section-body">
+        <div id="collection-list" class="collection-nav-list"></div>
+        <button id="create-collection-sidebar" class="clear-btn" type="button">
+          + New collection
+        </button>
+      </div>
+    </div>
+
     <div class="sb-section" id="sec-socials">
       <div class="sb-section-toggle" id="toggle-socials">
         <span class="sb-label">My Socials</span>
@@ -472,7 +582,14 @@
         <span>🌐</span> My Web Resources
         <span class="social-ext">↗</span>
       </a>
-      <button id="clear-filters" class="clear-btn">✕&nbsp; Clear filters</button>
+      <button id="export-library" class="web-resources-btn" type="button">
+        <span>⇩</span><span>Export star library</span><span>JSON</span>
+      </button>
+      <button id="import-library" class="web-resources-btn" type="button">
+        <span>⇧</span><span>Import star library</span><span>JSON</span>
+      </button>
+      <input id="import-library-file" type="file" accept=".json,application/json" hidden>
+      <button id="clear-filters" class="clear-btn" type="button">✕&nbsp; Clear filters</button>
     </div>
   </aside>
 
@@ -481,7 +598,7 @@
       <button id="hamburger" class="hamburger" aria-label="Open menu">
         <span></span><span></span><span></span>
       </button>
-      <h1 class="logo" onclick="window.location.hash=''">Aryter<span class="lo-a">Log</span></h1>
+      <h1 class="logo" id="site-logo" role="button" tabindex="0" aria-label="Return to Recent Posts">Aryter<span class="lo-a">Log</span></h1>
     </div>
     <button id="theme-btn" aria-label="Cycle Theme">
       <span class="emoji" id="theme-emoji">🌙</span>
@@ -501,7 +618,7 @@
         <span class="search-prefix">&gt;_</span>
         <input type="text" id="search-bar" placeholder="search posts...">
       </div>
-      <div class="section-label">Recent Posts</div>
+      <div class="section-label" id="list-heading">Recent Posts</div>
       <div id="active-filter-bar"></div>
       <div id="post-list"></div>
       <div id="pagination" class="pagination"></div>
@@ -546,7 +663,17 @@
     const categoryListEl=document.getElementById("category-list");
     const clearFiltersBtn=document.getElementById("clear-filters");
     const activeFilterBar=document.getElementById("active-filter-bar");
+    const savedCountEl=document.getElementById("saved-count");
+    const collectionListEl=document.getElementById("collection-list");
+    const listHeading=document.getElementById("list-heading");
+    const importLibraryInput=document.getElementById("import-library-file");
     let selectedCategories=new Set();
+
+    function escapeHTML(value){
+      return String(value ?? "").replace(/[&<>\"']/g, character => ({
+        "&":"&amp;", "<":"&lt;", ">":"&gt;", "\"":"&quot;", "'":"&#39;"
+      })[character]);
+    }
 
     function openSidebar(){sidebar.classList.add("open");sidebarOverlay.classList.add("active");}
     function closeSidebar(){sidebar.classList.remove("open");sidebarOverlay.classList.remove("active");}
@@ -576,7 +703,7 @@
       cats.forEach(cat=>{
         const chip=document.createElement("div");
         chip.className="cat-chip"+(selectedCategories.has(cat)?" selected":"");
-        chip.innerHTML=`${cat} <span class="cat-count">${countMap[cat]}</span>`;
+        chip.innerHTML=`${escapeHTML(cat)} <span class="cat-count">${countMap[cat]}</span>`;
         chip.onclick=()=>{
           if(selectedCategories.has(cat)){selectedCategories.delete(cat);chip.classList.remove("selected");}
           else{selectedCategories.add(cat);chip.classList.add("selected");}
@@ -607,12 +734,15 @@
       bar.className="filter-active-bar";
       bar.innerHTML=`<span>Filtered:</span>`;
       selectedCategories.forEach(cat=>{
-        const chip=document.createElement("span");
+        const chip=document.createElement("button");
+        chip.type="button";
         chip.className="active-chip";
-        chip.innerHTML=`${cat} <span>✕</span>`;
+        chip.textContent=`${cat} ×`;
         chip.onclick=()=>{
           selectedCategories.delete(cat);
-          categoryListEl.querySelectorAll(".cat-chip").forEach(c=>{if(c.textContent.trim().startsWith(cat))c.classList.remove("selected");});
+          categoryListEl.querySelectorAll(".cat-chip").forEach(c=>{
+            if(c.textContent.trim().startsWith(cat)) c.classList.remove("selected");
+          });
           renderPostCards(searchBar.value,1);
         };
         bar.appendChild(chip);
@@ -629,60 +759,503 @@
     let blogPosts=[],currentPage=1,currentQuery="";
     const POSTS_PER_PAGE=7;
 
-    function renderPostCards(filterQuery="",page=1){
-      currentQuery=filterQuery; currentPage=page;
-      listContainer.innerHTML=""; paginationEl.innerHTML=""; pageInfoEl.innerHTML="";
-      renderActiveFilterBar();
-      const lq=filterQuery.toLowerCase();
-      const filtered=blogPosts.filter(p=>{
-        const ok=p.title.toLowerCase().includes(lq)||p.summary.toLowerCase().includes(lq);
-        if(!ok)return false;
-        if(!selectedCategories.size)return true;
-        const pc=Array.isArray(p.category)?p.category:(p.category?[p.category]:[]);
-        return[...selectedCategories].every(sc=>pc.includes(sc));
+    /* STARRED POSTS AND COLLECTIONS */
+    const LIBRARY_STORAGE_KEY="aryterlog_star_library_v1";
+    let activeListMode="all"; // all | saved | collection
+    let activeCollectionId=null;
+    let activeCollectionPostId=null;
+    let postsLoaded=false;
+
+    function makeCollectionId(){
+      if(window.crypto && typeof window.crypto.randomUUID === "function"){
+        return "collection-" + window.crypto.randomUUID();
+      }
+      return "collection-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2,8);
+    }
+
+    function normalizeLibrary(raw){
+      const starred=new Set(
+        (Array.isArray(raw?.starred) ? raw.starred : [])
+          .slice(0,10000).map(id=>String(id)).filter(id=>id.length>0 && id.length<=300)
+      );
+      const seenIds=new Set();
+      const collections=(Array.isArray(raw?.collections) ? raw.collections : [])
+        .slice(0,500)
+        .filter(item=>item && typeof item==="object" && String(item.name || "").trim())
+        .map(item=>{
+          let id=String(item.id || makeCollectionId()).slice(0,300);
+          if(!id || seenIds.has(id)) id=makeCollectionId();
+          seenIds.add(id);
+          const postIds=[...new Set((Array.isArray(item.postIds) ? item.postIds : [])
+            .slice(0,10000).map(postId=>String(postId))
+            .filter(postId=>postId.length>0 && postId.length<=300))];
+          postIds.forEach(postId=>starred.add(postId));
+          return {id,name:String(item.name).trim().slice(0,60),postIds};
+        });
+      return {version:1,starred:[...starred],collections};
+    }
+
+    function readLibrary(){
+      try{
+        const raw=localStorage.getItem(LIBRARY_STORAGE_KEY);
+        return normalizeLibrary(raw ? JSON.parse(raw) : {});
+      }catch(error){
+        console.warn("Could not load the saved-post library:",error);
+        return {version:1,starred:[],collections:[]};
+      }
+    }
+
+    let libraryState=readLibrary();
+
+    function saveLibraryState(){
+      try{
+        localStorage.setItem(LIBRARY_STORAGE_KEY,JSON.stringify(libraryState));
+        updateSavedCount();
+        return true;
+      }catch(error){
+        console.error("Could not save the library:",error);
+        alert("Could not save your library. Check browser storage settings or available storage.");
+        return false;
+      }
+    }
+
+    function updateSavedCount(){
+      savedCountEl.textContent=String(libraryState.starred.length);
+    }
+
+    function isPostStarred(postId){
+      return libraryState.starred.includes(String(postId));
+    }
+
+    function sanitizeLibraryAgainstPosts(){
+      const before=JSON.stringify(libraryState);
+      const knownPostIds=new Set(blogPosts.map(post=>String(post.id)));
+      libraryState.starred=libraryState.starred.filter(id=>knownPostIds.has(id));
+      libraryState.collections.forEach(collection=>{
+        collection.postIds=[...new Set(collection.postIds.filter(id=>knownPostIds.has(id) && libraryState.starred.includes(id)))];
       });
-      if(!filtered.length){listContainer.innerHTML=`<div class="loading">No posts found${filterQuery?` for "<em>${filterQuery}</em>"`:""}${selectedCategories.size?" with selected filters":""}.</div>`;return;}
+      updateSavedCount();
+      // Avoid unnecessary writes: storage events synchronize other tabs.
+      if(JSON.stringify(libraryState)!==before) saveLibraryState();
+    }
+
+    function renderSidebarCollections(){
+      collectionListEl.innerHTML="";
+      updateSavedCount();
+
+      if(!libraryState.collections.length){
+        const empty=document.createElement("div");
+        empty.className="collection-empty";
+        empty.textContent="No collections yet.";
+        collectionListEl.appendChild(empty);
+        return;
+      }
+
+      libraryState.collections.forEach(collection=>{
+        const row=document.createElement("div");
+        row.className="collection-nav-row";
+
+        const openButton=document.createElement("button");
+        openButton.type="button";
+        openButton.className="collection-nav-btn";
+        openButton.setAttribute("aria-label",`Open collection ${collection.name}`);
+
+        const icon=document.createElement("span");
+        icon.textContent="📁";
+        const name=document.createElement("span");
+        name.className="collection-nav-name";
+        name.textContent=collection.name;
+        const count=document.createElement("span");
+        count.className="collection-nav-count";
+        count.textContent=String(collection.postIds.length);
+        openButton.append(icon,name,count);
+        openButton.addEventListener("click",()=>showLibraryView("collection",collection.id));
+
+        const deleteButton=document.createElement("button");
+        deleteButton.type="button";
+        deleteButton.className="collection-delete-btn";
+        deleteButton.textContent="×";
+        deleteButton.title=`Delete collection ${collection.name}`;
+        deleteButton.setAttribute("aria-label",deleteButton.title);
+        deleteButton.addEventListener("click",event=>{
+          event.stopPropagation();
+          if(!confirm(`Delete the collection “${collection.name}”? Its posts will remain starred.`)) return;
+          libraryState.collections=libraryState.collections.filter(item=>item.id!==collection.id);
+          if(activeCollectionId===collection.id){activeListMode="all";activeCollectionId=null;}
+          saveLibraryState();
+          renderSidebarCollections();
+          renderPostCards(searchBar.value,1);
+          syncPostDetailControlsForCurrentRoute();
+        });
+
+        row.append(openButton,deleteButton);
+        collectionListEl.appendChild(row);
+      });
+    }
+
+    function showLibraryView(mode,collectionId=null){
+      activeListMode=mode;
+      activeCollectionId=collectionId;
+      activeCollectionPostId=null;
+      selectedCategories.clear();
+      categoryListEl.querySelectorAll(".cat-chip").forEach(chip=>chip.classList.remove("selected"));
+      closeSidebar();
+
+      if(window.location.hash.startsWith("#post-")){
+        window.location.hash="";
+        return;
+      }
+
+      postView.classList.add("hidden");
+      homeView.classList.remove("hidden");
+      heroSection.style.display="";
+      renderPostCards(searchBar.value,1);
+    }
+
+    function togglePostStar(postId){
+      const id=String(postId);
+      if(isPostStarred(id)){
+        libraryState.starred=libraryState.starred.filter(item=>item!==id);
+        libraryState.collections.forEach(collection=>{
+          collection.postIds=collection.postIds.filter(item=>item!==id);
+        });
+        if(activeCollectionPostId===id) activeCollectionPostId=null;
+      }else{
+        libraryState.starred.push(id);
+        activeCollectionPostId=id;
+      }
+      saveLibraryState();
+      renderSidebarCollections();
+      renderPostCards(currentQuery,currentPage);
+      syncPostDetailControlsForCurrentRoute();
+    }
+
+    function createCollection(name,postId=null){
+      name=String(name || "").trim().slice(0,60);
+      if(!name){alert("Enter a collection name.");return false;}
+      if(postId!==null && !isPostStarred(postId)){
+        alert("Star the post before adding it to a collection.");
+        return false;
+      }
+
+      let collection=libraryState.collections.find(item=>item.name.toLowerCase()===name.toLowerCase());
+      if(!collection){
+        collection={id:makeCollectionId(),name,postIds:[]};
+        libraryState.collections.push(collection);
+      }
+      if(postId!==null){
+        const id=String(postId);
+        if(!collection.postIds.includes(id)) collection.postIds.push(id);
+      }
+
+      saveLibraryState();
+      renderSidebarCollections();
+      renderPostCards(currentQuery,currentPage);
+      syncPostDetailControlsForCurrentRoute();
+      return true;
+    }
+
+    function togglePostCollection(postId,collectionId,checked){
+      const collection=libraryState.collections.find(item=>item.id===collectionId);
+      const id=String(postId);
+      if(!collection || !isPostStarred(id)) return;
+      if(checked){
+        if(!collection.postIds.includes(id)) collection.postIds.push(id);
+      }else{
+        collection.postIds=collection.postIds.filter(item=>item!==id);
+      }
+      saveLibraryState();
+      renderSidebarCollections();
+      renderPostCards(currentQuery,currentPage);
+      syncPostDetailControlsForCurrentRoute();
+    }
+
+    function buildCollectionPanel(postId){
+      const id=String(postId);
+      const panel=document.createElement("div");
+      panel.className="collection-panel";
+
+      const heading=document.createElement("div");
+      heading.className="collection-panel-title";
+      heading.textContent="Add to collections";
+      panel.appendChild(heading);
+
+      if(!libraryState.collections.length){
+        const empty=document.createElement("div");
+        empty.className="collection-empty";
+        empty.textContent="No collections yet. Create one below.";
+        panel.appendChild(empty);
+      }
+
+      const options=document.createElement("div");
+      options.className="collection-options";
+      libraryState.collections.forEach(collection=>{
+        const label=document.createElement("label");
+        label.className="collection-choice";
+        const checkbox=document.createElement("input");
+        checkbox.type="checkbox";
+        checkbox.checked=collection.postIds.includes(id);
+        checkbox.addEventListener("change",()=>togglePostCollection(id,collection.id,checkbox.checked));
+        const text=document.createElement("span");
+        text.textContent=collection.name;
+        label.append(checkbox,text);
+        options.appendChild(label);
+      });
+      panel.appendChild(options);
+
+      const form=document.createElement("form");
+      form.className="collection-create-form";
+      const input=document.createElement("input");
+      input.type="text"; input.maxLength=60; input.required=true;
+      input.placeholder="New collection name";
+      input.setAttribute("aria-label","New collection name");
+      const button=document.createElement("button");
+      button.type="submit"; button.textContent="+ Create";
+      form.append(input,button);
+      form.addEventListener("submit",event=>{
+        event.preventDefault();
+        createCollection(input.value,id);
+      });
+      panel.appendChild(form);
+      return panel;
+    }
+
+    function syncPostDetailControls(meta){
+      const actions=document.getElementById("post-detail-actions");
+      const panelHost=document.getElementById("post-detail-collection-panel");
+      if(!actions || !panelHost || !meta) return;
+      actions.innerHTML="";
+      panelHost.innerHTML="";
+      const id=String(meta.id);
+      const starred=isPostStarred(id);
+
+      const starButton=document.createElement("button");
+      starButton.type="button";
+      starButton.className="detail-star-btn" + (starred ? " is-starred" : "");
+      starButton.textContent=starred ? "★" : "☆";
+      starButton.title=starred ? "Unstar post" : "Star post";
+      starButton.setAttribute("aria-label",starButton.title);
+      starButton.setAttribute("aria-pressed",String(starred));
+      starButton.addEventListener("click",()=>togglePostStar(id));
+      actions.appendChild(starButton);
+
+      if(starred){
+        const folderButton=document.createElement("button");
+        folderButton.type="button";
+        folderButton.className="detail-folder-btn";
+        folderButton.textContent="📁";
+        folderButton.title="Manage collections";
+        folderButton.setAttribute("aria-label","Manage collections");
+        folderButton.addEventListener("click",()=>{
+          activeCollectionPostId=activeCollectionPostId===id ? null : id;
+          syncPostDetailControls(meta);
+        });
+        actions.appendChild(folderButton);
+      }
+
+      if(starred && activeCollectionPostId===id){
+        panelHost.appendChild(buildCollectionPanel(id));
+      }
+    }
+
+    function syncPostDetailControlsForCurrentRoute(){
+      const hash=window.location.hash;
+      if(!hash.startsWith("#post-")) return;
+      const id=hash.slice("#post-".length);
+      const meta=blogPosts.find(post=>String(post.id)===String(id));
+      if(meta) syncPostDetailControls(meta);
+    }
+
+    function exportLibrary(){
+      const payload={
+        app:"AryterLog", version:1, exportedAt:new Date().toISOString(),
+        starred:[...libraryState.starred],
+        collections:libraryState.collections.map(collection=>({
+          id:collection.id,name:collection.name,postIds:[...collection.postIds]
+        }))
+      };
+      const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});
+      const url=URL.createObjectURL(blob);
+      const link=document.createElement("a");
+      link.href=url;
+      link.download="aryterlog-library-"+new Date().toISOString().slice(0,10)+".json";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),1000);
+    }
+
+    function mergeImportedLibrary(raw){
+      if(!raw || raw.version!==1 || !Array.isArray(raw.starred) || !Array.isArray(raw.collections)){
+        throw new Error("Invalid or unsupported AryterLog library JSON.");
+      }
+      if(!postsLoaded) throw new Error("Wait for posts to finish loading, then import again.");
+
+      const knownPostIds=new Set(blogPosts.map(post=>String(post.id)));
+      const incoming=normalizeLibrary(raw);
+      incoming.starred=incoming.starred.filter(id=>knownPostIds.has(id));
+      incoming.collections.forEach(collection=>{
+        collection.postIds=collection.postIds.filter(id=>knownPostIds.has(id));
+      });
+
+      const allStarred=new Set([...libraryState.starred,...incoming.starred]);
+      incoming.collections.forEach(incomingCollection=>{
+        let target=libraryState.collections.find(item=>item.name.toLowerCase()===incomingCollection.name.toLowerCase());
+        if(!target){
+          target={id:makeCollectionId(),name:incomingCollection.name,postIds:[]};
+          libraryState.collections.push(target);
+        }
+        target.postIds=[...new Set([...target.postIds,...incomingCollection.postIds])];
+        target.postIds.forEach(id=>allStarred.add(id));
+      });
+      libraryState.starred=[...allStarred];
+      sanitizeLibraryAgainstPosts();
+    }
+
+    /* Listen for edits made in another tab of the same origin. */
+    window.addEventListener("storage",event=>{
+      if(event.key!==LIBRARY_STORAGE_KEY) return;
+      libraryState=readLibrary();
+      if(postsLoaded) sanitizeLibraryAgainstPosts();
+      renderSidebarCollections();
+      renderPostCards(searchBar.value,1);
+      syncPostDetailControlsForCurrentRoute();
+    });
+
+    function renderPostCards(filterQuery="",page=1){
+      currentQuery=String(filterQuery ?? "");
+      currentPage=page;
+      listContainer.innerHTML="";
+      paginationEl.innerHTML="";
+      pageInfoEl.innerHTML="";
+      renderActiveFilterBar();
+
+      let sourcePosts=blogPosts;
+      if(activeListMode==="saved"){
+        sourcePosts=blogPosts.filter(post=>isPostStarred(post.id));
+      }else if(activeListMode==="collection"){
+        const collection=libraryState.collections.find(item=>item.id===activeCollectionId);
+        sourcePosts=collection
+          ? blogPosts.filter(post=>collection.postIds.includes(String(post.id)) && isPostStarred(post.id))
+          : [];
+      }
+
+      if(activeListMode==="saved"){
+        listHeading.textContent="Saved Posts";
+      }else if(activeListMode==="collection"){
+        const collection=libraryState.collections.find(item=>item.id===activeCollectionId);
+        listHeading.textContent=collection ? "📁 " + collection.name : "Collection";
+      }else{
+        listHeading.textContent="Recent Posts";
+      }
+
+      const lq=currentQuery.toLowerCase();
+      const filtered=sourcePosts.filter(post=>{
+        const title=String(post.title || "");
+        const summary=String(post.summary || "");
+        const matchesSearch=title.toLowerCase().includes(lq) || summary.toLowerCase().includes(lq);
+        if(!matchesSearch) return false;
+        if(!selectedCategories.size) return true;
+        const postCategories=Array.isArray(post.category) ? post.category.map(String) : (post.category ? [String(post.category)] : []);
+        return [...selectedCategories].every(category=>postCategories.includes(category));
+      });
+
+      if(!filtered.length){
+        const empty=document.createElement("div");
+        empty.className="loading";
+        if(activeListMode==="saved"){
+          empty.textContent=currentQuery ? "No saved posts match your search." : "No starred posts yet. Star a post to save it here.";
+        }else if(activeListMode==="collection"){
+          empty.textContent=currentQuery ? "No posts in this collection match your search." : "This collection is empty. Star a post and add it to this collection.";
+        }else{
+          empty.textContent="No posts found" + (currentQuery ? ` for “${currentQuery}”` : "") + (selectedCategories.size ? " with selected filters." : ".");
+        }
+        listContainer.appendChild(empty);
+        return;
+      }
+
       const totalPages=Math.ceil(filtered.length/POSTS_PER_PAGE);
       currentPage=Math.max(1,Math.min(page,totalPages));
       const start=(currentPage-1)*POSTS_PER_PAGE;
       const slice=filtered.slice(start,start+POSTS_PER_PAGE);
+
       slice.forEach(post=>{
-        const cats=Array.isArray(post.category)?post.category:(post.category?[post.category]:[]);
-        const catHTML=cats.map(c=>`<span class="card-cat-chip">${c}</span>`).join("");
-        const card=document.createElement("a");
+        const postId=String(post.id);
+        const cats=Array.isArray(post.category) ? post.category : (post.category ? [post.category] : []);
+        const catHTML=cats.map(category=>`<span class="card-cat-chip">${escapeHTML(category)}</span>`).join("");
+        const card=document.createElement("article");
         card.className="post-card";
-        card.href=`posts/${post.id}/`;
-        card.addEventListener("click", e=>{
-          // Allow ctrl/cmd/middle click to open real static page in new tab
-          if(e.ctrlKey||e.metaKey||e.shiftKey||e.button===1) return;
-          e.preventDefault();
-          window.location.hash=`post-${post.id}`;
-        });
-        card.innerHTML=`
-          <h2>${post.title}</h2>
+
+        const main=document.createElement("a");
+        main.className="post-card-main";
+        main.href=`posts/${encodeURIComponent(postId)}/`;
+        main.innerHTML=`
+          <h2>${escapeHTML(post.title || "Untitled post")}</h2>
           <div class="post-meta-row">
-            <span class="meta-date">📅 ${post.date}</span>
-            ${catHTML?`<span class="meta-dot">·</span>${catHTML}`:""}
+            <span class="meta-date">📅 ${escapeHTML(post.date || "")}</span>
+            ${catHTML ? `<span class="meta-dot">·</span>${catHTML}` : ""}
           </div>
-          <p>${post.summary}</p>
+          <p>${escapeHTML(post.summary || "")}</p>
           <span class="post-card-arrow">→</span>`;
+        main.addEventListener("click",event=>{
+          if(event.ctrlKey || event.metaKey || event.shiftKey || event.button===1) return;
+          event.preventDefault();
+          window.location.hash=`post-${postId}`;
+        });
+        card.appendChild(main);
+
+        const actions=document.createElement("div");
+        actions.className="post-card-actions";
+        const starred=isPostStarred(postId);
+        const starButton=document.createElement("button");
+        starButton.type="button";
+        starButton.className="post-star-btn" + (starred ? " is-starred" : "");
+        starButton.textContent=starred ? "★" : "☆";
+        starButton.title=starred ? "Unstar post" : "Star post";
+        starButton.setAttribute("aria-label",starButton.title);
+        starButton.setAttribute("aria-pressed",String(starred));
+        starButton.addEventListener("click",event=>{
+          event.preventDefault(); event.stopPropagation(); togglePostStar(postId);
+        });
+        actions.appendChild(starButton);
+
+        if(starred){
+          const folderButton=document.createElement("button");
+          folderButton.type="button";
+          folderButton.className="post-folder-btn";
+          folderButton.textContent="📁";
+          folderButton.title="Add to collections";
+          folderButton.setAttribute("aria-label","Add to collections");
+          folderButton.addEventListener("click",event=>{
+            event.preventDefault(); event.stopPropagation();
+            activeCollectionPostId=activeCollectionPostId===postId ? null : postId;
+            renderPostCards(currentQuery,currentPage);
+          });
+          actions.appendChild(folderButton);
+        }
+        card.appendChild(actions);
+
+        if(starred && activeCollectionPostId===postId){
+          card.appendChild(buildCollectionPanel(postId));
+        }
         listContainer.appendChild(card);
       });
+
       if(totalPages>1){
         const addBtn=(label,pg,isActive=false,isDisabled=false)=>{
           const btn=document.createElement("button");
-          btn.className="page-btn"+(isActive?" active":"");
+          btn.className="page-btn"+(isActive ? " active" : "");
           btn.textContent=label; btn.disabled=isDisabled;
-          if(!isDisabled)btn.onclick=()=>{renderPostCards(currentQuery,pg);window.scrollTo(0,0);};
+          if(!isDisabled) btn.onclick=()=>{renderPostCards(currentQuery,pg);window.scrollTo(0,0);};
           paginationEl.appendChild(btn);
         };
         addBtn("←",currentPage-1,false,currentPage===1);
-        let vp=[];
-        if(totalPages<=3){for(let i=1;i<=totalPages;i++)vp.push(i);}
-        else if(currentPage===1)vp=[1,2,3];
-        else if(currentPage===totalPages)vp=[totalPages-2,totalPages-1,totalPages];
-        else vp=[currentPage-1,currentPage,currentPage+1];
-        vp.forEach(p=>addBtn(p,p,p===currentPage));
+        let visiblePages=[];
+        if(totalPages<=3){for(let i=1;i<=totalPages;i++) visiblePages.push(i);}
+        else if(currentPage===1) visiblePages=[1,2,3];
+        else if(currentPage===totalPages) visiblePages=[totalPages-2,totalPages-1,totalPages];
+        else visiblePages=[currentPage-1,currentPage,currentPage+1];
+        visiblePages.forEach(pg=>addBtn(pg,pg,pg===currentPage));
         addBtn("→",currentPage+1,false,currentPage===totalPages);
         const from=start+1,to=Math.min(start+POSTS_PER_PAGE,filtered.length);
         pageInfoEl.textContent=`${from}–${to} of ${filtered.length} posts`;
@@ -697,31 +1270,57 @@
     marked.setOptions({breaks:true,gfm:true});
 
     async function loadFullPost(postId){
-      const meta=blogPosts.find(p=>p.id===postId);
+      const meta=blogPosts.find(post=>String(post.id)===String(postId));
       if(!meta){postContent.innerHTML=`<div class="error">⚠️ Post not found.</div>`;return;}
-      const filePath = meta.file || meta.file_path;
-      if (!filePath) { postContent.innerHTML = `<div class="error"><p>⚠️ No file path defined for this post.</p><code>id: ${meta.id}</code></div>`; return; }
+      const filePath=meta.file || meta.file_path;
+      if(!filePath){
+        postContent.innerHTML=`<div class="error"><p>⚠️ No file path defined for this post.</p><code>id: ${escapeHTML(meta.id)}</code></div>`;
+        return;
+      }
       postContent.innerHTML=`<div class="loading">⟳ Loading...</div>`;
       try{
         const res=await fetch(filePath);
-        if(!res.ok)throw new Error("File not found");
+        if(!res.ok) throw new Error("File not found");
         const md=await res.text();
-        postContent.innerHTML=`<h1>${meta.title}</h1><div class="post-header-meta">📅 Published ${meta.date}</div>${marked.parse(md)}`;
-        postContent.querySelectorAll("a").forEach(l=>{l.setAttribute("target","_blank");l.setAttribute("rel","noopener noreferrer");});
+        postContent.innerHTML=`
+          <div class="post-detail-heading">
+            <div class="post-detail-titles">
+              <h1>${escapeHTML(meta.title || "Untitled post")}</h1>
+              <div class="post-header-meta">📅 Published ${escapeHTML(meta.date || "")}</div>
+            </div>
+            <div id="post-detail-actions" class="post-detail-actions"></div>
+          </div>
+          <div id="post-detail-collection-panel"></div>
+          <div class="post-markdown">${marked.parse(md)}</div>`;
+
+        syncPostDetailControls(meta);
+        postContent.querySelectorAll("a").forEach(link=>{
+          link.setAttribute("target","_blank");
+          link.setAttribute("rel","noopener noreferrer");
+        });
         postContent.querySelectorAll("pre").forEach(pre=>{
           const code=pre.querySelector("code");
-          if(!code)return;
-          const btn=document.createElement("button");
-          btn.className="copy-btn"; btn.textContent="copy";
-          btn.onclick=async()=>{
+          if(!code) return;
+          const button=document.createElement("button");
+          button.className="copy-btn"; button.textContent="copy";
+          button.onclick=async()=>{
             try{await navigator.clipboard.writeText(code.innerText.trimEnd());}
-            catch{const s=window.getSelection(),r=document.createRange();r.selectNodeContents(code);s.removeAllRanges();s.addRange(r);document.execCommand("copy");s.removeAllRanges();}
-            btn.textContent="✓ copied";btn.classList.add("copied");
-            setTimeout(()=>{btn.textContent="copy";btn.classList.remove("copied");},2000);
+            catch{
+              const selection=window.getSelection();
+              const range=document.createRange();
+              range.selectNodeContents(code);
+              selection.removeAllRanges(); selection.addRange(range);
+              document.execCommand("copy"); selection.removeAllRanges();
+            }
+            button.textContent="✓ copied"; button.classList.add("copied");
+            setTimeout(()=>{button.textContent="copy";button.classList.remove("copied");},2000);
           };
-          pre.appendChild(btn);
+          pre.appendChild(button);
         });
-      }catch(err){postContent.innerHTML=`<div class="error"><p>⚠️ Could not load post.</p><code>${filePath}</code></div>`;}
+      }catch(error){
+        console.error("Could not load post:",error);
+        postContent.innerHTML=`<div class="error"><p>⚠️ Could not load post.</p><code>${escapeHTML(filePath)}</code></div>`;
+      }
     }
 
     function handleRoute(){
@@ -738,6 +1337,39 @@
       }
     }
 
+    /* SAVED POSTS, COLLECTIONS, IMPORT AND EXPORT */
+    document.getElementById("saved-posts-nav").addEventListener("click",()=>showLibraryView("saved"));
+    document.getElementById("create-collection-sidebar").addEventListener("click",()=>{
+      const name=prompt("Enter a collection name:");
+      if(name!==null) createCollection(name);
+    });
+    document.getElementById("export-library").addEventListener("click",exportLibrary);
+    document.getElementById("import-library").addEventListener("click",()=>importLibraryInput.click());
+    importLibraryInput.addEventListener("change",async()=>{
+      const file=importLibraryInput.files[0];
+      if(!file) return;
+      try{
+        if(file.size>2*1024*1024) throw new Error("The selected JSON file is larger than 2 MB.");
+        const raw=JSON.parse(await file.text());
+        mergeImportedLibrary(raw);
+        renderSidebarCollections();
+        renderPostCards(currentQuery,currentPage);
+        syncPostDetailControlsForCurrentRoute();
+        alert("Star library imported and merged successfully.");
+      }catch(error){
+        console.error("Library import failed:",error);
+        alert("Import failed: " + (error.message || "Select a valid AryterLog library JSON file."));
+      }finally{
+        importLibraryInput.value="";
+      }
+    });
+
+    const siteLogo=document.getElementById("site-logo");
+    siteLogo.addEventListener("click",()=>showLibraryView("all"));
+    siteLogo.addEventListener("keydown",event=>{
+      if(event.key==="Enter" || event.key===" "){event.preventDefault();showLibraryView("all");}
+    });
+
     /* 5. BOOT */
     async function init(){
       listContainer.innerHTML=`<div class="loading">⟳ Loading posts...</div>`;
@@ -745,7 +1377,11 @@
         const[postsRes,socialsRes]=await Promise.all([fetch("posts-info.json"),fetch("socials.json")]);
         if(!postsRes.ok)throw new Error("posts-info.json not found");
         blogPosts=await postsRes.json();
+        if(!Array.isArray(blogPosts)) throw new Error("posts-info.json must contain a JSON array.");
+        postsLoaded=true;
+        sanitizeLibraryAgainstPosts();
         buildCategoryChips();
+        renderSidebarCollections();
         if(socialsRes.ok)buildSocialLinks(await socialsRes.json());
       }catch(err){
         listContainer.innerHTML=`<div class="error">⚠️ Could not load posts-info.json<br><small>${err.message}</small></div>`;
