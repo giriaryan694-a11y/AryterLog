@@ -1,5 +1,19 @@
 [
   {
+  "id": "tryhackme-dogcat-writeup",
+  "title": "TryHackMe Dogcat: LFI, Log Poisoning, Privilege Escalation, and Docker Escape",
+  "date": "15-10-2026",
+  "summary": "A practical Dogcat room walkthrough covering PHP file inclusion, source disclosure with php://filter, Apache log poisoning, reverse-shell access, sudo privilege escalation, Docker escape, and relevant MITRE ATT&CK mappings.",
+  "category": [
+    "ctf",
+    "pentesting",
+    "web-security",
+    "post-exploitation",
+    "privilege-escalation"
+  ],
+  "file": "posts/tryhackme-dogcat-writeup.md"
+  },
+  {
   "id": "bounty-hacker",
   "title": "Bounty Hacker - TryHackMe Writeup",
   "date": "29-09-2026",
