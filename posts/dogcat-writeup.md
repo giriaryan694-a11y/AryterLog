@@ -118,7 +118,7 @@ Because the response headers identified Apache, test the usual Debian/Ubuntu Apa
 /var/log/apache2/access.log
 ```
 
-For clearer browser rendering, you can use Firefox's view-source mode:
+For easier viewing of HTML source code, you can use Firefox's view-source mode :
 
 ```text
 view-source:http://10.48.136.199/?view=dog/../../../../var/log/apache2/access.log&ext=
