@@ -1,5 +1,18 @@
 [
   {
+  "id": "linux-post-exploitation-filesystem-map",
+  "title": "Linux Post-Exploitation Filesystem Map: Directories Worth Investigating",
+  "date": "16-10-2026",
+  "summary": "A practical reference to Linux directories used during post-exploitation analysis, covering temporary storage, system configuration, logs, runtime state, application data, permissions, and privilege-escalation investigation.",
+  "category": [
+    "post-exploitation",
+    "privilege-escalation",
+    "linux",
+    "reference"
+  ],
+  "file": "posts/linux-post-exploitation-filesystem-map.md"
+  },
+  {
   "id": "tryhackme-dogcat-writeup",
   "title": "TryHackMe Dogcat: LFI, Log Poisoning, Privilege Escalation, and Docker Escape",
   "date": "15-10-2026",
