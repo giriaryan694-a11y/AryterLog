@@ -1,5 +1,19 @@
 [
   {
+  "id": "tryhackme-overpass-writeup",
+  "title": "TryHackMe Overpass Writeup",
+  "date": "18-10-2026",
+  "summary": "A walkthrough of the Overpass TryHackMe room covering web enumeration, client-side authentication bypass, SSH private key passphrase cracking, Linux enumeration, and root privilege escalation through a writable hosts file and a privileged cron job.",
+  "category": [
+    "ctf",
+    "pentesting",
+    "web-security",
+    "privilege-escalation",
+    "post-exploitation"
+  ],
+  "file": "posts/tryhackme-overpass-writeup.md"
+  },
+  {
   "id": "linux-post-exploitation-filesystem-map",
   "title": "Linux Post-Exploitation Filesystem Map: Directories Worth Investigating",
   "date": "16-10-2026",
