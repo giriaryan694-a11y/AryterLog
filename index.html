@@ -396,18 +396,28 @@
     }
     .post-card:hover .post-card-arrow{opacity:1;transform:translateY(-50%) translateX(0);}
 
-    /* ── PAGINATION ── */
-    .pagination{display:flex;justify-content:center;align-items:center;gap:5px;margin-top:28px;flex-wrap:wrap;}
-    .page-btn {
-      background:var(--surface);border:1px solid var(--border2);color:var(--text2);
-      padding:6px 12px;border-radius:6px;cursor:pointer;font-family:'Fira Code',monospace;
-      font-size:12px;font-weight:500;transition:all 0.2s;min-width:34px;text-align:center;
-      display:inline-flex;align-items:center;justify-content:center;
+    /* ── LOAD MORE ── */
+    .pagination{display:flex;justify-content:center;align-items:center;margin-top:28px;}
+    .pagination:empty{display:none;}
+    .load-more-btn {
+      display:inline-flex;align-items:center;justify-content:center;gap:10px;
+      min-height:44px;padding:12px 22px;border:1px solid var(--border2);
+      border-radius:8px;background:var(--surface);color:var(--text);
+      font-family:'Fira Code',monospace;font-size:12px;font-weight:500;
+      cursor:pointer;transition:background 0.2s,border-color 0.2s,color 0.2s,transform 0.2s,box-shadow 0.2s;
     }
-    .page-btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent);background:var(--glow);}
-    .page-btn.active{border-color:var(--accent);background:var(--glow2);color:var(--accent);box-shadow:0 0 10px var(--glow2);}
-    .page-btn:disabled{opacity:0.22;cursor:not-allowed;}
-    .page-info{text-align:center;margin-top:8px;font-family:'Fira Code',monospace;font-size:10px;color:var(--text2);letter-spacing:0.5px;}
+    .load-more-btn:hover {
+      border-color:var(--accent);color:var(--accent);background:var(--glow);
+      transform:translateY(-2px);box-shadow:0 4px 16px var(--glow2);
+    }
+    .load-more-btn:active{transform:translateY(0);}
+    .load-more-btn:focus-visible{outline:2px solid var(--accent);outline-offset:3px;}
+    .load-more-count {
+      display:inline-flex;align-items:center;justify-content:center;
+      min-width:24px;height:22px;padding:0 6px;border:1px solid var(--border2);
+      border-radius:5px;color:var(--accent);font-size:10px;
+    }
+    .page-info{text-align:center;margin-top:12px;font-family:'Fira Code',monospace;font-size:10px;color:var(--text2);letter-spacing:0.5px;}
 
     /* ── POST CONTENT ── */
     .back-btn {
@@ -792,8 +802,8 @@
       <div class="section-label" id="list-heading">Recent Posts</div>
       <div id="active-filter-bar"></div>
       <div id="post-list"></div>
+      <div id="page-info" class="page-info" aria-live="polite"></div>
       <div id="pagination" class="pagination"></div>
-      <div id="page-info" class="page-info"></div>
     </div>
 
     <div id="post-view" class="hidden">
@@ -859,7 +869,7 @@
     clearFiltersBtn.addEventListener("click",()=>{
       selectedCategories.clear();
       categoryListEl.querySelectorAll(".cat-chip").forEach(c=>c.classList.remove("selected"));
-      renderPostCards(searchBar.value,1);
+      renderPostCards(searchBar.value,true);
     });
 
     function buildCategoryChips(){
@@ -878,7 +888,7 @@
         chip.onclick=()=>{
           if(selectedCategories.has(cat)){selectedCategories.delete(cat);chip.classList.remove("selected");}
           else{selectedCategories.add(cat);chip.classList.add("selected");}
-          renderPostCards(searchBar.value,1);
+          renderPostCards(searchBar.value,true);
         };
         categoryListEl.appendChild(chip);
       });
@@ -914,21 +924,22 @@
           categoryListEl.querySelectorAll(".cat-chip").forEach(c=>{
             if(c.textContent.trim().startsWith(cat)) c.classList.remove("selected");
           });
-          renderPostCards(searchBar.value,1);
+          renderPostCards(searchBar.value,true);
         };
         bar.appendChild(chip);
       });
       activeFilterBar.appendChild(bar);
     }
 
-    /* 3. POSTS & PAGINATION */
+    /* 3. POSTS & LOAD MORE */
     const listContainer=document.getElementById("post-list");
     const paginationEl=document.getElementById("pagination");
     const pageInfoEl=document.getElementById("page-info");
     const searchBar=document.getElementById("search-bar");
     const heroSection=document.getElementById("hero-section");
-    let blogPosts=[],currentPage=1,currentQuery="";
-    const POSTS_PER_PAGE=7;
+    let blogPosts=[],currentQuery="";
+    let visiblePostCount=4;
+    const POSTS_PER_LOAD=4;
 
     /* STARRED POSTS AND COLLECTIONS */
     const LIBRARY_STORAGE_KEY="aryterlog_star_library_v1";
@@ -1055,7 +1066,7 @@
           if(activeCollectionId===collection.id){activeListMode="all";activeCollectionId=null;}
           saveLibraryState();
           renderSidebarCollections();
-          renderPostCards(searchBar.value,1);
+          renderPostCards(searchBar.value,true);
           syncPostDetailControlsForCurrentRoute();
         });
 
@@ -1080,7 +1091,7 @@
       postView.classList.add("hidden");
       homeView.classList.remove("hidden");
       heroSection.style.display="";
-      renderPostCards(searchBar.value,1);
+      renderPostCards(searchBar.value,true);
     }
 
     function togglePostStar(postId){
@@ -1097,7 +1108,7 @@
       }
       saveLibraryState();
       renderSidebarCollections();
-      renderPostCards(currentQuery,currentPage);
+      renderPostCards(currentQuery,false);
       syncPostDetailControlsForCurrentRoute();
     }
 
@@ -1121,7 +1132,7 @@
 
       saveLibraryState();
       renderSidebarCollections();
-      renderPostCards(currentQuery,currentPage);
+      renderPostCards(currentQuery,false);
       syncPostDetailControlsForCurrentRoute();
       return true;
     }
@@ -1137,7 +1148,7 @@
       }
       saveLibraryState();
       renderSidebarCollections();
-      renderPostCards(currentQuery,currentPage);
+      renderPostCards(currentQuery,false);
       syncPostDetailControlsForCurrentRoute();
     }
 
@@ -1289,16 +1300,16 @@
       libraryState=readLibrary();
       if(postsLoaded) sanitizeLibraryAgainstPosts();
       renderSidebarCollections();
-      renderPostCards(searchBar.value,1);
+      renderPostCards(searchBar.value,false);
       syncPostDetailControlsForCurrentRoute();
     });
 
-    function renderPostCards(filterQuery="",page=1){
+    function renderPostCards(filterQuery="",resetVisibleCount=true){
       /* Disconnect the old feed observer before replacing cards after search,
-         category filtering, pagination, or saved-library changes. */
+         category filtering, loading another batch, or saved-library changes. */
       resetHomeScrollReveal();
       currentQuery=String(filterQuery ?? "");
-      currentPage=page;
+      if(resetVisibleCount) visiblePostCount=POSTS_PER_LOAD;
       listContainer.innerHTML="";
       paginationEl.innerHTML="";
       pageInfoEl.innerHTML="";
@@ -1348,10 +1359,8 @@
         return;
       }
 
-      const totalPages=Math.ceil(filtered.length/POSTS_PER_PAGE);
-      currentPage=Math.max(1,Math.min(page,totalPages));
-      const start=(currentPage-1)*POSTS_PER_PAGE;
-      const slice=filtered.slice(start,start+POSTS_PER_PAGE);
+      visiblePostCount=Math.max(POSTS_PER_LOAD,Math.min(visiblePostCount,filtered.length));
+      const slice=filtered.slice(0,visiblePostCount);
 
       slice.forEach(post=>{
         const postId=String(post.id);
@@ -1403,7 +1412,7 @@
           folderButton.addEventListener("click",event=>{
             event.preventDefault(); event.stopPropagation();
             activeCollectionPostId=activeCollectionPostId===postId ? null : postId;
-            renderPostCards(currentQuery,currentPage);
+            renderPostCards(currentQuery,false);
           });
           actions.appendChild(folderButton);
         }
@@ -1419,27 +1428,24 @@
          users scroll away and back. */
       setupHomeScrollReveal();
 
-      if(totalPages>1){
-        const addBtn=(label,pg,isActive=false,isDisabled=false)=>{
-          const btn=document.createElement("button");
-          btn.className="page-btn"+(isActive ? " active" : "");
-          btn.textContent=label; btn.disabled=isDisabled;
-          if(!isDisabled) btn.onclick=()=>{renderPostCards(currentQuery,pg);window.scrollTo(0,0);};
-          paginationEl.appendChild(btn);
-        };
-        addBtn("←",currentPage-1,false,currentPage===1);
-        let visiblePages=[];
-        if(totalPages<=3){for(let i=1;i<=totalPages;i++) visiblePages.push(i);}
-        else if(currentPage===1) visiblePages=[1,2,3];
-        else if(currentPage===totalPages) visiblePages=[totalPages-2,totalPages-1,totalPages];
-        else visiblePages=[currentPage-1,currentPage,currentPage+1];
-        visiblePages.forEach(pg=>addBtn(pg,pg,pg===currentPage));
-        addBtn("→",currentPage+1,false,currentPage===totalPages);
-        const from=start+1,to=Math.min(start+POSTS_PER_PAGE,filtered.length);
-        pageInfoEl.textContent=`${from}–${to} of ${filtered.length} posts`;
+      pageInfoEl.textContent=`Showing ${slice.length} of ${filtered.length} posts`;
+
+      if(slice.length<filtered.length){
+        const remaining=filtered.length-slice.length;
+        const nextBatch=Math.min(POSTS_PER_LOAD,remaining);
+        const moreButton=document.createElement("button");
+        moreButton.type="button";
+        moreButton.className="load-more-btn";
+        moreButton.setAttribute("aria-label",`Load ${nextBatch} more posts`);
+        moreButton.innerHTML=`<span>Load More Posts</span><span class="load-more-count">+${nextBatch}</span><span aria-hidden="true">↓</span>`;
+        moreButton.addEventListener("click",()=>{
+          visiblePostCount=Math.min(visiblePostCount+POSTS_PER_LOAD,filtered.length);
+          renderPostCards(currentQuery,false);
+        });
+        paginationEl.appendChild(moreButton);
       }
     }
-    searchBar.addEventListener("input",e=>renderPostCards(e.target.value,1));
+    searchBar.addEventListener("input",e=>renderPostCards(e.target.value,true));
 
     /* 4. ROUTING */
     const homeView=document.getElementById("home-view");
@@ -1598,7 +1604,7 @@
         mainContainer.classList.remove("is-reading-post");
         postView.classList.add("hidden"); heroSection.style.display="";
         homeView.classList.remove("hidden");
-        renderPostCards(searchBar.value,1);
+        renderPostCards(searchBar.value,false);
       }
     }
 
@@ -1618,7 +1624,7 @@
         const raw=JSON.parse(await file.text());
         mergeImportedLibrary(raw);
         renderSidebarCollections();
-        renderPostCards(currentQuery,currentPage);
+        renderPostCards(currentQuery,false);
         syncPostDetailControlsForCurrentRoute();
         alert("Star library imported and merged successfully.");
       }catch(error){
