@@ -581,6 +581,29 @@
       transition-delay: var(--reveal-delay, 0ms);
     }
 
+    /* Home-feed cards use the same enter/leave-viewport effect as article
+       blocks. The observer toggles .is-visible without removing layout space. */
+    .post-card.home-scroll-reveal {
+      opacity: 0;
+      transform: translate3d(0, 18px, 0);
+      animation: none;
+      transition:
+        opacity 420ms ease,
+        transform 520ms cubic-bezier(0.2, 0.7, 0.2, 1),
+        border-color 0.25s,
+        box-shadow 0.25s;
+    }
+
+    .post-card.home-scroll-reveal.is-visible {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+      transition-delay: var(--reveal-delay, 0ms);
+    }
+
+    .post-card.home-scroll-reveal.is-visible:hover {
+      transform: translate3d(4px, 0, 0);
+    }
+
     @media (min-width: 1500px) {
       main.container.is-reading-post {
         width: min(1380px, calc(100% - 72px));
@@ -637,6 +660,15 @@
         transform: none !important;
         transition: none !important;
       }
+      .post-card {
+        animation: none !important;
+      }
+      .post-card.home-scroll-reveal,
+      .post-card.home-scroll-reveal.is-visible {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+      }
     }
 
     /* Keep all article content visible in print/PDF output. */
@@ -651,6 +683,14 @@
         opacity: 1 !important;
         transform: none !important;
         transition: none !important;
+      }
+      .post-card,
+      .post-card.home-scroll-reveal,
+      .post-card.home-scroll-reveal.is-visible {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+        animation: none !important;
       }
     }
 
@@ -1254,6 +1294,9 @@
     });
 
     function renderPostCards(filterQuery="",page=1){
+      /* Disconnect the old feed observer before replacing cards after search,
+         category filtering, pagination, or saved-library changes. */
+      resetHomeScrollReveal();
       currentQuery=String(filterQuery ?? "");
       currentPage=page;
       listContainer.innerHTML="";
@@ -1372,6 +1415,10 @@
         listContainer.appendChild(card);
       });
 
+      /* Animate cards loaded from posts-info.json and repeat the reveal when
+         users scroll away and back. */
+      setupHomeScrollReveal();
+
       if(totalPages>1){
         const addBtn=(label,pg,isActive=false,isDisabled=false)=>{
           const btn=document.createElement("button");
@@ -1400,6 +1447,47 @@
     const postContent=document.getElementById("post-content-container");
     const mainContainer=document.querySelector("main.container");
     marked.setOptions({breaks:true,gfm:true});
+
+    /* Home-feed scroll reveals. This observer is recreated whenever the feed
+       is rendered, so search, pagination, filtering and library actions stay in
+       sync with the current set of cards. */
+    let homeScrollRevealObserver=null;
+
+    function resetHomeScrollReveal(){
+      if(homeScrollRevealObserver){
+        homeScrollRevealObserver.disconnect();
+        homeScrollRevealObserver=null;
+      }
+    }
+
+    function setupHomeScrollReveal(){
+      resetHomeScrollReveal();
+
+      const targets=Array.from(listContainer.querySelectorAll(".post-card"));
+      if(!targets.length) return;
+
+      const reduceMotion=window.matchMedia &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      /* Keep a reliable fallback for older browsers and reduced-motion users. */
+      if(reduceMotion || !("IntersectionObserver" in window)) return;
+
+      homeScrollRevealObserver=new IntersectionObserver(entries=>{
+        entries.forEach(entry=>{
+          entry.target.classList.toggle("is-visible",entry.isIntersecting);
+        });
+      },{
+        root:null,
+        rootMargin:"0px 0px -8% 0px",
+        threshold:0
+      });
+
+      targets.forEach((target,index)=>{
+        target.classList.add("home-scroll-reveal");
+        target.style.setProperty("--reveal-delay",`${(index % 3) * 45}ms`);
+        homeScrollRevealObserver.observe(target);
+      });
+    }
 
     /* Scroll-aware reveals for post blocks. Disconnect before replacing a post
        so observers never retain stale content after route changes. */
@@ -1499,6 +1587,7 @@
     function handleRoute(){
       const hash=window.location.hash;
       if(hash.startsWith("#post-")){
+        resetHomeScrollReveal();
         mainContainer.classList.add("is-reading-post");
         homeView.classList.add("hidden"); heroSection.style.display="none";
         postView.classList.remove("hidden");
