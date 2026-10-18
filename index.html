@@ -523,6 +523,137 @@
       .post-content{padding:20px 14px;}
       pre{padding:13px;}
     }
+  
+
+    /* ── DESKTOP READING LAYOUT ────────────────────────────────────────────
+       Widen only the article view. The home feed keeps its compact layout. */
+    main.container.is-reading-post {
+      width: min(1320px, calc(100% - 64px));
+      max-width: none;
+      padding: 0 0 72px;
+    }
+
+    main.container.is-reading-post .post-content {
+      padding: clamp(28px, 3.15vw, 52px);
+    }
+
+    main.container.is-reading-post .post-markdown {
+      min-width: 0;
+      width: 100%;
+    }
+
+    /* Keep prose readable while letting commands, output, tables and images
+       benefit from the wider article canvas. */
+    main.container.is-reading-post .post-markdown > p,
+    main.container.is-reading-post .post-markdown > ul,
+    main.container.is-reading-post .post-markdown > ol,
+    main.container.is-reading-post .post-markdown > blockquote {
+      max-width: 104ch;
+      font-size: clamp(14px, 0.92vw, 15px);
+      line-height: 1.9;
+    }
+
+    main.container.is-reading-post .post-markdown > h1,
+    main.container.is-reading-post .post-markdown > h2,
+    main.container.is-reading-post .post-markdown > h3 {
+      max-width: 82ch;
+      line-height: 1.4;
+    }
+
+    main.container.is-reading-post .post-markdown > :first-child {
+      margin-top: 0;
+    }
+
+    /* ── SCROLL REVEAL ─────────────────────────────────────────────────────
+       Visibility is toggled by IntersectionObserver; layout space is retained
+       so the article does not jump as blocks appear and disappear. */
+    .post-content .scroll-reveal {
+      opacity: 0;
+      transform: translate3d(0, 16px, 0);
+      transition:
+        opacity 440ms ease,
+        transform 520ms cubic-bezier(0.2, 0.7, 0.2, 1);
+    }
+
+    .post-content .scroll-reveal.is-visible {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+      transition-delay: var(--reveal-delay, 0ms);
+    }
+
+    @media (min-width: 1500px) {
+      main.container.is-reading-post {
+        width: min(1380px, calc(100% - 72px));
+      }
+      main.container.is-reading-post .post-content {
+        padding: 52px 58px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      main.container.is-reading-post {
+        width: calc(100% - 32px);
+        padding: 0 0 48px;
+      }
+      main.container.is-reading-post .post-content {
+        padding: 24px 22px;
+      }
+      main.container.is-reading-post .post-markdown > p,
+      main.container.is-reading-post .post-markdown > ul,
+      main.container.is-reading-post .post-markdown > ol,
+      main.container.is-reading-post .post-markdown > blockquote {
+        max-width: 100%;
+        font-size: 14px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      main.container.is-reading-post {
+        width: calc(100% - 26px);
+        padding: 0 0 42px;
+      }
+      main.container.is-reading-post .post-content {
+        padding: 20px 14px;
+      }
+      main.container.is-reading-post .post-markdown > p,
+      main.container.is-reading-post .post-markdown > ul,
+      main.container.is-reading-post .post-markdown > ol,
+      main.container.is-reading-post .post-markdown > blockquote {
+        font-size: 14px;
+        line-height: 1.8;
+      }
+      .post-content .scroll-reveal {
+        transform: translate3d(0, 10px, 0);
+        transition-duration: 360ms;
+      }
+    }
+
+    /* Accessibility: motion preferences always win over decorative effects. */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .post-content .scroll-reveal,
+      .post-content .scroll-reveal.is-visible {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+      }
+    }
+
+    /* Keep all article content visible in print/PDF output. */
+    @media print {
+      main.container.is-reading-post {
+        width: 100%;
+        max-width: none;
+        padding: 0;
+      }
+      .post-content .scroll-reveal,
+      .post-content .scroll-reveal.is-visible {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -1267,9 +1398,50 @@
     const homeView=document.getElementById("home-view");
     const postView=document.getElementById("post-view");
     const postContent=document.getElementById("post-content-container");
+    const mainContainer=document.querySelector("main.container");
     marked.setOptions({breaks:true,gfm:true});
 
+    /* Scroll-aware reveals for post blocks. Disconnect before replacing a post
+       so observers never retain stale content after route changes. */
+    let postRevealObserver=null;
+
+    function resetPostScrollReveal(){
+      if(postRevealObserver){
+        postRevealObserver.disconnect();
+        postRevealObserver=null;
+      }
+    }
+
+    function setupPostScrollReveal(){
+      resetPostScrollReveal();
+      const reduceMotion=window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if(reduceMotion || !("IntersectionObserver" in window)) return;
+
+      const targets=[
+        postContent.querySelector(".post-detail-heading"),
+        ...postContent.querySelectorAll(".post-markdown > *")
+      ].filter(Boolean);
+      if(!targets.length) return;
+
+      postRevealObserver=new IntersectionObserver(entries=>{
+        entries.forEach(entry=>{
+          entry.target.classList.toggle("is-visible",entry.isIntersecting);
+        });
+      },{
+        root:null,
+        rootMargin:"-56px 0px -10% 0px",
+        threshold:0
+      });
+
+      targets.forEach((target,index)=>{
+        target.classList.add("scroll-reveal");
+        target.style.setProperty("--reveal-delay",`${(index % 3) * 35}ms`);
+        postRevealObserver.observe(target);
+      });
+    }
+
     async function loadFullPost(postId){
+      resetPostScrollReveal();
       const meta=blogPosts.find(post=>String(post.id)===String(postId));
       if(!meta){postContent.innerHTML=`<div class="error">⚠️ Post not found.</div>`;return;}
       const filePath=meta.file || meta.file_path;
@@ -1293,6 +1465,7 @@
           <div id="post-detail-collection-panel"></div>
           <div class="post-markdown">${marked.parse(md)}</div>`;
 
+        setupPostScrollReveal();
         syncPostDetailControls(meta);
         postContent.querySelectorAll("a").forEach(link=>{
           link.setAttribute("target","_blank");
@@ -1326,11 +1499,14 @@
     function handleRoute(){
       const hash=window.location.hash;
       if(hash.startsWith("#post-")){
+        mainContainer.classList.add("is-reading-post");
         homeView.classList.add("hidden"); heroSection.style.display="none";
         postView.classList.remove("hidden");
         loadFullPost(hash.replace("#post-",""));
         window.scrollTo(0,0);
       }else{
+        resetPostScrollReveal();
+        mainContainer.classList.remove("is-reading-post");
         postView.classList.add("hidden"); heroSection.style.display="";
         homeView.classList.remove("hidden");
         renderPostCards(searchBar.value,1);
