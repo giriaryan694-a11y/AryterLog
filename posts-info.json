@@ -1,5 +1,13 @@
 [
   {
+  "id": "uphack-drill-marathon-seven-web-security-findings",
+  "title": "UPHACK Drill Marathon: Seven Web Security Findings",
+  "date": "31-10-2026",
+  "summary": "A technical write-up of seven solved UPHACK drills covering client-controlled deadline logic, HTTP path normalization, mass assignment, cursor-based IDOR/BOLA, HTTP method override authorization, legacy signature validation, and self-transfer accounting flaws.",
+  "category": ["web-security", "pentesting", "logic-bugs"],
+  "file": "posts/uphack-drill-marathon-seven-web-security-findings.md"
+  },
+  {
   "id": "tryhackme-overpass-writeup",
   "title": "TryHackMe Overpass Writeup",
   "date": "18-10-2026",
