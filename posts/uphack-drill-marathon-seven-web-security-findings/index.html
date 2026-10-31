@@ -1,0 +1,1384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UPHACK Drill Marathon: Seven Web Security Findings — AryterLog</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="../../manifest.json">
+  <meta name="theme-color" content="#080b10">
+  <link rel="icon" href="../../icons/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="../../icons/apple-touch-icon.png">
+  <meta name="description" content="A technical write-up of seven solved UPHACK drills covering client-controlled deadline logic, HTTP path normalization, mass assignment, cursor-based IDOR/BOLA, HTTP method override authorization, legacy signature validation, and self-transfer accounting flaws.">
+  <link rel="canonical" href="https://giriaryan694-a11y.github.io/AryterLog/posts/uphack-drill-marathon-seven-web-security-findings/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="UPHACK Drill Marathon: Seven Web Security Findings">
+  <meta property="og:description" content="A technical write-up of seven solved UPHACK drills covering client-controlled deadline logic, HTTP path normalization, mass assignment, cursor-based IDOR/BOLA, HTTP method override authorization, legacy signature validation, and self-transfer accounting flaws.">
+  <meta property="og:url" content="https://giriaryan694-a11y.github.io/AryterLog/posts/uphack-drill-marathon-seven-web-security-findings/">
+  <meta property="og:site_name" content="AryterLog">
+  <meta property="article:published_time" content="2026-10-31T11:59:33.854Z">
+  <meta property="article:tag" content="web-security">
+  <meta property="article:tag" content="pentesting">
+  <meta property="article:tag" content="logic-bugs">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="UPHACK Drill Marathon: Seven Web Security Findings">
+  <meta name="twitter:description" content="A technical write-up of seven solved UPHACK drills covering client-controlled deadline logic, HTTP path normalization, mass assignment, cursor-based IDOR/BOLA, HTTP method override authorization, legacy signature validation, and self-transfer accounting flaws.">
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"UPHACK Drill Marathon: Seven Web Security Findings","description":"A technical write-up of seven solved UPHACK drills covering client-controlled deadline logic, HTTP path normalization, mass assignment, cursor-based IDOR/BOLA, HTTP method override authorization, legacy signature validation, and self-transfer accounting flaws.","datePublished":"2026-10-31T11:59:33.854Z","author":{"@type":"Person","name":"Aryan Giri"},"publisher":{"@type":"Organization","name":"AryterLog"},"mainEntityOfPage":"https://giriaryan694-a11y.github.io/AryterLog/posts/uphack-drill-marathon-seven-web-security-findings/","keywords":"web-security, pentesting, logic-bugs"}</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:#080b10;
+      --surface:#0d1117;
+      --surface2:#111820;
+      --surface3:#161d27;
+      --text:#d0dbe8;
+      --text2:#7a8a9a;
+      --accent:#00ff88;
+      --accent2:#0ea5e9;
+      --danger:#ff4560;
+      --border:#1e2a38;
+      --border2:#2a3848;
+      --code-bg:#0a0f16;
+      --glow:rgba(0,255,136,0.08);
+      --glow2:rgba(0,255,136,0.18);
+    }
+
+    .light {
+      --bg:#f5f7fa;
+      --surface:#ffffff;
+      --surface2:#f0f4f8;
+      --surface3:#e8eef5;
+      --text:#111827;
+      --text2:#6b7280;
+      --accent:#059669;
+      --accent2:#0284c7;
+      --danger:#dc2626;
+      --border:#e2e8f0;
+      --border2:#cbd5e1;
+      --code-bg:#f1f5f9;
+      --glow:rgba(5,150,105,0.07);
+      --glow2:rgba(5,150,105,0.14);
+    }
+
+    .eye-saver {
+      --bg:#12100a;
+      --surface:#1a1608;
+      --surface2:#211c0c;
+      --surface3:#282210;
+      --text:#e8d8b0;
+      --text2:#9a8860;
+      --accent:#f5c542;
+      --accent2:#e08030;
+      --danger:#e05050;
+      --border:#302810;
+      --border2:#3d3418;
+      --code-bg:#0f0d06;
+      --glow:rgba(245,197,66,0.08);
+      --glow2:rgba(245,197,66,0.18);
+    }
+
+    *,*::before,*::after {
+      box-sizing:border-box;
+      margin:0;
+      padding:0;
+    }
+
+    html {
+      scroll-behavior:smooth;
+    }
+
+    body {
+      font-family:'Fira Code',monospace;
+      background:var(--bg);
+      color:var(--text);
+      min-height:100vh;
+      overflow-x:hidden;
+      transition:background 0.4s,color 0.4s;
+    }
+
+    body::before {
+      content:'';
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:0;
+      background-image:
+        linear-gradient(var(--border) 1px,transparent 1px),
+        linear-gradient(90deg,var(--border) 1px,transparent 1px);
+      background-size:44px 44px;
+      opacity:0.25;
+    }
+
+    header {
+      position:sticky;
+      top:0;
+      z-index:200;
+      background:rgba(8,11,16,0.86);
+      backdrop-filter:blur(16px);
+      border-bottom:1px solid var(--border);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:0 22px;
+      height:56px;
+      gap:12px;
+    }
+
+    .light header {
+      background:rgba(245,247,250,0.9);
+    }
+
+    .eye-saver header {
+      background:rgba(18,16,10,0.9);
+    }
+
+    header::after {
+      content:'';
+      position:absolute;
+      bottom:-1px;
+      left:8%;
+      right:8%;
+      height:1px;
+      background:linear-gradient(
+        90deg,
+        transparent,
+        var(--accent),
+        transparent
+      );
+      opacity:0.35;
+    }
+
+    .header-left {
+      display:flex;
+      align-items:center;
+      gap:12px;
+      flex-shrink:0;
+    }
+
+    .logo {
+      font-family:'Bebas Neue',sans-serif;
+      font-size:24px;
+      font-weight:400;
+      letter-spacing:3px;
+      color:var(--text);
+      text-decoration:none;
+      white-space:nowrap;
+      flex-shrink:0;
+      line-height:1;
+      transition:color 0.2s;
+    }
+
+    .logo .lo-a {
+      color:var(--accent);
+    }
+
+    .logo:hover .lo-a {
+      text-shadow:0 0 14px var(--accent);
+    }
+
+    .back-link {
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      background:transparent;
+      border:1px solid var(--border2);
+      color:var(--text2);
+      padding:6px 12px;
+      border-radius:6px;
+      cursor:pointer;
+      transition:all 0.2s;
+      font-family:'Fira Code',monospace;
+      font-size:11px;
+      text-decoration:none;
+    }
+
+    .back-link:hover {
+      border-color:var(--accent);
+      color:var(--accent);
+      background:var(--glow);
+    }
+
+    #theme-btn {
+      background:transparent;
+      border:1px solid var(--border2);
+      padding:5px 11px;
+      cursor:pointer;
+      color:var(--text2);
+      border-radius:6px;
+      transition:all 0.2s;
+      font-family:'Fira Code',monospace;
+      font-size:11px;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      white-space:nowrap;
+    }
+
+    #theme-btn:hover {
+      border-color:var(--accent);
+      color:var(--accent);
+      background:var(--glow);
+    }
+
+    @keyframes popSpin {
+      0% {
+        transform:scale(0.4) rotate(-60deg);
+        opacity:0;
+      }
+      70% {
+        transform:scale(1.15) rotate(5deg);
+      }
+      100% {
+        transform:scale(1) rotate(0deg);
+        opacity:1;
+      }
+    }
+
+    .emoji {
+      display:inline-block;
+    }
+
+    /* Wide desktop canvas, with mobile gutters controlled separately. */
+    main {
+      width:min(1320px,calc(100% - 64px));
+      max-width:none;
+      margin:0 auto;
+      padding:34px 0 72px;
+      position:relative;
+      z-index:1;
+    }
+
+    .back-btn {
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+      margin-bottom:20px;
+      background:var(--surface);
+      border:1px solid var(--border2);
+      color:var(--text2);
+      padding:7px 13px;
+      border-radius:6px;
+      font-family:'Fira Code',monospace;
+      font-size:11px;
+      cursor:pointer;
+      transition:all 0.2s;
+      text-decoration:none;
+    }
+
+    .back-btn:hover {
+      border-color:var(--accent);
+      color:var(--accent);
+      background:var(--glow);
+    }
+
+    .post-content {
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:clamp(28px,3.15vw,52px);
+      position:relative;
+      overflow:hidden;
+    }
+
+    .post-content::before {
+      content:'';
+      position:absolute;
+      top:0;
+      left:0;
+      right:0;
+      height:2px;
+      background:linear-gradient(
+        90deg,
+        var(--accent),
+        var(--accent2),
+        transparent
+      );
+      border-radius:12px 12px 0 0;
+    }
+
+    .post-content * {
+      max-width:100%;
+    }
+
+    h1 {
+      font-family:'Space Grotesk',sans-serif;
+      font-size:clamp(19px,4vw,26px);
+      font-weight:700;
+      color:var(--text);
+      margin-bottom:8px;
+      line-height:1.25;
+      word-break:break-word;
+    }
+
+    .post-header-meta {
+      font-family:'Fira Code',monospace;
+      font-size:11px;
+      color:var(--text2);
+      padding-bottom:18px;
+      margin-bottom:22px;
+      border-bottom:1px solid var(--border);
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+
+    .card-cat-chip {
+      display:inline-flex;
+      align-items:center;
+      padding:1px 7px;
+      border-radius:3px;
+      border:1px solid var(--border2);
+      background:var(--surface2);
+      color:var(--text2);
+      font-size:9px;
+      font-family:'Fira Code',monospace;
+      font-weight:500;
+      letter-spacing:0.4px;
+    }
+
+    h2,h3 {
+      font-family:'Space Grotesk',sans-serif;
+      font-weight:600;
+      color:var(--text);
+      margin:26px 0 10px;
+      word-break:break-word;
+    }
+
+    h2 {
+      font-size:19px;
+    }
+
+    h3 {
+      font-size:15px;
+      color:var(--accent);
+    }
+
+    p {
+      font-size:14px;
+      line-height:1.8;
+      margin-bottom:14px;
+      color:var(--text);
+    }
+
+    ul,ol {
+      padding-left:20px;
+      margin-bottom:14px;
+      font-size:14px;
+      line-height:1.8;
+    }
+
+    li {
+      margin-bottom:4px;
+    }
+
+    a {
+      color:var(--accent);
+      word-break:break-all;
+      overflow-wrap:break-word;
+      transition:opacity 0.2s;
+    }
+
+    a:hover {
+      opacity:0.75;
+    }
+
+    .post-content a {
+      text-decoration:underline;
+      text-underline-offset:3px;
+    }
+
+    code {
+      background:var(--code-bg);
+      border:1px solid var(--border);
+      padding:2px 6px;
+      border-radius:4px;
+      font-family:'Fira Code',monospace;
+      font-size:0.85em;
+      color:var(--accent);
+      word-break:break-all;
+      overflow-wrap:break-word;
+    }
+
+    pre {
+      background:var(--code-bg);
+      border:1px solid var(--border);
+      padding:18px;
+      border-radius:8px;
+      max-width:100%;
+      overflow:hidden;
+      position:relative;
+      margin-bottom:14px;
+    }
+
+    pre::before {
+      content:'';
+      position:absolute;
+      top:0;
+      left:0;
+      right:0;
+      height:2px;
+      background:linear-gradient(
+        90deg,
+        var(--accent),
+        var(--accent2),
+        transparent
+      );
+      opacity:0.5;
+      border-radius:8px 8px 0 0;
+    }
+
+    pre code {
+      background:transparent;
+      border:none;
+      padding:0 60px 0 0;
+      word-break:normal;
+      overflow-wrap:normal;
+      white-space:pre;
+      display:block;
+      overflow-x:auto;
+      -webkit-overflow-scrolling:touch;
+      font-size:13px;
+      line-height:1.65;
+      color:var(--text);
+    }
+
+    blockquote {
+      border-left:2px solid var(--accent);
+      margin:14px 0;
+      padding:10px 16px;
+      background:var(--glow);
+      border-radius:0 6px 6px 0;
+      font-style:italic;
+      color:var(--text2);
+    }
+
+    table {
+      width:100%;
+      border-collapse:collapse;
+      display:block;
+      overflow-x:auto;
+      -webkit-overflow-scrolling:touch;
+      font-size:13px;
+      margin-bottom:14px;
+    }
+
+    th,td {
+      border:1px solid var(--border);
+      padding:8px 12px;
+      text-align:left;
+      white-space:nowrap;
+    }
+
+    th {
+      background:var(--surface2);
+      color:var(--accent);
+      font-weight:600;
+    }
+
+    img {
+      max-width:100%;
+      height:auto;
+      border-radius:8px;
+      display:block;
+      margin:14px 0;
+    }
+
+    /* Readable prose width inside the wider article canvas. Code, tables and
+       images can use the available width instead of forcing narrow wrapping. */
+    .post-content > p,
+    .post-content > ul,
+    .post-content > ol,
+    .post-content > blockquote {
+      max-width:104ch;
+      font-size:clamp(14px,0.92vw,15px);
+      line-height:1.9;
+    }
+
+    .post-content > h1,
+    .post-content > h2,
+    .post-content > h3 {
+      max-width:82ch;
+      line-height:1.4;
+    }
+
+    .post-content > :nth-child(3) {
+      margin-top:0;
+    }
+
+    /* Scroll-triggered reveal. Opacity changes do not remove layout space, so
+       the article stays stable while sections enter and leave the viewport. */
+    .post-content .scroll-reveal {
+      opacity:0;
+      transform:translate3d(0,16px,0);
+      transition:
+        opacity 440ms ease,
+        transform 520ms cubic-bezier(0.2,0.7,0.2,1);
+    }
+
+    .post-content .scroll-reveal.is-visible {
+      opacity:1;
+      transform:translate3d(0,0,0);
+      transition-delay:var(--reveal-delay,0ms);
+    }
+
+    @media (min-width:1500px) {
+      main {
+        width:min(1380px,calc(100% - 72px));
+      }
+
+      .post-content {
+        padding:52px 58px;
+      }
+    }
+
+    .copy-btn {
+      position:absolute;
+      top:9px;
+      right:9px;
+      padding:3px 8px;
+      font-size:10px;
+      font-family:'Fira Code',monospace;
+      font-weight:500;
+      background:var(--surface2);
+      border:1px solid var(--border2);
+      color:var(--text2);
+      border-radius:4px;
+      cursor:pointer;
+      transition:all 0.2s;
+      opacity:0;
+      letter-spacing:0.3px;
+    }
+
+    pre:hover .copy-btn {
+      opacity:1;
+    }
+
+    .copy-btn:hover {
+      border-color:var(--accent);
+      color:var(--accent);
+      background:var(--glow);
+    }
+
+    .copy-btn.copied {
+      border-color:var(--accent);
+      color:var(--accent);
+      opacity:1;
+    }
+
+    footer {
+      text-align:center;
+      padding:22px 16px;
+      color:var(--text2);
+      font-family:'Fira Code',monospace;
+      font-size:11px;
+      border-top:1px solid var(--border);
+      position:relative;
+      z-index:1;
+    }
+
+    .f-accent {
+      color:var(--accent);
+    }
+
+    footer a {
+      color:var(--accent);
+      text-decoration:none;
+    }
+
+    footer a:hover {
+      opacity:0.75;
+    }
+
+    @media(max-width:768px) {
+      main {
+        width:calc(100% - 32px);
+        padding:24px 0 48px;
+      }
+
+      .post-content {
+        padding:24px 22px;
+      }
+
+      .post-content > p,
+      .post-content > ul,
+      .post-content > ol,
+      .post-content > blockquote {
+        max-width:100%;
+        font-size:14px;
+        line-height:1.85;
+      }
+    }
+
+    @media(max-width:480px) {
+      header {
+        padding:0 13px;
+        height:50px;
+      }
+
+      .logo {
+        font-size:21px;
+        letter-spacing:2px;
+      }
+
+      main {
+        width:calc(100% - 26px);
+        padding:20px 0 44px;
+      }
+
+      .post-content {
+        padding:20px 14px;
+      }
+
+      .post-content > p,
+      .post-content > ul,
+      .post-content > ol,
+      .post-content > blockquote {
+        font-size:14px;
+        line-height:1.8;
+      }
+
+      .post-content .scroll-reveal {
+        transform:translate3d(0,10px,0);
+        transition-duration:360ms;
+      }
+
+      pre {
+        padding:13px;
+      }
+    }
+
+    @media(prefers-reduced-motion:reduce) {
+      html {
+        scroll-behavior:auto;
+      }
+
+      .post-content .scroll-reveal,
+      .post-content .scroll-reveal.is-visible {
+        opacity:1!important;
+        transform:none!important;
+        transition:none!important;
+      }
+    }
+
+    @media print {
+      main {
+        width:100%;
+        max-width:none;
+        padding:0;
+      }
+
+      .post-content .scroll-reveal,
+      .post-content .scroll-reveal.is-visible {
+        opacity:1!important;
+        transform:none!important;
+        transition:none!important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <a href="../../index.html" class="logo">Aryter<span class="lo-a">Log</span></a>
+    </div>
+
+    <button id="theme-btn" aria-label="Cycle Theme">
+      <span class="emoji" id="theme-emoji">🌙</span>
+      <span id="theme-label">Dark</span>
+    </button>
+  </header>
+
+  <main>
+    <a href="../../index.html#post-uphack-drill-marathon-seven-web-security-findings" class="back-btn">← Back to Blog</a>
+
+    <article class="post-content">
+      <h1>UPHACK Drill Marathon: Seven Web Security Findings</h1>
+
+      <div class="post-header-meta">
+        <span>📅 Published 31-10-2026</span>
+        <span>·</span><span class="card-cat-chip">web-security</span><span class="card-cat-chip">pentesting</span><span class="card-cat-chip">logic-bugs</span>
+      </div>
+
+      <p>Written By Aryan Giri</p>
+<h1>UPHACK Drill Marathon: Seven Web Security Findings</h1>
+<p>This write-up documents seven UPHACK drills covering business-logic weaknesses, HTTP request handling, mass assignment, object-level authorization, method override behavior, legacy authentication handling, and transaction-accounting logic.</p>
+<p>The screenshots below use the exact GitHub attachment URLs supplied with the original notes. The initial server-response screenshot for Drill 04 was not included in the source material, so that location is explicitly marked as missing rather than replaced with an invented URL.</p>
+<hr>
+<h2>Drill 01: The Deadline in Your Own Time</h2>
+<p><strong>Category:</strong> Business Logic<br><strong>Difficulty:</strong> Easy<br><strong>Status:</strong> Solved</p>
+<h3>Initial request</h3>
+<p>The first request was submitted using the application&#39;s normal deadline-handling flow.</p>
+<p><img src="https://github.com/user-attachments/assets/49e3e396-5e3f-4119-aaa9-8f612d1d010b" alt="Initial request"></p>
+<h3>Modified request</h3>
+<p>The request was modified to test whether client-supplied time-zone and offline-mode values influenced the deadline decision.</p>
+<p><img src="https://github.com/user-attachments/assets/1d549ae0-dd9b-4326-b9d1-9653b3e5fb7d" alt="Modified request"></p>
+<h3>Server response</h3>
+<p><img src="https://github.com/user-attachments/assets/6b1dfcff-d6eb-4ae1-919d-67ddefe4a434" alt="Server response"></p>
+<h3>Vulnerability analysis</h3>
+<p><strong>Vulnerability:</strong> Client-controlled time-zone manipulation.</p>
+<p><strong>Root cause:</strong> The application trusted client-supplied time-zone and offline-mode parameters while evaluating submission deadlines.</p>
+<p><strong>Parameters tested:</strong></p>
+<ul>
+<li><code>tz</code></li>
+<li><code>offline</code></li>
+</ul>
+<p><strong>Impact:</strong> An expired examination attempt was accepted as a timely submission.</p>
+<p><strong>Remediation:</strong></p>
+<ul>
+<li>Evaluate deadlines using server-controlled time.</li>
+<li>Apply a trusted, server-side deadline policy.</li>
+<li>Treat client-provided time-zone and workflow flags as untrusted input.</li>
+<li>Keep the authoritative submission timestamp on the server.</li>
+</ul>
+<p><strong>Key learning:</strong> Security-critical deadline checks must not depend on values controlled by the client.</p>
+<hr>
+<h2>Drill 02: One Character Longer</h2>
+<p><strong>Category:</strong> HTTP<br><strong>Difficulty:</strong> Medium<br><strong>Status:</strong> Solved</p>
+<h3>Initial request</h3>
+<p>The initial request targeted the internal billing ledger endpoint:</p>
+<p><code>GET /internal/billing/ledger</code></p>
+<p><img src="https://github.com/user-attachments/assets/a4cd40e1-da73-4d75-bbfb-5bd78da4f965" alt="Initial request"></p>
+<p><strong>Initial response:</strong> <code>403 Forbidden</code></p>
+<p>The billing ledger was inaccessible through the original request.</p>
+<h3>Initial testing</h3>
+<p>I tested two path variations:</p>
+<ul>
+<li>Appending <code>%09</code> (Horizontal Tab)</li>
+<li>Appending <code>%0C</code> (Form Feed)</li>
+</ul>
+<p>Both attempts returned:</p>
+<p><code>404 Not Found</code></p>
+<p>These variations did not reach the intended application route.</p>
+<h3>Modified request</h3>
+<p>The successful variation added a trailing slash to the endpoint:</p>
+<p><code>GET /internal/billing/ledger/</code></p>
+<p><img src="https://github.com/user-attachments/assets/f81197dd-641f-4e1a-be18-27338214e4fe" alt="Modified request"></p>
+<h3>Server response</h3>
+<p><img src="https://github.com/user-attachments/assets/cebceeb7-d9f5-4c2b-9400-2316c74ebcf8" alt="Server response"></p>
+<h3>Vulnerability analysis</h3>
+<p><strong>Vulnerability:</strong> HTTP request path normalization inconsistency.</p>
+<p><strong>Root cause:</strong> The reverse proxy (nginx) and the Node.js application handled or normalized the request path differently. This created inconsistent access-control behavior between the proxy and the backend.</p>
+<p><strong>Key observation:</strong> The original path returned <code>403</code>, while the trailing-slash variation was handled differently and reached the intended route.</p>
+<p><strong>Impact:</strong> Potential unauthorized access to a restricted internal billing endpoint.</p>
+<p><strong>Remediation:</strong></p>
+<ul>
+<li>Normalize request paths consistently across the reverse proxy and backend.</li>
+<li>Apply authorization checks in the application, not only at the proxy.</li>
+<li>Ensure proxy routing and backend routing rules agree.</li>
+<li>Test access control against alternate representations of the same route.</li>
+</ul>
+<p><strong>Key learning:</strong> Different path-normalization behavior between infrastructure layers can undermine access-control rules.</p>
+<hr>
+<h2>Drill 03: Approved on Arrival</h2>
+<p><strong>Category:</strong> Privilege Escalation<br><strong>Difficulty:</strong> Medium<br><strong>Status:</strong> Solved</p>
+<h3>Initial request</h3>
+<p>The normal claim-submission request used:</p>
+<p><code>POST /api/claims</code></p>
+<p>The JSON body contained these properties:</p>
+<ul>
+<li><code>amount</code></li>
+<li><code>category</code></li>
+<li><code>note</code></li>
+</ul>
+<p><img src="https://github.com/user-attachments/assets/05d11b22-df53-44a8-849d-e4e37b8abe63" alt="Initial request"></p>
+<h3>Initial server response</h3>
+<p><img src="https://github.com/user-attachments/assets/4cb1bfc4-5445-4a34-ad26-d2ddb263899c" alt="Initial server response"></p>
+<p><strong>HTTP status:</strong> <code>201 Created</code></p>
+<p>The server created claim <code>44712</code> with:</p>
+<pre><code class="language-json">{
+  &quot;status&quot;: &quot;submitted&quot;
+}
+</code></pre>
+<p>The response also identified an approver and a queue position.</p>
+<h3>Modified request</h3>
+<p>I added a <code>status</code> property to the JSON request body:</p>
+<p><img src="https://github.com/user-attachments/assets/14786440-db0d-4891-8ab9-3d5f7ea57c40" alt="Modified request"></p>
+<pre><code class="language-json">{
+  &quot;amount&quot;: 1340.00,
+  &quot;category&quot;: &quot;travel&quot;,
+  &quot;note&quot;: &quot;Client visit, Leeds&quot;,
+  &quot;status&quot;: &quot;approved&quot;
+}
+</code></pre>
+<h3>Server response</h3>
+<p><img src="https://github.com/user-attachments/assets/997cb87d-0cb5-4d74-9e34-904baff39386" alt="Server response"></p>
+<p><strong>HTTP status:</strong> <code>201 Created</code></p>
+<p>The server created claim <code>44713</code> with the following values:</p>
+<ul>
+<li><strong>Status:</strong> <code>approved</code></li>
+<li><strong>Approver:</strong> <code>null</code></li>
+<li><strong>Queue position:</strong> <code>null</code></li>
+</ul>
+<p>The claim was created directly in the approved state, without the normal approval workflow represented in the initial response.</p>
+<h3>Vulnerability analysis</h3>
+<p><strong>Vulnerability:</strong> Mass Assignment.</p>
+<p><strong>Root cause:</strong> The backend accepted a client-controlled <code>status</code> property instead of restricting the request to fields the user was permitted to set.</p>
+<p><strong>Impact:</strong> A contractor could create an expense claim with an approved status without going through the intended manager-approval workflow.</p>
+<p><strong>Remediation:</strong></p>
+<ul>
+<li>Use an explicit allowlist of accepted request properties.</li>
+<li>Do not let users directly assign privileged workflow states.</li>
+<li>Enforce authorization on every state transition.</li>
+<li>Separate claim creation from claim approval.</li>
+<li>Maintain server-side approval records and audit logs.</li>
+</ul>
+<p><strong>Key learning:</strong> An API accepting a property does not mean the requester is authorized to control it. Workflow state must be managed and authorized by the server.</p>
+<hr>
+<h2>Drill 04: The Cursor Carries the Scope</h2>
+<p><strong>Category:</strong> IDOR<br><strong>Difficulty:</strong> Medium<br><strong>Status:</strong> Solved</p>
+<h3>Initial request</h3>
+<p>The request targeted the conversation-thread endpoint:</p>
+<p><code>GET /api/conversations/threads</code></p>
+<p><img src="https://github.com/user-attachments/assets/008b5afc-6cc3-4e36-a134-66480e83150c" alt="Initial request"></p>
+<p><strong>Initial parameters:</strong></p>
+<ul>
+<li><code>cursor=eyJvIjoyMDR9</code></li>
+<li><code>limit=25</code></li>
+</ul>
+<p>The original cursor value is <code>eyJvIjoyMDR9</code>, which identifies workspace <code>204</code> in the supplied scenario.</p>
+<p>The authenticated user belonged to workspace <code>204</code>.</p>
+<h3>Initial server response</h3>
+<p><strong>Screenshot:</strong> Not supplied in the source notes.</p>
+<p><strong>HTTP status:</strong> <code>200 OK</code></p>
+<p>The server returned conversations belonging to workspace <code>204</code>, along with a pagination cursor.</p>
+<h3>Modified request</h3>
+<p>The cursor was replaced with:</p>
+<p><code>eyJvIjo4ODF9</code></p>
+<p><img src="https://github.com/user-attachments/assets/bd9d8b5d-df1e-4af4-b211-7a9f7dfc9fb8" alt="Modified request"></p>
+<p>The replacement cursor corresponded to workspace <code>881</code>.</p>
+<h3>Server response</h3>
+<p><img src="https://github.com/user-attachments/assets/a117c9ef-ddbf-4bb6-b85e-1803a0d33255" alt="Server response"></p>
+<p><strong>HTTP status:</strong> <code>200 OK</code></p>
+<p>The server returned:</p>
+<ul>
+<li><strong>Workspace:</strong> <code>881</code></li>
+<li><strong>Thread IDs:</strong> <code>90418</code>, <code>90422</code></li>
+<li>A new pagination cursor for workspace <code>881</code></li>
+</ul>
+<p>The response exposed conversation metadata belonging to another workspace.</p>
+<h3>Vulnerability analysis</h3>
+<p><strong>Vulnerability:</strong> Insecure Direct Object Reference (IDOR), also described as Broken Object Level Authorization (BOLA).</p>
+<p><strong>Root cause:</strong> The backend appeared to trust the workspace identifier encoded in the client-supplied pagination cursor without verifying that the authenticated user was authorized to access that workspace.</p>
+<p><strong>Impact:</strong> Potential unauthorized cross-workspace access to private conversation metadata.</p>
+<p><strong>Remediation:</strong></p>
+<ul>
+<li>Derive workspace authorization from the authenticated session.</li>
+<li>Validate workspace membership on every API request.</li>
+<li>Bind pagination cursors to the authenticated user and authorized workspace.</li>
+<li>Use integrity-protected, server-validated cursors.</li>
+<li>Do not treat Base64 encoding as a security boundary.</li>
+</ul>
+<h3>Key learning</h3>
+<p>Pagination cursors are not automatically trustworthy. If a cursor contains authorization-sensitive information, the backend must validate that information against the authenticated user&#39;s permissions.</p>
+<hr>
+<h2>Drill 05: The Verb in the Body</h2>
+<p><strong>Category:</strong> HTTP<br><strong>Difficulty:</strong> Medium<br><strong>Status:</strong> Solved</p>
+<h3>Initial request</h3>
+<p>The request targeted the collaborator endpoint for the <code>glasshouse-ep</code> release:</p>
+<p><code>POST /catalogue/releases/glasshouse-ep/collaborators</code></p>
+<p>The request included the method-override parameter:</p>
+<p><code>_method=PUT</code></p>
+<p>It updated collaborator <code>119</code> and set the revenue split to <code>15</code>.</p>
+<p><img src="https://github.com/user-attachments/assets/279879eb-9a21-413c-854f-a469f96cc7fe" alt="Initial request"></p>
+<h3>Initial server response</h3>
+<p><img src="https://github.com/user-attachments/assets/38443a3e-373d-476f-bf28-017ccf512482" alt="Initial server response"></p>
+<p><strong>HTTP status:</strong> <code>200 OK</code></p>
+<p>The server confirmed the operation:</p>
+<pre><code class="language-json">{
+  &quot;action&quot;: &quot;updated&quot;
+}
+</code></pre>
+<h3>Modified request</h3>
+<p>I changed the <code>_method</code> parameter from <code>PUT</code> to <code>DELETE</code>. The outer HTTP method remained <code>POST</code>.</p>
+<p><img src="https://github.com/user-attachments/assets/85cc2ec7-1e3d-47d3-ab88-b76d41633f06" alt="Modified request"></p>
+<p>The modified body was:</p>
+<pre><code class="language-http">_method=DELETE&amp;collaborator=119&amp;split=15
+</code></pre>
+<h3>Server response</h3>
+<p><img src="https://github.com/user-attachments/assets/3957ab64-fbff-4ea2-89bf-7630335c03a0" alt="Server response"></p>
+<p><strong>HTTP status:</strong> <code>200 OK</code></p>
+<p>The server returned:</p>
+<ul>
+<li><strong>Release:</strong> <code>glasshouse-ep</code></li>
+<li><strong>Collaborator:</strong> <code>119</code></li>
+<li><strong>Action:</strong> <code>removed</code></li>
+<li><strong>Split released:</strong> <code>15</code></li>
+<li><strong>Removed by:</strong> <code>you@brightloom.example</code></li>
+</ul>
+<p>The collaborator was successfully removed.</p>
+<h3>Vulnerability analysis</h3>
+<p><strong>Vulnerability:</strong> HTTP Method Override Abuse / Broken Function-Level Authorization.</p>
+<p><strong>Root cause:</strong> The application accepted a client-controlled <code>_method</code> parameter to determine the effective HTTP method but did not enforce the manager-level authorization required for the <code>DELETE</code> operation.</p>
+<p><strong>Impact:</strong> A label assistant could perform a collaborator-removal operation intended to be restricted to managers.</p>
+<p><strong>Remediation:</strong></p>
+<ul>
+<li>Enforce role-based authorization for destructive operations.</li>
+<li>Check permissions against the effective method and operation.</li>
+<li>Do not assume that an incoming <code>POST</code> request is harmless.</li>
+<li>Restrict method overrides where they are not required.</li>
+<li>Log and audit sensitive collaborator changes.</li>
+</ul>
+<h3>Key learning</h3>
+<p>The HTTP method visible in the network request is not necessarily the method processed by the application. Review method-override behavior and enforce authorization for the operation the backend actually performs.</p>
+<hr>
+<h2>Drill 06: The Link That Works Without It</h2>
+<p><strong>Category:</strong> Authentication<br><strong>Difficulty:</strong> Easy<br><strong>Status:</strong> Solved</p>
+<h3>Initial request</h3>
+<p>The request targeted:</p>
+<p><code>GET /preferences</code></p>
+<p>It included these parameters:</p>
+<ul>
+<li><code>u=9330</code> (subscriber ID)</li>
+<li><code>h=6f2ab19c</code> (signature)</li>
+</ul>
+<p>The supplied signature belonged to my own subscriber link, not subscriber <code>9330</code>.</p>
+<p><img src="https://github.com/user-attachments/assets/f9d5824f-3a09-4343-af79-6491e5b89019" alt="Initial request"></p>
+<h3>Initial server response</h3>
+<p><img src="https://github.com/user-attachments/assets/7fa5cd76-e750-4404-8295-24fc59b80216" alt="Initial server response"></p>
+<p><strong>HTTP status:</strong> <code>403 Forbidden</code></p>
+<p>The server returned:</p>
+<p><code>signature_mismatch</code></p>
+<p>The supplied signature did not match the requested subscriber ID.</p>
+<h3>Modified request</h3>
+<p>I tested the request without the signature parameter. The objective was to investigate the legacy newsletter links mentioned in the scenario.</p>
+<p><img src="https://github.com/user-attachments/assets/fe72ff34-12a2-42a2-90bc-f07fd6140c8b" alt="Modified request"></p>
+<h3>Server response</h3>
+<p><img src="https://github.com/user-attachments/assets/15edc3f2-c0f5-4ec9-b72c-bc1c4455b1a2" alt="Server response"></p>
+<p><strong>HTTP status:</strong> <code>200 OK</code></p>
+<p>The server returned subscriber information, including:</p>
+<ul>
+<li>Subscriber ID</li>
+<li>Name</li>
+<li>Email address</li>
+<li>Phone number</li>
+<li>Postal address</li>
+<li>Newsletter subscriptions</li>
+</ul>
+<p>The response also contained:</p>
+<pre><code class="language-json">{
+  &quot;legacy_link&quot;: true
+}
+</code></pre>
+<h3>Vulnerability analysis</h3>
+<p><strong>Vulnerability:</strong> Authentication/Signature Validation Bypass.</p>
+<p><strong>Root cause:</strong> The application appeared to allow requests without a signature when processing legacy subscriber links, without requiring an appropriate alternative authorization mechanism.</p>
+<p><strong>Impact:</strong> Unauthorized access to another subscriber&#39;s personal information.</p>
+<p><strong>Remediation:</strong></p>
+<ul>
+<li>Require valid authentication or authorization before returning subscriber records.</li>
+<li>Do not treat a missing signature as valid legacy authorization.</li>
+<li>Migrate legacy links to secure, time-limited tokens.</li>
+<li>Validate subscriber ownership on the server.</li>
+<li>Minimize the personal information exposed by preference endpoints.</li>
+</ul>
+<h3>Key learning</h3>
+<p>Removing a security parameter can expose an unexpected legacy code path. Missing authentication data must never automatically result in trusted access.</p>
+<hr>
+<h2>Drill 07: The Account That Multiplies Points</h2>
+<p><strong>Category:</strong> Business Logic<br><strong>Difficulty:</strong> Not specified<br><strong>Status:</strong> Solved</p>
+<h3>Initial request</h3>
+<p>The request targeted the points-transfer endpoint:</p>
+<p><code>POST /api/points/transfer</code></p>
+<p>The parameters were:</p>
+<ul>
+<li><code>from=88214009</code></li>
+<li><code>to=90117442</code></li>
+<li><code>points=5000</code></li>
+</ul>
+<p>The transfer moved 5,000 points between two accounts owned by the same member.</p>
+<p><img src="https://github.com/user-attachments/assets/1ae466eb-96b5-4332-9b82-bcbd212e280d" alt="Initial request"></p>
+<h3>Initial server response</h3>
+<p><img src="https://github.com/user-attachments/assets/7a2ce557-c2ed-43e5-a1b4-4b61cd505e3f" alt="Initial server response"></p>
+<p><strong>HTTP status:</strong> <code>200 OK</code></p>
+<p>The balances changed as follows:</p>
+<table>
+<thead>
+<tr>
+<th>Account</th>
+<th align="right">Before</th>
+<th align="right">After</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Source</td>
+<td align="right">41,000</td>
+<td align="right">36,000</td>
+</tr>
+<tr>
+<td>Destination</td>
+<td align="right">2,500</td>
+<td align="right">7,500</td>
+</tr>
+</tbody></table>
+<p>The combined balance remained <code>43,500</code> points.</p>
+<h3>Modified request</h3>
+<p>I changed the destination account so that it matched the source account:</p>
+<pre><code class="language-http">from=88214009&amp;to=88214009&amp;points=5000
+</code></pre>
+<p><img src="https://github.com/user-attachments/assets/954e4961-e232-4a5b-a256-5987029d5f55" alt="Modified request"></p>
+<p>Both account identifiers now referred to the same account.</p>
+<h3>Server response</h3>
+<p><img src="https://github.com/user-attachments/assets/0442346b-0e7a-4453-83a1-0b60b78409df" alt="Server response"></p>
+<p><strong>HTTP status:</strong> <code>200 OK</code></p>
+<p>The server reported:</p>
+<ul>
+<li><strong>Source balance:</strong> <code>46,000</code></li>
+<li><strong>Destination balance:</strong> <code>46,000</code></li>
+<li><strong>Moved:</strong> <code>5,000</code></li>
+</ul>
+<p>The account balance increased from <code>41,000</code> to <code>46,000</code> after the self-transfer.</p>
+<h3>Vulnerability analysis</h3>
+<p><strong>Vulnerability:</strong> Self-transfer accounting flaw / Business Logic Vulnerability.</p>
+<p><strong>Root cause:</strong> The transfer operation appeared to process the debit and credit inconsistently when both account identifiers referred to the same account.</p>
+<p><strong>Impact:</strong> Potential unauthorized creation of loyalty points through a self-transfer.</p>
+<p><strong>Remediation:</strong></p>
+<ul>
+<li>Reject transfers where the source and destination account IDs are identical.</li>
+<li>Perform debit and credit operations atomically.</li>
+<li>Validate ledger invariants before committing transactions.</li>
+<li>Use database transactions and appropriate locking.</li>
+<li>Maintain an immutable transaction ledger.</li>
+<li>Reconcile account balances against ledger entries.</li>
+</ul>
+<h3>Key learning</h3>
+<p>Test relationships between input parameters, not only their individual values. Two individually valid account IDs can form an invalid business operation when used together.</p>
+<hr>
+<h2>Consolidated findings</h2>
+<table>
+<thead>
+<tr>
+<th>Drill</th>
+<th>Finding</th>
+<th>Category</th>
+<th>Reported impact</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>01</td>
+<td>Client-controlled deadline evaluation</td>
+<td>Business Logic</td>
+<td>Expired attempt accepted as timely</td>
+</tr>
+<tr>
+<td>02</td>
+<td>Inconsistent path normalization</td>
+<td>HTTP</td>
+<td>Potential access to a restricted internal endpoint</td>
+</tr>
+<tr>
+<td>03</td>
+<td>Mass assignment of workflow state</td>
+<td>Privilege Escalation</td>
+<td>Claim created directly as approved</td>
+</tr>
+<tr>
+<td>04</td>
+<td>Trust in client-controlled pagination scope</td>
+<td>IDOR</td>
+<td>Cross-workspace conversation metadata exposed</td>
+</tr>
+<tr>
+<td>05</td>
+<td>Method override without effective-operation authorization</td>
+<td>HTTP</td>
+<td>Manager-restricted collaborator removal</td>
+</tr>
+<tr>
+<td>06</td>
+<td>Legacy path accepted without signature</td>
+<td>Authentication</td>
+<td>Subscriber personal information exposed</td>
+</tr>
+<tr>
+<td>07</td>
+<td>Self-transfer accounting flaw</td>
+<td>Business Logic</td>
+<td>Account balance increased through a self-transfer</td>
+</tr>
+</tbody></table>
+<h2>General lessons</h2>
+<p>These drills demonstrate several recurring application-security principles:</p>
+<ol>
+<li><strong>The server must own security decisions.</strong> Deadline checks, approval states, authorization scopes, and transaction accounting must not be controlled by untrusted client input.</li>
+<li><strong>Validate authorization at the object and operation level.</strong> A valid session or an accepted request does not automatically authorize access to every object or action.</li>
+<li><strong>Test alternate request representations.</strong> Reverse proxies, frameworks, and application code may interpret paths and effective HTTP methods differently.</li>
+<li><strong>Treat tokens and cursors as untrusted until validated.</strong> Encoding a value does not make it tamper-proof or authorize the user represented by it.</li>
+<li><strong>Enforce business invariants.</strong> API operations must remain valid when parameters interact in unexpected ways, including self-transfers and privileged state changes.</li>
+</ol>
+<hr>
+<h2>Screenshot source URLs</h2>
+<p>The following image URLs are reproduced from the supplied source notes:</p>
+<table>
+<thead>
+<tr>
+<th>Drill</th>
+<th>Screenshot</th>
+<th>Source URL</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>01</td>
+<td>Initial request</td>
+<td><a href="https://github.com/user-attachments/assets/49e3e396-5e3f-4119-aaa9-8f612d1d010b">https://github.com/user-attachments/assets/49e3e396-5e3f-4119-aaa9-8f612d1d010b</a></td>
+</tr>
+<tr>
+<td>01</td>
+<td>Modified request</td>
+<td><a href="https://github.com/user-attachments/assets/1d549ae0-dd9b-4326-b9d1-9653b3e5fb7d">https://github.com/user-attachments/assets/1d549ae0-dd9b-4326-b9d1-9653b3e5fb7d</a></td>
+</tr>
+<tr>
+<td>01</td>
+<td>Server response</td>
+<td><a href="https://github.com/user-attachments/assets/6b1dfcff-d6eb-4ae1-919d-67ddefe4a434">https://github.com/user-attachments/assets/6b1dfcff-d6eb-4ae1-919d-67ddefe4a434</a></td>
+</tr>
+<tr>
+<td>02</td>
+<td>Initial request</td>
+<td><a href="https://github.com/user-attachments/assets/a4cd40e1-da73-4d75-bbfb-5bd78da4f965">https://github.com/user-attachments/assets/a4cd40e1-da73-4d75-bbfb-5bd78da4f965</a></td>
+</tr>
+<tr>
+<td>02</td>
+<td>Modified request</td>
+<td><a href="https://github.com/user-attachments/assets/f81197dd-641f-4e1a-be18-27338214e4fe">https://github.com/user-attachments/assets/f81197dd-641f-4e1a-be18-27338214e4fe</a></td>
+</tr>
+<tr>
+<td>02</td>
+<td>Server response</td>
+<td><a href="https://github.com/user-attachments/assets/cebceeb7-d9f5-4c2b-9400-2316c74ebcf8">https://github.com/user-attachments/assets/cebceeb7-d9f5-4c2b-9400-2316c74ebcf8</a></td>
+</tr>
+<tr>
+<td>03</td>
+<td>Initial request</td>
+<td><a href="https://github.com/user-attachments/assets/05d11b22-df53-44a8-849d-e4e37b8abe63">https://github.com/user-attachments/assets/05d11b22-df53-44a8-849d-e4e37b8abe63</a></td>
+</tr>
+<tr>
+<td>03</td>
+<td>Initial server response</td>
+<td><a href="https://github.com/user-attachments/assets/4cb1bfc4-5445-4a34-ad26-d2ddb263899c">https://github.com/user-attachments/assets/4cb1bfc4-5445-4a34-ad26-d2ddb263899c</a></td>
+</tr>
+<tr>
+<td>03</td>
+<td>Modified request</td>
+<td><a href="https://github.com/user-attachments/assets/14786440-db0d-4891-8ab9-3d5f7ea57c40">https://github.com/user-attachments/assets/14786440-db0d-4891-8ab9-3d5f7ea57c40</a></td>
+</tr>
+<tr>
+<td>03</td>
+<td>Server response</td>
+<td><a href="https://github.com/user-attachments/assets/997cb87d-0cb5-4d74-9e34-904baff39386">https://github.com/user-attachments/assets/997cb87d-0cb5-4d74-9e34-904baff39386</a></td>
+</tr>
+<tr>
+<td>04</td>
+<td>Initial request</td>
+<td><a href="https://github.com/user-attachments/assets/008b5afc-6cc3-4e36-a134-66480e83150c">https://github.com/user-attachments/assets/008b5afc-6cc3-4e36-a134-66480e83150c</a></td>
+</tr>
+<tr>
+<td>04</td>
+<td>Initial server response</td>
+<td>Not supplied</td>
+</tr>
+<tr>
+<td>04</td>
+<td>Modified request</td>
+<td><a href="https://github.com/user-attachments/assets/bd9d8b5d-df1e-4af4-b211-7a9f7dfc9fb8">https://github.com/user-attachments/assets/bd9d8b5d-df1e-4af4-b211-7a9f7dfc9fb8</a></td>
+</tr>
+<tr>
+<td>04</td>
+<td>Server response</td>
+<td><a href="https://github.com/user-attachments/assets/a117c9ef-ddbf-4bb6-b85e-1803a0d33255">https://github.com/user-attachments/assets/a117c9ef-ddbf-4bb6-b85e-1803a0d33255</a></td>
+</tr>
+<tr>
+<td>05</td>
+<td>Initial request</td>
+<td><a href="https://github.com/user-attachments/assets/279879eb-9a21-413c-854f-a469f96cc7fe">https://github.com/user-attachments/assets/279879eb-9a21-413c-854f-a469f96cc7fe</a></td>
+</tr>
+<tr>
+<td>05</td>
+<td>Initial server response</td>
+<td><a href="https://github.com/user-attachments/assets/38443a3e-373d-476f-bf28-017ccf512482">https://github.com/user-attachments/assets/38443a3e-373d-476f-bf28-017ccf512482</a></td>
+</tr>
+<tr>
+<td>05</td>
+<td>Modified request</td>
+<td><a href="https://github.com/user-attachments/assets/85cc2ec7-1e3d-47d3-ab88-b76d41633f06">https://github.com/user-attachments/assets/85cc2ec7-1e3d-47d3-ab88-b76d41633f06</a></td>
+</tr>
+<tr>
+<td>05</td>
+<td>Server response</td>
+<td><a href="https://github.com/user-attachments/assets/3957ab64-fbff-4ea2-89bf-7630335c03a0">https://github.com/user-attachments/assets/3957ab64-fbff-4ea2-89bf-7630335c03a0</a></td>
+</tr>
+<tr>
+<td>06</td>
+<td>Initial request</td>
+<td><a href="https://github.com/user-attachments/assets/f9d5824f-3a09-4343-af79-6491e5b89019">https://github.com/user-attachments/assets/f9d5824f-3a09-4343-af79-6491e5b89019</a></td>
+</tr>
+<tr>
+<td>06</td>
+<td>Initial server response</td>
+<td><a href="https://github.com/user-attachments/assets/7fa5cd76-e750-4404-8295-24fc59b80216">https://github.com/user-attachments/assets/7fa5cd76-e750-4404-8295-24fc59b80216</a></td>
+</tr>
+<tr>
+<td>06</td>
+<td>Modified request</td>
+<td><a href="https://github.com/user-attachments/assets/fe72ff34-12a2-42a2-90bc-f07fd6140c8b">https://github.com/user-attachments/assets/fe72ff34-12a2-42a2-90bc-f07fd6140c8b</a></td>
+</tr>
+<tr>
+<td>06</td>
+<td>Server response</td>
+<td><a href="https://github.com/user-attachments/assets/15edc3f2-c0f5-4ec9-b72c-bc1c4455b1a2">https://github.com/user-attachments/assets/15edc3f2-c0f5-4ec9-b72c-bc1c4455b1a2</a></td>
+</tr>
+<tr>
+<td>07</td>
+<td>Initial request</td>
+<td><a href="https://github.com/user-attachments/assets/1ae466eb-96b5-4332-9b82-bcbd212e280d">https://github.com/user-attachments/assets/1ae466eb-96b5-4332-9b82-bcbd212e280d</a></td>
+</tr>
+<tr>
+<td>07</td>
+<td>Initial server response</td>
+<td><a href="https://github.com/user-attachments/assets/7a2ce557-c2ed-43e5-a1b4-4b61cd505e3f">https://github.com/user-attachments/assets/7a2ce557-c2ed-43e5-a1b4-4b61cd505e3f</a></td>
+</tr>
+<tr>
+<td>07</td>
+<td>Modified request</td>
+<td><a href="https://github.com/user-attachments/assets/954e4961-e232-4a5b-a256-5987029d5f55">https://github.com/user-attachments/assets/954e4961-e232-4a5b-a256-5987029d5f55</a></td>
+</tr>
+<tr>
+<td>07</td>
+<td>Server response</td>
+<td><a href="https://github.com/user-attachments/assets/0442346b-0e7a-4453-83a1-0b60b78409df">https://github.com/user-attachments/assets/0442346b-0e7a-4453-83a1-0b60b78409df</a></td>
+</tr>
+</tbody></table>
+
+    </article>
+  </main>
+
+  <footer>
+    <span class="f-accent">$</span> echo "Made by <span class="f-accent">Aryan Giri</span>" &nbsp;·&nbsp;
+    <a href="https://github.com/giriaryan694-a11y" target="_blank" rel="noopener noreferrer">GitHub</a>
+  </footer>
+
+  <script>
+    /* Theme — synced with main site via same cookie */
+    const themes = ["dark", "light", "eye-saver"];
+
+    const themeData = {
+      "dark": { emoji:"🌙", label:"Dark" },
+      "light": { emoji:"☀️", label:"Light" },
+      "eye-saver": { emoji:"☕", label:"Reading" }
+    };
+
+    function setCookie(n,v,d) {
+      const e = new Date();
+      e.setTime(e.getTime() + d * 86400000);
+      document.cookie = `${n}=${v};expires=${e.toUTCString()};path=/`;
+    }
+
+    function getCookie(n) {
+      const m = document.cookie.match(new RegExp('(^| )' + n + '=([^;]+)'));
+      return m ? m[2] : null;
+    }
+
+    let currentTheme = getCookie("site_theme") || "dark";
+
+    const themeBtn = document.getElementById("theme-btn");
+    const themeEmoji = document.getElementById("theme-emoji");
+
+    function applyTheme(theme, animate = false) {
+      document.body.className = theme === "dark" ? "" : theme;
+      themeEmoji.textContent = themeData[theme].emoji;
+      document.getElementById("theme-label").textContent = themeData[theme].label;
+      setCookie("site_theme", theme, 365);
+
+      if (animate) {
+        themeEmoji.style.animation = "none";
+        themeEmoji.offsetHeight;
+        themeEmoji.style.animation =
+          "popSpin 0.4s cubic-bezier(0.175,0.885,0.32,1.275) forwards";
+      }
+    }
+
+    applyTheme(currentTheme);
+
+    themeBtn.addEventListener("click", () => {
+      currentTheme = themes[(themes.indexOf(currentTheme) + 1) % themes.length];
+      applyTheme(currentTheme, true);
+    });
+
+    /* Links → new tab + copy buttons on code blocks */
+    document.querySelectorAll(".post-content a").forEach(link => {
+      link.setAttribute("target", "_blank");
+      link.setAttribute("rel", "noopener noreferrer");
+    });
+
+    document.querySelectorAll("pre").forEach(pre => {
+      const code = pre.querySelector("code");
+      if (!code) return;
+
+      const btn = document.createElement("button");
+      btn.className = "copy-btn";
+      btn.textContent = "copy";
+
+      btn.onclick = async () => {
+        try {
+          await navigator.clipboard.writeText(code.innerText.trimEnd());
+        } catch {}
+
+        btn.textContent = "✓ copied";
+        btn.classList.add("copied");
+
+        setTimeout(() => {
+          btn.textContent = "copy";
+          btn.classList.remove("copied");
+        }, 2000);
+      };
+
+      pre.appendChild(btn);
+    });
+
+    /* Scroll-aware reveal for article blocks. Keep the title and publication
+       metadata visible; only article content fades in/out as it enters/leaves. */
+    const article = document.querySelector(".post-content");
+
+    const prefersReducedMotion = window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (
+      article &&
+      !prefersReducedMotion &&
+      ("IntersectionObserver" in window)
+    ) {
+      const revealTargets = Array.from(article.children).filter(element =>
+        !element.matches("h1, .post-header-meta")
+      );
+
+      const revealObserver = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          entry.target.classList.toggle("is-visible", entry.isIntersecting);
+        });
+      }, {
+        root: null,
+        rootMargin: "-56px 0px -10% 0px",
+        threshold: 0
+      });
+
+      revealTargets.forEach((element, index) => {
+        element.classList.add("scroll-reveal");
+        element.style.setProperty(
+          "--reveal-delay",
+          String((index % 3) * 35) + "ms"
+        );
+        revealObserver.observe(element);
+      });
+    }
+  </script>
+</body>
+</html>
