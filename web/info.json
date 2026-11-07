@@ -226,6 +226,11 @@
         "name": "SE·EMU",
         "url": "https://giriaryan694-a11y.github.io/SE-EMU/",
         "description": "SE·EMU is a browser-based social engineering simulation designed to help cybersecurity learners understand and practice the human side of offensive security."
+      },
+      {
+        "name": "ZipSlip Lab",
+        "url": "https://giriaryan694-a11y.github.io/ZipSlip-Lab/",
+        "description": "Interactive, browser-based Zip Slip demonstration and ZIP archive analysis tool. Create crafted ZIP archives, inspect archive entries and paths, and explore path-traversal behavior entirely client-side with pure JavaScript and no backend."
       }
     ]
   }
