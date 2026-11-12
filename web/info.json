@@ -1,96 +1,81 @@
 [
   {
-    "name": "Notes, Cheatsheets & Workflow",
+    "name": "Labs & Attack Simulators",
     "tools": [
       {
-        "name": "Pentest Framework Cheat Sheet",
-        "url": "https://giriaryan694-a11y.github.io/Pentest-Framework-Cheat-Sheet/",
-        "description": "Interactive reference guide for 9 penetration testing frameworks across 6 categories - PTES, NIST SP 800-115, ISSAF, OWASP WSTG, WASC TCv2, MITRE ATT&CK, OSSTMM, CSA CCM."
+        "name": "pickle-ride",
+        "url": "https://giriaryan694-a11y.github.io/pickle-ride/",
+        "description": "Client-side PyTorch pickle deserialization lab. Forge .pt and .pkl samples, then statically dissect pickle opcodes one by one. Processing runs locally in a Pyodide/WebAssembly environment; files stay on the device."
       },
       {
-        "name": "DEF CON 27 SEV Notes",
-        "url": "https://giriaryan694-a11y.github.io/DEF-CON-27-Social-Engineering-Village-Notes/",
-        "description": "Curated, structured collection of notes from DEF CON 27 Social Engineering Village talks on social engineering, psychology, OSINT, red teaming, human behavior, and defensive strategies."
+        "name": "SVG Attack Lab",
+        "url": "https://giriaryan694-a11y.github.io/SVG-Attack-Lab/",
+        "description": "Fully client-side browser tool for demonstrating, injecting, and analyzing SVG-based attack vectors for authorized research and CTFs."
       },
       {
-        "name": "RedTeam Arsenal",
-        "url": "https://giriaryan694-a11y.github.io/RedTeam-Arsenal/",
-        "description": "Your Ultimate Pentest & Red Team Cheatsheets Hub - curated resources, cheatsheets, and tools for security professionals, penetration testers, and red teamers."
+        "name": "SMUGGLR",
+        "url": "https://giriaryan694-a11y.github.io/SMUGGLR/",
+        "description": "Unicode steganography and text obfuscation toolkit for invisible characters, homoglyphs, whitespace ciphers, and Unicode payload hiding - all client-side."
       },
       {
-        "name": "SQLi Auth Bypass Cheatsheet",
-        "url": "https://giriaryan694-a11y.github.io/SQLi-Auth-Bypass-Cheatsheet/",
-        "description": "Ready-to-use SQLi payloads for bypassing login pages. Designed for educational purposes and authorized security testing."
+        "name": "TrustNoChar",
+        "url": "https://giriaryan694-a11y.github.io/TrustNoChar/",
+        "description": "Browser lab demonstrating how Unicode homoglyphs and typosquatting exploit human visual perception by transforming text into deceptive lookalike variants."
       },
       {
-        "name": "Privacy Cheatsheets Hub",
-        "url": "https://giriaryan694-a11y.github.io/Privacy-Cheatsheets-Hub/",
-        "description": "Comprehensive guide to online privacy and security."
+        "name": "Ref_XSS",
+        "url": "https://giriaryan694-a11y.github.io/Ref_XSS/",
+        "description": "Hands-on DOM Cross-Site Scripting (XSS) learning lab."
       },
       {
-        "name": "Google Bughunting Dork Cheatsheet",
-        "url": "https://giriaryan694-a11y.github.io/Google-Bughunting-Dork-Cheatsheet/",
-        "description": "Categorized collection of Google Dorks for security researchers and bug bounty hunters to streamline reconnaissance and vulnerability discovery."
+        "name": "JSStressTester",
+        "url": "https://giriaryan694-a11y.github.io/JSStressTester/",
+        "description": "Lightweight, browser-based educational load/stress tester that simulates repeated HTTP requests to demonstrate request patterns."
       },
       {
-        "name": "EscapeArtist",
-        "url": "https://giriaryan694-a11y.github.io/EscapeArtist/",
-        "description": "Interactive OS command injection bypass cheatsheet that dynamically generates syntactically valid payloads based on a target command and active characters."
+        "name": "SE·EMU",
+        "url": "https://giriaryan694-a11y.github.io/SE-EMU/",
+        "description": "SE·EMU is a browser-based social engineering simulation designed to help cybersecurity learners understand and practice the human side of offensive security."
       },
       {
-        "name": "AryNotes",
-        "url": "https://giriaryan694-a11y.github.io/AryNotes/",
-        "description": "Local, offline engagement notebook for authorized penetration testing workflows and general note-keeping. Lightweight, browser-based note-taking app."
+        "name": "ZipSlip Lab",
+        "url": "https://giriaryan694-a11y.github.io/ZipSlip-Lab/",
+        "description": "Interactive, browser-based Zip Slip demonstration and ZIP archive analysis tool. Create crafted ZIP archives, inspect archive entries and paths, and explore path-traversal behavior entirely client-side with pure JavaScript and no backend."
       }
     ]
   },
   {
-    "name": "OSINT & Reconnaissance",
+    "name": "Practical Tools & Generators",
     "tools": [
       {
-        "name": "ary.osint",
-        "url": "https://giriaryan694-a11y.github.io/ary.osint/",
-        "description": "Comprehensive, well-organized directory of Open Source Intelligence (OSINT) tools, resources, and research materials. Centralized launcher for researchers."
+        "name": "HunterVault",
+        "url": "https://giriaryan694-a11y.github.io/HunterVault/",
+        "description": "Web-based repository of 200+ bug bounty and penetration testing tools. Organized reference for security researchers and bug bounty hunters."
       },
       {
-        "name": "Ary Recon",
-        "url": "https://giriaryan694-a11y.github.io/Ary-Recon/",
-        "description": "Comprehensive web-based passive reconnaissance tools directory."
+        "name": "SQL Reverse Shell Generator",
+        "url": "https://giriaryan694-a11y.github.io/SQL-REVERSE-SHELL-GENERATOR/",
+        "description": "Designed for authorized security testing, educational purposes, and controlled red teaming simulations."
       },
       {
-        "name": "Awesome Search Engines for CyberSec",
-        "url": "https://giriaryan694-a11y.github.io/Awesome-Search-Engines-For-CyberSec/",
-        "description": "Curated collection of powerful search engines used by cybersecurity professionals for OSINT, red teaming, threat intelligence, malware research, and investigations."
-      }
-    ]
-  },
-  {
-    "name": "Learning & Education",
-    "tools": [
-      {
-        "name": "ARY.UNIVERSITY",
-        "url": "https://giriaryan694-a11y.github.io/ARY.UNIVERSITY/",
-        "description": "Gateway to free cybersecurity knowledge: curated online courses, hands-on labs, AI tools, and learning paths for beginners to advanced learners."
+        "name": "KeyCraft",
+        "url": "https://giriaryan694-a11y.github.io/KeyCraft/",
+        "description": "Modern, customizable password generator web application built with vanilla HTML, CSS, and JavaScript."
       },
       {
-        "name": "ip-subnet-calculator",
-        "url": "https://giriaryan694-a11y.github.io/ip-subnet-calculator/",
-        "description": "Interactive IPv4 subnet calculator built for learners and pentesters. Calculates network addresses, broadcast addresses, usable host range, and block size."
+        "name": "ShellCamo",
+        "url": "https://giriaryan694-a11y.github.io/ShellCamo/",
+        "description": "Advanced client-side command obfuscation generator for Bash, PowerShell, and cmd.exe. Produces heavily obfuscated payloads while preserving the original command intent."
       },
       {
-        "name": "Ip-Range-Calculator",
-        "url": "https://giriaryan694-a11y.github.io/Ip-Range-Calculator/",
-        "description": "Helps you understand and calculate IPv4 address ranges using simple math and clear explanations for learners and pentesters."
+        "name": "GhostScripterPDF",
+        "url": "https://giriaryan694-a11y.github.io/GhostScripterPDF/",
+        "description": "Browser-native PDF payload compiler for controlled security research and CTFs. Uses client-side Web APIs and pdf-lib to manipulate PDF XRef tables and object dictionaries, embedding /JS JavaScript and /AA Additional Actions directly into the PDF structure. Processing stays in-memory in the browser with no backend."
       },
       {
-        "name": "Interactive OSI Model Simulator",
-        "url": "https://giriaryan694-a11y.github.io/Interactive-OSI-Model-Simulator/",
-        "description": "Emoji-based simulator of the OSI model to help visualize how data travels across layers, covering encapsulation and decapsulation concepts."
-      },
-      {
-        "name": "MD:// Viewer",
-        "url": "https://giriaryan694-a11y.github.io/MD-Viewer/",
-        "description": "Fully offline, client-side Markdown and mini-repository viewer. Renders Markdown, Mermaid diagrams, images, videos, and ZIP repositories entirely in the browser."
+        "name": "AryObscura",
+        "url": "https://giriaryan694-a11y.github.io/aryobscura/",
+        "description": "Browser-based, client-side multi-language script obfuscation and deobfuscation tool. Generates obfuscated scripts and analyzes supported encoding/wrapper patterns for security education, reverse engineering, and authorized research."
       }
     ]
   },
@@ -160,77 +145,97 @@
     ]
   },
   {
-    "name": "Toolkits & Generators",
+    "name": "OSINT & Reconnaissance",
     "tools": [
       {
-        "name": "HunterVault",
-        "url": "https://giriaryan694-a11y.github.io/HunterVault/",
-        "description": "Web-based repository of 200+ bug bounty and penetration testing tools. Organized reference for security researchers and bug bounty hunters."
+        "name": "ary.osint",
+        "url": "https://giriaryan694-a11y.github.io/ary.osint/",
+        "description": "Comprehensive, well-organized directory of Open Source Intelligence (OSINT) tools, resources, and research materials. Centralized launcher for researchers."
       },
       {
-        "name": "SQL Reverse Shell Generator",
-        "url": "https://giriaryan694-a11y.github.io/SQL-REVERSE-SHELL-GENERATOR/",
-        "description": "Designed for authorized security testing, educational purposes, and controlled red teaming simulations."
+        "name": "Ary Recon",
+        "url": "https://giriaryan694-a11y.github.io/Ary-Recon/",
+        "description": "Comprehensive web-based passive reconnaissance tools directory."
       },
       {
-        "name": "KeyCraft",
-        "url": "https://giriaryan694-a11y.github.io/KeyCraft/",
-        "description": "Modern, customizable password generator web application built with vanilla HTML, CSS, and JavaScript."
-      },
-      {
-        "name": "ShellCamo",
-        "url": "https://giriaryan694-a11y.github.io/ShellCamo/",
-        "description": "Advanced client-side command obfuscation generator for Bash, PowerShell, and cmd.exe. Produces heavily obfuscated payloads while preserving the original command intent."
-      },
-      {
-        "name": "GhostScripterPDF",
-        "url": "https://giriaryan694-a11y.github.io/GhostScripterPDF/",
-        "description": "Browser-native PDF payload compiler for controlled security research and CTFs. Uses client-side Web APIs and pdf-lib to manipulate PDF XRef tables and object dictionaries, embedding /JS JavaScript and /AA Additional Actions directly into the PDF structure. Processing stays in-memory in the browser with no backend."
-      },
-      {
-        "name": "AryObscura",
-        "url": "https://giriaryan694-a11y.github.io/aryobscura/",
-        "description": "Browser-based, client-side multi-language script obfuscation and deobfuscation tool. Generates obfuscated scripts and analyzes supported encoding/wrapper patterns for security education, reverse engineering, and authorized research."
+        "name": "Awesome Search Engines for CyberSec",
+        "url": "https://giriaryan694-a11y.github.io/Awesome-Search-Engines-For-CyberSec/",
+        "description": "Curated collection of powerful search engines used by cybersecurity professionals for OSINT, red teaming, threat intelligence, malware research, and investigations."
       }
     ]
   },
   {
-    "name": "Labs & Attack Simulators",
+    "name": "Learning & Education",
     "tools": [
       {
-        "name": "SVG Attack Lab",
-        "url": "https://giriaryan694-a11y.github.io/SVG-Attack-Lab/",
-        "description": "Fully client-side browser tool for demonstrating, injecting, and analyzing SVG-based attack vectors for authorized research and CTFs."
+        "name": "ARY.UNIVERSITY",
+        "url": "https://giriaryan694-a11y.github.io/ARY.UNIVERSITY/",
+        "description": "Gateway to free cybersecurity knowledge: curated online courses, hands-on labs, AI tools, and learning paths for beginners to advanced learners."
       },
       {
-        "name": "SMUGGLR",
-        "url": "https://giriaryan694-a11y.github.io/SMUGGLR/",
-        "description": "Unicode steganography and text obfuscation toolkit for invisible characters, homoglyphs, whitespace ciphers, and Unicode payload hiding - all client-side."
+        "name": "ip-subnet-calculator",
+        "url": "https://giriaryan694-a11y.github.io/ip-subnet-calculator/",
+        "description": "Interactive IPv4 subnet calculator built for learners and pentesters. Calculates network addresses, broadcast addresses, usable host range, and block size."
       },
       {
-        "name": "TrustNoChar",
-        "url": "https://giriaryan694-a11y.github.io/TrustNoChar/",
-        "description": "Browser lab demonstrating how Unicode homoglyphs and typosquatting exploit human visual perception by transforming text into deceptive lookalike variants."
+        "name": "Ip-Range-Calculator",
+        "url": "https://giriaryan694-a11y.github.io/Ip-Range-Calculator/",
+        "description": "Helps you understand and calculate IPv4 address ranges using simple math and clear explanations for learners and pentesters."
       },
       {
-        "name": "Ref_XSS",
-        "url": "https://giriaryan694-a11y.github.io/Ref_XSS/",
-        "description": "Hands-on DOM Cross-Site Scripting (XSS) learning lab."
+        "name": "Interactive OSI Model Simulator",
+        "url": "https://giriaryan694-a11y.github.io/Interactive-OSI-Model-Simulator/",
+        "description": "Emoji-based simulator of the OSI model to help visualize how data travels across layers, covering encapsulation and decapsulation concepts."
       },
       {
-        "name": "JSStressTester",
-        "url": "https://giriaryan694-a11y.github.io/JSStressTester/",
-        "description": "Lightweight, browser-based educational load/stress tester that simulates repeated HTTP requests to demonstrate request patterns."
+        "name": "MD:// Viewer",
+        "url": "https://giriaryan694-a11y.github.io/MD-Viewer/",
+        "description": "Fully offline, client-side Markdown and mini-repository viewer. Renders Markdown, Mermaid diagrams, images, videos, and ZIP repositories entirely in the browser."
+      }
+    ]
+  },
+  {
+    "name": "Notes, Cheatsheets & Workflow",
+    "tools": [
+      {
+        "name": "Pentest Framework Cheat Sheet",
+        "url": "https://giriaryan694-a11y.github.io/Pentest-Framework-Cheat-Sheet/",
+        "description": "Interactive reference guide for 9 penetration testing frameworks across 6 categories - PTES, NIST SP 800-115, ISSAF, OWASP WSTG, WASC TCv2, MITRE ATT&CK, OSSTMM, CSA CCM."
       },
       {
-        "name": "SE·EMU",
-        "url": "https://giriaryan694-a11y.github.io/SE-EMU/",
-        "description": "SE·EMU is a browser-based social engineering simulation designed to help cybersecurity learners understand and practice the human side of offensive security."
+        "name": "DEF CON 27 SEV Notes",
+        "url": "https://giriaryan694-a11y.github.io/DEF-CON-27-Social-Engineering-Village-Notes/",
+        "description": "Curated, structured collection of notes from DEF CON 27 Social Engineering Village talks on social engineering, psychology, OSINT, red teaming, human behavior, and defensive strategies."
       },
       {
-        "name": "ZipSlip Lab",
-        "url": "https://giriaryan694-a11y.github.io/ZipSlip-Lab/",
-        "description": "Interactive, browser-based Zip Slip demonstration and ZIP archive analysis tool. Create crafted ZIP archives, inspect archive entries and paths, and explore path-traversal behavior entirely client-side with pure JavaScript and no backend."
+        "name": "RedTeam Arsenal",
+        "url": "https://giriaryan694-a11y.github.io/RedTeam-Arsenal/",
+        "description": "Your Ultimate Pentest & Red Team Cheatsheets Hub - curated resources, cheatsheets, and tools for security professionals, penetration testers, and red teamers."
+      },
+      {
+        "name": "SQLi Auth Bypass Cheatsheet",
+        "url": "https://giriaryan694-a11y.github.io/SQLi-Auth-Bypass-Cheatsheet/",
+        "description": "Ready-to-use SQLi payloads for bypassing login pages. Designed for educational purposes and authorized security testing."
+      },
+      {
+        "name": "Privacy Cheatsheets Hub",
+        "url": "https://giriaryan694-a11y.github.io/Privacy-Cheatsheets-Hub/",
+        "description": "Comprehensive guide to online privacy and security."
+      },
+      {
+        "name": "Google Bughunting Dork Cheatsheet",
+        "url": "https://giriaryan694-a11y.github.io/Google-Bughunting-Dork-Cheatsheet/",
+        "description": "Categorized collection of Google Dorks for security researchers and bug bounty hunters to streamline reconnaissance and vulnerability discovery."
+      },
+      {
+        "name": "EscapeArtist",
+        "url": "https://giriaryan694-a11y.github.io/EscapeArtist/",
+        "description": "Interactive OS command injection bypass cheatsheet that dynamically generates syntactically valid payloads based on a target command and active characters."
+      },
+      {
+        "name": "AryNotes",
+        "url": "https://giriaryan694-a11y.github.io/AryNotes/",
+        "description": "Local, offline engagement notebook for authorized penetration testing workflows and general note-keeping. Lightweight, browser-based note-taking app."
       }
     ]
   }
