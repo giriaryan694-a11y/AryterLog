@@ -76,6 +76,11 @@
         "name": "AryObscura",
         "url": "https://giriaryan694-a11y.github.io/aryobscura/",
         "description": "Browser-based, client-side multi-language script obfuscation and deobfuscation tool. Generates obfuscated scripts and analyzes supported encoding/wrapper patterns for security education, reverse engineering, and authorized research."
+      },
+      {
+        "name": "PermiKey",
+        "url": "https://permi-key.vercel.app/",
+        "description": "PermiKey is a free, open-source API key and access permission checker. Validate credentials and inspect available permissions across AI providers, cloud platforms, code hosting services, and more. Built with Python, designed for Vercel and local deployment, and without database storage."
       }
     ]
   },
