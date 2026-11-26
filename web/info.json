@@ -81,6 +81,11 @@
         "name": "PermiKey",
         "url": "https://permi-key.vercel.app/",
         "description": "PermiKey is a free, open-source API key and access permission checker. Validate credentials and inspect available permissions across AI providers, cloud platforms, code hosting services, and more. Built with Python, designed for Vercel and local deployment, and without database storage."
+      },
+      {
+        "name": "EXTORA-lnk",
+        "url": "https://extora-lnk.vercel.app/",
+        "description": "A Flask-based Windows shortcut (.lnk) generator with custom icon support, ZIP export, and server-side file generation. Built for file-format experimentation and security research."
       }
     ]
   },
