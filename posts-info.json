@@ -1,5 +1,13 @@
 [
   {
+  "id": "rootme-tryhackme",
+  "title": "RootMe - TryHackMe Writeup",
+  "date": "27-11-2026",
+  "summary": "A beginner TryHackMe walkthrough covering web enumeration, file upload restrictions, initial access, SUID enumeration, and Linux privilege escalation.",
+  "category": ["ctf", "pentesting", "post-exploitation", "privilege-escalation", "linux"],
+  "file": "posts/rootme-tryhackme.md"
+  },
+  {
   "id": "uphack-drill-marathon-seven-web-security-findings",
   "title": "UPHACK Drill Marathon: Seven Web Security Findings",
   "date": "31-10-2026",
